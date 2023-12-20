@@ -59,15 +59,15 @@ export default defineConfig({
     },
   },
   build: {
-    outDir:"../"
+    outDir:"../teamProject/src/main/resources/static"
   },
-  server:{
-    proxy:{
-      '/api' : {
-        target : 'http://localhost:8888',
-        changeOrigin : true,
-        rewrite: path => path.replace(/^\/api/,''),
-      }
-    }
-  }
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:9999',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/api/, ''),
+      },
+    },
+  },
 })
