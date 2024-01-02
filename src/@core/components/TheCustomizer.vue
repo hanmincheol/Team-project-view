@@ -1,19 +1,19 @@
 <script setup>
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
-import { useTheme } from 'vuetify'
 import { staticPrimaryColor } from '@/plugins/vuetify/theme'
 import { useThemeConfig } from '@core/composable/useThemeConfig'
 import {
-  RouteTransitions,
-  Skins,
+RouteTransitions,
+Skins,
 } from '@core/enums'
 import {
-  AppContentLayoutNav,
-  ContentWidth,
-  FooterType,
-  NavbarType,
+AppContentLayoutNav,
+ContentWidth,
+FooterType,
+NavbarType,
 } from '@layouts/enums'
 import { themeConfig } from '@themeConfig'
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import { useTheme } from 'vuetify'
 
 const isNavDrawerOpen = ref(false)
 const { theme, skin, appRouteTransition, navbarType, footerType, isVerticalNavCollapsed, isVerticalNavSemiDark, appContentWidth, appContentLayoutNav, isAppRtl, isNavbarBlurEnabled, isLessThanOverlayNavBreakpoint } = useThemeConfig()
@@ -46,6 +46,7 @@ const { width: windowWidth } = useWindowSize()
 
 const headerValues = computed(() => {
   const entries = Object.entries(NavbarType)
+  console.log(entries);
   if (appContentLayoutNav.value === AppContentLayoutNav.Horizontal)
     return entries.filter(([_, val]) => val !== NavbarType.Hidden)
   

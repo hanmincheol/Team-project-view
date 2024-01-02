@@ -10,6 +10,7 @@ import '@styles/styles.scss'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 
+
 loadFonts()
 
 
