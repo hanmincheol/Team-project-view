@@ -31,7 +31,7 @@ const tabs = [
 
 <template>
   <section>
-    <VRow class="match-height">
+    <VRow class="fill-height">
       <VCol
         cols="12"
         md="8"
@@ -95,17 +95,16 @@ const tabs = [
             넣기
           </VWindowItem>
         </VWindow>
-
+        
         <!-- -->
       </VCol>
+
       <VCol
         cols="12"
         md="4"
       >
-        <VRow class="match-height">
-          <CrmActivityTimeline />
-          <Timeline />
-        </VRow>
+        <CrmActivityTimeline />
+        <Timeline />
       </VCol>
     </VRow>
   </section>

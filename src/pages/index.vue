@@ -1,25 +1,135 @@
-<template>
-  <div>
-    <VCard
-      class="mb-6"
-      title="Kick start your project 🚀"
-    >
-      <VCardText>All the best for your new project.</VCardText>
-      <VCardText>
-        Please make sure to read our <a
-          href="https://themeselection.com/demo/materio-vuetify-vuejs-admin-template/documentation"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-decoration-none"
-        >
-          Template Documentation
-        </a> to understand where to go from here and how to use our template.
-      </VCardText>
-    </VCard>
+<script setup>
+import Calendar from '@/pages/apps/calendar.vue'
+import Timeline from '@/pages/components/timeline.vue'
+import CrmActivityTimeline from '@/views/dashboards/crm/CrmActivityTimeline.vue'
 
-    <VCard title="Want to integrate JWT? 🔒">
-      <VCardText>We carefully crafted JWT flow so you can implement JWT with ease and with minimum efforts.</VCardText>
-      <VCardText>Please read our  JWT Documentation to get more out of JWT authentication.</VCardText>
-    </VCard>
-  </div>
+const userTab = ref(null)
+
+const tabs = [
+  {
+    icon: 'mdi-account-outline',
+    title: '항목에',
+  },
+  {
+    icon: 'mdi-lock-outline',
+    title: '원하는',
+  },
+  {
+    icon: 'mdi-bookmark-outline',
+    title: '제목',
+  },
+  {
+    icon: 'mdi-bell-outline',
+    title: '정해서',
+  },
+  {
+    icon: 'mdi-link-variant',
+    title: '넣기',
+  },
+]
+
+const iconss = [
+  {
+    icon: 'mdi-contactless-payment-circle-outline',
+    title: '오늘의 스케쥴',
+  },
+]
+</script>
+
+<template>
+  <section>
+    <VRow class="fill-height">
+      <VCol
+        cols="12"
+        md="8"
+      >
+        <VExpansionPanels variant="accordion">
+          <VExpansionPanel
+            v-for="item in 1"
+            :key="item"
+          >
+            <VExpansionPanelTitle>
+              <h6 class="text-h6">
+                Calendar
+              </h6>
+            </VExpansionPanelTitle>
+            <VExpansionPanelText>
+              <Calendar />
+            </VExpansionPanelText>
+          </VExpansionPanel>
+        </VExpansionPanels>
+        <VCol cols="12" />
+        <!-- -->
+        <VTabs
+          v-model="userTab"
+          class="v-tabs-pill"
+        >
+          <VTab
+            v-for="tab in tabs"
+            :key="tab.icon"
+          >
+            <VIcon
+              start
+              :icon="tab.icon"
+            />
+            <span>{{ tab.title }}</span>
+          </VTab>
+        </VTabs>   
+        
+        <VWindow
+          v-model="userTab"
+          class="mt-6 disable-tab-transition"
+          :touch="false"
+        >
+          <VWindowItem>
+            가져올 페이지나 내용 작성
+          </VWindowItem>
+
+          <VWindowItem>
+            <CrmActivityTimeline />
+          </VWindowItem>
+
+          <VWindowItem>
+            제목에 맞는
+          </VWindowItem>
+
+          <VWindowItem>
+            내용 정해서
+          </VWindowItem>
+
+          <VWindowItem>
+            넣기
+          </VWindowItem>
+        </VWindow>
+        <VCol cols="12" />
+        <VCard>
+          <VCardText>
+            <VTab
+              v-for="icons in iconss"
+              :key="icons.icon"
+            >
+              <VIcon
+                start
+                :icon="icons.icon"
+              />
+              <span>{{ icons.title }}</span>
+            </VTab>
+          </VCardText>
+        </VCard>
+        <!-- -->
+      </VCol>
+
+      <VCol
+        cols="12"
+        md="4"
+      >
+        <CrmActivityTimeline />
+        <Timeline />
+      </VCol>
+    </VRow>
+  </section>
 </template>
+
+<style lang="scss">
+  @use "@core/scss/template/libs/apex-chart.scss";
+</style>

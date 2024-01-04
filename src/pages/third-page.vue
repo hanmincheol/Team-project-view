@@ -27,11 +27,18 @@ const tabs = [
     title: '넣기',
   },
 ]
+
+const iconss = [
+  {
+    icon: 'mdi-contactless-payment-circle-outline',
+    title: '오늘의 스케쥴',
+  },
+]
 </script>
 
 <template>
   <section>
-    <VRow class="match-height">
+    <VRow class="fill-height">
       <VCol
         cols="12"
         md="8"
@@ -51,7 +58,7 @@ const tabs = [
             </VExpansionPanelText>
           </VExpansionPanel>
         </VExpansionPanels>
-
+        <VCol cols="12" />
         <!-- -->
         <VTabs
           v-model="userTab"
@@ -76,7 +83,6 @@ const tabs = [
         >
           <VWindowItem>
             가져올 페이지나 내용 작성
-            <Calendar />
           </VWindowItem>
 
           <VWindowItem>
@@ -95,7 +101,21 @@ const tabs = [
             넣기
           </VWindowItem>
         </VWindow>
-
+        <VCol cols="12" />
+        <VCard>
+          <VCardText>
+            <VTab
+              v-for="icons in iconss"
+              :key="icons.icon"
+            >
+              <VIcon
+                start
+                :icon="icons.icon"
+              />
+              <span>{{ icons.title }}</span>
+            </VTab>
+          </VCardText>
+        </VCard>
         <!-- -->
       </VCol>
 
