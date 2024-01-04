@@ -6,10 +6,13 @@ import vuetify from '@/plugins/vuetify'
 import { loadFonts } from '@/plugins/webfontloader'
 import router from '@/router'
 import '@core/scss/template/index.scss'
+
 import '@styles/styles.scss'
+import 'bootstrap'
+
+// import 'bootstrap/dist/css/bootstrap.min.css'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
-
 
 loadFonts()
 
