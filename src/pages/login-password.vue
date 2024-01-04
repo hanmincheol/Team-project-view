@@ -1,22 +1,19 @@
 <script setup>
-import { VForm } from 'vuetify/components/VForm'
 import { useAppAbility } from '@/plugins/casl/useAppAbility'
-import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
 import axios from '@axios'
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
-import tree from '@images/pages/tree.png'
-import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
-import { themeConfig } from '@themeConfig'
-import {
-  emailValidator,
-  requiredValidator,
-} from '@validators'
 import authV2LoginIllustrationBorderedDark from '@images/pages/auth-v2-login-illustration-bordered-dark.png'
 import authV2LoginIllustrationBorderedLight from '@images/pages/auth-v2-login-illustration-bordered-light.png'
 import authV2LoginIllustrationDark from '@images/pages/auth-v2-login-illustration-dark.png'
 import authV2LoginIllustrationLight from '@images/pages/auth-v2-login-illustration-light.png'
 import authV2MaskDark from '@images/pages/auth-v2-mask-dark.png'
 import authV2MaskLight from '@images/pages/auth-v2-mask-light.png'
+import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
+import { themeConfig } from '@themeConfig'
+import {
+  requiredValidator,
+} from '@validators'
+import { VForm } from 'vuetify/components/VForm'
 
 const isPasswordVisible = ref(false)
 const authThemeImg = useGenerateImageVariant(authV2LoginIllustrationLight, authV2LoginIllustrationDark, authV2LoginIllustrationBorderedLight, authV2LoginIllustrationBorderedDark, true)
@@ -32,6 +29,7 @@ const errors = ref({
 
 const refVForm = ref()
 const id = ref('test')
+
 //const email = ref('admin@demo.com')
 //const password = ref('admin')
 const rememberMe = ref(false)
@@ -66,7 +64,7 @@ const onSubmit = () => {
 }
 
 const loginpass = () => {
-  router.push({path:"/login"});
+  router.push({ path: "/login" })
 }
 </script>
 
@@ -85,11 +83,7 @@ const loginpass = () => {
       no-gutters
       class="auth-wrapper"
     >
-    
-      <VCol
-        class="d-none d-lg-flex align-center justify-center position-relative"
-      >
-      </VCol>
+      <VCol class="d-none d-lg-flex align-center justify-center position-relative" />
 
       <VCol
         cols="12"
@@ -99,15 +93,12 @@ const loginpass = () => {
           flat
           :max-width="500"
           class="mt-12 mt-sm-0 pa-4"
-          style="border:solid 2px gray;width:500px;height:500px"
+          style="width: 500px;height: 500px;border: solid 2px gray;"
         >
-          <VCol
-            class="text-center" 
-          >
-          
+          <VCol class="text-center">
             <VCardText>              
               <h5 class="text-h5 mb-1">
-                &#128100;{{id}}
+                &#128100;{{ id }}
               </h5>
             </VCardText>
           </VCol>
@@ -130,31 +121,33 @@ const loginpass = () => {
                   />
                  
 
-                  <div class="d-flex align-center flex-wrap mt-1 mb-4" style="justify-content:right">
-                    <VCol cols="12">
-
-                    </VCol>
-                    <VBtn @click="loginpass()">다음</VBtn>
+                  <div
+                    class="d-flex align-center flex-wrap mt-1 mb-4"
+                    style="justify-content: right;"
+                  >
+                    <VCol cols="12" />
+                    <VBtn @click="loginpass">
+                      다음
+                    </VBtn>
                   </div>
                   <VCol
                     cols="12"                  
                     class="d-flex align-center"
-                  >
-                  </VCol>                  
+                  />                  
                 </VCol>
 
                 <!-- create account -->                
                 <VCol
                   cols="12"
                   class="text-center"
-                  style="margin-top:-30px"
+                  style="margin-top: -30px;"
                 >
                   <RouterLink
-                      class="text-primary ms-2 mb-1"
-                      :to="{ name: 'forgot-password' }"
-                    >
-                      비밀번호 찾기
-                    </RouterLink>
+                    class="text-primary ms-2 mb-1"
+                    :to="{ name: 'forgot-password' }"
+                  >
+                    비밀번호 찾기
+                  </RouterLink>
                 </VCol>
               </VRow>
             </VForm>

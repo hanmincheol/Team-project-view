@@ -1,14 +1,13 @@
 <script setup>
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
-import tree from '@images/pages/tree.png'
-import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
-import { themeConfig } from '@themeConfig'
 import authV2ForgotPasswordIllustrationBorderedDark from '@images/pages/auth-v2-forgot-password-illustration-bordered-dark.png'
 import authV2ForgotPasswordIllustrationBorderedLight from '@images/pages/auth-v2-forgot-password-illustration-bordered-light.png'
 import authV2ForgotPasswordIllustrationDark from '@images/pages/auth-v2-forgot-password-illustration-dark.png'
 import authV2ForgotPasswordIllustrationLight from '@images/pages/auth-v2-forgot-password-illustration-light.png'
 import authV2MaskDark from '@images/pages/auth-v2-mask-dark.png'
 import authV2MaskLight from '@images/pages/auth-v2-mask-light.png'
+import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
+import { themeConfig } from '@themeConfig'
 
 const email = ref('')
 const authThemeImg = useGenerateImageVariant(authV2ForgotPasswordIllustrationLight, authV2ForgotPasswordIllustrationDark, authV2ForgotPasswordIllustrationBorderedLight, authV2ForgotPasswordIllustrationBorderedDark, true)
@@ -30,7 +29,6 @@ const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
       class="auth-wrapper"
       no-gutters
     >
-
       <VCol
         cols="12"
         class="auth-card-v2 d-flex align-center justify-center"
@@ -39,26 +37,24 @@ const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
           flat
           :max-width="500"
           class="mt-12 mt-sm-0 pa-4"
-          style="border:solid 2px gray;width:500px;height:500px"
+          style="width: 500px;height: 500px;border: solid 2px gray;"
         >
           <VCol
             class="text-center" 
-            style="display:flex;"
+            style="display: flex;"
           >
             <RouterLink
               class="text-primary ms-2 text-center"
               :to="{ name: 'login_password' }"
-              style="line-height:70px;"
+              style="line-height: 70px;"
             >
               <VIcon
                 class="flip-in-rtl"
                 icon="mdi-chevron-left"
               />
-                <span>Back</span>
+              <span>Back</span>
             </RouterLink>
-            <VCardText
-              style="padding-left:5px"
-            >
+            <VCardText style="padding-left: 5px;">
               <h5 class="text-h5 mb-1">
                 비밀번호 찾기 🔒
               </h5>
@@ -102,21 +98,23 @@ const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
                 </VCol>
 
                 <!-- back to login -->
-                <!-- <VCol
+                <!--
+                  <VCol
                   cols="12"
                   class="text-center"
-                >
-                  <RouterLink
-                    class="text-primary ms-2"
-                    :to="{ name: 'login' }"
                   >
-                    <VIcon
-                      class="flip-in-rtl"
-                      icon="mdi-chevron-left"
-                    />
-                    <span>Back to login</span>
+                  <RouterLink
+                  class="text-primary ms-2"
+                  :to="{ name: 'login' }"
+                  >
+                  <VIcon
+                  class="flip-in-rtl"
+                  icon="mdi-chevron-left"
+                  />
+                  <span>Back to login</span>
                   </RouterLink>
-                </VCol> -->
+                  </VCol> 
+                -->
               </VRow>
             </VForm>
           </VCardText>
