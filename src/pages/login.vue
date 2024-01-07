@@ -22,6 +22,9 @@ const form = ref({
 const isPasswordVisible = ref(false)
 const authThemeImg = useGenerateImageVariant(authV2LoginIllustrationLight, authV2LoginIllustrationDark, authV2LoginIllustrationBorderedLight, authV2LoginIllustrationBorderedDark, true)
 const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
+const loginpass = () => {
+  router.push({path:"/login-password"});
+}
 </script>
 
 <template>
@@ -40,103 +43,88 @@ const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
       class="auth-wrapper"
     >
       <VCol
-        md="8"
         class="d-none d-md-flex align-center justify-center position-relative"
       >
-        <div class="d-flex align-center justify-center w-100 pa-10 pe-0">
-          <VImg
-            max-width="768px"
-            :src="authThemeImg"
-            class="auth-illustration"
-          />
-        </div>
-
-        <VImg
-          :width="276"
-          :src="tree"
-          class="auth-footer-start-tree"
-        />
-        <VImg
-          class="auth-footer-mask"
-          :src="authThemeMask"
-        />
       </VCol>
 
       <VCol
         cols="12"
-        md="4"
         class="auth-card-v2 d-flex align-center justify-center"
       >
         <VCard
           flat
           :max-width="500"
           class="mt-12 mt-sm-0 pa-4"
+          style="border:solid 2px gray;width:500px;height:500px"
         >
-          <VCardText>
-            <h5 class="text-h5 font-weight-medium mb-1">
-              Welcome to {{ themeConfig.app.title }}! 👋🏻
-            </h5>
-            <p class="mb-0">
-              Please sign-in to your account and start the adventure
-            </p>
-          </VCardText>
+          <VCol
+            class="text-center" 
+          >
+          
+            <VCardText>              
+              <h5 class="text-h5 mb-1">
+                &#128100;로그인
+              </h5>
+            </VCardText>
+          </VCol>
           <VCardText>
             <VForm @submit.prevent="router.push('/')">
               <VRow>
-                <!-- email -->
+                <!-- 아이디 입력란 -->
                 <VCol cols="12">
                   <VTextField
-                    v-model="form.email"
-                    label="Email"
-                    type="email"
+                    v-model="id"
+                    label="아이디"
+                    type="id"
                   />
                 </VCol>
-
-                <!-- password -->
-                <VCol cols="12">
-                  <VTextField
-                    v-model="form.password"
-                    label="Password"
-                    :type="isPasswordVisible ? 'text' : 'password'"
-                    :append-inner-icon="isPasswordVisible ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
-                    @click:append-inner="isPasswordVisible = !isPasswordVisible"
-                  />
-
+                  <VCol cols="12">
                   <div class="d-flex align-center flex-wrap justify-space-between mt-1 mb-4">
                     <VCheckbox
-                      v-model="form.remember"
+                      v-model="rememberMe"
                       label="Remember me"
                     />
-                    <a
-                      class="text-primary ms-2 mb-1"
-                      href="#"
-                    >
-                      Forgot Password?
-                    </a>
+                    <VBtn @click="loginpass()">다음</VBtn>
                   </div>
-
-                  <VBtn
-                    block
-                    type="submit"
+                  <VCol
+                    cols="12"                  
+                    class="d-flex align-center"
                   >
-                    Login
-                  </VBtn>
-                </VCol>
-
+                    <VDivider />
+                    <span class="mx-4">or</span>
+                    <VDivider />
+                  </VCol>                  
+                </VCol> 
                 <!-- create account -->
                 <VCol
                   cols="12"
-                  class="text-center text-base"
+                  class="text-center"
+                  style="margin-top:-30px"
                 >
-                  <span>New on our platform?</span>
-                  <a
-                    class="text-primary ms-2"
-                    href="#"
+                  <!-- /AuthProvider.vue -->
+                  <!-- 소셜로그인(AuthProvider) 부분 정렬 -->                
+                  <VCol
+                    cols="12"
+                    class="text-center"
                   >
-                    Create an account
-                  </a>
+                    <AuthProvider />
+                  </VCol>
+                  <span>서비스가 궁금하신가요?</span>
+                  <RouterLink
+                    class="text-primary ms-2"
+                    :to="{ name: 'register' }"
+                  >
+                    회원가입
+                  </RouterLink>
+                  <br/><br/>
+                  <RouterLink
+                      class="text-primary ms-2 mb-1"
+                      :to="{ name: 'forgot-id' }"
+                    >
+                      아이디 찾기
+                    </RouterLink>
                 </VCol>
-
+<!-- 
                 <VCol
                   cols="12"
                   class="d-flex align-center"
@@ -146,13 +134,13 @@ const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
                   <VDivider />
                 </VCol>
 
-                <!-- auth providers -->
+
                 <VCol
                   cols="12"
                   class="text-center"
                 >
                   <AuthProvider />
-                </VCol>
+                </VCol> -->
               </VRow>
             </VForm>
           </VCardText>
@@ -169,4 +157,7 @@ const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
 <route lang="yaml">
 meta:
   layout: blank
+  action: read
+  subject: Auth
+  redirectIfLoggedIn: true
 </route>
