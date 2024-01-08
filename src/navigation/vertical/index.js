@@ -1,3 +1,4 @@
+import comm from "./comm"
 import test from "./test"
 
 export default [
@@ -28,4 +29,5 @@ export default [
   },
 
   ...test,
+  ...comm,
 ]

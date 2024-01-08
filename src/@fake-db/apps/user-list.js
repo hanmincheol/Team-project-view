@@ -274,7 +274,7 @@ const users = [
     id: 21,
     fullName: 'Selina Kyle',
     company: 'Wayne Enterprises',
-    role: 'admin',
+    role: '달성률 80%',
     username: 'catwomen1940',
     country: 'USA',
     contact: '(829) 537-0057',

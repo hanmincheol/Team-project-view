@@ -1,4 +1,5 @@
 /* eslint-disable import/order */
+import '@/@fake-db/db'
 import '@/@iconify/icons-bundle'
 import App from '@/App.vue'
 import layoutsPlugin from '@/plugins/layouts'
@@ -7,8 +8,8 @@ import { loadFonts } from '@/plugins/webfontloader'
 import router from '@/router'
 import '@core/scss/template/index.scss'
 
-import '@styles/styles.scss'
-import 'bootstrap'
+//import '@styles/styles.scss'
+//import 'bootstrap'
 
 // import 'bootstrap/dist/css/bootstrap.min.css'
 import { createPinia } from 'pinia'

@@ -166,7 +166,7 @@ export const getBarChartConfig = themeColors => {
     xaxis: {
       axisBorder: { show: false },
       axisTicks: { color: themeBorderColor },
-      categories: ['MON, 11', 'THU, 14', 'FRI, 15', 'MON, 18', 'WED, 20', 'FRI, 21', 'MON, 23'],
+      categories: ['목표 달성률'],
       labels: {
         style: { colors: themeDisabledTextColor },
       },
