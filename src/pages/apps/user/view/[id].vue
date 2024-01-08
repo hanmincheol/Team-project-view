@@ -1,11 +1,6 @@
 <script setup>
 import { useUserListStore } from '@/views/apps/user/useUserListStore'
 import UserBioPanel from '@/views/apps/user/view/UserBioPanel.vue'
-import UserTabBillingsPlans from '@/views/apps/user/view/UserTabBillingsPlans.vue'
-import UserTabConnections from '@/views/apps/user/view/UserTabConnections.vue'
-import UserTabNotifications from '@/views/apps/user/view/UserTabNotifications.vue'
-import UserTabOverview from '@/views/apps/user/view/UserTabOverview.vue'
-import UserTabSecurity from '@/views/apps/user/view/UserTabSecurity.vue'
 
 const userListStore = useUserListStore()
 const route = useRoute()
@@ -15,23 +10,23 @@ const userTab = ref(null)
 const tabs = [
   {
     icon: 'mdi-account-outline',
-    title: 'Overview',
+    title: '항목에',
   },
   {
     icon: 'mdi-lock-outline',
-    title: 'Security',
+    title: '원하는',
   },
   {
     icon: 'mdi-bookmark-outline',
-    title: 'Billing & Plan',
+    title: '제목',
   },
   {
     icon: 'mdi-bell-outline',
-    title: 'Notifications',
+    title: '정해서',
   },
   {
     icon: 'mdi-link-variant',
-    title: 'Connections',
+    title: '넣기',
   },
 ]
 
@@ -49,11 +44,9 @@ userListStore.fetchUser(Number(route.params.id)).then(response => {
     >
       <UserBioPanel :user-data="userData" />
     </VCol>
-
     <VCol
       cols="12"
-      md="7"
-      lg="8"
+      md="8"
     >
       <VTabs
         v-model="userTab"
@@ -69,31 +62,30 @@ userListStore.fetchUser(Number(route.params.id)).then(response => {
           />
           <span>{{ tab.title }}</span>
         </VTab>
-      </VTabs>
-
+      </VTabs>  
       <VWindow
         v-model="userTab"
         class="mt-6 disable-tab-transition"
         :touch="false"
       >
         <VWindowItem>
-          <UserTabOverview />
+          가져올 페이지나 내용 작성
         </VWindowItem>
 
         <VWindowItem>
-          <UserTabSecurity />
+          <CrmActivityTimeline />
         </VWindowItem>
 
         <VWindowItem>
-          <UserTabBillingsPlans />
+          제목에 맞는
         </VWindowItem>
 
         <VWindowItem>
-          <UserTabNotifications />
+          내용 정해서
         </VWindowItem>
 
         <VWindowItem>
-          <UserTabConnections />
+          넣기
         </VWindowItem>
       </VWindow>
     </VCol>

@@ -1,8 +1,8 @@
 <script setup>
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
-import { useChat } from './useChat'
 import { useChatStore } from '@/views/apps/chat/useChatStore'
 import { avatarText } from '@core/utils/formatters'
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import { useChat } from './useChat'
 
 const emit = defineEmits(['close'])
 
@@ -13,22 +13,22 @@ const { resolveAvatarBadgeVariant } = useChat()
 
 const userStatusRadioOptions = [
   {
-    title: 'Online',
+    title: '온라인',
     value: 'online',
     color: 'success',
   },
   {
-    title: 'Away',
+    title: '외출중',
     value: 'away',
     color: 'warning',
   },
   {
-    title: 'Do not disturb',
+    title: '방해금지',
     value: 'busy',
     color: 'error',
   },
   {
-    title: 'Offline',
+    title: '오프라인',
     value: 'offline',
     color: 'secondary',
   },
@@ -90,7 +90,7 @@ const userStatusRadioOptions = [
         <span
           for="textarea-user-about"
           class="text-sm text-disabled mb-1"
-        >ABOUT</span>
+        >자기소개</span>
         <VTextarea
           id="textarea-user-about"
           v-model="store.profileUser.about"
@@ -102,7 +102,7 @@ const userStatusRadioOptions = [
 
       <!-- Status -->
       <div class="mb-6">
-        <span class="text-sm text-disabled">STATUS</span>
+        <span class="text-sm text-disabled">상태</span>
         <VRadioGroup
           v-model="store.profileUser.status"
           class="mt-1"
@@ -119,34 +119,34 @@ const userStatusRadioOptions = [
 
       <!-- Settings -->
       <div class="text-medium-emphasis">
-        <span class="text-sm text-disabled">SETTINGS</span>
+        <span class="text-sm text-disabled">추가 기능</span>
         <div class="d-flex align-center my-3">
           <VIcon
             class="me-3"
             icon="mdi-check-circle-outline"
           />
-          <span class="text-sm">Two-step Verification</span>
+          <span class="text-sm">2단계 인증</span>
         </div>
         <div class="d-flex align-center mb-3">
           <VIcon
             class="me-3"
             icon="mdi-bell-outline"
           />
-          <span class="text-sm">Notification</span>
+          <span class="text-sm">알림</span>
         </div>
         <div class="d-flex align-center mb-3">
           <VIcon
             class="me-3"
             icon="mdi-account-outline"
           />
-          <span class="text-sm">Invite Friends</span>
+          <span class="text-sm">친구 초대</span>
         </div>
         <div class="d-flex align-center">
           <VIcon
             class="me-3"
             icon="mdi-trash-can-outline"
           />
-          <span class="text-sm">Delete Account</span>
+          <span class="text-sm">계정 삭제</span>
         </div>
       </div>
 
@@ -155,7 +155,7 @@ const userStatusRadioOptions = [
         color="primary"
         class="mt-6"
       >
-        Logout
+        로그아웃
       </VBtn>
     </PerfectScrollbar>
   </template>
