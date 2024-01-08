@@ -28,6 +28,7 @@ declare module '@vue/runtime-core' {
     CardStatisticsVertical: typeof import('./src/@core/components/cards/CardStatisticsVertical.vue')['default']
     CardStatisticsWithImages: typeof import('./src/@core/components/cards/CardStatisticsWithImages.vue')['default']
     ConfirmDialog: typeof import('./src/components/dialogs/ConfirmDialog.vue')['default']
+    copy: typeof import('./src/components/dialogs/UserUpgradedietPlan copy.vue')['default']
     copy: typeof import('./src/views/demos/register/DemoCheckboxLabelSlot copy.vue')['default']
     CreateAppDialog: typeof import('./src/components/dialogs/CreateAppDialog.vue')['default']
     CustomCheckboxes: typeof import('./src/@core/components/app-form-elements/CustomCheckboxes.vue')['default']
@@ -56,7 +57,12 @@ declare module '@vue/runtime-core' {
     TheCustomizer: typeof import('./src/@core/components/TheCustomizer.vue')['default']
     ThemeSwitcher: typeof import('./src/@core/components/ThemeSwitcher.vue')['default']
     TwoFactorAuthDialog: typeof import('./src/components/dialogs/TwoFactorAuthDialog.vue')['default']
+    UserCa: typeof import('./src/components/dialogs/UserCa.vue')['default']
+    UserCategory: typeof import('./src/components/dialogs/UserCategory.vue')['default']
+    UserCheckedRecipe: typeof import('./src/components/dialogs/UserCheckedRecipe.vue')['default']
+    UserFindRestaurant: typeof import('./src/components/dialogs/UserFindRestaurant.vue')['default']
     UserInfoEditDialog: typeof import('./src/components/dialogs/UserInfoEditDialog.vue')['default']
+    UserUpgradedietPlan: typeof import('./src/components/dialogs/UserUpgradedietPlan.vue')['default']
     UserUpgradePlanDialog: typeof import('./src/components/dialogs/UserUpgradePlanDialog.vue')['default']
   }
 }

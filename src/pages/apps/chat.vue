@@ -1,6 +1,4 @@
 <script setup>
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
-import { useDisplay } from 'vuetify'
 import ChatActiveChatUserProfileSidebarContent from '@/views/apps/chat/ChatActiveChatUserProfileSidebarContent.vue'
 import ChatLeftSidebarContent from '@/views/apps/chat/ChatLeftSidebarContent.vue'
 import ChatLog from '@/views/apps/chat/ChatLog.vue'
@@ -9,22 +7,33 @@ import { useChat } from '@/views/apps/chat/useChat'
 import { useChatStore } from '@/views/apps/chat/useChatStore'
 import { useResponsiveLeftSidebar } from '@core/composable/useResponsiveSidebar'
 import { avatarText } from '@core/utils/formatters'
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import { useDisplay } from 'vuetify'
 
+//현재 화면 크기에 대한 정보
 const vuetifyDisplays = useDisplay()
+
+//상태를 관리하고 액션을 수행
 const store = useChatStore()
+
+//왼쪽 사이드바의 열림/닫힘 상태를 결정
 const { isLeftSidebarOpen } = useResponsiveLeftSidebar(vuetifyDisplays.smAndDown)
+
+//유저 상태 색상
 const { resolveAvatarBadgeVariant } = useChat()
 
 // Perfect scrollbar
 const chatLogPS = ref()
 
+//맨 아래로 스크롤
 const scrollToBottomInChatLog = () => {
   const scrollEl = chatLogPS.value.$el || chatLogPS.value
 
   scrollEl.scrollTop = scrollEl.scrollHeight
 }
 
-// Search query
+//검색 쿼리에 따라 채팅 및 연락처 목록이 동적으로 업데이트
+//채팅 로그가 업데이트되면 맨 아래로 스크롤하여 사용자에게 가장 최근의 채팅 내용을 보여주는 기능
 const q = ref('')
 
 watch(q, val => store.fetchChatsAndContacts(val), { immediate: true })
@@ -83,21 +92,22 @@ const isActiveChatUserProfileSidebarOpen = ref(false)
 // file input
 const refInputEl = ref()
 
+//햄버거 누르면 나오는 창
 const moreList = [
   {
-    title: 'View Contact',
+    title: '연락처 보기',
     value: 'View Contact',
   },
   {
-    title: 'Mute Notifications',
+    title: '음소거 알림',
     value: 'Mute Notifications',
   },
   {
-    title: 'Block Contact',
+    title: '차단하기',
     value: 'Block Contact',
   },
   {
-    title: 'Clear Chat',
+    title: '채팅 지우기',
     value: 'Clear Chat',
   },
   {
@@ -108,8 +118,9 @@ const moreList = [
 </script>
 
 <template>
+  <!-- "bg-surface" 클래스는 배경 색상 -->
   <VLayout class="chat-app-layout bg-surface">
-    <!-- 👉 user profile sidebar -->
+    <!-- 사용자 프로필 사이드바의 열림/닫힘 상태를 관리 => 고칠곳 x -->
     <VNavigationDrawer
       v-model="isUserProfileSidebarOpen"
       temporary
@@ -248,7 +259,7 @@ const moreList = [
             v-model="msg"
             variant="solo"
             class="chat-message-input"
-            placeholder="Type your message..."
+            placeholder="메세지를 입력해주세요"
             autofocus
           >
             <template #append-inner>
@@ -270,7 +281,7 @@ const moreList = [
               </IconBtn>
 
               <VBtn @click="sendMessage">
-                Send
+                보내기
               </VBtn>
             </template>
           </VTextField>
@@ -285,7 +296,7 @@ const moreList = [
         </VForm>
       </div>
 
-      <!-- 👉 Start conversation -->
+      <!-- 채팅방을 하나도 열지 않았을 시 -->
       <div
         v-else
         class="d-flex h-100 align-center justify-center flex-column"
@@ -305,7 +316,7 @@ const moreList = [
           :class="[{ 'cursor-pointer': $vuetify.display.smAndDown }]"
           @click="startConversation"
         >
-          Start Conversation
+          채팅방을 클릭하세요!
         </p>
       </div>
     </VMain>

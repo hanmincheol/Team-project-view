@@ -1,8 +1,8 @@
 <script setup>
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
-import { useChat } from './useChat'
 import { useChatStore } from '@/views/apps/chat/useChatStore'
 import { avatarText } from '@core/utils/formatters'
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import { useChat } from './useChat'
 
 const emit = defineEmits(['close'])
 
@@ -12,7 +12,7 @@ const { resolveAvatarBadgeVariant } = useChat()
 
 <template>
   <template v-if="store.activeChat">
-    <!-- Close Button -->
+    <!-- 사용자 아이콘 눌렀을 때 닫기버튼 -->
     <div
       class="pt-2 me-2"
       :class="$vuetify.locale.isRtl ? 'text-left' : 'text-right'"
@@ -25,8 +25,9 @@ const { resolveAvatarBadgeVariant } = useChat()
       </IconBtn>
     </div>
 
-    <!-- User Avatar + Name + Role -->
+    <!-- 사용자 프로필 정보 표시 -->
     <div class="text-center px-6">
+      <!-- 사용자 아바타 + 이름 + 역할 -->
       <VBadge
         location="bottom right"
         offset-x="7"
@@ -68,7 +69,7 @@ const { resolveAvatarBadgeVariant } = useChat()
         <span
           for="textarea-user-about"
           class="text-sm text-disabled"
-        >ABOUT</span>
+        >자기소개</span>
         <p class="mt-1 text-sm">
           {{ store.activeChat.contact.about }}
         </p>
@@ -76,7 +77,7 @@ const { resolveAvatarBadgeVariant } = useChat()
 
       <!-- Personal Information -->
       <div class="mb-8">
-        <span class="d-block text-sm text-disabled mb-3">PERSONAL INFORMATION</span>
+        <span class="d-block text-sm text-disabled mb-3">사용자 정보</span>
         <div class="d-flex align-center">
           <VIcon
             class="me-2"
@@ -100,36 +101,36 @@ const { resolveAvatarBadgeVariant } = useChat()
         </div>
       </div>
 
-      <!-- Options -->
+      <!-- 사용자 프로필 눌렀을 때 기능들 -->
       <div>
-        <span class="d-block text-sm text-disabled mb-3">OPTIONS</span>
+        <span class="d-block text-sm text-disabled mb-3">추가 기능</span>
         <div class="d-flex align-center">
           <VIcon
             class="me-2"
             icon="mdi-bookmark-outline"
           />
-          <span class="text-sm">Add Tag</span>
+          <span class="text-sm">구독하기</span>
         </div>
         <div class="d-flex align-center my-3">
           <VIcon
             class="me-2"
             icon="mdi-star-outline"
           />
-          <span class="text-sm">Important Contact</span>
+          <span class="text-sm">즐겨찾기</span>
         </div>
         <div class="d-flex align-center mb-3">
           <VIcon
             class="me-2"
             icon="mdi-image-outline"
           />
-          <span class="text-sm">Shared Media</span>
+          <span class="text-sm">공유하기</span>
         </div>
         <div class="d-flex align-center mb-3">
           <VIcon
             class="me-2"
             icon="mdi-trash-can-outline"
           />
-          <span class="text-sm">Delete Contact</span>
+          <span class="text-sm">친구 삭제하기</span>
         </div>
         <div class="d-flex align-center">
           <VIcon
@@ -137,7 +138,7 @@ const { resolveAvatarBadgeVariant } = useChat()
             size="16"
             icon="mdi-block-helper"
           />
-          <span class="text-sm">Block Contact</span>
+          <span class="text-sm">차단하기</span>
         </div>
       </div>
     </PerfectScrollbar>

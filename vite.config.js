@@ -1,3 +1,4 @@
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { fileURLToPath } from 'node:url'
@@ -25,6 +26,33 @@ export default defineConfig({
     }),
     Pages({
       dirs: ['./src/pages'],
+
+      // ℹ️ We need three routes using single routes so we will ignore generating route for this SFC file
+      onRoutesGenerated: routes => [
+        // Email filter
+        {
+          path: '/apps/email/:filter',
+          name: 'apps-email-filter',
+          component: '/src/pages/apps/email/index.vue',
+          meta: {
+            navActiveLink: 'apps-email',
+            layoutWrapperClasses: 'layout-content-height-fixed',
+          },
+        },
+
+        // Email label
+        {
+          path: '/apps/email/label/:label',
+          name: 'apps-email-label',
+          component: '/src/pages/apps/email/index.vue',
+          meta: {
+            // contentClass: 'email-application',
+            navActiveLink: 'apps-email',
+            layoutWrapperClasses: 'layout-content-height-fixed',
+          },
+        },
+        ...routes,
+      ],
     }),
     Layouts({
       layoutsDirs: './src/layouts/',
@@ -38,8 +66,15 @@ export default defineConfig({
         enabled: true,
         filepath: './.eslintrc-auto-import.json',
       },
-      imports: ['vue', 'vue-router', '@vueuse/core', '@vueuse/math', 'pinia'],
+      imports: ['vue', 'vue-router', '@vueuse/core', '@vueuse/math', 'vue-i18n', 'pinia'],
       vueTemplate: true,
+    }),
+    VueI18nPlugin({
+      runtimeOnly: true,
+      compositionOnly: true,
+      include: [
+        fileURLToPath(new URL('./src/plugins/i18n/locales/**', import.meta.url)),
+      ],
     }),
     DefineOptions(),
   ],
@@ -59,15 +94,12 @@ export default defineConfig({
     },
   },
   build: {
-    outDir:"../teamProject/src/main/resources/static"
+    chunkSizeWarningLimit: 5000,
   },
-  server: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:9999',
-        changeOrigin: true,
-        rewrite: path => path.replace(/^\/api/, ''),
-      },
-    },
+  optimizeDeps: {
+    exclude: ['vuetify'],
+    entries: [
+      './src/**/*.vue',
+    ],
   },
 })
