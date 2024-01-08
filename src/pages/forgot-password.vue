@@ -8,10 +8,14 @@ import authV2ForgotPasswordIllustrationDark from '@images/pages/auth-v2-forgot-p
 import authV2ForgotPasswordIllustrationLight from '@images/pages/auth-v2-forgot-password-illustration-light.png'
 import authV2MaskDark from '@images/pages/auth-v2-mask-dark.png'
 import authV2MaskLight from '@images/pages/auth-v2-mask-light.png'
+import { RouterLink } from 'vue-router';
 
+const name = ref('')
+const birthday = ref('')
 const email = ref('')
 const authThemeImg = useGenerateImageVariant(authV2ForgotPasswordIllustrationLight, authV2ForgotPasswordIllustrationDark, authV2ForgotPasswordIllustrationBorderedLight, authV2ForgotPasswordIllustrationBorderedDark, true)
 const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
+
 </script>
 
 <template>
@@ -64,57 +68,14 @@ const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
           <VCardText>
             <VForm @submit.prevent="() => {}">
               <VRow>
-                <!-- email -->
-                <VCol cols="12">
-                  <VTextField
-                    v-model="name"
-                    label="이름"
-                    type="name"
-                  />
+                <VCol cols="12" style="text-align:left">
+                  <h3>인증 방법 선택</h3><br/>
+                  <VBtnGroup v-model="selectedMethod" style="border: solid #fff 1px;display:grid;height:300px;">                                        
+                    <VBtn value="input-password" class="choicebox" @click="redirectToLoginPassword()">비밀번호 입력</VBtn>
+                    <VBtn value="phone" class="choicebox" @click="phone_certification()">&#x1F4F1; 휴대폰 인증</VBtn>
+                    <VBtn value="email" class="choicebox" @click="email_certification()">&#x1F4E7; 이메일 인증</VBtn>
+                  </VBtnGroup>
                 </VCol>
-                <VCol cols="12">
-                  <VTextField
-                    v-model="birthday"
-                    label="생년월일"
-                    type="b_day"
-                  />
-                </VCol>
-                <VCol cols="12">
-                  <VTextField
-                    v-model="email"
-                    label="Email"
-                    type="email"
-                  />
-                </VCol>
-
-                <!-- Reset link -->
-                <VCol cols="12">
-                  <VBtn
-                    block
-                    type="submit"
-                  >
-                    Send Reset Link
-                  </VBtn>
-                </VCol>
-
-                <!-- back to login -->
-                <!--
-                  <VCol
-                  cols="12"
-                  class="text-center"
-                  >
-                  <RouterLink
-                  class="text-primary ms-2"
-                  :to="{ name: 'login' }"
-                  >
-                  <VIcon
-                  class="flip-in-rtl"
-                  icon="mdi-chevron-left"
-                  />
-                  <span>Back to login</span>
-                  </RouterLink>
-                  </VCol> 
-                -->
               </VRow>
             </VForm>
           </VCardText>
@@ -126,6 +87,12 @@ const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
 
 <style lang="scss">
 @use "@core/scss/template/pages/page-auth.scss";
+
+.choicebox{
+  //border: 1px solid #fff;
+  //background-color: black;
+  font-size: 20px;
+}
 </style>
 
 <route lang="yaml">
