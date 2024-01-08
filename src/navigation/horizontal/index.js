@@ -24,4 +24,9 @@ export default [
     to: { name: 'fifth-page' },
     icon: { icon: 'mdi-file-document-outline' },
   },
+  {
+    title: '회원가입',
+    to: { name: 'sixth-page' },
+    icon: { icon: 'mdi-file-document-outline' },
+  },
 ]
