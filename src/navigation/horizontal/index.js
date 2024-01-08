@@ -18,11 +18,6 @@ export default [
     ],
   },
   {
-    title: '메인',
-    to: { name: 'third-page' },
-    icon: { icon: 'mdi-file-document-outline' },
-  },
-  {
     title: '마이페이지',
     to: { name: 'fourth-page' },
     icon: { icon: 'mdi-file-document-outline' },
@@ -30,11 +25,6 @@ export default [
   {
     title: '고객센터',
     to: { name: 'fifth-page' },
-    icon: { icon: 'mdi-file-document-outline' },
-  },
-  {
-    title: '회원가입',
-    to: { name: 'sixth-page' },
     icon: { icon: 'mdi-file-document-outline' },
   },
 ]

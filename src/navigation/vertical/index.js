@@ -21,11 +21,6 @@ export default [
     ],
   },
   {
-    title: '메인',
-    to: { name: 'third-page' },
-    icon: { icon: 'mdi-file-document-outline' },
-  },
-  {
     title: '마이페이지',
     icon: { icon: 'mdi-file-document-outline' },
     to: { name: 'apps-user-view-id', params: { id: 21 }  },
@@ -35,12 +30,6 @@ export default [
     to: { name: 'fifth-page' },
     icon: { icon: 'mdi-file-document-outline' },
   },
-  {
-    title: '회원가입',
-    to: { name: 'sixth-page' },
-    icon: { icon: 'mdi-file-document-outline' },
-  },
-
   ...test,
   ...comm,
 ]

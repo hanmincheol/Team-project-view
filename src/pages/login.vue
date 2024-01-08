@@ -12,8 +12,7 @@ import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
 
 import {
-  emailValidator,
-  requiredValidator,
+  requiredValidatorId,
 } from '@validators'
 const router = useRouter()
 
@@ -73,6 +72,7 @@ const loginNext = () => {
           flat
           :max-width="500"
           class="mt-12 mt-sm-0 pa-4"
+          style="border:solid 2px gray;width:500px;height:500px;opacity: 0.8;"
         >
           <VCol
             class="text-center" 
@@ -95,7 +95,7 @@ const loginNext = () => {
                     v-model="id"
                     label="아이디"
                     type="id"
-                    :rules="[requiredValidator]"
+                    :rules="[requiredValidatorId]"
                   />
                 </VCol>
                   <VCol cols="12">
