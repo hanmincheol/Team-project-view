@@ -4,8 +4,7 @@ import UserBioPanel from '@/views/apps/user/view/UserBioPanel.vue'
 
 const userListStore = useUserListStore()
 const route = useRoute()
-const userData = 21
-const userId = "admin"
+const userData = ref()
 const userTab = ref(null)
 
 const tabs = [
@@ -43,7 +42,7 @@ userListStore.fetchUser(Number(route.params.id)).then(response => {
       md="5"
       lg="4"
     >
-      <UserBioPanel :user-data="userId" />
+      <UserBioPanel :user-data="userData" />
     </VCol>
     <VCol
       cols="12"

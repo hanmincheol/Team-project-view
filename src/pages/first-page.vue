@@ -1,76 +1,115 @@
 <script setup>
-import Calendar from '@/pages/apps/calendar.vue'
-import Timeline from '@/pages/components/timeline.vue'
-import CrmActivityTimeline from '@/views/dashboards/crm/CrmActivityTimeline.vue'
+import UserCategory from '@/components/dialogs/UserCategory.vue'
+
+const isUpgradePlanDietPlan = ref(false)
+const isCheckedRecipe = ref(false)
+const isCheckedRestaurant = ref(false)
+const isCategory = ref(false)
+
+const router = useRoute()
+const connectionData = ref([])
+
+
+const fetchProjectData = () => {
+  if (router.params.tab === 'connections') {
+    axios.get('/pages/profile', { params: { tab: router.params.tab } }).then(response => {
+      connectionData.value = response.data
+    })
+  }
+}
+
+const dietPlansList = [
+  {
+    desc: 'Standard - $99/month',
+    title: '아침 메뉴',
+    content: '아침 메뉴 설명',
+  },
+  {
+    desc: 'Basic - $0/month',
+    title: '점심 메뉴',
+    content: '점심 메뉴 설명',
+  },
+  {
+    desc: 'Enterprise - $499/month',
+    title: '저녁 메뉴',
+    content: '저녁 메뉴 설명',
+  },
+]
+
+watch(router, fetchProjectData, { immediate: true })
 </script>
 
 <template>
   <section>
-    <VRow class="match-height">
-      <VCol
-        cols="12"
-        md="8"
-      >
-        <div
-          id="accordionExample"
-          class="accordion"
+    <VRow class="fill-height">
+      <VCol cols="12">
+        <VBtn
+          block
+          @click="isCategory = true"
         >
-          <div class="accordion-item">
-            <h2 class="accordion-header">
-              <button
-                class="accordion-button"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseOne"
-                aria-expanded="true"
-                aria-controls="collapseOne"
-              >
-                Calendar
-              </button>
-            </h2>
-            <div
-              id="collapseOne"
-              class="accordion-collapse collapse show"
-              data-bs-parent="#accordionExample"
-            >
-              <div class="accordion-body">
-                <Calendar />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- -->
-        <ul class="nav nav-tabs">
-          <li class="nav-item">
-            <a
-              class="nav-link active"
-              aria-current="page"
-              href="#"
-            >식단</a>
-            <div>
-              <Timeline />
-            </div>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              aria-current="page"
-              href="#"
-            >경로</a>
-          </li>
-        </ul>
-        <!-- -->
+          카테고리
+        </VBtn>
       </VCol>
-
       <VCol
+        v-for="list in dietPlansList"
+        :key="list"
         cols="12"
         md="4"
       >
-        <CrmActivityTimeline />
-        <Timeline />
+        <VCard class="text-center">
+          <VCardItem class="d-flex flex-column justify-center align-center">
+            <VAvatar
+              color="primary"
+              variant="tonal"
+              size="56"
+              class="mb-2"
+            >
+              <VIcon
+                size="2rem"
+                icon="mdi-help-circle-outline"
+              />
+            </VAvatar>
+
+            <h6 class="text-h6">
+              <span>{{ list.title }}</span>
+            </h6>
+          </VCardItem>
+
+          <VCardText>
+            <span>{{ list.content }}</span>
+          </VCardText>
+
+          <VCardText class="justify-center">
+            <VBtn
+              variant="elevated" 
+              @click="isCheckedRecipe = true"
+            >
+              레시피
+            </VBtn>
+          </VCardText>
+          <VCardText class="justify-center">
+            <VBtn
+              variant="elevated"
+              @click="isCheckedRestaurant = true"
+            >
+              음식점
+            </VBtn>
+          </VCardText>
+        </VCard>
+      </VCol>
+      <VCol>
+        <VBtn
+          block
+          @click="isUpgradePlanDietPlan = true"
+        >
+          식단 재추천
+        </VBtn>
       </VCol>
     </VRow>
+    <UserUpgradedietPlan v-model:isDialogVisible="isUpgradePlanDietPlan" />
+    <UserCheckedRecipe v-model:isDialogVisible="isCheckedRecipe" />
+    <UserFindRestaurant v-model:isDialogVisible="isCheckedRestaurant" />
+    <UserCategory v-model:isDialogVisible="isCategory" />
   </section>
 </template>
 
