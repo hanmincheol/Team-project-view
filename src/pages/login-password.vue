@@ -11,7 +11,7 @@ import authV2LoginIllustrationLight from '@images/pages/auth-v2-login-illustrati
 import authV2MaskDark from '@images/pages/auth-v2-mask-dark.png'
 import authV2MaskLight from '@images/pages/auth-v2-mask-light.png'
 import {
-  requiredValidator,
+  requiredValidatorPw,
 } from '@validators'
 
 const router = useRouter()
@@ -92,7 +92,7 @@ const loginNext = () => {
                   <VTextField
                     v-model="form.password"
                     label="비밀번호"
-                    :rules="[requiredValidator]"
+                    :rules="[requiredValidatorPw]"
                     :type="isPasswordVisible ? 'text' : 'password'"
                     :append-inner-icon="isPasswordVisible ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
                     @click:append-inner="isPasswordVisible = !isPasswordVisible"

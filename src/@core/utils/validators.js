@@ -3,9 +3,22 @@ import { isEmpty, isEmptyArray, isNullOrUndefined } from './index'
 // 👉 Required Validator
 export const requiredValidator = value => {
   if (isNullOrUndefined(value) || isEmptyArray(value) || value === false)
-    return 'This field is required'
+    return 'The field is required'
   
-  return !!String(value).trim().length || 'This field is required'
+  return !!String(value).trim().length || 'The field is required'
+}
+
+export const requiredValidatorId = value => {
+  if (isNullOrUndefined(value) || isEmptyArray(value) || value === false)
+    return '아이디를 입력하세요'
+  
+  return !!String(value).trim().length || '아이디를 입력하세요'
+}
+export const requiredValidatorPw = value => {
+  if (isNullOrUndefined(value) || isEmptyArray(value) || value === false)
+    return '비밀번호를 입력하세요'
+  
+  return !!String(value).trim().length || '비밀번호를 입력하세요'
 }
 
 // 👉 Email Validator
