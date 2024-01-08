@@ -1,8 +1,8 @@
 <script setup>
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
-import { useChat } from './useChat'
 import ChatContact from '@/views/apps/chat/ChatContact.vue'
 import { useChatStore } from '@/views/apps/chat/useChatStore'
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import { useChat } from './useChat'
 
 const props = defineProps({
   search: {
@@ -57,7 +57,7 @@ const store = useChatStore()
     <VTextField
       v-model="search"
       density="compact"
-      placeholder="Search..."
+      placeholder="검색할 단어를 입력해주세요"
       prepend-inner-icon="mdi-magnify"
       class="ms-4 me-1 chat-list-search"
     />
@@ -80,7 +80,7 @@ const store = useChatStore()
     :options="{ wheelPropagation: false }"
   >
     <li>
-      <span class="chat-contact-header d-block text-primary text-xl font-weight-medium">Chats</span>
+      <span class="chat-contact-header d-block text-primary text-xl font-weight-medium">채팅방</span>
     </li>
     <ChatContact
       v-for="contact in store.chatsContacts"
@@ -92,9 +92,9 @@ const store = useChatStore()
     <span
       v-show="!store.chatsContacts.length"
       class="no-chat-items-text text-disabled"
-    >No chats found</span>
+    >존재하지 않습니다.</span>
     <li>
-      <span class="chat-contact-header d-block text-primary text-xl font-weight-medium">Contacts</span>
+      <span class="chat-contact-header d-block text-primary text-xl font-weight-medium">친구 목록</span>
     </li>
     <ChatContact
       v-for="contact in store.contacts"
@@ -105,7 +105,7 @@ const store = useChatStore()
     <span
       v-show="!store.contacts.length"
       class="no-chat-items-text text-disabled"
-    >No contacts found</span>
+    >존재하지 않습니다.</span>
   </PerfectScrollbar>
 </template>
 

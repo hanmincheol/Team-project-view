@@ -1,13 +1,35 @@
+<script setup>
+import ApexChartHorizontalBar from '@/pages/views/charts/apex-chart/ApexChartHorizontalBar.vue'
+</script>
+
 <template>
   <div>
-    <VCard title="Create Awesome 🙌">
+<<<<<<< HEAD
+    <VCard
+      title="Create Awesome 🙌"
+      flat
+      :max-width="auto"
+      class="mt-12 mt-sm- pa-0"
+    >
       <VCardText>This is your second page.</VCardText>
       <VCardText>
-        Chocolate sesame snaps pie carrot cake pastry pie lollipop muffin.
-        Carrot cake dragée chupa chups jujubes. Macaroon liquorice cookie
-        wafer tart marzipan bonbon. Gingerbread jelly-o dragée
-        chocolate.
+        <ApexChartHorizontalBar />
       </VCardText>
     </VCard>
+=======
+    <FontAwesomeIcon icon="coffee" />
+    <p>This is a coffee cup icon from Font Awesome.</p>
+>>>>>>> origin/hmc1
   </div>
 </template>
+
+<script>
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+export default {
+  components: {
+    FontAwesomeIcon,
+  },
+}
+</script>
+
