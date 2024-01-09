@@ -3,10 +3,7 @@ import axios from '@axios'
 
 const profileHeaderData = ref()
 
-<<<<<<< HEAD
-=======
 //axios로 가짜 데이터 가져오기
->>>>>>> origin/hmc1
 const fetchHeaderData = () => {
   axios.get('/pages/profile-header').then(response => {
     profileHeaderData.value = response.data
@@ -75,12 +72,6 @@ fetchHeaderData()
               </span>
             </span>
           </div>
-<<<<<<< HEAD
-
-          <VBtn prepend-icon="mdi-account-check-outline">
-            Connected
-          </VBtn>
-=======
           <VBtn prepend-icon="mdi-account-plus-outline">
             친구신청
           </VBtn>
@@ -95,7 +86,6 @@ fetchHeaderData()
             </VBtn>
             </div>
           -->
->>>>>>> origin/hmc1
         </div>
       </div>
     </VCardText>

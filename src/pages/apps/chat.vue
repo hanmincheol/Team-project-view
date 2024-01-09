@@ -118,7 +118,6 @@ const moreList = [
 </script>
 
 <template>
-  <!-- "bg-surface" 클래스는 배경 색상 -->
   <VLayout class="chat-app-layout bg-surface">
     <!-- 사용자 프로필 사이드바의 열림/닫힘 상태를 관리 => 고칠곳 x -->
     <VNavigationDrawer
