@@ -73,7 +73,7 @@ const openChatOfContact = async userId => {
   })
 }
 
-openChatOfContact('1');
+
 // User profile sidebar
 const isUserProfileSidebarOpen = ref(false)
 
@@ -105,6 +105,7 @@ const moreList = [
     value: 'Report',
   },
 ]
+openChatOfContact('1');
 </script>
 
 <template>
@@ -138,8 +139,9 @@ const moreList = [
     
 
     <!-- 👉 Chat content -->
-    <VMain class="chat-content-container">
+    <VMain class="chat-content-container " :style="{'height':'500px'}">
       <!-- 👉 Right content: Active Chat -->
+      <!--아래의 class 속성의 h-100을 h-50으로 바꿔 길이 조정-->
       <div
         v-if="store.activeChat"
         class="d-flex flex-column h-100"
@@ -215,7 +217,7 @@ const moreList = [
           ref="chatLogPS"
           tag="ul"
           :options="{ wheelPropagation: false }"
-          class="flex-grow-1"
+          class="flex-grow-6"
         >
           <ChatLog />
         </PerfectScrollbar>
@@ -267,29 +269,6 @@ const moreList = [
         </VForm>
       </div>
 
-      <!-- 👉 Start conversation -->
-      <div
-        v-else
-        class="d-flex h-100 align-center justify-center flex-column"
-      >
-        <VAvatar
-          size="109"
-          class="elevation-3 mb-6 bg-surface"
-        >
-          <VIcon
-            size="50"
-            class="rounded-0 text-high-emphasis"
-            icon="mdi-message-outline"
-          />
-        </VAvatar>
-        <p
-          class="mb-0 px-6 py-1 font-weight-medium text-lg elevation-3 rounded-xl text-high-emphasis bg-surface"
-          :class="[{ 'cursor-pointer': $vuetify.display.smAndDown }]"
-          @click="startConversation"
-        >
-          Start Conversation
-        </p>
-      </div>
     </VMain>
   </VLayout>
 </template>

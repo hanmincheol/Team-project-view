@@ -1,14 +1,15 @@
 <script lang="ts" setup>
 import VueApexCharts from 'vue3-apexcharts'
 import { useTheme } from 'vuetify'
-import { getDonutChartConfig } from '@core/libs/apex-chart/apexCharConfig'
+import { getDonutChartConfig } from '@core/libs/apex-chart/lsyApexCharConfig'
 import {computed} from 'vue'
 
 const vuetifyTheme = useTheme()
 
-const expenseRationChartConfig = computed(() => getDonutChartConfig(vuetifyTheme.current.value))
+const succRate = 80; //달성률
+const series = [100-succRate, succRate, ]
+const expenseRationChartConfig = computed(() => getDonutChartConfig(vuetifyTheme.current.value, series))
 
-const series = [85, 16, 50, 50]
 </script>
 
 <template>
