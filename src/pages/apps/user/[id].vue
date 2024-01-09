@@ -7,6 +7,7 @@ import ChallengeRatio from '@/views/charts/apex-chart/ChallengeRatio.vue';
 import AppDateTimePicker from '@core/components/app-form-elements/AppDateTimePicker.vue';
 import { getBarChartConfig } from '@core/libs/apex-chart/apexCharConfig'; //차트 불러오기
 import { useTheme } from 'vuetify'; //차트 불러오기
+import ChallengeRatio from '@/views/charts/apex-chart/ChallengeRatio.vue'
 
 const isShareProjectDialogVisible = ref(false)
 const userListStore = useUserListStore()
