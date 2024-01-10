@@ -31,8 +31,9 @@ const authThemeImg = useGenerateImageVariant(authV2LoginIllustrationLight, authV
 const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
 
 const loginId = () => {
-  router.push({path:"/login-password"});
+  router.push({ path:"/login-password" });
 }
+
 const loginNext = () => {
   refVForm.value?.validate().then(({ valid: isValid }) => {
     if (isValid)
@@ -77,7 +78,6 @@ const loginNext = () => {
           <VCol
             class="text-center" 
           >
-          
             <VCardText>              
               <h5 class="text-h5 mb-1">
                 &#128100;로그인
@@ -98,7 +98,7 @@ const loginNext = () => {
                     :rules="[requiredValidatorId]"
                   />
                 </VCol>
-                  <VCol cols="12">
+                <VCol cols="12">
                   <div class="d-flex align-center flex-wrap justify-space-between mt-1 mb-4">
                     <VCheckbox
                       v-model="rememberMe"
@@ -138,11 +138,10 @@ const loginNext = () => {
                   </RouterLink>
                   <br/><br/>
                   <RouterLink
-                      class="text-primary ms-2 mb-1"
-                      :to="{ name: 'forgot-id' }"
-                    >
-                      아이디 찾기
-                    </RouterLink>
+                    class="text-primary ms-2 mb-1"
+                    :to="{ name: 'forgot-id' }" >
+                    아이디 찾기
+                  </RouterLink>
                 </VCol>
               </VRow>
             </VForm>
