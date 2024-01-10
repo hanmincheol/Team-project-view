@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import VueApexCharts from 'vue3-apexcharts'
-import { useTheme } from 'vuetify'
-import { getRadialBarChartConfig } from '@core/libs/apex-chart/apexCharConfig'
+import { getRadialBarChartConfig } from '@core/libs/apex-chart/apexCharConfig';
+import { computed } from 'vue';
+import VueApexCharts from 'vue3-apexcharts';
+import { useTheme } from 'vuetify';
 
 const vuetifyTheme = useTheme()
 

@@ -1,84 +1,111 @@
 <script setup>
+//영양소 분석 모달창
+import NutrientAnalysis from '@/components/dialogs/NutrientAnalysis.vue';
 
+const isSubmitDisabled = ref(true); //submit버튼 활성화 컨트롤 변수
 
-const uploadImg = e =>{
-  console.log(e.target.files);
+//이미지 파일 업로드 시 업로드한 이미지가 미리 보이도록 하는 함수
+const uploadImg = (e, tagId) =>{  
+  console.log(isSubmitDisabled);
+  
+  //(param)e : <input>태그에 발생한 change 이벤트 객체
+  //(param)tagId : 업로드한 이미지를 뿌려줄 <img>태그의 아이디값
   const imgUrl = URL.createObjectURL(e.target.files[0]); //이미지 url 생성
-  console.log(typeof imgUrl)
-  console.log(imgUrl)
-  var imageDiv = document.querySelector('#img');
-  console.log(imageDiv);
-  console.log(imageDiv.src);
-  imageDiv.style.width = '250px';
-  imageDiv.style.height = '250px';
-  imageDiv.src = imgUrl;
-  console.log('함수 끝');
+  var imgTag = document.getElementById(tagId);
+  imgTag.style.width = '250px';
+  imgTag.style.height = '250px';
+  imgTag.src = imgUrl;
+  if(tagId == 'imgBefore') {
+    isSubmitDisabled.value = false;
+  }
+  console.log(isSubmitDisabled)
+  console.log('함수끝');
 }
 
-const handleUpload = () => {
-  var btn = document.getElementById('filebtn');
-  btn.fileInput.click();
+
+const makeDisable = () => {
+  console.log('함수 실행됨');
+  return false;
+}
+
+//버튼을 누르면 input태그가 클릭되도록 작동하는 함수
+const handleUpload = (tagId) => { 
+  //(param)tagId : upload버튼을 눌렀을 때 실행되어야 할 <input>태그의 아이디값
+  var filebtn = document.getElementById(tagId);
+  console.log('파일버튼',filebtn);
+  filebtn.click();
 }
 const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1000000 || 'Avatar size should be less than 1 MB!']
+const isNutrientAnalysisVisible = ref(false); //모달창 컨트롤 변수
 </script>
 <template>
-<VRow :style="{'margin-top':'120px'}">
-  <VCol cols="6">
-    
-    <v-card class="text-high-emphasis text-center">
-      <div :style="{'display':'flex', 'justify-content':'center','margin':'20px'}">
+<VCard>
+  <VCardItem :style="{'background-color':'#F6F6F6'}">
+    <VCardText>
+      <p class="text-h4">식단의 사진을 등록해주세요</p>
+      <p>⚠️ 식전 사진 등록은 필수입니다</p>
+    </VCardText>
+  </VCardItem>
+<VRow :style="{'margin-top':'120px', 'display':'flex', 'justify-content':'center'}">
+  <VCol cols="6" :style="{'display':'flex', 'justify-content':'center'}">
+    <v-card class="text-high-emphasis text-center" :style="{'width':'80%', 'margin-bottom':'100px'}"> <!--식전사진 업로드-->
+      <div :style="{'margin':'30px'}">
         <h2>식전 사진</h2>
       </div>
       <VCardItem :style="{'margin-top':'10px'}">
-        <input @change="uploadImg" type="file" id="file" hidden> <!--test-->
-        <label for="file" class="input-plus">
+        <input @change="uploadImg($event,'imgBefore')" type="file" id="filebtn" accept="image/*" hidden>
+        <!--label의 for속성값과 input의 id값을 맞춰줘야 label영역을 클릭했을 때 input태그가 활성화됨-->
+        <label for="filebtn" class="input-plus"> 
           <div :style="{'border-style':'dashed', 'width':'100%', 'height':'300px', 'display':'flex','justify-content': 'center','align-items': 'center'}">
-            <img :style="{'width':'50px', 'height':'60px'}" id="img" src="@/assets/images/noimage.png"/>
+            <img :style="{'width':'50px', 'height':'60px'}" id="imgBefore" src="@/assets/images/noimage.png"/>
           </div>
-        </label> <!--test-->
+        </label>
       </VCardItem>
       <VCardText>
         <p class="text-base clamp-text">
-          식전 사진은 필수로 입력해주세요.
+          음식이 모두 보이도록<br/>사진을 업로드해주세요.
         </p>
-        <div>
-        <input id="filebtn" ref="fileInput" @change="uploadImg" type="file" hidden> <!--test-->
-          <v-btn @change="handleUpload">
-            upload
-          </v-btn>
-        </div>
+        <v-btn @click="handleUpload('filebtn')">
+          upload
+        </v-btn>
       </VCardText>
 
       <ShareProjectDialog v-model:isDialogVisible="isShareProjectDialogVisible" />
-    </v-card>
+    </v-card> <!--식전사진 업로드 end-->
   </VCol>
-  <VCol cols="6">
-    <v-card class="text-high-emphasis text-center">
-      <div :style="{'display':'flex', 'justify-content':'center','margin-top':'20px'}">
-        <h2>식전 사진</h2>
+  <VCol cols="6" :style="{'display':'flex', 'justify-content':'center'}">
+    <v-card class="text-high-emphasis text-center" :style="{'width':'80%', 'margin-bottom':'100px'}"> <!--식후사진 업로드-->
+      <div :style="{'display':'flex', 'justify-content':'center','margin':'30px'}">
+        <h2>식후 사진</h2>
       </div>
-      <VCardText>
-        <VBtn @click="isShareProjectDialogVisible = !isShareProjectDialogVisible">
-          Show
-        </VBtn>
-        
-        <p :style="{'margin-top':'20px'}" class="text-base clamp-text">
-          식전 사진은 필수로 업로드해주세요
-        </p>
-
-      </VCardText>
       <VCardItem :style="{'margin-top':'10px'}">
-        <input @change="uploadImg" type="file" id="file" hidden> <!--test-->
-        <label for="file" class="input-plus"><img :style="{'width':'200px', 'height':'200px'}" id="img" src="@/assets/images/noimage.jpeg"/></label> <!--test-->
+        <input @change="uploadImg($event,'imgAfter')" type="file" id="filebtnAfter" accept="image/*" hidden> 
+        <label for="filebtnAfter" class="input-plus">
+          <div :style="{'border-style':'dashed', 'width':'100%', 'height':'300px', 'display':'flex','justify-content': 'center','align-items': 'center'}">
+            <img :style="{'width':'50px', 'height':'60px'}" id="imgAfter" src="@/assets/images/noimage.png"/>
+          </div>
+        </label>
       </VCardItem>
-      <!-- <div>
-        <img :style="{'width':'200px', 'height':'200px'}" id="img" src="@/assets/images/noimage.jpeg"/>
-      </div> -->
+      <VCardText>
+        <p class="text-base clamp-text">
+          식전 사진과 같은 구도로 찍은 사진을 <br/>업로드해주세요.
+        </p>
+        <v-btn @click="handleUpload('filebtnAfter')">
+          upload
+        </v-btn>
+      </VCardText>
 
       <ShareProjectDialog v-model:isDialogVisible="isShareProjectDialogVisible" />
-    </v-card>
+    </v-card> <!--식후사진 업로드 end-->
   </VCol>
 </VRow>
+<VRow :style="{'display':'flex', 'justify-content': 'center'}">
+  <v-btn :disabled=isSubmitDisabled :style="{'margin-bottom':'50px'}" @click="isNutrientAnalysisVisible = !isNutrientAnalysisVisible" >
+    SUBMIT
+  </v-btn>
+  <NutrientAnalysis v-model:isDialogVisible="isNutrientAnalysisVisible"/>
+</VRow>
+</VCard>
 </template>
 
 <style>

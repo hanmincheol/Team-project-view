@@ -131,7 +131,7 @@ export const getLineChartSimpleConfig = themeColors => {
     },
   }
 }
-export const getBarChartConfig = themeColors => {
+export const getBarChartConfig = themeColors => { //칼로리 차트
   const { themeBorderColor, themeDisabledTextColor } = colorVariables(themeColors)
   
   return {
@@ -139,7 +139,7 @@ export const getBarChartConfig = themeColors => {
       parentHeightOffset: 0,
       toolbar: { show: false },
     },
-    colors: ['#00cfe8'],
+    colors: ['#86EA76', 'F57255'],
     dataLabels: { enabled: false },
     plotOptions: {
       bar: {
@@ -147,6 +147,12 @@ export const getBarChartConfig = themeColors => {
         barHeight: '30%',
         horizontal: true,
         startingShape: 'rounded',
+      },
+      candlestick: {
+        colors: {
+          upward: candlestickColors.series1,
+          downward: candlestickColors.series2,
+        },
       },
     },
     grid: {
@@ -166,7 +172,7 @@ export const getBarChartConfig = themeColors => {
     xaxis: {
       axisBorder: { show: false },
       axisTicks: { color: themeBorderColor },
-      categories: ['목표 달성률'],
+      categories: ['권장','현재'],
       labels: {
         style: { colors: themeDisabledTextColor },
       },
@@ -237,7 +243,7 @@ export const getRadialBarChartConfig = themeColors => {
   
   return {
     stroke: { lineCap: 'round' },
-    labels: ['Comments', 'Replies', 'Shares'],
+    labels: ['탄수화물', '단백질', '지방','비타민','무기질'],
     legend: {
       show: true,
       position: 'bottom',
@@ -252,7 +258,7 @@ export const getRadialBarChartConfig = themeColors => {
         horizontal: 10,
       },
     },
-    colors: [radialBarColors.series1, radialBarColors.series2, radialBarColors.series4],
+    colors: [radialBarColors.series1, radialBarColors.series2, radialBarColors.series4, radialBarColors.series4, radialBarColors.series4],
     plotOptions: {
       radialBar: {
         hollow: { size: '30%' },
@@ -296,7 +302,7 @@ export const getRadialBarChartConfig = themeColors => {
     },
   }
 }
-export const getDonutChartConfig = (themeColors, series) => {
+export const getDonutChartConfig = (themeColors, series) => { //챌린지 달성률 차트
   const donutColors = {
     series1: '#bfbfbf',
     series2: '#00d4bd',
@@ -605,7 +611,7 @@ export const getHeatMapChartConfig = themeColors => {
     },
   }
 }
-export const getRadarChartConfig = themeColors => {
+export const getRadarChartConfig = themeColors => { //영양소 chart
   const radarColors = {
     series1: '#9b88fa',
     series2: '#ffa1a1',
@@ -625,8 +631,8 @@ export const getRadarChartConfig = themeColors => {
         enabled: false,
       },
     },
-    markers: { size: 0 },
-    fill: { opacity: [1, 0.8] },
+    markers: { size: 3 },
+    fill: { opacity: [0.6, 0.8] }, //투명도 설정
     colors: [radarColors.series1, radarColors.series2],
     stroke: {
       width: 0,
@@ -661,7 +667,8 @@ export const getRadarChartConfig = themeColors => {
     },
     yaxis: { show: false },
     xaxis: {
-      categories: ['Battery', 'Brand', 'Camera', 'Memory', 'Storage', 'Display', 'OS', 'Price'],
+      //카테고리 설정
+      categories: ['탄수화물', '단백질', '지방', '비타민', '무기질'],
       labels: {
         style: {
           colors: [
