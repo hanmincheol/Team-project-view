@@ -1,5 +1,4 @@
 import comm from "./comm"
-import test from "./test"
 
 export default [
   {
@@ -23,13 +22,12 @@ export default [
   {
     title: '마이페이지',
     icon: { icon: 'mdi-file-document-outline' },
-    to: { name: 'apps-user-view-id', params: { id: 21 }  },
+    to: { name: 'apps-user-view-id', params: { id: 22 }  },
   },
   {
     title: '고객센터',
     to: { name: 'fifth-page' },
     icon: { icon: 'mdi-file-document-outline' },
   },
-  ...test,
   ...comm,
 ]

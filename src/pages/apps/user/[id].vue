@@ -27,8 +27,8 @@ const series = [{ data: [200] }]
 userListStore.fetchUser(Number(route.params.id)).then(response => {
   userData.value = response.data
 })
-
 </script>
+
 <template>
   <div>
     <VRow class="match-height">
@@ -132,11 +132,11 @@ userListStore.fetchUser(Number(route.params.id)).then(response => {
             </VCard>
             <VCard :style="{'width':'90%', 'margin-top':'30px'}">
               <VueApexCharts
-                    type="bar"
-                    height="200"
-                    :options="horizontalBarChartConfig"
-                    :series="series"
-                  />
+                type="bar"
+                height="200"
+                :options="horizontalBarChartConfig"
+                :series="series"
+              />
             </VCard>
             <div :style="{'margin-top':'50px','display':'flex', 'width':'90%', 'justify-content':'flex-end'}">
               <v-btn @click="isShareProjectDialogVisible = !isShareProjectDialogVisible">Invite</v-btn>

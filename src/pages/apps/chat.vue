@@ -118,8 +118,8 @@ const moreList = [
 </script>
 
 <template>
-  <!-- "bg-surface" 클래스는 배경 색상 -->
   <VLayout class="chat-app-layout bg-surface">
+    <!-- "bg-surface" 클래스는 배경 색상 -->
     <!-- 사용자 프로필 사이드바의 열림/닫힘 상태를 관리 => 고칠곳 x -->
     <VNavigationDrawer
       v-model="isUserProfileSidebarOpen"
@@ -263,6 +263,19 @@ const moreList = [
             autofocus
           >
             <template #append-inner>
+              <IconBtn>
+                <VIcon
+                  icon="mdi-map-legend "
+                  size="22"
+                />
+              </IconBtn>
+              <IconBtn>
+                <VIcon
+                  icon="mdi-instagram "
+                  size="22"
+                />
+              </IconBtn>
+
               <IconBtn>
                 <VIcon
                   icon="mdi-microphone-outline"
