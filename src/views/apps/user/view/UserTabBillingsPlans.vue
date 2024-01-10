@@ -59,104 +59,15 @@ const currentBillingAddress = {
 
 <template>
   <VRow>
-    <!-- 👉 Current Plan -->
-    <VCol cols="12">
-      <VCard title="Current Plan">
-        <VCardText>
-          <VRow>
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <p class="text-sm mb-1">
-                Your Current Plan is <span class="font-weight-medium text-high-emphasis">Basic</span>
-              </p>
-              <p>A simple start for everyone</p>
-
-              <h6 class="text-sm font-weight-medium mb-1">
-                Active until Dec 09, 2021
-              </h6>
-              <p>We will send you a notification upon Subscription expiration</p>
-
-              <h6 class="text-sm font-weight-medium mb-1">
-                <span class="me-4">$199 Per Month</span>
-                <VChip
-                  color="primary"
-                  density="comfortable"
-                  label
-                >
-                  popular
-                </VChip>
-              </h6>
-              <p class="mb-0">
-                Standard plan for small to medium businesses
-              </p>
-            </VCol>
-
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <!-- 👉 Alert -->
-              <VAlert
-                color="warning"
-                variant="tonal"
-              >
-                <VAlertTitle>We need your attention!</VAlertTitle>
-                <div class="mt-1">
-                  Your plan requires update
-                </div>
-              </VAlert>
-
-              <!-- 👉 Progress -->
-              <div class="d-flex justify-space-between mt-4 mb-2">
-                <h6 class="text-sm font-weight-medium">
-                  Days
-                </h6>
-                <h6 class="text-sm font-weight-medium">
-                  26 of 30 Days
-                </h6>
-              </div>
-
-              <VProgressLinear
-                rounded
-                color="primary"
-                :height="10"
-                :model-value="75"
-              />
-              <p class="text-xs mt-2">
-                Your plan requires update
-              </p>
-            </VCol>
-
-            <VCol cols="12">
-              <div class="d-flex flex-wrap gap-4">
-                <VBtn @click="isUpgradePlanDialogVisible = true">
-                  upgrade plan
-                </VBtn>
-
-                <VBtn
-                  color="error"
-                  variant="tonal"
-                >
-                  Cancel Subscription
-                </VBtn>
-              </div>
-            </VCol>
-          </VRow>
-        </VCardText>
-      </VCard>
-    </VCol>
-
     <!-- 👉 Payment Methods -->
     <VCol cols="12">
-      <VCard title="Payment Methods">
+      <VCard title="등록 카드 목록">
         <template #append>
           <VBtn
             prepend-icon="mdi-plus"
             @click="isCardAddDialogVisible = !isCardAddDialogVisible"
           >
-            Add Card
+            카드 등록하기
           </VBtn>
         </template>
 
@@ -200,13 +111,13 @@ const currentBillingAddress = {
                     class="me-4"
                     @click="openEditCardDialog(card)"
                   >
-                    Edit
+                    수정하기
                   </VBtn>
                   <VBtn
                     color="secondary"
                     variant="outlined"
                   >
-                    Delete
+                    삭제하기
                   </VBtn>
                 </div>
                 <span class="my-4 order-sm-1 order-0">Card expires at {{ card.expiry }}</span>
@@ -219,10 +130,10 @@ const currentBillingAddress = {
 
     <VCol cols="12">
       <!-- 👉 Billing Address -->
-      <VCard title="Billing Address">
+      <VCard title="환불 통장 정보">
         <template #append>
-          <VBtn @click="isEditAddressDialogVisible = !isEditAddressDialogVisible">
-            Edit Address
+          <VBtn prepend-icon="mdi-plus" @click="isEditAddressDialogVisible = !isEditAddressDialogVisible">
+            통장 등록하기
           </VBtn>
         </template>
 

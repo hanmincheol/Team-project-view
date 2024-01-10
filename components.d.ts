@@ -38,6 +38,8 @@ declare module '@vue/runtime-core' {
     CustomRadiosWithImage: typeof import('./src/@core/components/app-form-elements/CustomRadiosWithImage.vue')['default']
     DemoCheckboxLabelSlot: typeof import('./src/views/demos/register/DemoCheckboxLabelSlot.vue')['default']
     DemoCheckboxLabelSlotAll: typeof import('./src/views/demos/register/DemoCheckboxLabelSlotAll.vue')['default']
+    DemoSelectCustomTextAndValue: typeof import('./src/views/demos/DemoSelectCustomTextAndValue.vue')['default']
+    DemoTextareaClearable: typeof import('./src/pages/views/demos/forms/form-elements/textarea/DemoTextareaClearable.vue')['default']
     DialogCloseBtn: typeof import('./src/@core/components/DialogCloseBtn.vue')['default']
     EnableOneTimePasswordDialog: typeof import('./src/components/dialogs/EnableOneTimePasswordDialog.vue')['default']
     ErrorHeader: typeof import('./src/components/ErrorHeader.vue')['default']

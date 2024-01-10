@@ -1,6 +1,9 @@
 <script setup>
 import { useUserListStore } from '@/views/apps/user/useUserListStore'
 import UserBioPanel from '@/views/apps/user/view/UserBioPanel.vue'
+import UserTabBillingsPlans from '@/views/apps/user/view/UserTabBillingsPlans.vue'
+import UserHistory from '@/views/apps/user/view/UserHistory.vue'
+import UserEdit from '@/views/apps/user/view/UserEdit.vue'
 
 const userListStore = useUserListStore()
 const route = useRoute()
@@ -9,24 +12,28 @@ const userTab = ref(null)
 
 const tabs = [
   {
-    icon: 'mdi-account-outline',
-    title: '항목에',
+    icon: 'mdi-account-edit',
+    title: '회원정보 수정',
   },
   {
-    icon: 'mdi-lock-outline',
-    title: '원하는',
+    icon: 'mdi-text-box-edit',
+    title: '게시글 수정',
   },
   {
-    icon: 'mdi-bookmark-outline',
-    title: '제목',
+    icon: 'mdi-chart-bar',
+    title: '분석',
   },
   {
-    icon: 'mdi-bell-outline',
-    title: '정해서',
+    icon: 'mdi-history',
+    title: '히스토리',
   },
   {
-    icon: 'mdi-link-variant',
-    title: '넣기',
+    icon: 'mdi-poll',
+    title: '이행률',
+  },
+  {
+    icon: 'mdi-credit-card-plus',
+    title: '결제등록',
   },
 ]
 
@@ -69,11 +76,7 @@ userListStore.fetchUser(Number(route.params.id)).then(response => {
         :touch="false"
       >
         <VWindowItem>
-          가져올 페이지나 내용 작성
-        </VWindowItem>
-
-        <VWindowItem>
-          <CrmActivityTimeline />
+          <UserEdit />
         </VWindowItem>
 
         <VWindowItem>
@@ -81,11 +84,19 @@ userListStore.fetchUser(Number(route.params.id)).then(response => {
         </VWindowItem>
 
         <VWindowItem>
-          내용 정해서
+          제목에 맞는
         </VWindowItem>
 
         <VWindowItem>
-          넣기
+          <UserHistory />
+        </VWindowItem>
+
+        <VWindowItem>
+          제목에 맞는
+        </VWindowItem>
+
+        <VWindowItem>
+          <UserTabBillingsPlans />
         </VWindowItem>
       </VWindow>
     </VCol>
