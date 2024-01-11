@@ -1,53 +1,94 @@
 <script setup>
 import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
-import tree from '@images/pages/tree.png'
-import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
-import { themeConfig } from '@themeConfig'
 import authV2LoginIllustrationBorderedDark from '@images/pages/auth-v2-login-illustration-bordered-dark.png'
 import authV2LoginIllustrationBorderedLight from '@images/pages/auth-v2-login-illustration-bordered-light.png'
 import authV2LoginIllustrationDark from '@images/pages/auth-v2-login-illustration-dark.png'
 import authV2LoginIllustrationLight from '@images/pages/auth-v2-login-illustration-light.png'
 import authV2MaskDark from '@images/pages/auth-v2-mask-dark.png'
 import authV2MaskLight from '@images/pages/auth-v2-mask-light.png'
+import tree from '@images/pages/tree.png'
+import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
+import { themeConfig } from '@themeConfig'
+
 import {
-  requiredValidatorPw,
+  requiredValidatorId,
+  requiredValidatorPw
 } from '@validators'
-
 const router = useRouter()
-const refVForm = ref()
-//const idValue = $router.params.userid;
-//const id = ref('test');
-const route = useRoute();
-const id = ref(route.query.userid);
 
-const password = ref('')
 const form = ref({
   email: '',
   password: '',
   remember: false,
 })
+const refVForm = ref()
 
+const id = ref('')
+const password = ref('')
+const rememberMe = ref(false)
 const isPasswordVisible = ref(false)
 const authThemeImg = useGenerateImageVariant(authV2LoginIllustrationLight, authV2LoginIllustrationDark, authV2LoginIllustrationBorderedLight, authV2LoginIllustrationBorderedDark, true)
 const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
-const login = () => {
-  router.push({path:"/"});
-}
 
+const loginId = () => {
+  router.push({path:"/access-control"});
+}
 const loginNext = () => {
   refVForm.value?.validate().then(({ valid: isValid }) => {
     if (isValid)
-      login()
+      loginId()
   })
 }
 </script>
 
+<script>
+export default{
+  data() {
+    return {
+      keyCombination: [], //사용자가 누른 키 조합을 저장하는 역할
+      timer: null
+    }; 
+  },
+  created(){
+    window.addEventListener('keydown',this.handleKeyDown);
+  },
+  destroyed(){
+    window.removeEventListener('keydown', this.handleKeyDown);
+  },
+  methods: {
+    handleKeyDown(event) {
+      const key = event.key;
+      this.keyCombination.push(key);
+
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
+        this.resetKeyCombination();
+        //console.log('타이머가 만료되었습니다.')
+      }, 5000);
+
+      if (this.checkKeyCombination()) {
+        this.enterAdminMode();
+      }
+    },
+    checkKeyCombination() {
+      const targetKeys = ['ArrowUp','ArrowUp', 'ArrowRight','ArrowRight', 'ArrowDown','ArrowDown', 'ArrowLeft','ArrowLeft'];
+      return this.keyCombination.length === targetKeys.length && this.keyCombination.every((key, index) => key === targetKeys[index]);
+    },
+    resetKeyCombination() {
+      this.keyCombination = [];
+    },
+    enterAdminMode() {
+      // 일반 모드로 변경
+      //console.log('일반 모드를 실행합니다.');
+      location.href = '/login';
+    }
+  }
+};
+</script>
+
 <template>
   <div>
-    <video autoplay loop muted>
-      <source src="@/assets/video/sample.mp4" type="video/mp4">
-    </video>
     <!-- Title and Logo -->
     <div class="auth-logo d-flex align-start gap-x-3">
       <VNodeRenderer :nodes="themeConfig.app.logo" />
@@ -61,12 +102,15 @@ const loginNext = () => {
       no-gutters
       class="auth-wrapper"
     >
-      <VCol class="d-none d-md-flex align-center justify-center position-relative">
+      <VCol
+        class="d-none d-md-flex align-center justify-center position-relative"
+      >
       </VCol>
 
       <VCol
         cols="12"
         class="auth-card-v2 d-flex align-center justify-center"
+        style="background-color:gray;opacity: 0.8;"
       >
         <VCard
           flat
@@ -76,31 +120,28 @@ const loginNext = () => {
         >
           <VCol
             class="text-center" 
-            style="display: flex;"
           >
-            <RouterLink
-              class="text-primary ms-2 text-center"
-              :to="{ name: 'login', params:{backid:id} }"
-              style="line-height: 70px;"
-            >
-              <VIcon
-                class="flip-in-rtl"
-                icon="mdi-chevron-left"
-              />
-              <span>Back</span>
-            </RouterLink>
-            <VCardText style="padding-left: 5px;">              
+          
+            <VCardText>              
               <h5 class="text-h5 mb-1">
-                &#128100;{{id}}
+                &#128100;관리자 로그인
               </h5>
             </VCardText>
           </VCol>
           <VCardText>
-            <VForm 
-              ref="refVForm"
-              @submit.prevent="router.push('/')">
+            <VForm
+              ref="refVForm" 
+              @submit.prevent="router.push('/access-control')">
               <VRow>
-                <!-- 비밀번호 입력란 -->
+                <!-- 아이디 입력란 -->
+                <VCol cols="12">
+                  <VTextField
+                    v-model="id"
+                    label="아이디"
+                    type="id"
+                    :rules="[requiredValidatorId]"
+                  />                  
+                </VCol>
                 <VCol cols="12">
                   <VTextField
                     v-model="form.password"
@@ -109,28 +150,14 @@ const loginNext = () => {
                     :type="isPasswordVisible ? 'text' : 'password'"
                     :append-inner-icon="isPasswordVisible ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
                     @click:append-inner="isPasswordVisible = !isPasswordVisible"
-                  />
-                  <div class="d-flex align-center flex-wrap mt-1 mb-4" style="justify-content:right">
-                    <VCol cols="12"/>
-                    <VBtn @click="loginNext()">다음</VBtn>
+                  />                 
+                </VCol>                               
+                  <VCol cols="12">
+                    <div class="d-flex align-center flex-wrap mt-1 mb-4 justify-center">
+                      <VBtn @click="loginNext()">로그인</VBtn>
+                      <div @keydown="handleKeyDown"></div>
                   </div>
-                  <VCol cols="12"/>
-                </VCol>
-
-                 
-                <!-- create account -->                
-                <VCol
-                  cols="12"
-                  class="text-center"
-                  style="margin-top:-30px"
-                >
-                  <RouterLink
-                    class="text-primary ms-2 mb-1"
-                    :to="{ name: 'forgot-password' }"
-                  >
-                    비밀번호 찾기
-                  </RouterLink>
-                </VCol>
+                </VCol>                                                                  
               </VRow>
             </VForm>
           </VCardText>
@@ -139,6 +166,7 @@ const loginNext = () => {
     </VRow>
   </div>
 </template>
+
 
 <style lang="scss">
 @use "@core/scss/template/pages/page-auth.scss";
