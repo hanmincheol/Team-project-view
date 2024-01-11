@@ -18,7 +18,7 @@ export default [
   {
     title: '마이페이지',
     icon: { icon: 'mdi-file-document-outline' },
-    to: { name: 'apps-user-view-id', params: { id: 21 }  },
+    to: { name: 'apps-user-view-id', params: { id: 22 }  },
   },
   {
     title: '고객센터',
