@@ -18,6 +18,7 @@ const selectedBtn = ref()
 const viewPassword = ref(false)
 const password = ref('Password')
 const refVForm = ref()
+const inputDiaryPhoto = ref(false)
 
 const diaryWriteComplet = () => {
   writeDiaryContent.value = false
@@ -76,8 +77,11 @@ const getButtonColor = value => {
 }
 
 
-const imageUrl = ref('') // 이미지 URL을 담을 ref
+const imageUrl = ref('') // 이미지 URL을 담을 변수 -- 사진 1개
+const imgUrls = ref([]) // 이미지 URL 담을 변수 -- 사진 여러개
+const imageSize = ref(null) //이미지 마우스 올릴 때 이벤트를 위한 변수
 
+//파일 1개 업로드 함수 -- 오늘의 기분
 const uploadImg = e => {
   const fileList = e.target.files
   if (fileList.length > 0) {
@@ -90,15 +94,49 @@ const uploadImg = e => {
   }
 }
 
+// 마우스 올릴 때
+const handleMouseOver = index => {
+  imageSize.value = index // Set the index of the hovered image
+}
 
+//마우스 떠날 때
+const handleMouseLeave = () => {
+  imageSize.value = null // Reset the index to null when mouse leaves
+}
 
+/////
+
+// 멀티 파일 업로드할때 필요한 함수 -- 일기에 사진 추가할때 사용
+const uploadImgMultiple = e => {
+  const fileList = e.target.files
+
+  if (fileList.length > 0) {
+    // 여러 이미지를 저장할 배열
+    const imageUrls = []
+
+    // fileList의 각 파일에 대해 URL 생성 및 배열에 추가
+    for (let i = 0; i < fileList.length; i++) {
+      const imgUrl = URL.createObjectURL(fileList[i])
+
+      imageUrls.push(imgUrl)
+    }
+
+    // 배열을 컴포넌트 내의 데이터에 할당
+    imgUrls.value = imageUrls
+  } else {
+    // Handle the case where no file is selected
+    console.error('No file selected')
+  }
+}
+
+//input file에 사이즈에 대한 룰 설정
 const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1000000 || 'Avatar size should be less than 1 MB!']
 </script>
 
 <template>
   <VRow>
     <VCol>
-      <!--Diary 위 이미지-->
+      <!-- Diary 위 이미지 -->
       <VImg
         cover
         height="230"
@@ -112,8 +150,9 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
         class="mt-12 mt-sm- pa-0"
       >
         <VRow cols="12">
-          <VCol cols="2"/>
+          <VCol cols="2" />
           <VRow cols="8">
+            <!-- 기분 표시하는 아이콘 -->
             <VCol 
               v-for="(icon, index) in btnIcons" 
               :key="index"
@@ -126,7 +165,8 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
                 @click="selectButton(icon.value)"
               />
             </VCol>
-
+            <!-- 아이콘 영역 끝 -->
+            <!-- 사진을 통한 스트레스 분석에 필요한 버튼 -->
             <VCol cols="2">
               <VDialog
                 v-model="isDialogVisible"
@@ -136,7 +176,8 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
                 <template #activator="{ props }">
                   <VBtn 
                     v-bind="props"
-                    size="x-large">
+                    size="x-large"
+                  >
                     오늘의 기분
                   </VBtn>
                 </template>
@@ -148,7 +189,7 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
                     @click="isDialogVisible = false"
                   />
                   <VCardText>
-                    당신의 표정을 찍어서 오늘의 스트레스 지수를 확인해보세요!! <br/>
+                    당신의 표정을 찍어서 오늘의 스트레스 지수를 확인해보세요!! <br />
                     AI가 당신의 표정을 읽어 스트레스 지수를 알려줘요  
                   </VCardText>
                   <VImg
@@ -170,23 +211,29 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
                   <VCol>
                     <VBtn 
                       block
-                      @click="isDialogVisible=false">
+                      @click="isDialogVisible=false"
+                    >
                       확인
                     </VBtn>
                   </VCol>
                 </VCard>
               </VDialog>
             </VCol>
+            <!-- 버튼 눌렀을 때 나타나는 모달 끝 -->
           </VRow>
-          <VCol cols="2"/>
+          <!-- 아이콘 / 오늘의 기분 버튼 줄 -->
+          <VCol cols="2" />
         </VRow>
         <VCol />
-        <!--여기가 content부분-->
+        <!-- 여기가 content부분 -->
+        <!-- 해당 if는 일기 작성 / 일기 보기 버튼이 클릭 되지 않은 기본 상태 -->
         <VCard 
           v-if="!writeDiaryContent && !readDiaryContent"
           :image="DiaryPage"
           height="900"
-          align="center">
+          align="center"
+        >
+          <!-- 다이어리 비밀번호 입력 -->
           <VRow v-if="!diaryLock">
             <VCol cols="9" />
             <VCol cols="2">
@@ -218,6 +265,8 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
               />
             </VCol>
           </VRow>
+          <!-- 비밀번호 입력 끝 -->
+          <!-- 비밀번호 입력 했을 시 보이는 화면 -->
           <VRow v-if="diaryLock">
             <VCol cols="4" />
             <VCol cols="2">
@@ -237,9 +286,12 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
               </VBtn> 
             </VCol> 
           </VRow>
+          <!-- 비밀번호 입력 했을 시 보이는 화면 끝 -->
         </VCard>
+        <!-- 일기 보기 버튼 클릭 -->
         <VCard v-if="readDiaryContent">
           <Calendar />
+          <!-- 일기 보기 버튼 다시 비활성화하는 버튼 -->
           <VCol cols="2">
             <VBtn 
               cols="2"  
@@ -249,32 +301,104 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
             </VBtn>
           </VCol>
         </VCard>
+        <!-- 일기 보기 버튼 끝 -->
+        <!-- 일기 쓰기 버튼 -->
         <VForm>
           <VCard v-if="writeDiaryContent">
+            <VCol cols="12">
+              <!-- 텍스트 영역 위 img 뿌려주는 공간 -->
+              <VRow>
+                <VImg 
+                  v-for="(url, index) in imgUrls" 
+                  :key="index"
+                  :src="url"
+                  :style="{
+                    width: imageSize === index ? '200px' : '150px',
+                    height: imageSize === index ? '200px' : '150px',
+                    alignSelf: 'center',
+                    transition: 'width 0.2s, height 0.2s' // Transition for smooth size change
+                  }"
+                  @click="df"
+                  @mouseover="handleMouseOver(index)"
+                  @mouseleave="handleMouseLeave"
+                />
+              </VRow>
+            </VCol>
             <VCol>
               <VCol cols="12">
                 <VTextarea 
                   label="Content" 
-                  rows="35"
-                  style="height: 900px;"/>
+                  rows="30"
+                  style="height: 800px;"
+                />
               </VCol>
-
-              <VCol cols="2">
-                <VSpacer />
+              <VCol cols="12">
                 <VRow>
                   <VCol cols="2">
                     <VBtn @click="submitBtn = true">
                       등록
                     </VBtn>
                   </VCol>
-                  <div style="width: 50px;"/>
-                  <VCol cols="2">
+                  <VSpacer />
+                  <VCol cols="1">
                     <VBtn 
-                      cols="2"  
+                      width="50"  
                       @click="diaryWriteComplet"
                     >
                       뒤로가기
                     </VBtn>
+                  </VCol>
+                  <VCol cols="1">
+                    <VDialog
+                      v-model="inputDiaryPhoto"
+                      width="600"
+                    >
+                      <template #activator="{ props }">
+                        <VBtn 
+                          width="50" 
+                          v-bind="props "
+                        >
+                          사진 추가
+                        </VBtn>
+                      </template>
+                      <!-- Dialog Content -->
+                      <VCard title="당신의 오늘의 기분을 알려주세요!!">
+                        <DialogCloseBtn
+                          variant="text"
+                          size="small"
+                          @click="inputDiaryPhoto = false"
+                        />
+                        <VCardText>
+                          사진을 추가해주세요
+                        </VCardText>
+                        <VImg 
+                          v-for="(url, index) in imgUrls" 
+                          :key="index"
+                          :src="url"
+                          style="width: 400px; height: 400px; align-self: center;"
+                        />
+                        <VCol cols="12">
+                          <VFileInput
+                            :rules="rules"
+                            label="Face IMG"
+                            type="file"
+                            accept="image/png, image/jpeg, image/bmp"
+                            placeholder="Pick an avatar"
+                            prepend-icon="mdi-camera-outline"
+                            multiple
+                            @change="uploadImgMultiple"
+                          />
+                        </VCol>
+                        <VCol>
+                          <VBtn 
+                            block
+                            @click="inputDiaryPhoto=false"
+                          >
+                            확인
+                          </VBtn>
+                        </VCol>
+                      </VCard>
+                    </VDialog>
                   </VCol>
                 </VRow>  
                 <VDialog
@@ -304,7 +428,7 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
           </VCard>
         </VForm>
       </VCard>
-      <!-- content부분 끝-->
+      <!-- content부분 끝 -->
       <FontAwesomeIcon icon="coffee" />
     </VCol>
   </VRow>
