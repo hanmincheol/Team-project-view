@@ -6,62 +6,91 @@ const props = defineProps({
   },
 })
 
+
 const emit = defineEmits(['update:isDialogVisible'])
 
-const selectedPlan = ref('standard')
-
-const categorys = [
-  {
-    icon: 'mdi-food-drumstick-outline',
-    title: '육류/해물',
-  },
-  {
-    icon: 'mdi-lock-outline',
-    title: '샐러드',
-  },
-  {
-    icon: 'mdi-bookmark-outline',
-    title: '도시락',
-  },
-  {
-    icon: 'mdi-bell-outline',
-    title: '샌드위치',
-  },
-  {
-    icon: 'mdi-link-variant',
-    title: '분식',
-  },
-]
-
-const isConfirmDialogVisible = ref(false)
+const tabItemText = 'Biscuit cheesecake gingerbread oat cake tiramisu. Marzipan tiramisu jelly-o muffin biscuit jelly cake pie. Chocolate cookie candy croissant brownie cupcake powder cheesecake. Biscuit sesame snaps biscuit topping tiramisu croissant.'
+const currentTab = ref('tab-1')
 </script>
 
 <template>
-  <!-- 👉 upgrade plan -->
   <VDialog
     :width="$vuetify.display.smAndDown ? 'auto' : 650"
     :model-value="props.isDialogVisible"
     @update:model-value="val => $emit('update:isDialogVisible', val)"
   >
     <VCard class="py-8">
-      <!-- 👉 dialog close btn -->
-      <DialogCloseBtn
-        variant="text"
-        size="small"
-        @click="$emit('update:isDialogVisible', false)"
-      />
-      <VCardText class="d-flex align-center flex-column flex-sm-nowrap px-15">
-        <VCard 
-          v-for="category in categorys"
-          :key="category.icon"
-        >
-          <VBtn
-            :icon="category.icon"
-            variant="text"
-            :text="category.title"
+      <VTabs
+        v-model="currentTab"
+        grow
+        stacked
+      >
+        <VTab value="tab-1">
+          <VIcon
+            icon="mdi-food-steak"
+            class="mb-2"
           />
-        </VCard>
-      </VCardText>
+          <span>육류</span>
+        </VTab>
+      
+        <VTab value="tab-2">
+          <VIcon
+            icon="mdi-bread-slice"
+            class="mb-2"
+          />
+          <span>샌드위치</span>
+        </VTab>
+        
+        <VTab value="tab-3">
+          <VIcon
+            icon="mdi-egg-fried"
+            class="mb-2"
+          />
+          <span>단백질</span>
+        </VTab>
+      </VTabs>
+      <VTabs
+        v-model="currentTab"
+        grow
+        stacked
+      >
+        <VTab value="tab-4">
+          <VIcon
+            icon="mdi-seed"
+            class="mb-2"
+          />
+          <span>샐러드</span>
+        </VTab>
+      
+        <VTab value="tab-5">
+          <VIcon
+            icon="mdi-land-plots-circle-variant"
+            class="mb-2"
+          />
+          <span>도시락</span>
+        </VTab>
+        
+        <VTab value="tab-6">
+          <VIcon
+            icon="mdi-beer"
+            class="mb-2"
+          />
+          <span>음료수</span>
+        </VTab>
+      </VTabs>
+      <VWindow
+        v-model="currentTab"
+        class="mt-5"
+      >
+        <VWindowItem
+          v-for="i in 6"
+          :key="i"
+          :value="`tab-${i}`"
+        >
+          {{ tabItemText }}
+        </VWindowItem>
+      </VWindow>
     </VCard>
   </VDialog>
 </template>
+          

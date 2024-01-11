@@ -61,9 +61,7 @@ const loginNext = () => {
       no-gutters
       class="auth-wrapper"
     >
-      <VCol
-        class="d-none d-md-flex align-center justify-center position-relative"
-      >
+      <VCol class="d-none d-md-flex align-center justify-center position-relative">
       </VCol>
 
       <VCol
@@ -127,11 +125,11 @@ const loginNext = () => {
                   style="margin-top:-30px"
                 >
                   <RouterLink
-                      class="text-primary ms-2 mb-1"
-                      :to="{ name: 'forgot-password' }"
-                    >
-                      비밀번호 찾기
-                    </RouterLink>
+                    class="text-primary ms-2 mb-1"
+                    :to="{ name: 'forgot-password' }"
+                  >
+                    비밀번호 찾기
+                  </RouterLink>
                 </VCol>
               </VRow>
             </VForm>
