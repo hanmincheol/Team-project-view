@@ -1,20 +1,25 @@
 <script setup>
-import TermsAndConditions from '@/views/demos/register/TermsAndConditions.vue'
-
 const iconsSteps = [
   {
-    title: '약관동의',
+    title: 'Account Details',
     icon: 'custom-wizard-account',
   },
   {
-    title: '회원가입 정보',
+    title: 'Personal Info',
     icon: 'custom-wizard-personal',
   },
   {
-    title: '자동 회원가입 방지',
+    title: 'Address',
     icon: 'custom-wizard-address',
   },
-  
+  {
+    title: 'Social Links',
+    icon: 'custom-wizard-social-link',
+  },
+  {
+    title: 'Review & Submit',
+    icon: 'custom-wizard-submit',
+  },
 ]
 
 const currentStep = ref(0)
@@ -66,26 +71,64 @@ const onSubmit = () => {
         >
           <VWindowItem>
             <VRow>
-              <TermsAndConditions />
-            </VRow>
-          </VWindowItem>
-
-          <VWindowItem>
-            <VRow>
               <VCol cols="12">
                 <h6 class="text-sm font-weight-medium">
-                  회원가입 정보 입력
+                  Account Details
                 </h6>
                 <p class="text-xs mb-0">
-                  HealthyReal의 회원이 되어보세요!
+                  Enter your Account Details
                 </p>
               </VCol>
 
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <VTextField
+                  v-model="formData.username"
+                  placeholder="CarterLeonardo"
+                  label="Username"
+                />
+              </VCol>
 
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <VTextField
+                  v-model="formData.email"
+                  placeholder="carterleonardo@gmail.com"
+                  label="Email"
+                />
+              </VCol>
 
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <VTextField
+                  v-model="formData.password"
+                  label="Password"
+                  placeholder="Enter Password"
+                  :type="isPasswordVisible ? 'text' : 'password'"
+                  :append-inner-icon="isPasswordVisible ? 'mdi-eye-outline' : 'mdi-eye-off-outline'"
+                  @click:append-inner="isPasswordVisible = !isPasswordVisible"
+                />
+              </VCol>
 
-
-              <DemoFormLayoutHorizontalForm />
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <VTextField
+                  v-model="formData.c_password"
+                  label="Confirm Password"
+                  placeholder="Enter Confirm Password"
+                  :type="isCPasswordVisible ? 'text' : 'password'"
+                  :append-inner-icon="isCPasswordVisible ? 'mdi-eye-outline' : 'mdi-eye-off-outline'"
+                  @click:append-inner="isCPasswordVisible = !isCPasswordVisible"
+                />
+              </VCol>
             </VRow>
           </VWindowItem>
 
@@ -93,10 +136,69 @@ const onSubmit = () => {
             <VRow>
               <VCol cols="12">
                 <h6 class="text-sm font-weight-medium">
-                  자동 회원가입 방지
+                  Personal Info
                 </h6>
                 <p class="text-xs mb-0">
-                  ㅇㅇㅇㅇㅇㅇㅇ
+                  Setup Information
+                </p>
+              </VCol>
+
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <VTextField
+                  v-model="formData.firstName"
+                  label="First Name"
+                  placeholder="Leonard"
+                />
+              </VCol>
+
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <VTextField
+                  v-model="formData.lastName"
+                  label="Last Name"
+                  placeholder="Carter"
+                />
+              </VCol>
+
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <VSelect
+                  v-model="formData.country"
+                  label="Country"
+                  placeholder="Country"
+                  :items="['UK', 'USA', 'Canada', 'Australia', 'Germany']"
+                />
+              </VCol>
+
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <VSelect
+                  v-model="formData.language"
+                  label="Language"
+                  placeholder="Language"
+                  :items="['English', 'Spanish', 'French', 'Russian', 'German']"
+                />
+              </VCol>
+            </VRow>
+          </VWindowItem>
+
+          <VWindowItem>
+            <VRow>
+              <VCol cols="12">
+                <h6 class="text-sm font-weight-medium">
+                  Address
+                </h6>
+                <p class="text-xs mb-0">
+                  Enter Your Address.
                 </p>
               </VCol>
 
@@ -147,6 +249,62 @@ const onSubmit = () => {
             </VRow>
           </VWindowItem>
 
+          <VWindowItem>
+            <VRow>
+              <VCol cols="12">
+                <h6 class="text-sm font-weight-medium">
+                  Social Links
+                </h6>
+                <p class="text-xs mb-0">
+                  Add Social Links
+                </p>
+              </VCol>
+
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <VTextField
+                  v-model="formData.twitter"
+                  placeholder="https://twitter.com/abc"
+                  label="Twitter"
+                />
+              </VCol>
+
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <VTextField
+                  v-model="formData.facebook"
+                  placeholder="https://facebook.com/abc"
+                  label="Facebook"
+                />
+              </VCol>
+
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <VTextField
+                  v-model="formData.googlePlus"
+                  placeholder="https://plus.google.com/abc"
+                  label="Google+"
+                />
+              </VCol>
+
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <VTextField
+                  v-model="formData.linkedIn"
+                  placeholder="https://linkedin.com/abc"
+                  label="LinkedIn"
+                />
+              </VCol>
+            </VRow>
+          </VWindowItem>
 
           <VWindowItem>
             <div class="text-base">
@@ -233,7 +391,7 @@ const onSubmit = () => {
               start
               class="flip-in-rtl"
             />
-            이전
+            Previous
           </VBtn>
 
           <VBtn
@@ -249,7 +407,7 @@ const onSubmit = () => {
             v-else
             @click="currentStep++"
           >
-            다음
+            Next
 
             <VIcon
               icon="mdi-arrow-right"
