@@ -8,6 +8,13 @@ export const requiredValidator = value => {
   return !!String(value).trim().length || 'The field is required'
 }
 
+export const requiredValidatorDiaryPassword = value => {
+  if (isNullOrUndefined(value) || isEmptyArray(value) || value === false)
+    return 'PW를 입력하세요'
+  
+  return !!String(value).trim().length || 'PW를 입력하세요'
+}
+
 export const requiredValidatorId = value => {
   if (isNullOrUndefined(value) || isEmptyArray(value) || value === false)
     return '아이디를 입력하세요'

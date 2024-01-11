@@ -22,8 +22,8 @@ const router = useRouter()
 //   remember: false,
 // })
 const refVForm = ref()
-
 const id = ref('')
+
 const rememberMe = ref(false)
 
 const isPasswordVisible = ref(false)
@@ -31,14 +31,66 @@ const authThemeImg = useGenerateImageVariant(authV2LoginIllustrationLight, authV
 const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
 
 const loginId = () => {
-  router.push({path:"/login-password"});
+  router.push({path:"/login-password", query:{ userid: id.value }});
 }
+
 const loginNext = () => {
   refVForm.value?.validate().then(({ valid: isValid }) => {
-    if (isValid)
+    if (isValid)    
       loginId()
   })
 }
+</script>
+<script>
+export default{
+  data() {
+    return {
+      keyCombination: [], //사용자가 누른 키 조합을 저장하는 역할
+      timer: null
+    }; 
+  },
+  // mounted(){
+  //   this.timer = setTimeout(() => {
+  //     // 타이머가 만료되었을때 실행될 코드
+  //     console.log('타이머가 만료되었습니다.');
+  //   }, 30000); // 30초를 밀리초 단위로 설정    
+  // },
+  created(){
+    window.addEventListener('keydown',this.handleKeyDown);
+  },
+  destroyed(){
+    window.removeEventListener('keydown', this.handleKeyDown);
+  },
+  methods: {
+    handleKeyDown(event) {
+      const key = event.key;
+      this.keyCombination.push(key);
+
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
+        this.resetKeyCombination();
+        //console.log('타이머가 만료되었습니다.');
+      }, 5000);
+
+      if (this.checkKeyCombination()) {
+        this.enterAdminMode();
+      }
+    },
+    checkKeyCombination() {
+      const targetKeys = ['ArrowUp','ArrowUp', 'ArrowRight','ArrowRight', 'ArrowDown','ArrowDown', 'ArrowLeft','ArrowLeft'];
+      return this.keyCombination.length === targetKeys.length && this.keyCombination.every((key, index) => key === targetKeys[index]);
+    },
+    resetKeyCombination() {
+      this.keyCombination = [];
+    },
+    enterAdminMode() {
+      // 관리자 모드로 변경
+      //console.log('관리자 모드를 실행합니다.');
+      location.href = '/login-admin';
+    }
+  }
+};
+
 </script>
 
 <template>
@@ -77,7 +129,6 @@ const loginNext = () => {
           <VCol
             class="text-center" 
           >
-          
             <VCardText>              
               <h5 class="text-h5 mb-1">
                 &#128100;로그인
@@ -98,7 +149,7 @@ const loginNext = () => {
                     :rules="[requiredValidatorId]"
                   />
                 </VCol>
-                  <VCol cols="12">
+                <VCol cols="12">
                   <div class="d-flex align-center flex-wrap justify-space-between mt-1 mb-4">
                     <VCheckbox
                       v-model="rememberMe"

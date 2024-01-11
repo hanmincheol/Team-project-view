@@ -4,6 +4,11 @@ import {
   kFormatter,
 } from '@core/utils/formatters'
 
+import SelfEdit from '@/pages/views/demos/forms/form-elements/textarea/self-edit.vue'
+import Btnsu from '@/pages/views/demos/components/button/self-suc.vue'
+import { faL } from '@fortawesome/free-solid-svg-icons'
+
+
 const props = defineProps({
   userData: {
     type: Object,
@@ -21,6 +26,8 @@ const standardPlan = {
   ],
 }
 
+const editClick = ref(true)
+const edit = ref(false)
 const isUserInfoEditDialogVisible = ref(false)
 const isUpgradePlanDialogVisible = ref(false)
 
@@ -122,7 +129,7 @@ const resolveUserRoleVariant = role => {
             >
               <VIcon
                 size="24"
-                icon="mdi-check"
+                icon="mdi-poll"
               />
             </VAvatar>
 
@@ -130,7 +137,7 @@ const resolveUserRoleVariant = role => {
               <h6 class="text-h6">
                 {{ kFormatter(props.userData.taskDone) }}
               </h6>
-              <span>Task Done</span>
+              <span>이행률</span>
             </div>
           </div>
 
@@ -145,7 +152,7 @@ const resolveUserRoleVariant = role => {
             >
               <VIcon
                 size="24"
-                icon="mdi-star-outline"
+                icon="mdi-star"
               />
             </VAvatar>
 
@@ -153,121 +160,37 @@ const resolveUserRoleVariant = role => {
               <h6 class="text-h6">
                 {{ kFormatter(props.userData.projectDone) }}
               </h6>
-              <span>Project Done</span>
+              <span>구독자 수</span>
             </div>
           </div>
         </VCardText>
 
         <!-- 👉 Details -->
         <VCardText>
-          <h6 class="text-h6">
-            Details
-          </h6>
-
+          <VRow align="center ml-4">
+            <h6 class="text-h6" style="margin-top: 10px;">
+              Self-Introduction
+            </h6>
+            <IconBtn>
+              <VIcon
+                icon="mdi-lead-pencil"
+                size="22"
+                @click="editClick=false, edit=true"
+              />
+            </IconBtn>
+          </VRow>
           <VDivider class="my-4" />
-
-          <!-- 👉 User Details list -->
-          <VList class="card-list">
-            <VListItem>
-              <VListItemTitle>
-                <h6 class="text-sm font-weight-medium">
-                  Username:
-                  <span class="text-body-2">
-                    @{{ props.userData.username }}
-                  </span>
-                </h6>
-              </VListItemTitle>
-            </VListItem>
-
-            <VListItem>
-              <VListItemTitle>
-                <h6 class="text-sm font-weight-medium">
-                  Billing Email:
-                  <span class="text-body-2">{{ props.userData.email }}</span>
-                </h6>
-              </VListItemTitle>
-            </VListItem>
-
-            <VListItem>
-              <VListItemTitle>
-                <h6 class="text-sm font-weight-medium">
-                  Status:
-
-                  <VChip
-                    label
-                    density="comfortable"
-                    :color="resolveUserStatusVariant(props.userData.status)"
-                    class="text-capitalize"
-                  >
-                    {{ props.userData.status }}
-                  </VChip>
-                </h6>
-              </VListItemTitle>
-            </VListItem>
-
-            <VListItem>
-              <VListItemTitle>
-                <h6 class="text-sm font-weight-medium">
-                  Role:
-                  <span class="text-capitalize text-body-2">{{ props.userData.role }}</span>
-                </h6>
-              </VListItemTitle>
-            </VListItem>
-
-            <VListItem>
-              <VListItemTitle>
-                <h6 class="text-sm font-weight-medium">
-                  Tax ID:
-                  <span class="text-body-2">
-                    {{ props.userData.taxId }}
-                  </span>
-                </h6>
-              </VListItemTitle>
-            </VListItem>
-
-            <VListItem>
-              <VListItemTitle>
-                <h6 class="text-sm font-weight-medium">
-                  Contact:
-                  <span class="text-body-2">{{ props.userData.contact }}</span>
-                </h6>
-              </VListItemTitle>
-            </VListItem>
-
-            <VListItem>
-              <VListItemTitle>
-                <h6 class="text-sm font-weight-medium">
-                  Language:
-                  <span class="text-body-2">{{ props.userData.language }}</span>
-                </h6>
-              </VListItemTitle>
-            </VListItem>
-
-            <VListItem>
-              <VListItemTitle>
-                <h6 class="text-sm font-weight-medium">
-                  Country:
-                  <span class="text-body-2">{{ props.userData.country }}</span>
-                </h6>
-              </VListItemTitle>
-            </VListItem>
-          </VList>
-        </VCardText>
-
-        <!-- 👉 Edit and Suspend button -->
-        <VCardText class="d-flex justify-center gap-4">
-          <VBtn
-            variant="elevated"
-            @click="isUserInfoEditDialogVisible = true"
+          <VCol
+            cols="12"
+            md="12"
+            rows="12"
+            style="height: 380px;"
           >
-            Edit
-          </VBtn>
-          <VBtn
-            variant="outlined"
-            color="error"
-          >
-            Suspend
-          </VBtn>
+            <SelfEdit :readonly="editClick" />
+            <div style="float: right; margin-top: 10px;" v-if="edit">
+              <Btnsu @click="editClick=true, edit=false" />
+            </div>
+          </VCol>
         </VCardText>
       </VCard>
     </VCol>

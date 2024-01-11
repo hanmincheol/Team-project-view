@@ -1,5 +1,7 @@
 <script setup>
 import ShareProjectDialogTemp from '@/components/dialogs/ShareProjectDialogTemp.vue';
+import AddChallRoomSetting from '@/components/dialogs/AddChallRoomSetting.vue';
+import AddMateRoomSetting from '@/components/dialogs/AddMateRoomSetting.vue';
 import chat from '@/pages/apps/challengeChat.vue';
 import { useUserListStore } from '@/views/apps/user/useUserListStore';
 import UserProfileForChellenge from '@/views/apps/user/view/UserProfileForChellenge.vue';
@@ -9,6 +11,8 @@ import VueApexCharts from 'vue3-apexcharts'; //차트 불러오기
 import { useTheme } from 'vuetify'; //차트 불러오기
 
 const isShareProjectDialogVisible = ref(false)
+const isAddChallRoomSettingDialogVisible = ref(false)
+const isAddMateRoomSettingDialogVisible = ref(false)
 const userListStore = useUserListStore()
 const route = useRoute() //route객체
 const userData = ref()
@@ -27,8 +31,8 @@ const series = [{ data: [200] }]
 userListStore.fetchUser(Number(route.params.id)).then(response => {
   userData.value = response.data
 })
-
 </script>
+
 <template>
   <div>
     <VRow class="match-height">
@@ -132,15 +136,19 @@ userListStore.fetchUser(Number(route.params.id)).then(response => {
             </VCard>
             <VCard :style="{'width':'90%', 'margin-top':'30px'}">
               <VueApexCharts
-                    type="bar"
-                    height="200"
-                    :options="horizontalBarChartConfig"
-                    :series="series"
-                  />
+                type="bar"
+                height="200"
+                :options="horizontalBarChartConfig"
+                :series="series"
+              />
             </VCard>
             <div :style="{'margin-top':'50px','display':'flex', 'width':'90%', 'justify-content':'flex-end'}">
               <v-btn @click="isShareProjectDialogVisible = !isShareProjectDialogVisible">Invite</v-btn>
               <ShareProjectDialogTemp v-model:isDialogVisible="isShareProjectDialogVisible"/>
+              <v-btn :style="{'margin-left':'10px'}" @click="isAddChallRoomSettingDialogVisible = !isAddChallRoomSettingDialogVisible">Chall</v-btn>
+              <AddChallRoomSetting v-model:isDialogVisible="isAddChallRoomSettingDialogVisible"/>
+              <v-btn :style="{'margin-left':'10px'}" @click="isAddMateRoomSettingDialogVisible = !isAddMateRoomSettingDialogVisible">Mate</v-btn>
+              <AddMateRoomSetting v-model:isDialogVisible="isAddMateRoomSettingDialogVisible"/>
               <v-btn :style="{'margin-left':'10px'}">Exit</v-btn>
             </div>
             <!-- <VCard> 첫번째 시도
