@@ -45,7 +45,7 @@ const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
           >
             <RouterLink
               class="text-primary ms-2 text-center"
-              :to="{ name: 'login-password' }"
+              :to="{ name: 'forgot-password' }"
               style="line-height: 70px;"
             >
               <VIcon
