@@ -1,160 +1,264 @@
 <script setup>
-import * as text from '@/views/demos/Terms_and_Conditions'
-import DemoCheckboxLabelSlotAll from '@/views/demos/register/DemoCheckboxLabelSlotAll.vue'
+import TermsAndConditions from '@/views/demos/register/TermsAndConditions.vue'
 
-const value = ref(text.TermsAndConditions.ts)
-const value2 = ref(text.TermsAndConditionsN2.ts)
-const value3 = ref(text.TermsAndConditionsN3.ts)
-const value4 = ref(text.TermsAndConditionsN4.ts)
-const value5 = ref(text.TermsAndConditionsN5.ts)
-const value6 = ref(text.TermsAndConditionsN6.ts)
+const iconsSteps = [
+  {
+    title: '약관동의',
+    icon: 'custom-wizard-account',
+  },
+  {
+    title: '회원가입 정보',
+    icon: 'custom-wizard-personal',
+  },
+  {
+    title: '자동 회원가입 방지',
+    icon: 'custom-wizard-address',
+  },
+  
+]
+
+const currentStep = ref(0)
+const isPasswordVisible = ref(false)
+const isCPasswordVisible = ref(false)
+
+const formData = ref({
+  username: 'johndoe',
+  email: 'john.doe@email.com',
+  password: 'johndoe@J2',
+  c_password: 'johndoe@J2',
+  firstName: 'John',
+  lastName: 'Doe',
+  country: 'UK',
+  language: 'English',
+  address: '98 Borough bridge Road, Birmingham',
+  landmark: 'Borough bridge',
+  pincode: '658921',
+  city: 'Birmingham',
+  twitter: 'https://twitter.com/abc',
+  facebook: 'https://facebook.com/abc',
+  googlePlus: 'https://plus.google.com/abc',
+  linkedIn: 'https://linkedin.com/abc',
+})
+
+const onSubmit = () => {
+  console.log(formData.value)
+}
 </script>
 
-
-
-
-
-
 <template>
-  <VCol
-    cols="12"
-    md="12"
-  >
-    <!-- 👉 Label Slot -->
-    <VCard title="전체 동의하기">
-      <VCol
-        cols="12"
-        md="12"
-      >
-        <VTextarea 
-          v-model="value6"
-          readonly
-          label="약관동의"
-          no-resize
-          rows="2"
-        />
-        <DemoCheckboxLabelSlotAll />
-      </VCol>
-    </VCard>
-  </VCol>
+  <VCard>
+    <VCardText>
+      <!-- 👉 Stepper -->
+      <AppStepper
+        v-model:current-step="currentStep"
+        :items="iconsSteps"
+      />
+    </VCardText>
+
+    <VDivider />
+
+    <VCardText>
+      <!-- 👉 stepper content -->
+      <VForm>
+        <VWindow
+          v-model="currentStep"
+          class="disable-tab-transition"
+        >
+          <VWindowItem>
+            <VRow>
+              <TermsAndConditions />
+            </VRow>
+          </VWindowItem>
+
+          <VWindowItem>
+            <VRow>
+              <VCol cols="12">
+                <h6 class="text-sm font-weight-medium">
+                  회원가입 정보 입력
+                </h6>
+                <p class="text-xs mb-0">
+                  HealthyReal의 회원이 되어보세요!
+                </p>
+              </VCol>
 
 
 
-  <VCol
-    cols="12"
-    md="12"
-  >
-    <!-- 👉 Label Slot -->
-    <VCard title="[필수] 헬시리얼 이용약관">
-      <VCol
-        cols="12"
-        md="12"
-      >
-        <VTextarea 
-          v-model="value"
-          readonly
-          label="약관동의"
-          no-resize
-          rows="6"
-        />
-        <DemoCheckboxLabelSlot agree=""/>
-      </VCol>
-    </VCard>
-  </VCol>
-
-  <VCol
-    cols="12"
-    md="12"
-  >
-    <!-- 👉 Label Slot -->
-    <VCard title="[필수] 개인정보 수집 및 이용">
-      <VCol
-        cols="12"
-        md="12"
-      >
-        <VTextarea 
-          v-model="value2"
-          readonly
-          label="약관동의"
-          no-resize
-          rows="6"
-        />
-        <DemoCheckboxLabelSlot />
-      </VCol>
-    </VCard>
-  </VCol>
 
 
-  <VCol
-    cols="12"
-    md="12"
-  >
-    <!-- 👉 Label Slot -->
-    <VCard title="[필수] 실명 인증된 아이디로 가입">
-      <VCol
-        cols="12"
-        md="12"
-      >
-        <VTextarea 
-          v-model="value3"
-          readonly
-          label="약관동의"
-          no-resize
-          rows="2"
-        />
-        <DemoCheckboxLabelSlot />
-      </VCol>
-    </VCard>
-  </VCol>
+              <DemoFormLayoutHorizontalForm />
+            </VRow>
+          </VWindowItem>
 
-  <VCol
-    cols="12"
-    md="12"
-  >
-    <!-- 👉 Label Slot -->
-    <VCard title="[선택] 위치기반서비스 이용약관">
-      <VCol
-        cols="12"
-        md="12"
-      >
-        <VTextarea 
-          v-model="value4"
-          readonly
-          label="약관동의"
-          no-resize
-          rows="6"
-        />
-        <DemoCheckboxLabelSlot />
-      </VCol>
-    </VCard>
-  </VCol>
+          <VWindowItem>
+            <VRow>
+              <VCol cols="12">
+                <h6 class="text-sm font-weight-medium">
+                  자동 회원가입 방지
+                </h6>
+                <p class="text-xs mb-0">
+                  ㅇㅇㅇㅇㅇㅇㅇ
+                </p>
+              </VCol>
 
-  <VCol
-    cols="12"
-    md="12"
-  >
-    <!-- 👉 Label Slot -->
-    <VCard title="[선택] 개인정보 수집 및 이용">
-      <VCol
-        cols="12"
-        md="12"
-      >
-        <VTextarea 
-          v-model="value5"
-          readonly
-          label="약관동의"
-          no-resize
-          rows="2"
-        />
-        <DemoCheckboxLabelSlot />
-      </VCol>
-    </VCard>
-  </VCol>
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <VTextField
+                  v-model="formData.address"
+                  placeholder="98 Borough bridge Road, Birmingham"
+                  label="Address"
+                />
+              </VCol>
+
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <VTextField
+                  v-model="formData.landmark"
+                  placeholder="Borough bridge"
+                  label="Landmark"
+                />
+              </VCol>
+
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <VTextField
+                  v-model="formData.pincode"
+                  placeholder="658921"
+                  label="Pincode"
+                  type="number"
+                />
+              </VCol>
+
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <VTextField
+                  v-model="formData.city"
+                  placeholder="City"
+                  label="City"
+                />
+              </VCol>
+            </VRow>
+          </VWindowItem>
+
+
+          <VWindowItem>
+            <div class="text-base">
+              <h6 class="text-base font-weight-medium mb-2">
+                Account
+              </h6>
+
+              <p class="mb-1">
+                {{ formData.username }}
+              </p>
+              <p class="mb-1">
+                {{ formData.email }}
+              </p>
+
+              <VDivider class="my-4" />
+
+              <h6 class="text-base font-weight-medium mb-2">
+                Personal Info
+              </h6>
+
+              <p class="mb-1">
+                {{ formData.firstName }}
+              </p>
+              <p class="mb-1">
+                {{ formData.lastName }}
+              </p>
+              <p class="mb-1">
+                {{ formData.country }}
+              </p>
+              <p class="mb-1">
+                {{ formData.language }}
+              </p>
+
+              <VDivider class="my-4" />
+
+              <h6 class="text-base font-weight-medium mb-2">
+                Address
+              </h6>
+
+              <p class="mb-1">
+                {{ formData.address }}
+              </p>
+              <p class="mb-1">
+                {{ formData.landmark }}
+              </p>
+              <p class="mb-1">
+                {{ formData.pincode }}
+              </p>
+              <p class="mb-1">
+                {{ formData.city }}
+              </p>
+
+              <VDivider class="my-4" />
+
+              <h6 class="text-base font-weight-medium mb-2">
+                Social Links
+              </h6>
+
+              <p class="mb-1">
+                {{ formData.twitter }}
+              </p>
+              <p class="mb-1">
+                {{ formData.facebook }}
+              </p>
+              <p class="mb-1">
+                {{ formData.googlePlus }}
+              </p>
+              <p class="mb-1">
+                {{ formData.linkedIn }}
+              </p>
+            </div>
+          </VWindowItem>
+        </VWindow>
+
+        <div class="d-flex justify-sm-space-between gap-4 flex-wrap justify-center mt-8">
+          <VBtn
+            :color="currentStep === 0 ? 'secondary' : 'default'"
+            variant="outlined"
+            :disabled="currentStep === 0"
+            @click="currentStep--"
+          >
+            <VIcon
+              icon="mdi-arrow-left"
+              start
+              class="flip-in-rtl"
+            />
+            이전
+          </VBtn>
+
+          <VBtn
+            v-if="iconsSteps.length - 1 === currentStep"
+            color="success"
+            append-icon="mdi-check"
+            @click="onSubmit"
+          >
+            submit
+          </VBtn>
+
+          <VBtn
+            v-else
+            @click="currentStep++"
+          >
+            다음
+
+            <VIcon
+              icon="mdi-arrow-right"
+              end
+              class="flip-in-rtl"
+            />
+          </VBtn>
+        </div>
+      </VForm>
+    </VCardText>
+  </VCard>
 </template>
-
-
-
-
-
-
-

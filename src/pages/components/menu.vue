@@ -1,5 +1,5 @@
 <script setup>
-import * as demoCode from '@/views/demos/components/menu/demoCodeMenu'
+import * as demoCode from '@/views/demos/register/demoCodeMenu'
 </script>
 
 <template>

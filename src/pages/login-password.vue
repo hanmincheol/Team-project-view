@@ -16,7 +16,11 @@ import {
 
 const router = useRouter()
 const refVForm = ref()
-const id = ref('test')
+//const idValue = $router.params.userid;
+//const id = ref('test');
+const route = useRoute();
+const id = ref(route.query.userid);
+
 const password = ref('')
 const form = ref({
   email: '',
@@ -57,9 +61,7 @@ const loginNext = () => {
       no-gutters
       class="auth-wrapper"
     >
-      <VCol
-        class="d-none d-md-flex align-center justify-center position-relative"
-      >
+      <VCol class="d-none d-md-flex align-center justify-center position-relative">
       </VCol>
 
       <VCol
@@ -74,9 +76,20 @@ const loginNext = () => {
         >
           <VCol
             class="text-center" 
+            style="display: flex;"
           >
-          
-            <VCardText>              
+            <RouterLink
+              class="text-primary ms-2 text-center"
+              :to="{ name: 'login', params:{backid:id} }"
+              style="line-height: 70px;"
+            >
+              <VIcon
+                class="flip-in-rtl"
+                icon="mdi-chevron-left"
+              />
+              <span>Back</span>
+            </RouterLink>
+            <VCardText style="padding-left: 5px;">              
               <h5 class="text-h5 mb-1">
                 &#128100;{{id}}
               </h5>
@@ -112,11 +125,11 @@ const loginNext = () => {
                   style="margin-top:-30px"
                 >
                   <RouterLink
-                      class="text-primary ms-2 mb-1"
-                      :to="{ name: 'forgot-password' }"
-                    >
-                      비밀번호 찾기
-                    </RouterLink>
+                    class="text-primary ms-2 mb-1"
+                    :to="{ name: 'forgot-password' }"
+                  >
+                    비밀번호 찾기
+                  </RouterLink>
                 </VCol>
               </VRow>
             </VForm>

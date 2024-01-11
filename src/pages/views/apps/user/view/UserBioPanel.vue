@@ -130,7 +130,7 @@ const resolveUserRoleVariant = role => {
               <h6 class="text-h6">
                 {{ kFormatter(props.userData.taskDone) }}
               </h6>
-              <span>Task Done</span>
+              <span>이행률</span>
             </div>
           </div>
 
@@ -153,7 +153,7 @@ const resolveUserRoleVariant = role => {
               <h6 class="text-h6">
                 {{ kFormatter(props.userData.projectDone) }}
               </h6>
-              <span>Project Done</span>
+              <span>구독자 수</span>
             </div>
           </div>
         </VCardText>
@@ -161,7 +161,7 @@ const resolveUserRoleVariant = role => {
         <!-- 👉 Details -->
         <VCardText>
           <h6 class="text-h6">
-            Details
+            자기소개
           </h6>
 
           <VDivider class="my-4" />

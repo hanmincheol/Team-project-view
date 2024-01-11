@@ -16,6 +16,16 @@ const email = ref('')
 const authThemeImg = useGenerateImageVariant(authV2ForgotPasswordIllustrationLight, authV2ForgotPasswordIllustrationDark, authV2ForgotPasswordIllustrationBorderedLight, authV2ForgotPasswordIllustrationBorderedDark, true)
 const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
 
+const router = useRouter()
+const redirectToLoginPassword = () => {
+  router.push({path:"/login-password"})
+}
+const phone_certification = () => {
+  router.push({path:"/forgot-password-phone"})
+}
+const email_certification = () => {
+  router.push({path:"/forgot-password-email"})
+}
 </script>
 
 <template>

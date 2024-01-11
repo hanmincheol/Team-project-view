@@ -2,7 +2,6 @@
 import VueApexCharts from 'vue3-apexcharts'
 import { useTheme } from 'vuetify'
 import { getDonutChartConfig } from '@core/libs/apex-chart/apexCharConfig'
-import {computed} from 'vue'
 
 const vuetifyTheme = useTheme()
 
