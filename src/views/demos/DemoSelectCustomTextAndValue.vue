@@ -1,29 +1,29 @@
 <script setup>
 const selectedOption = ref({
-  state: '건강을 위해서',
-  value: '건강을 위해서',
+  state: '건강 관리',
+  value: '건강 관리',
 })
 
 const items = [
   {
-    state: '건강을 위해서',
-    value: '건강을 위해서',
+    state: '건강 관리',
+    value: '건강 관리',
   },
   {
-    state: '살을 빼기 위해서',
-    value: '살을 빼기 위해서',
+    state: '체중 감량',
+    value: '체중 감량',
   },
   {
-    state: '살을 찌우기 위해서',
-    value: '살을 찌우기 위해서',
+    state: '체중 증가',
+    value: '체중 증가',
   },
   {
-    state: '근육을 키우기 위해서',
-    value: '근육을 키우기 위해서',
+    state: '근육 강화',
+    value: '근육 강화',
   },
   {
-    state: '벨런스 맞는 식단을 위해서',
-    value: '벨런스 맞는 식단을 위해서',
+    state: '다이어트 식단',
+    value: '다이어트 식단',
   },
 ]
 </script>
