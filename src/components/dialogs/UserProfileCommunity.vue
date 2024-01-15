@@ -50,7 +50,7 @@ const dialogVisibleUpdate = value => {
           <VAvatar
             size="75"
             class="avatar-center"
-            :src="avatar1"
+            :src="avatar2"
           />
           <div class="d-flex justify-space-between flex-wrap pt-8">
             <div class="me-2 mb-2">

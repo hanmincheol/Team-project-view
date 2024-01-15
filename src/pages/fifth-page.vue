@@ -243,37 +243,41 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
           align="center"
         >
           <!-- 다이어리 비밀번호 입력 -->
-          <VRow v-if="!diaryLock">
-            <VCol cols="9" />
-            <VCol cols="2">
-              <VForm 
-                ref="refVForm" 
-                @submit="diaryLock=true"
-              >
-                <VTextField
-                  v-if="viewPassword"
-                  v-model="password"
+          <Transition name="fade">
+            <VRow v-if="!diaryLock">
+              <VCol cols="9" />
+              <VCol cols="2">
+                <VForm 
+                  ref="refVForm" 
+                  @submit="diaryLock=true"
+                >
+                  <Transition name="fade">
+                    <VTextField
+                      v-if="viewPassword"
+                      v-model="password"
+                      style="margin-top: 450px;"
+                      :append-inner-icon="show1 ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+                      :rules="[rules.required, rules.min, requiredValidatorDiaryPassword]"
+                      :type="show1 ? 'text' : 'password'"
+                      name="input-10-1"
+                      label="Password"
+                      counter
+                      @click:append-inner="show1 = !show1"
+                    />
+                  </Transition>
+                </VForm>
+              </VCol>
+              <VCol cols="1">
+                <VBtn 
+                  icon="mdi-lock"
+                  rounded="lg"
+                  size="x-large"
                   style="margin-top: 450px;"
-                  :append-inner-icon="show1 ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
-                  :rules="[rules.required, rules.min, requiredValidatorDiaryPassword]"
-                  :type="show1 ? 'text' : 'password'"
-                  name="input-10-1"
-                  label="Password"
-                  counter
-                  @click:append-inner="show1 = !show1"
+                  @click="viewPassword = true"
                 />
-              </VForm>
-            </VCol>
-            <VCol cols="1">
-              <VBtn 
-                icon="mdi-lock"
-                rounded="lg"
-                size="x-large"
-                style="margin-top: 450px;"
-                @click="viewPassword = true"
-              />
-            </VCol>
-          </VRow>
+              </VCol>
+            </VRow>
+          </Transition>
           <!-- 비밀번호 입력 끝 -->
           <!-- 비밀번호 입력 했을 시 보이는 화면 -->
           <VRow v-if="diaryLock">
@@ -458,4 +462,27 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
     </VCol>
   </VRow>
 </template>
+
+
+<style lang="scss">
+.fade-enter,
+.fade-enter-active {
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.fade-enter-to {
+  opacity: 1;
+}
+
+.fade-leave-active,
+.fade-leave {
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
 

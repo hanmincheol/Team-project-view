@@ -1,5 +1,4 @@
 <script setup>
-import SearchBar from '@/layouts/components/SearchBarCommunity.vue'
 import { size } from '@floating-ui/dom'
 import avatar1 from '@images/avatars/avatar-1.png'
 import avatar2 from '@images/avatars/avatar-2.png'
@@ -77,7 +76,7 @@ const membersList = [
 
 //게시글 반복할 배열의 길이 설정 + 무한 스크롤로 사용하는 배열 저장용
 
-const items = ref(Array.from({ length: 4 }))
+const items = ref(Array.from({ length: 5 }))
 
 // 스크롤 하단에 내렸을때 호출되는 함수 정리
 
@@ -127,7 +126,12 @@ onBeforeUnmount(() => {
               <VBtn>
                 카테고리 
               </VBtn>
-              <SearchBar />
+              <VTextField
+                v-model="q"
+                class="search px-1 flex-grow-1"
+                prepend-inner-icon="mdi-magnify"
+                placeholder="Search"
+              />
             </VRow>
             <VCol>
               <VCol>
@@ -206,6 +210,17 @@ onBeforeUnmount(() => {
 <style scoped>
 .pointer-cursor {
   cursor: pointer;
+}
+</style>
+
+<style lang="scss">
+@use "@styles/variables/_vuetify.scss";
+@use "@core/scss/base/_mixins.scss";
+
+.search {
+  .v-field__outline {
+    display: none;
+  }
 }
 </style>
 
