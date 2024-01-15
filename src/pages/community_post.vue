@@ -14,6 +14,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 
 const userProfileModal = ref(false)
+const writingModal = ref(false)
 
 const membersList = [
   {
@@ -122,6 +123,14 @@ onBeforeUnmount(() => {
           class="mt-12 mt-sm- pa-0"
         >
           <VCardText>
+            <VCol cols="12">
+              <VBtn 
+                style="float: inline-end;"
+                @click="writingModal=true"
+              >
+                글 등록
+              </VBtn>
+            </VCol>
             <VRow>
               <!-- 카테고리 버튼 추가 -->
               <VBtn>
@@ -200,6 +209,7 @@ onBeforeUnmount(() => {
       </VCol>
     </VRow>
     <UserProfileCommunity v-model:isDialogVisible="userProfileModal" />
+    <Writing v-model:isDialogVisible="writingModal" />
   </section>
 </template>
 

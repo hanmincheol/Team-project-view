@@ -46,7 +46,6 @@ declare module '@vue/runtime-core' {
     DemoMenuBasic: typeof import('./src/views/demos/register/DemoMenuBasic.vue')['default']
     DemoSelectCustomTextAndValue: typeof import('./src/views/demos/DemoSelectCustomTextAndValue.vue')['default']
     DialogCloseBtn: typeof import('./src/@core/components/DialogCloseBtn.vue')['default']
-    DiaryImageFileBiggerSize: typeof import('./src/components/dialogs/DiaryImageFileBiggerSize.vue')['default']
     EnableOneTimePasswordDialog: typeof import('./src/components/dialogs/EnableOneTimePasswordDialog.vue')['default']
     ErrorHeader: typeof import('./src/components/ErrorHeader.vue')['default']
     I18n: typeof import('./src/@core/components/I18n.vue')['default']
@@ -61,6 +60,7 @@ declare module '@vue/runtime-core' {
     ShareProjectDialog: typeof import('./src/components/dialogs/ShareProjectDialog.vue')['default']
     ShareProjectDialogTemp: typeof import('./src/components/dialogs/ShareProjectDialogTemp.vue')['default']
     Shortcuts: typeof import('./src/@core/components/Shortcuts.vue')['default']
+    Subject: typeof import('./src/views/demos/Subject.vue')['default']
     TermsAndConditions: typeof import('./src/views/demos/register/TermsAndConditions.vue')['default']
     TheCustomizer: typeof import('./src/@core/components/TheCustomizer.vue')['default']
     ThemeSwitcher: typeof import('./src/@core/components/ThemeSwitcher.vue')['default']
@@ -73,6 +73,8 @@ declare module '@vue/runtime-core' {
     UserProfileCommunity: typeof import('./src/components/dialogs/UserProfileCommunity.vue')['default']
     UserUpgradedietPlan: typeof import('./src/components/dialogs/UserUpgradedietPlan.vue')['default']
     UserUpgradePlanDialog: typeof import('./src/components/dialogs/UserUpgradePlanDialog.vue')['default']
+    Wri: typeof import('./src/components/dialogs/Wri.vue')['default']
     Write: typeof import('./src/views/demos/register/Write.vue')['default']
+    Writing: typeof import('./src/components/dialogs/Writing.vue')['default']
   }
 }
