@@ -153,7 +153,7 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
       />
       <!-- Diary 시작 -->
       <VCard
-        title="Diary🙌"
+        title=" "
         flat
         :max-width="auto"
         class="mt-4 mt-sm- pa-0"
@@ -320,22 +320,27 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
           <VCard v-if="writeDiaryContent">
             <VCol cols="12">
               <!-- 텍스트 영역 위 img 뿌려주는 공간 -->
-              <VRow style="height: 200px; margin-top: 15px;">
-                <VImg 
-                  v-for="(url, index) in imgUrls" 
-                  :key="index"
-                  :src="url"
-                  :style="{
-                    width: imageSize === index ? '200px' : '150px',
-                    height: imageSize === index ? '200px' : '150px',
-                    alignSelf: 'center',
-                    transition: 'width 0.2s, height 0.2s' // Transition for smooth size change
-                  }"
-                  @click="handleImageClick(url)"
-                  @mouseover="handleMouseOver(index)"
-                  @mouseleave="handleMouseLeave"
-                />
-              </VRow>
+              <Transition name="fade">
+                <VRow
+                  v-if="imgUrls.length > 0"
+                  style="height: 200px; margin-top: 15px;"
+                >
+                  <VImg 
+                    v-for="(url, index) in imgUrls" 
+                    :key="index"
+                    :src="url"
+                    :style="{
+                      width: imageSize === index ? '200px' : '150px',
+                      height: imageSize === index ? '200px' : '150px',
+                      alignSelf: 'center',
+                      transition: 'width 0.2s, height 0.2s' // Transition for smooth size change
+                    }"
+                    @click="handleImageClick(url)"
+                    @mouseover="handleMouseOver(index)"
+                    @mouseleave="handleMouseLeave"
+                  />
+                </VRow>
+              </Transition>
             </VCol>
             <VCol>
               <VCol cols="12">

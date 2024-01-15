@@ -9,7 +9,7 @@ import avatar6 from '@images/avatars/avatar-6.png'
 import avatar7 from '@images/avatars/avatar-7.png'
 import avatar8 from '@images/avatars/avatar-8.png'
 import pages1 from '@images/pages/1.png'
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 
 const userProfileModal = ref(false)
@@ -74,6 +74,31 @@ const membersList = [
   },
 ]
 
+
+//스크롤 이벤트 리스터 추가 - 화면 하단에 스크롤 도착 시 loadMore()함수 호출
+const scrollTimeout = ref(null)
+
+const handleScroll = () => {
+  if(scrollTimeout.value !== null) 
+    clearTimeout(scrollTimeout.value)  
+
+  scrollTimeout.value = setTimeout(function() {
+    if ((window.innerHeight + document.documentElement.scrollTop) >= document.documentElement.offsetHeight) {
+      loadMore()
+    }
+  }, 150)
+}
+
+//이벤트 리스터 추가 
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+})
+
+//이벤트 리스너 제거
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
+
 //게시글 반복할 배열의 길이 설정 + 무한 스크롤로 사용하는 배열 저장용
 
 const items = ref(Array.from({ length: 5 }))
@@ -83,31 +108,13 @@ const items = ref(Array.from({ length: 5 }))
 const loadMore = () => {
   //moreItems로 새로 추가할 배열의 길이 설정
 
-  const moreItems = Array.from({ length: 3 })
+  const moreItems = Array.from({ length: 5 })
   
   //items 배열에 moreItems 배열 추가해서 화면에 표시되는 게시글 추가
 
   items.value = items.value.concat(moreItems)
-  console.log('Loading more items...')
+  console.log("leadMore..")
 }
-
-
-//스크롤 이벤트 리스터 추가 - 화면 하단에 스크롤 도착 시 loadMore()함수 호출
-const handleScroll = () => {
-  if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-    loadMore()
-  }
-}
-
-//이벤트 리스터 추가 
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-})
-
-//이벤트 리스너 제거
-onBeforeUnmount(() => {
-  window.removeEventListener('scroll', handleScroll)
-})
 </script>
 
 
