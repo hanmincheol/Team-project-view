@@ -157,11 +157,3 @@ const isNutrientAnalysisVisible = ref(false) //모달창 컨트롤 변수
   </VCard>
 </template>
 
-<script>
-
-</script>
-
-<style>
-
-</style>
-

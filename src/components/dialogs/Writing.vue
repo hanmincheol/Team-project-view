@@ -1,9 +1,13 @@
 <script setup>
+import It from '@/pages/views/demos/components/tabs/ImageTab.vue'
 import Hashtag from '@/pages/views/demos/forms/form-elements/textarea/Hashtag.vue'
 import Text from '@/pages/views/demos/forms/form-elements/textarea/WritingText.vue'
 import Sub from '@/views/demos/Subject.vue'
 import { size } from '@floating-ui/dom'
 import avatar1 from '@images/avatars/avatar-1.png'
+import { ref } from 'vue'
+
+
 
 
 
@@ -16,8 +20,11 @@ const props = defineProps({
 
 const emit = defineEmits(['update:isDialogVisible'])
 
+const imageUrls = ref([]) // 각 이미지의 URL을 저장하는 배열
+
 const isprofile = ref(false)
-const text = ref(['공개'])
+
+const people = ref(false)
 
 const dialogVisibleUpdate = value => {
   emit('update:isDialogVisible', value)
@@ -45,6 +52,13 @@ const members = [
       <VIcon>mdi-close</VIcon>
     </VBtn>
     <VCol cols="12">
+      <!--
+        <VImg
+        :src="bg"
+        style=" filter: contrast(200%);opacity: 0.5;"
+        /> 
+      -->
+
       <VCard>
         <VCardText>
           <div
@@ -63,13 +77,14 @@ const members = [
                   >
                     <template #prepend>
                       <VAvatar 
-                        class="text-sm pointer-cursor"
+                        class="text pointer-cursor"
                         :image="member.avatar" 
                         @click="isprofile=true"
                       />
                     </template>
                     <VListItemTitle 
-                      class="text-sm pointer-cursor"
+                      class="text pointer-cursor"
+                      style="font-weight: bold;"
                       @click="isprofile=true"
                       @mouseover="size"  
                     >
@@ -79,7 +94,7 @@ const members = [
                 </VCol>
                 <VCol
                   cols="4"
-                  style=" margin-left: 75px;"
+                  style=" margin-left: 85px;"
                 >
                   <Sub />
                 </VCol>
@@ -94,41 +109,33 @@ const members = [
                   <Hashtag />
                 </VCol>
               </VRow>
-              <VRow style=" margin-top: -10px;">
-                <VSwitch
-                  v-model="selectedSwitch"
-                  style="margin-left: auto;"
-                  :label="text"
-                  :value="item"
-                  :color="Primary"
-                />
+              <VRow style="margin-top: -10px;">
+                <div
+                  class="demo-space-x"
+                  style="display: flex; width: 100%; justify-content: flex-end;"
+                >
+                  <VSwitch
+                    v-model="people"
+                    value="people"
+                  />
+                  <h3
+                    v-if="people"
+                    style="margin-top: 17px; margin-left: 2px;"
+                  >
+                    공개
+                  </h3>
+                  <h3
+                    v-if="!people"
+                    style="margin-top: 17px; margin-left: 2px;"
+                  >
+                    비공개
+                  </h3>
+                </div>
               </VRow>
             </VCol>
-            <VCol
-              cols="6"
-              style=" margin-top: 10px;"
-            >
+            <VCol cols="6">
               <VCardItem>
-                <input
-                  id="filebtn"
-                  type="file"
-                  accept="image/*"
-                  hidden
-                  @change="uploadImg($event,'imgBefore')"
-                >
-                <!-- label의 for속성값과 input의 id값을 맞춰줘야 label영역을 클릭했을 때 input태그가 활성화됨 -->
-                <label
-                  for="filebtn"
-                  class="input-plus"
-                > 
-                  <div :style="{'border-style':'solid', 'width':'100%', 'height':'600px', 'display':'flex','justify-content': 'center','align-items': 'center'}">
-                    <img
-                      id="imgBefore"
-                      :style="{'width':'50px', 'height':'60px'}"
-                      src="@images/noimage.png"
-                    >
-                  </div>
-                </label>
+                <It :image-urls="imageUrls" />
               </VCardItem>
             </VCol>
           </VRow>
