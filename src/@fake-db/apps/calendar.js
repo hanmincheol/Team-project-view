@@ -124,6 +124,7 @@ const data = {
 
 // ------------------------------------------------
 // GET: Return calendar events
+// mock은 실제 요청이 아닌 가짜로 응답을 구성함
 // ------------------------------------------------
 mock.onGet('/apps/calendar/events').reply(config => {
   // Get requested calendars as Array
@@ -134,6 +135,8 @@ mock.onGet('/apps/calendar/events').reply(config => {
 
 // ------------------------------------------------
 // POST: Add new event
+// getId(data.events) 함수로 data.events 배열의 id값을 기반으로 고유 식별자 id를 생성하고
+// 생성된 id 이벤트 객체의 id속성에 할당
 // ------------------------------------------------
 mock.onPost('/apps/calendar/events').reply(config => {
   // Get event from post data
@@ -142,6 +145,7 @@ mock.onPost('/apps/calendar/events').reply(config => {
   event.id = String(genId(data.events))
   data.events.push(event)
   
+  //[상태코드, 응답데이터] 형식은 Axios에서 사용되는 응답 구조
   return [201, { event }]
 })
 
