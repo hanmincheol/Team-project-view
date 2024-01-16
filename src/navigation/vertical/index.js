@@ -14,7 +14,7 @@ export default [
       { title: '채팅', to: { name: 'apps-chat' }, icon: { icon: 'mdi-message-text'  } },
       { title: '챌린지', to: { name: 'apps-user-id', params: { id: 21 } }, icon: { icon: 'mdi-crowd'  } },
       { title: '게시판', to: { name: 'community_post' }, icon: { icon: 'mdi-instagram'  } },
-      { title: '챌린지목록', to: { name: 'apps-challengeList' }, icon: { icon: 'mdi-message-outline'  }},
+      { title: '챌린지목록', to: { name: 'apps-challengeList' }, icon: { icon: 'mdi-message-outline'  } },
     ],
   },
   {
@@ -28,15 +28,14 @@ export default [
     icon: { icon: 'mdi-notebook' },
   },
   {
-<<<<<<< HEAD
-    title: '자가진단',
-    to: { name: 'selfTest' },
-    icon: { icon: 'mdi-account-check-outline' },
-=======
     title: '메이트',
     to: { name: 'mate' },
     icon: { icon: 'mdi-notebook' },
->>>>>>> origin/LDH
+  },
+  {
+    title: '자가진단',
+    to: { name: 'selfTest' },
+    icon: { icon: 'mdi-notebook' },
   },
   ...management,
 ]
