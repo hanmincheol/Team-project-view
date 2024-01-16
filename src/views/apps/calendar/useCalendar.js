@@ -1,9 +1,9 @@
+import { useCalendarStore } from '@/views/apps/calendar/useCalendarStore'
+import { useThemeConfig } from '@core/composable/useThemeConfig'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
 import timeGridPlugin from '@fullcalendar/timegrid'
-import { useThemeConfig } from '@core/composable/useThemeConfig'
-import { useCalendarStore } from '@/views/apps/calendar/useCalendarStore'
 
 export const blankEvent = {
   title: '',
@@ -89,7 +89,8 @@ export const useCalendar = (event, isEventHandlerSidebarActive, isLeftSidebarOpe
   const calendarApi = ref(null)
 
 
-  // 👉 Update event in calendar [UI]
+  // calendarApi.value?.getEventById(updatedEventData.id)를 사용하여 
+  // updatedEventData.id에 해당하는 이벤트를 캘린더에서 가져온다
   const updateEventInCalendar = (updatedEventData, propsToUpdate, extendedPropsToUpdate) => {
     const existingEvent = calendarApi.value?.getEventById(updatedEventData.id)
     if (!existingEvent) {
@@ -166,13 +167,15 @@ export const useCalendar = (event, isEventHandlerSidebarActive, isLeftSidebarOpe
   }
 
 
-  // 👉 Calendar options
+  // 👉 Calendar options  
+  // interactionPlugin 제거하면 달력 터치해서 이벤트 생성하는 이벤트 사라짐
+  // timeGridPlugin 제거하면 위 WEEK | DAY 사라짐 , listPlugin 제거하면 위 LIST제거
   const calendarOptions = {
     plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin, listPlugin],
     initialView: 'dayGridMonth',
     headerToolbar: {
-      start: 'drawerToggler,prev,next title',
-      end: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth',
+      start: 'drawerToggler,prev,next title', //상단 2024부분 화살표
+      end: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth', //상단 MONTH/WEEK/DAY/LIST부분 뿌려주는 곳
     },
     events: fetchEvents,
 
@@ -197,10 +200,8 @@ export const useCalendar = (event, isEventHandlerSidebarActive, isLeftSidebarOpe
       */
     dragScroll: true,
 
-    /*
-        Max number of events within a given day
-        Docs: https://fullcalendar.io/docs/dayMaxEvents
-      */
+
+    //하루에 최대 표시해주는 이벤트를 2개로 한정시킴
     dayMaxEvents: 2,
 
     /*
