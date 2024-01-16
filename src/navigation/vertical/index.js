@@ -14,6 +14,7 @@ export default [
       { title: '채팅', to: { name: 'apps-chat' }, icon: { icon: 'mdi-message-text'  } },
       { title: '챌린지', to: { name: 'apps-user-id', params: { id: 21 } }, icon: { icon: 'mdi-crowd'  } },
       { title: '게시판', to: { name: 'community_post' }, icon: { icon: 'mdi-instagram'  } },
+      { title: '챌린지목록', to: { name: 'apps-challengeList' }, icon: { icon: 'mdi-message-outline'  }},
     ],
   },
   {
@@ -24,6 +25,11 @@ export default [
   {
     title: '다이어리',
     to: { name: 'fifth-page' },
+    icon: { icon: 'mdi-notebook' },
+  },
+  {
+    title: '메이트',
+    to: { name: 'mate' },
     icon: { icon: 'mdi-notebook' },
   },
   ...management,
