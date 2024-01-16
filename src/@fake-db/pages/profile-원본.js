@@ -292,79 +292,141 @@ const data = {
   ],
   projects: [
     {
-      title: '건강한 나를 위한 챌린지1', //챌린지 제목
-      startDate: '24/1/12', //시작일
-      deadline: '24/3/01', //종료일
-      client: 'HealthyReal', //방장
-      pay: 5000, //참가비
-      members: 4, //참여인원
+      daysLeft: 28,
+      comments: 15,
       totalTask: 344,
+      hours: '380/244',
       tasks: '290/344',
+      budget: '$18.2k',
       completedTask: 328,
+      deadline: '28/2/22',
+      chipColor: 'success',
+      startDate: '14/2/21',
+      budgetSpent: '$24.8k',
+      members: '280 members',
+      title: 'Social Banners',
+      client: 'Christian Jimenez',
       avatar: socialLabel,
-      percent:50,
-      description: '설명란입니다.',
-      avatarGroup: [ //참여자 정보
+      description: 'We are Consulting, Software Development and Web Development Services.',
+      avatarGroup: [
         { avatar: avatar1, name: 'Vinnie Mostowy' },
         { avatar: avatar2, name: 'Allen Rieske' },
         { avatar: avatar3, name: 'Julee Rossignol' },
       ],
     },
     {
-      title: '건강한 나를 위한 챌린지2', //챌린지 제목
-      startDate: '24/1/20', //시작일
-      deadline: '24/4/01', //종료일
-      client: 'HealthyReal', //방장
-      pay: 5000, //참가비
-      members: 4, //참여인원
-      totalTask: 344,
-      tasks: '290/344',
-      completedTask: 328,
-      avatar: socialLabel,
-      percent:50,
-      description: '설명란입니다.',
-      avatarGroup: [ //참여자 정보
-        { avatar: avatar1, name: 'Vinnie Mostowy' },
-        { avatar: avatar2, name: 'Allen Rieske' },
-        { avatar: avatar3, name: 'Julee Rossignol' },
+      daysLeft: 15,
+      comments: 236,
+      totalTask: 90,
+      tasks: '12/90',
+      hours: '98/135',
+      budget: '$1.8k',
+      completedTask: 38,
+      deadline: '21/6/22',
+      budgetSpent: '$2.4k',
+      chipColor: 'warning',
+      startDate: '18/8/21',
+      members: '1.1k members',
+      title: 'Admin Template',
+      client: 'Jeffrey Phillips',
+      avatar: reactLabel,
+      avatarGroup: [
+        { avatar: avatar4, name: 'Kaith D\'souza' },
+        { avatar: avatar5, name: 'John Doe' },
+        { avatar: avatar6, name: 'Alan Walker' },
+      ],
+      description: 'Time is our most valuable asset, that\'s why we want to help you save it by creating…',
+    },
+    {
+      daysLeft: 45,
+      comments: 98,
+      budget: '$420',
+      totalTask: 140,
+      tasks: '22/140',
+      hours: '880/421',
+      completedTask: 95,
+      chipColor: 'error',
+      budgetSpent: '$980',
+      deadline: '8/10/21',
+      title: 'App Design',
+      startDate: '24/7/21',
+      members: '458 members',
+      client: 'Ricky McDonald',
+      avatar: vueLabel,
+      description: 'App design combines the user interface (UI) and user experience (UX).',
+      avatarGroup: [
+        { avatar: avatar7, name: 'Jimmy Ressula' },
+        { avatar: avatar8, name: 'Kristi Lawker' },
+        { avatar: avatar1, name: 'Danny Paul' },
       ],
     },
     {
-      title: '건강한 나를 위한 챌린지3', //챌린지 제목
-      startDate: '24/2/01', //시작일
-      deadline: '24/6/01', //종료일
-      client: 'HealthyReal', //방장
-      pay: 5000, //참가비
-      members: 4, //참여인원
-      totalTask: 344,
-      tasks: '290/344',
-      completedTask: 328,
-      avatar: socialLabel,
-      percent:50,
-      description: '설명란입니다.',
-      avatarGroup: [ //참여자 정보
-        { avatar: avatar1, name: 'Vinnie Mostowy' },
-        { avatar: avatar2, name: 'Allen Rieske' },
-        { avatar: avatar3, name: 'Julee Rossignol' },
+      comments: 120,
+      daysLeft: 126,
+      totalTask: 420,
+      budget: '2.43k',
+      tasks: '237/420',
+      hours: '1.2k/820',
+      completedTask: 302,
+      deadline: '12/9/22',
+      budgetSpent: '$8.5k',
+      chipColor: 'warning',
+      startDate: '10/2/19',
+      members: '137 members',
+      client: 'Hulda Wright',
+      title: 'Create Website',
+      avatar: htmlLabel,
+      description: 'Your domain name should reflect your products or services so that your...',
+      avatarGroup: [
+        { avatar: avatar2, name: 'Andrew Tye' },
+        { avatar: avatar3, name: 'Rishi Swaat' },
+        { avatar: avatar4, name: 'Rossie Kim' },
       ],
     },
     {
-      title: '건강한 나를 위한 챌린지4', //챌린지 제목
-      startDate: '24/1/11', //시작일
-      deadline: '24/2/01', //종료일
-      client: 'HealthyReal', //방장
-      pay: 5000, //참가비
-      members: 4, //참여인원
-      totalTask: 344,
-      tasks: '290/344',
-      completedTask: 328,
-      avatar: socialLabel,
-      percent:50,
-      description: '설명란입니다.',
-      avatarGroup: [ //참여자 정보
-        { avatar: avatar1, name: 'Vinnie Mostowy' },
-        { avatar: avatar2, name: 'Allen Rieske' },
-        { avatar: avatar3, name: 'Julee Rossignol' },
+      daysLeft: 5,
+      comments: 20,
+      totalTask: 285,
+      tasks: '29/285',
+      budget: '28.4k',
+      hours: '142/420',
+      chipColor: 'error',
+      completedTask: 100,
+      deadline: '25/12/21',
+      startDate: '12/12/20',
+      members: '82 members',
+      budgetSpent: '$52.7k',
+      client: 'Jerry Greene',
+      title: 'Figma Dashboard',
+      avatar: figmaLabel,
+      description: 'Use this template to organize your design project. Some of the key features are…',
+      avatarGroup: [
+        { avatar: avatar5, name: 'Kim Merchent' },
+        { avatar: avatar6, name: 'Sam D\'souza' },
+        { avatar: avatar7, name: 'Nurvi Karlos' },
+      ],
+    },
+    {
+      daysLeft: 4,
+      comments: 16,
+      budget: '$655',
+      totalTask: 290,
+      tasks: '29/290',
+      hours: '580/445',
+      completedTask: 290,
+      budgetSpent: '$1.3k',
+      chipColor: 'success',
+      deadline: '02/11/21',
+      startDate: '17/8/21',
+      title: 'Logo Design',
+      members: '16 members',
+      client: 'Olive Strickland',
+      avatar: xdLabel,
+      description: 'Premium logo designs created by top logo designers. Create the branding of business.',
+      avatarGroup: [
+        { avatar: avatar8, name: 'Kim Karlos' },
+        { avatar: avatar1, name: 'Katy Turner' },
+        { avatar: avatar2, name: 'Peter Adward' },
       ],
     },
   ],

@@ -51,7 +51,7 @@ watchEffect(() => {
   emit('update:currentStep', currentStep.value)
 })
 </script>
-
+  
 <template>
   <VSlideGroup
     v-model="currentStep"
