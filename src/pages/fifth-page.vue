@@ -1,12 +1,13 @@
 <script setup>
-import timelineCardHeader from '@images/cards/timeline-card-header.png'
-import DiaryPage from '@images/cards/DiaryPage.png'
 import Calendar from '@/pages/apps/calendar.vue'
-import { ref } from 'vue'
+import DiaryPage from '@images/cards/DiaryPage.png'
+import timelineCardHeader from '@images/cards/timeline-card-header.png'
 import {
   requiredValidatorDiaryPassword,
 } from '@validators'
+import { ref } from 'vue'
 
+const biggeImgFile = ref(false)
 const previousBtn = ref(null)
 const btnSize = '40'  //버튼 크기
 const isDialogVisible = ref(false)
@@ -19,6 +20,7 @@ const viewPassword = ref(false)
 const password = ref('Password')
 const refVForm = ref()
 const inputDiaryPhoto = ref(false)
+const clickedImageUrl = ref('')
 
 const diaryWriteComplet = () => {
   writeDiaryContent.value = false
@@ -94,6 +96,13 @@ const uploadImg = e => {
   }
 }
 
+// 마우스 클릭할 때
+const handleImageClick = url => {
+  clickedImageUrl.value = url // Set the clicked image URL
+  biggeImgFile.value = true // Set biggeImgFile to true
+  console.log(clickedImageUrl.value)
+}
+
 // 마우스 올릴 때
 const handleMouseOver = index => {
   imageSize.value = index // Set the index of the hovered image
@@ -144,10 +153,10 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
       />
       <!-- Diary 시작 -->
       <VCard
-        title="Diary🙌"
+        title=" "
         flat
         :max-width="auto"
-        class="mt-12 mt-sm- pa-0"
+        class="mt-4 mt-sm- pa-0"
       >
         <VRow cols="12">
           <VCol cols="2" />
@@ -189,7 +198,7 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
                     @click="isDialogVisible = false"
                   />
                   <VCardText>
-                    당신의 표정을 찍어서 오늘의 스트레스 지수를 확인해보세요!! <br />
+                    당신의 표정을 찍어서 오늘의 스트레스 지수를 확인해보세요!! <br>
                     AI가 당신의 표정을 읽어 스트레스 지수를 알려줘요  
                   </VCardText>
                   <VImg
@@ -234,37 +243,41 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
           align="center"
         >
           <!-- 다이어리 비밀번호 입력 -->
-          <VRow v-if="!diaryLock">
-            <VCol cols="9" />
-            <VCol cols="2">
-              <VForm 
-                ref="refVForm" 
-                @submit="diaryLock=true"
-              >
-                <VTextField
-                  v-if="viewPassword"
-                  v-model="password"
+          <Transition name="fade">
+            <VRow v-if="!diaryLock">
+              <VCol cols="9" />
+              <VCol cols="2">
+                <VForm 
+                  ref="refVForm" 
+                  @submit="diaryLock=true"
+                >
+                  <Transition name="fade">
+                    <VTextField
+                      v-if="viewPassword"
+                      v-model="password"
+                      style="margin-top: 450px;"
+                      :append-inner-icon="show1 ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+                      :rules="[rules.required, rules.min, requiredValidatorDiaryPassword]"
+                      :type="show1 ? 'text' : 'password'"
+                      name="input-10-1"
+                      label="Password"
+                      counter
+                      @click:append-inner="show1 = !show1"
+                    />
+                  </Transition>
+                </VForm>
+              </VCol>
+              <VCol cols="1">
+                <VBtn 
+                  icon="mdi-lock"
+                  rounded="lg"
+                  size="x-large"
                   style="margin-top: 450px;"
-                  :append-inner-icon="show1 ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
-                  :rules="[rules.required, rules.min, requiredValidatorDiaryPassword]"
-                  :type="show1 ? 'text' : 'password'"
-                  name="input-10-1"
-                  label="Password"
-                  counter
-                  @click:append-inner="show1 = !show1"
+                  @click="viewPassword = true"
                 />
-              </VForm>
-            </VCol>
-            <VCol cols="1">
-              <VBtn 
-                icon="mdi-lock"
-                rounded="lg"
-                size="x-large"
-                style="margin-top: 450px;"
-                @click="viewPassword = true"
-              />
-            </VCol>
-          </VRow>
+              </VCol>
+            </VRow>
+          </Transition>
           <!-- 비밀번호 입력 끝 -->
           <!-- 비밀번호 입력 했을 시 보이는 화면 -->
           <VRow v-if="diaryLock">
@@ -307,22 +320,27 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
           <VCard v-if="writeDiaryContent">
             <VCol cols="12">
               <!-- 텍스트 영역 위 img 뿌려주는 공간 -->
-              <VRow>
-                <VImg 
-                  v-for="(url, index) in imgUrls" 
-                  :key="index"
-                  :src="url"
-                  :style="{
-                    width: imageSize === index ? '200px' : '150px',
-                    height: imageSize === index ? '200px' : '150px',
-                    alignSelf: 'center',
-                    transition: 'width 0.2s, height 0.2s' // Transition for smooth size change
-                  }"
-                  @click="df"
-                  @mouseover="handleMouseOver(index)"
-                  @mouseleave="handleMouseLeave"
-                />
-              </VRow>
+              <Transition name="fade">
+                <VRow
+                  v-if="imgUrls.length > 0"
+                  style="height: 200px; margin-top: 15px;"
+                >
+                  <VImg 
+                    v-for="(url, index) in imgUrls" 
+                    :key="index"
+                    :src="url"
+                    :style="{
+                      width: imageSize === index ? '200px' : '150px',
+                      height: imageSize === index ? '200px' : '150px',
+                      alignSelf: 'center',
+                      transition: 'width 0.2s, height 0.2s' // Transition for smooth size change
+                    }"
+                    @click="handleImageClick(url)"
+                    @mouseover="handleMouseOver(index)"
+                    @mouseleave="handleMouseLeave"
+                  />
+                </VRow>
+              </Transition>
             </VCol>
             <VCol>
               <VCol cols="12">
@@ -423,6 +441,22 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
                     </VCardText>
                   </VCard>
                 </VDialog>
+                <!-- 멀티 이미지 클릭 시 열리는 모달 -->
+                <VDialog
+                  v-model="biggeImgFile"
+                  width="600"
+                  height="650"
+                >
+                  <VCard cols="12">
+                    <VCardText>
+                      <VImg
+                        :src="clickedImageUrl"
+                        width="600px"
+                        height="600px"
+                      />
+                    </VCardText>
+                  </VCard>
+                </VDialog>
               </VCol>
             </VCol>
           </VCard>
@@ -433,4 +467,27 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
     </VCol>
   </VRow>
 </template>
+
+
+<style lang="scss">
+.fade-enter,
+.fade-enter-active {
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.fade-enter-to {
+  opacity: 1;
+}
+
+.fade-leave-active,
+.fade-leave {
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
 

@@ -1,17 +1,20 @@
 <script setup>
-import axios from '@axios';
-import { useRoute } from 'vue-router';
+import axios from '@axios'
+import { useRoute } from 'vue-router'
+
 const router = useRoute()
 const connectionData = ref([])
 
 //axios로 가짜 데이터 가져오기
 const fetchProjectData = () => {
   if (router.params.tab === 'friend') {
-    axios.get('/pages/profile', { params: { tab: 'connections'} }).then(response => {
+    axios.get('/pages/profile', { params: { tab: 'connections' } }).then(response => {
       connectionData.value = response.data
     })
   }
 }
+
+
 //watch 함수를 사용하여 router 객체를 감시하고, 변경이 있을 때마다 fetchProjectData 함수를 실행합니다. 
 //immediate: true 옵션을 사용하여 초기 로드 시에도 함수를 실행합니다.
 watch(router, fetchProjectData, { immediate: true })
@@ -70,17 +73,17 @@ const moreBtnList = [
               :image="data.avatar"
               class="mt-3"
             />
-            <!--이름 부분-->
+            <!-- 이름 부분 -->
             <p class="mt-6 mb-0">
               {{ data.name }}
             </p>
-            <!--이름 부분-->
-            <!--직업 부분-->
+            <!-- 이름 부분 -->
+            <!-- 직업 부분 -->
             <span class="text-body-1">{{ data.designation }}</span>
-            <!--직업 부분-->
+            <!-- 직업 부분 -->
 
             <div class="d-flex align-center flex-wrap gap-2 mt-6">
-              <!--주 전문분야 부분-->
+              <!-- 주 전문분야 부분 -->
               <VChip
                 v-for="chip in data.chips"
                 :key="chip.title"
@@ -91,7 +94,7 @@ const moreBtnList = [
                   {{ chip.title }}
                 </span>
               </VChip>
-              <!--주 전문분야 부분-->
+              <!-- 주 전문분야 부분 -->
             </div>
           </VCardTitle>
         </VCardItem>
