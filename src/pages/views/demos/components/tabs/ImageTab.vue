@@ -1,7 +1,7 @@
 <script setup>
+import axios from 'axios'
 import bg from '@images/pages/writing.jpg'
 import { reactive, ref, toRefs } from 'vue'
-import axios from 'axios'
 
 async function uploadImages() {
   let formData = new FormData()
@@ -21,6 +21,7 @@ async function uploadImages() {
   } catch (e) {
     console.error(e)
   }
+
 } //위부터 여기까지 값 넘기는 구간
 
 let images = reactive({ files: [] })  // 선택된 이미지 파일을 저장하는 배열
@@ -35,6 +36,7 @@ let fileNames = computed(() => {
     while (names.join(', ').length > maxNameLength) {
       names[names.length - 1] = names[names.length - 1].slice(0, -1)
     }
+
     names[names.length - 1] += '...'  // 마지막 파일 이름에 줄임표 추가
   }
   
@@ -53,10 +55,13 @@ const removeImage = index => {
   if (activeTab.value >= images.files.length) {
     activeTab.value = images.files.length - 1
   }
+
   fileInput.value = null  // 파일 선택 상태 초기화
+  
 }
 
 const { files } = toRefs(images)
+
 let fileInput = ref(null)  // 파일 입력을 위한 ref 생성
 </script>
 
@@ -93,11 +98,13 @@ let fileInput = ref(null)  // 파일 입력을 위한 ref 생성
 
     <VFileInput
       ref="fileInput"
+      :key="files.length"
       v-model="files"
-      multiple
-      label="파일을 첨부하세요" 
+      multiple 
+      label="파일을 첨부하세요"
       :show-size="false"
       prepend-icon="mdi-instagram"
+      accept="image/*"
     >
       <template #selection="{ text }">
         <div class="text-truncate">
@@ -107,6 +114,22 @@ let fileInput = ref(null)  // 파일 입력을 위한 ref 생성
     </VFileInput>
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      files: [],
+    }
+  },
+  methods: {
+    deleteAllFiles() {
+      this.files = [] // 파일 전체 삭제
+      this.$refs.fileInput.reset() // VFileInput 컴포넌트 초기화
+    },
+  },
+}
+</script>
 
 <style scoped>
 .image-container {

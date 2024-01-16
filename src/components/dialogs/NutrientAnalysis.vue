@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { mealsData } from '@/@fake-db/mealTable';
-import NutrientChart from '@/views/charts/apex-chart/NutrientChart.vue';
-import CalorieChart from '@/views/charts/chartjs/CalorieChart.vue';
+import { mealsData } from '@/@fake-db/mealTable'
+import NutrientChart from '@/views/charts/apex-chart/NutrientChart.vue'
+import CalorieChart from '@/views/charts/chartjs/CalorieChart.vue'
 
 const props = defineProps({
   isDialogVisible: {
@@ -15,7 +15,6 @@ const emit = defineEmits(['update:isDialogVisible'])
 const dialogVisibleUpdate = val => {
   emit('update:isDialogVisible', val)
 }
-
 </script>
 
 <template>
@@ -23,9 +22,8 @@ const dialogVisibleUpdate = val => {
     :model-value="props.isDialogVisible"
     max-width="1200"
     @update:model-value="dialogVisibleUpdate"
-    
   >
-    <VCard class="share-project-dialog pa-5 pa-sm-8" >
+    <VCard class="share-project-dialog pa-5 pa-sm-8">
       <!-- 👉 dialog close btn -->
       <DialogCloseBtn
         variant="text"
@@ -33,121 +31,127 @@ const dialogVisibleUpdate = val => {
         @click="emit('update:isDialogVisible', false)"
       />
       <VRow>
-      <VCol cols="6">
-        <!--영양소 분석-->
-        <VCard 
-          title="주요 영양소"
-          :style="{'margin-top':'20px'}">
-          <NutrientChart/>
-          <!--식단 테이블-->
-          <VTable height="250" class="text-center">
-            <thead>
-              <tr>
-                <th class="text-center">
-                  <VIcon 
-                    icon = "mdi-clock-time-five"
-                  />
-                  &nbsp; 시간 
-                  <br/>
-                  recommend
-                </th>
-                <th class="text-center">
-                  탄수화물
-                  <br/>
-                  315g
-                </th>
-                <th class="text-center">
-                  단백질
-                  <br/>
-                  315g
-                </th>
-                <th class="text-center">
-                  지방
-                  <br/>
-                  315g
-                </th>
-                <th class="text-center">
-                  비타민
-                  <br/>
-                  315g
-                </th>
-                <th class="text-center">
-                  무기질
-                  <br/>
-                  315g
-                </th>
-              </tr>
-            </thead>
+        <VCol cols="6">
+          <!-- 영양소 분석 -->
+          <VCard 
+            title="주요 영양소"
+            :style="{'margin-top':'20px'}"
+          >
+            <NutrientChart />
+            <!-- 식단 테이블 -->
+            <VTable
+              height="250"
+              class="text-center"
+            >
+              <thead>
+                <tr>
+                  <th class="text-center">
+                    <VIcon icon="mdi-clock-time-five" />
+                    &nbsp; 시간 
+                    <br>
+                    recommend
+                  </th>
+                  <th class="text-center">
+                    탄수화물
+                    <br>
+                    315g
+                  </th>
+                  <th class="text-center">
+                    단백질
+                    <br>
+                    315g
+                  </th>
+                  <th class="text-center">
+                    지방
+                    <br>
+                    315g
+                  </th>
+                  <th class="text-center">
+                    비타민
+                    <br>
+                    315g
+                  </th>
+                  <th class="text-center">
+                    무기질
+                    <br>
+                    315g
+                  </th>
+                </tr>
+              </thead>
 
-            <tbody>
-              <tr
-                v-for="item in mealsData"
-                :key="item.time"
-              >
-                <td>
-                  {{ item.time }}
-                </td>
-                <td>
-                  {{ item.carbo }}
-                </td>
-                <td>
-                  {{ item.protein }}
-                </td>
-                <td>
-                  {{ item.fat }}
-                </td>
-                <td>
-                  {{ item.vita }}
-                </td>
-                <td>
-                  {{ item.mineral }}
-                </td>
-              </tr>
-            </tbody>
-          </VTable>
-        </VCard>
-        <!--영양소 분석 end-->
-      </VCol>
-      <VCol cols="6">
-        <!--칼로리 분석-->
-        <VCard :style="{'margin-top':'20px'}"
-        title="칼로리 분석">
-          <VCardItem>
-            <CalorieChart/>
-          </VCardItem>
-          <!--칼로리 테이블-->
-          <VTable height="250" class="text-center" :style="{'margin-top':'15px'}">
-            <thead>
-              <tr>
-                <th class="text-center">
-                  <VIcon 
-                    icon = "mdi-clock-time-five"
-                  />
-                  &nbsp; 시간
-                </th>
-                <th class="text-center">
-                  칼로리
-                </th>
-              </tr>
-            </thead>
+              <tbody>
+                <tr
+                  v-for="item in mealsData"
+                  :key="item.time"
+                >
+                  <td>
+                    {{ item.time }}
+                  </td>
+                  <td>
+                    {{ item.carbo }}
+                  </td>
+                  <td>
+                    {{ item.protein }}
+                  </td>
+                  <td>
+                    {{ item.fat }}
+                  </td>
+                  <td>
+                    {{ item.vita }}
+                  </td>
+                  <td>
+                    {{ item.mineral }}
+                  </td>
+                </tr>
+              </tbody>
+            </VTable>
+          </VCard>
+        <!-- 영양소 분석 end -->
+        </VCol>
+        <VCol cols="6">
+          <!-- 칼로리 분석 -->
+          <VCard
+            :style="{'margin-top':'20px'}"
+            title="칼로리 분석"
+          >
+            <VCardItem>
+              <CalorieChart />
+            </VCardItem>
+            <!-- 칼로리 테이블 -->
+            <VTable
+              height="250"
+              class="text-center"
+              :style="{'margin-top':'15px'}"
+            >
+              <thead>
+                <tr>
+                  <th class="text-center">
+                    <VIcon icon="mdi-clock-time-five" />
+                    &nbsp; 시간
+                  </th>
+                  <th class="text-center">
+                    칼로리
+                  </th>
+                </tr>
+              </thead>
 
-            <tbody>
-              <tr
-                v-for="item in mealsData"
-                :key="item.time"
-              >
-                <td>
-                  {{ item.time }}
-                </td>
-                <td>
-                  {{ item.calorie }}
-                </td>
-              </tr>
-            </tbody>
-          </VTable>
-        </VCard>
-        <!--칼로리 분석 ends-->
-      </VCol>
+              <tbody>
+                <tr
+                  v-for="item in mealsData"
+                  :key="item.time"
+                >
+                  <td>
+                    {{ item.time }}
+                  </td>
+                  <td>
+                    {{ item.calorie }}
+                  </td>
+                </tr>
+              </tbody>
+            </VTable>
+          </VCard>
+        <!-- 칼로리 분석 ends -->
+        </VCol>
       </VRow>
     </VCard>
   </VDialog>
