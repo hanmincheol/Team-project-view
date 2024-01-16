@@ -31,4 +31,9 @@ export default [
     to: { name: 'mate' },
     icon: { icon: 'mdi-notebook' },
   },
+  {
+    title: '메이트',
+    to: { name: 'mate' },
+    icon: { icon: 'mdi-notebook' },
+  },
 ]
