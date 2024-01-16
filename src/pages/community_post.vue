@@ -9,15 +9,12 @@ import avatar5 from '@images/avatars/avatar-5.png'
 import avatar6 from '@images/avatars/avatar-6.png'
 import avatar7 from '@images/avatars/avatar-7.png'
 import avatar8 from '@images/avatars/avatar-8.png'
-import { computed, onMounted, ref } from 'vue'
-
-
-
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 const userProfileModal = ref(false)
 const writingModal = ref(false)
+const borderColor = ref('#ccc')
 let q = ref('')
-
 
 //검색기능
 const filteredItems = computed(() => {
@@ -27,15 +24,6 @@ const filteredItems = computed(() => {
   
   return items.value
 })
-
-const searchItems = () => {
-  // 검색 실행 시, 'q'가 비어있지 않다면 필터링된 게시글 목록을 반환
-  if (q.value) {
-    items.value = items.value.filter(item => item.title.includes(q.value))
-  }
-}//검색기능 
-
-
 
 const images = [
   {
@@ -113,7 +101,8 @@ const handleScroll = () => {
     clearTimeout(scrollTimeout.value)  
 
   scrollTimeout.value = setTimeout(function() {
-    if ((window.innerHeight + document.documentElement.scrollTop) >= document.documentElement.offsetHeight) {
+    // 스크롤이 페이지 하단에서 100px 이내로 가까워졌을 때 loadMore 함수 호출
+    if ((window.innerHeight + document.documentElement.scrollTop) >= (document.documentElement.offsetHeight - 100)) {
       loadMore()
     }
   }, 150)
@@ -310,21 +299,6 @@ const loadMore = () => {
     <Writing v-model:isDialogVisible="writingModal" />
   </section>
 </template>
-
-<script>
-export default {
-  data() {
-    return {
-      q: '', 
-      borderColor: '#ccc',  
-    }
-  },
-  methods: {
-    searchItems() {
-    },
-  },
-}
-</script>
 
 <style scoped>
 .pointer-cursor {
