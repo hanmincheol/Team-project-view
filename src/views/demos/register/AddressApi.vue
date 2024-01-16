@@ -1,0 +1,138 @@
+<template>
+  <VCol cols="12">
+    <VRow>
+      <VCol cols="4" />
+      <VCol cols="2">
+        <VTextField 
+          id="postcode"
+          v-model="postcode"
+          type="text"
+          placeholder="우편번호"
+          size="large"
+        />
+      </VCol>
+      <VCol cols="2">
+        <VBtn
+          color="primary"
+          class="my-custom-button"
+          height="55px"
+          width="200"
+          @click="execDaumPostcode"
+        >
+          우편번호 찾기
+        </VBtn>
+      </VCol>
+    </VRow>
+  </VCol>
+
+  <br>
+  <VCol cols="12">
+    <VRow>
+      <VCol
+        cols="12"
+        md="4"
+      />
+      <VCol
+        cols="12"
+        md="4"
+      >
+        <VTextField
+          id="address"
+          v-model="address"
+          type="text"
+          placeholder="주소"
+        />
+      </VCol>
+    </VRow>
+  </VCol>
+  <br>
+
+  <VCol
+    v-if="hidden"
+    cols="12"
+  >
+    <VRow>
+      <VCol
+        cols="12"
+        md="4"
+      >
+        <label for="extraAddress">참고항목</label>
+      </VCol>
+      <VCol
+        cols="12"
+        md="4"
+      >
+        <VTextField
+          id="extraAddress"
+          v-model="extraAddress"
+          type="text"
+          placeholder="참고항목"
+        />
+      </VCol>
+    </VRow>
+  </VCol>
+</template>
+
+<script setup>
+import { onMounted, ref } from 'vue'
+
+const postcode = ref('')
+const address = ref('')
+const detailAddress = ref('')
+const extraAddress = ref('')
+
+function execDaumPostcode() {
+  new daum.Postcode({
+    oncomplete: function(data) {
+      let addr = ''
+      let extraAddr = ''
+
+      if (data.userSelectedType === 'R') {
+        addr = data.roadAddress
+      } else {
+        addr = data.jibunAddress
+      }
+
+      if (data.userSelectedType === 'R') {
+        if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+          extraAddr += data.bname
+        }
+        if (data.buildingName !== '' && data.apartment === 'Y') {
+          extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName)
+        }
+        if (extraAddr !== '') {
+          extraAddr = ' (' + extraAddr + ')'
+        }
+        extraAddress.value = extraAddr
+      } else {
+        extraAddress.value = ''
+      }
+
+      postcode.value = data.zonecode
+      address.value = addr
+      detailAddress.value = ''
+
+      // 추가적인 작업이 필요한 경우 여기에 작성
+
+      // 상세주소 입력란에 포커스 설정
+      document.getElementById("detailAddressInput").focus()
+
+      // 팝업창 닫기
+      execDaumPostcode.close()
+    },
+  }).open()
+}
+
+onMounted(() => {
+  const script = document.createElement('script')
+
+  script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js'
+  script.async = true
+  script.onload = () => {
+    // 스크립트가 로드되면 Daum.Postcode API를 사용할 수 있습니다.
+  }
+  document.head.appendChild(script)
+})
+</script>
+
+

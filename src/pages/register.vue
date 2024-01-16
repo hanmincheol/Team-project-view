@@ -72,11 +72,15 @@ const onSubmit = () => {
 
           <VWindowItem>
             <VRow>
-              <VCol cols="12">
-                <h6 class="text-sm font-weight-medium">
+              <VCol
+                cols="12"
+                margin-left="50px"
+                class="centered-content"
+              >
+                <h6 class="text-lg font-weight-medium">
                   회원가입 정보 입력
                 </h6>
-                <p class="text-xs mb-0">
+                <p class="text-md mb-0">
                   HealthyReal의 회원이 되어보세요!
                 </p>
               </VCol>
@@ -262,3 +266,20 @@ const onSubmit = () => {
     </VCardText>
   </VCard>
 </template>
+
+<style scoped>
+.centered-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.text-lg {
+  font-size: 1.25rem; /* 원하는 폰트 크기로 조정 */
+}
+
+.text-md {
+  font-size: 1rem; /* 원하는 폰트 크기로 조정 */
+}
+</style>

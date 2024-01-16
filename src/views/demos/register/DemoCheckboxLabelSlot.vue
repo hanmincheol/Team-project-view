@@ -1,11 +1,11 @@
 
 <script setup>
-const checkbox = ref(false)
+const checkboxOne = ref(false)
 
 </script>
 
 <template>
-  <VCheckbox v-model="checkbox">
+  <VCheckbox v-model="checkboxOne">
     <template #label>
       <div>
         이용약관에 동의합니다.
