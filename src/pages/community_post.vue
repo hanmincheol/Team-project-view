@@ -1,4 +1,5 @@
 <script setup>
+import Category from '@/pages/views/demos/forms/form-elements/select/category.vue'
 import { size } from '@floating-ui/dom'
 import avatar1 from '@images/avatars/avatar-1.png'
 import avatar2 from '@images/avatars/avatar-2.png'
@@ -8,12 +9,40 @@ import avatar5 from '@images/avatars/avatar-5.png'
 import avatar6 from '@images/avatars/avatar-6.png'
 import avatar7 from '@images/avatars/avatar-7.png'
 import avatar8 from '@images/avatars/avatar-8.png'
-import pages1 from '@images/pages/1.png'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+
+
 
 
 const userProfileModal = ref(false)
 const writingModal = ref(false)
+let q = ref('')
+
+
+//검색기능
+const filteredItems = computed(() => {
+  if (q.value) {
+    return items.value.filter(item => item.title.includes(q.value))
+  }
+  
+  return items.value
+})
+
+const searchItems = () => {
+  // 검색 실행 시, 'q'가 비어있지 않다면 필터링된 게시글 목록을 반환
+  if (q.value) {
+    items.value = items.value.filter(item => item.title.includes(q.value))
+  }
+}//검색기능 
+
+
+
+const images = [
+  {
+    src: [avatar1, avatar2, avatar3, avatar4],
+  },
+
+]
 
 const membersList = [
   {
@@ -121,7 +150,7 @@ const loadMore = () => {
 
 <template>
   <section>
-    <VRow>
+    <VRow style="margin-top: -50px;">
       <VCol cols="8">
         <VCard
           flat
@@ -129,6 +158,36 @@ const loadMore = () => {
           class="mt-12 mt-sm- pa-0"
         >
           <VCardText>
+            <VRow
+              no-gutters
+              style=" overflow: hidden;max-height: 90px;"
+            >
+              <VCol
+                v-for="member in membersList"
+                :key="member.name"
+                cols="auto"
+                class="ma-2"
+              >
+                <VListItem>
+                  <VListItemContent class="d-flex flex-column align-center text-center">
+                    <VAvatar 
+                      class="text-sm pointer-cursor"
+                      :image="member.avatar" 
+                      @click="userProfileModal=true"
+                    />
+
+                    <VListItemTitle 
+                      class="text-sm pointer-cursor"
+                      @click="userProfileModal=true"
+                      @mouseover="size"  
+                    >
+                      {{ member.name }}
+                    </VListItemTitle>
+                  </VListItemContent>
+                </VListItem>
+              </VCol>
+            </VRow>
+
             <VCol cols="12">
               <VBtn 
                 style="float: inline-end;"
@@ -138,16 +197,37 @@ const loadMore = () => {
               </VBtn>
             </VCol>
             <VRow>
-              <!-- 카테고리 버튼 추가 -->
-              <VBtn>
-                카테고리 
-              </VBtn>
-              <VTextField
-                v-model="q"
-                class="search px-1 flex-grow-1"
-                prepend-inner-icon="mdi-magnify"
-                placeholder="Search"
-              />
+              <!-- 카테고리 추가 -->
+              <VCol
+                cols="5"
+                style="margin-top: -15px;"
+              >
+                <Category />
+              </VCol>
+              <VCol
+                cols="6"
+                style="margin-top: -16px;"
+              >
+                <VTextField
+                  v-model="q"
+                  class="search px-1 flex-grow-1"
+                  placeholder="Search"
+                  :style="{ border: `1px solid ${borderColor}`, borderRadius: '5px' }"  
+                  @focus="borderColor = '#28a745'"  
+                  @blur="borderColor = '#ccc'" 
+                >
+                  <!-- 아이콘에 클릭 이벤트 추가 -->
+                  <template #append>
+                    <VBtn
+                      icon
+                      style="margin-top: -8px;"
+                      @click="searchItems"
+                    >
+                      <VIcon>mdi-magnify</VIcon>
+                    </VBtn>
+                  </template>
+                </VTextField>
+              </VCol>
             </VRow>
             <VCol>
               <VCol>
@@ -158,14 +238,21 @@ const loadMore = () => {
                   cols="12"
                 >
                   <VCard>
-                    <VImg :src="pages1" />
+                    <VCarousel show-arrows-on-hover>
+                      <VCarouselItem
+                        v-for="(image, i) in images[0].src" 
+                        :key="i"
+                      >
+                        <VImg :src="image" />
+                      </VCarouselItem>
+                    </VCarousel>
 
                     <VCardItem>
-                      <VCardTitle>Influencing The Influencer</VCardTitle>
+                      <VCardTitle>멋쟁이 승영이</VCardTitle>
                     </VCardItem>
 
                     <VCardText>
-                      Cancun is back, better than ever! Over a hundred Mexico resorts have reopened and the state tourism minister predicts Cancun will draw as many visitors in 2006 as it did two years ago.
+                      나는 자랑스러운 3조라네 하하
                     </VCardText>
                   </VCard>
                 </VCol> 
@@ -224,6 +311,21 @@ const loadMore = () => {
   </section>
 </template>
 
+<script>
+export default {
+  data() {
+    return {
+      q: '', 
+      borderColor: '#ccc',  
+    }
+  },
+  methods: {
+    searchItems() {
+    },
+  },
+}
+</script>
+
 <style scoped>
 .pointer-cursor {
   cursor: pointer;
@@ -240,4 +342,3 @@ const loadMore = () => {
   }
 }
 </style>
-

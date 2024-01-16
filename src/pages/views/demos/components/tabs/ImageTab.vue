@@ -1,6 +1,27 @@
 <script setup>
 import bg from '@images/pages/writing.jpg'
 import { reactive, ref, toRefs } from 'vue'
+import axios from 'axios'
+
+async function uploadImages() {
+  let formData = new FormData()
+
+  images.files.forEach((file, index) => {
+    formData.append(`file${index}`, file)
+  })
+
+  try {
+    const response = await axios.post('/넘길 서버적기', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+
+    console.log(response.data)
+  } catch (e) {
+    console.error(e)
+  }
+} //위부터 여기까지 값 넘기는 구간
 
 let images = reactive({ files: [] })  // 선택된 이미지 파일을 저장하는 배열
 let activeTab = ref(0)
@@ -32,9 +53,11 @@ const removeImage = index => {
   if (activeTab.value >= images.files.length) {
     activeTab.value = images.files.length - 1
   }
+  fileInput.value = null  // 파일 선택 상태 초기화
 }
 
 const { files } = toRefs(images)
+let fileInput = ref(null)  // 파일 입력을 위한 ref 생성
 </script>
 
 <template>
@@ -69,10 +92,11 @@ const { files } = toRefs(images)
     </VTabs>
 
     <VFileInput
+      ref="fileInput"
       v-model="files"
       multiple
-      label="파일을 첨부하세요"
-      :show-size="false" 
+      label="파일을 첨부하세요" 
+      :show-size="false"
       prepend-icon="mdi-instagram"
     >
       <template #selection="{ text }">
