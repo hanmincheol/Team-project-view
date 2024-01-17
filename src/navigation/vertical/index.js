@@ -37,10 +37,5 @@ export default [
     to: { name: 'mate' },
     icon: { icon: 'mdi-notebook' },
   },
-  {
-    title: '자가진단',
-    to: { name: 'selfTest' },
-    icon: { icon: 'mdi-head-check' },
-  },
   ...management,
 ]
