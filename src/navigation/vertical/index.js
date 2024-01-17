@@ -30,12 +30,12 @@ export default [
   {
     title: '메이트',
     to: { name: 'mate' },
-    icon: { icon: 'mdi-notebook' },
+    icon: { icon: 'mdi-family-tree' },
   },
   {
     title: '자가진단',
     to: { name: 'selfTest' },
-    icon: { icon: 'mdi-notebook' },
+    icon: { icon: 'mdi-head-check' },
   },
   ...management,
 ]
