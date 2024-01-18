@@ -1,5 +1,5 @@
 <script setup>
-import axios from '@axios'
+import axios from 'axios'
 import bg from '@images/pages/writing.jpg'
 import { reactive, ref, toRefs } from 'vue'
 
@@ -140,7 +140,7 @@ let isLoading = ref(false)  // 로딩 상태를 나타내는 데이터 추가
         color="primary"
       />
       <VBtn
-        v-if="files.length > 0" 
+        v-if="!isLoading && files.length > 0" 
         class="delete-button"
         icon
         small

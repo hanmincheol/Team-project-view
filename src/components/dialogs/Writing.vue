@@ -5,10 +5,7 @@ import Text from '@/pages/views/demos/forms/form-elements/textarea/WritingText.v
 import Sub from '@/views/demos/Subject.vue'
 import { size } from '@floating-ui/dom'
 import avatar1 from '@images/avatars/avatar-1.png'
-import { ref } from 'vue'
-
-
-
+import { computed, ref } from 'vue'
 
 
 const props = defineProps({
@@ -26,9 +23,17 @@ const isprofile = ref(false)
 
 const people = ref(false)
 
+const textValue = ref('')
+const hashtagValue = ref('')
+const imageUrlsValue = ref([])
+
 const dialogVisibleUpdate = value => {
   emit('update:isDialogVisible', value)
 }
+
+const isButtonDisabled = computed(() => {
+  return !textValue.value && !hashtagValue.value && imageUrlsValue.value.length === 0
+})
 
 const members = [
   {
@@ -65,7 +70,9 @@ const members = [
             class="d-flex justify-end"
             style="margin-top: 10px;"
           >
-            <VBtn>글 등록</VBtn>
+            <VBtn :disabled="isButtonDisabled">
+              글 등록
+            </VBtn>
           </div>
           <VRow>
             <VCol cols="6">
@@ -101,12 +108,12 @@ const members = [
               </VRow>
               <VRow style=" margin-top: -10px;">
                 <VCol cols="12">
-                  <Text />
+                  <Text v-model="textValue" />
                 </VCol>
               </VRow>
               <VRow style=" margin-top: -10px;">
                 <VCol cols="12">
-                  <Hashtag />
+                  <Hashtag v-model="hashtagValue" />
                 </VCol>
               </VRow>
               <VRow style="margin-top: -10px;">
@@ -135,7 +142,10 @@ const members = [
             </VCol>
             <VCol cols="6">
               <VCardItem>
-                <It :image-urls="imageUrls" />
+                <It
+                  v-model="imageUrlsValue"
+                  :image-urls="imageUrls"
+                />
               </VCardItem>
             </VCol>
           </VRow>
