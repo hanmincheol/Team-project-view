@@ -135,6 +135,7 @@ let isLoading = ref(false)  // 로딩 상태를 나타내는 데이터 추가
       >
       <VProgressCircular
         v-else
+        class="loading"
         indeterminate
         color="primary"
       />
@@ -219,5 +220,12 @@ export default {
   position: absolute;
   inset-block-start: 0;
   inset-inline-end: 0;
+}
+
+.loading {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
