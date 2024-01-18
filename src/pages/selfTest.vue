@@ -31,6 +31,7 @@ const formData = ref({
   linkedIn: 'https://linkedin.com/abc',
 })
 
+// 탭에다 뿌려줄 사진 및 밸류
 const checkboxContent = [
   {
     bgImage: bg1,
@@ -82,6 +83,7 @@ const checkboxContent = [
   },
 ]
 
+// 탭에다 뿌려줄 사진 및 밸류
 const checkboxContent2 = [
   {
     bgImage: bg3,
@@ -141,8 +143,8 @@ const iconsSteps = [
     icon: 'mdi-allergy',
   },
   {
-    title: '싫어하는 음식',
-    icon: 'mdi-food-variant-off',
+    title: '좋아하는 음식',
+    icon: 'mdi-food-variant',
   },
   {
     title: '기타',
@@ -181,6 +183,7 @@ const isSelected = value => {
           v-model="currentStep"
           class="disable-tab-transition"
         >
+          <!-- 첫번째 탭 (알레르기) -->
           <VWindowItem>
             <VRow>
               <CustomCheckboxesWithImage
@@ -190,7 +193,8 @@ const isSelected = value => {
               />
             </VRow>
           </VWindowItem>
-
+          <!-- 두번쨰 탭 (좋아하는 음식) -->
+          <!-- 하트 이미지 수정하려면 src\@core\components\app-form-elements\CustomCheckboxesWithImageIcon.vue 에서 수정 -->
           <VWindowItem>
             <VRow>
               <CustomCheckboxesWithImageIcon
@@ -200,8 +204,9 @@ const isSelected = value => {
               />
             </VRow>
           </VWindowItem>
-          <!--   첫번째 줄  -->
+          <!-- 세번쨰 탭 (싫어하는 음식) -->
           <VWindowItem>
+            <!--   첫번째 줄  -->
             <VRow>
               <VCol cols="3">
                 <p />생체 정보
