@@ -60,8 +60,7 @@ const pay = [
 const dateRange = ref('');
 const router = useRouter()
 const createRoom = () => {
-    console.log("들어옴");
-    router.push({path:"/"}); //넘겨줄 Vue 경로 입력하기
+    router.push({ name: 'apps-user-id', params: { id: 21 } }); //넘겨줄 Vue 경로 입력하기
 }
 </script>
 
