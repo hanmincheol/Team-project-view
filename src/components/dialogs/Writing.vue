@@ -63,13 +63,13 @@ const members = [
         <VCardText>
           <div
             class="d-flex justify-end"
-            style="margin: 10px;"
+            style="margin-top: 10px;"
           >
             <VBtn>글 등록</VBtn>
           </div>
           <VRow>
             <VCol cols="6">
-              <VRow style=" margin-top: 10px;">
+              <VRow style=" margin-top: 20px;">
                 <VCol cols="6">
                   <VListItem 
                     v-for="(member, index) in members" 
