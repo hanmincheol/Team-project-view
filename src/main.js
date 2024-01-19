@@ -8,7 +8,6 @@ import { loadFonts } from '@/plugins/webfontloader'
 import router from '@/router'
 import '@core/scss/template/index.scss'
 
-
 import '@styles/styles.scss'
 import 'bootstrap'
 
@@ -17,7 +16,6 @@ import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 
 loadFonts()
-
 
 // Create vue app
 const app = createApp(App)
