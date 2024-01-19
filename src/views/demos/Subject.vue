@@ -1,8 +1,17 @@
 <script setup>
-const selectedOption = ref({
-  state: '카테고리',
-  value: '카테고리',
+import { ref } from 'vue'
+
+// modelValue prop 추가
+const props = defineProps({
+  modelValue: {
+    type: Object,
+    default: () => ({ state: '카테고리', value: '카테고리' }),
+  },
 })
+
+const emit = defineEmits(['update:modelValue'])
+
+const selectedOption = ref(props.modelValue)
 
 const items = [
   {
@@ -18,6 +27,15 @@ const items = [
     value: '심리',
   },
 ]
+
+watchEffect(() => {
+  selectedOption.value = props.modelValue
+})
+
+const updateSelectedOption = newOption => {
+  selectedOption.value = newOption
+  emit('update:modelValue', newOption)
+}
 </script>
 
 <template>
@@ -29,5 +47,6 @@ const items = [
     persistent-hint
     return-object
     single-line
+    @update:model-value="updateSelectedOption"
   />
 </template>

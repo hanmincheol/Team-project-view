@@ -3,6 +3,7 @@ import It from '@/pages/views/demos/components/tabs/ImageTab.vue'
 import Hashtag from '@/pages/views/demos/forms/form-elements/textarea/Hashtag.vue'
 import Text from '@/pages/views/demos/forms/form-elements/textarea/WritingText.vue'
 import Sub from '@/views/demos/Subject.vue'
+import axios from '@axios'
 import { size } from '@floating-ui/dom'
 import avatar1 from '@images/avatars/avatar-1.png'
 import { computed, ref } from 'vue'
@@ -23,6 +24,8 @@ const isprofile = ref(false)
 
 const people = ref(false)
 
+
+const subValue = ref('카테고리')
 const textValue = ref('')
 const hashtagValue = ref('')
 const imageUrlsValue = ref([])
@@ -31,8 +34,9 @@ const dialogVisibleUpdate = value => {
   emit('update:isDialogVisible', value)
 }
 
+
 const isButtonDisabled = computed(() => {
-  return !textValue.value && !hashtagValue.value && imageUrlsValue.value.length === 0
+  return !textValue.value && !hashtagValue.value && imageUrlsValue.value.length === 0 
 })
 
 const members = [
@@ -41,6 +45,29 @@ const members = [
     name: '멋쟁이 승환이',
   },
 ]
+
+// axios를 사용하여 데이터를 서버로 보내는 함수
+const submitData = async () => {
+  try {
+    const response = await axios.post('http://localhost:4000', {
+      text: textValue.value,
+      hashtag: hashtagValue.value,
+      images: imageUrlsValue.value,
+      sub: subValue.value,
+    })
+
+    console.log('text', text, 'hashtag', hashtag, 'images', images)
+
+    // 응답 처리
+    if (response.status === 200) {
+      console.log('데이터 전송 선공')
+    } else {
+      console.log('데이터 전송 실패')
+    }
+  } catch (error) {
+    console.error(`데이터 전송 실패: ${error}`)
+  }
+}
 </script>
 
 <template>
@@ -70,7 +97,10 @@ const members = [
             class="d-flex justify-end"
             style="margin-top: 10px;"
           >
-            <VBtn :disabled="isButtonDisabled">
+            <VBtn
+              :disabled="isButtonDisabled"
+              @click="submitData"
+            >
               글 등록
             </VBtn>
           </div>
@@ -103,7 +133,7 @@ const members = [
                   cols="4"
                   style=" margin-left: 85px;"
                 >
-                  <Sub />
+                  <Sub v-model="subValue" />
                 </VCol>
               </VRow>
               <VRow style=" margin-top: -10px;">
