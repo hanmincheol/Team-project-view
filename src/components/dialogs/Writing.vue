@@ -6,8 +6,8 @@ import Sub from '@/views/demos/Subject.vue'
 import axios from '@axios'
 import { size } from '@floating-ui/dom'
 import avatar1 from '@images/avatars/avatar-1.png'
+import logo from '@images/logo.svg' // 로고 이미지 불러오기
 import { computed, ref } from 'vue'
-
 
 const props = defineProps({
   isDialogVisible: {
@@ -36,7 +36,7 @@ const dialogVisibleUpdate = value => {
 
 
 const isButtonDisabled = computed(() => {
-  return !textValue.value && !hashtagValue.value && imageUrlsValue.value.length === 0 
+  return subValue.value === '카테고리' || !textValue.value && !hashtagValue.value && imageUrlsValue.value.length === 0 
 })
 
 const members = [
@@ -94,11 +94,13 @@ const submitData = async () => {
       <VCard>
         <VCardText>
           <div
-            class="d-flex justify-end"
+            class="d-flex justify-center align-center"
             style="margin-top: 10px;"
           >
+            <img :src="logo">  <!-- 로고 이미지 추가 -->
             <VBtn
               :disabled="isButtonDisabled"
+              style="position: absolute; right: 40px;"
               @click="submitData"
             >
               글 등록
