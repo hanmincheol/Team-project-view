@@ -25,8 +25,7 @@ const items = [
     v-model="selectedOption"
     :items="items"
     item-title="state"
-    item-value="abbr"
-    label="Select"
+    item-value="value"
     persistent-hint
     return-object
     single-line

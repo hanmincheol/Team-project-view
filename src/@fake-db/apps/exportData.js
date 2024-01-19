@@ -1,22 +1,23 @@
-import mock from '@/@fake-db/mock'
-import { genId } from '@/@fake-db/utils'
 
 const date = new Date()
+const toDay = new Date(date.getFullYear(), date.getMonth(), date.getDate())
 const nextDay = new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
 const nextMonth = date.getMonth() === 11 ? new Date(date.getFullYear() + 1, 0, 1) : new Date(date.getFullYear(), date.getMonth() + 1, 1)
 const prevMonth = date.getMonth() === 11 ? new Date(date.getFullYear() - 1, 0, 1) : new Date(date.getFullYear(), date.getMonth() - 1, 1)
+let data = { events: [] }
 
-const data = {
+data = {
   events: [
     {
       id: '1',
       url: '',
       title: 'Design Review',
-      start: date,
+      start: toDay,
       end: nextDay,
       allDay: false,
       extendedProps: {
         calendar: 'Business',
+        description: '오늘의 내용',
       },
     },
     {
@@ -28,6 +29,7 @@ const data = {
       allDay: true,
       extendedProps: {
         calendar: 'Business',
+        description: '오늘의 내용',
       },
     },
     {
@@ -39,6 +41,7 @@ const data = {
       end: new Date(date.getFullYear(), date.getMonth() + 1, -7),
       extendedProps: {
         calendar: 'Holiday',
+        description: '오늘의 내용',
       },
     },
     {
@@ -50,6 +53,7 @@ const data = {
       allDay: true,
       extendedProps: {
         calendar: 'Personal',
+        description: '오늘의 내용',
       },
     },
     {
@@ -61,6 +65,7 @@ const data = {
       allDay: true,
       extendedProps: {
         calendar: 'ETC',
+        description: '오늘의 내용',
       },
     },
     {
@@ -72,6 +77,7 @@ const data = {
       allDay: true,
       extendedProps: {
         calendar: 'Personal',
+        description: '오늘의 내용',
       },
     },
     {
@@ -83,6 +89,7 @@ const data = {
       allDay: true,
       extendedProps: {
         calendar: 'Family',
+        description: '오늘의 내용',
       },
     },
     {
@@ -94,6 +101,7 @@ const data = {
       allDay: true,
       extendedProps: {
         calendar: 'Business',
+        description: '오늘의 내용',
       },
     },
     {
@@ -105,7 +113,7 @@ const data = {
       allDay: true,
       extendedProps: {
         calendar: 'Business',
-        
+        description: '오늘의 내용',
       },
     },
     {
@@ -117,59 +125,9 @@ const data = {
       allDay: true,
       extendedProps: {
         calendar: 'Personal',
+        description: '오늘의 내용',
       },
     },
   ],
 }
-
-
-// ------------------------------------------------
-// GET: Return calendar events
-// mock은 실제 요청이 아닌 가짜로 응답을 구성함
-// ------------------------------------------------
-mock.onGet('/apps/calendar/events').reply(config => {
-  // Get requested calendars as Array
-  const calendars = config.params.calendars.split(',')
-  
-  return [200, data.events.filter(event => calendars.includes(event.extendedProps.calendar))]
-})
-
-// ------------------------------------------------
-// POST: Add new event
-// getId(data.events) 함수로 data.events 배열의 id값을 기반으로 고유 식별자 id를 생성하고
-// 생성된 id 이벤트 객체의 id속성에 할당
-// ------------------------------------------------
-mock.onPost('/apps/calendar/events').reply(config => {
-  // Get event from post data
-  const { event } = JSON.parse(config.data)
-
-  event.id = String(genId(data.events))
-  data.events.push(event)
-  
-  return [201, { event }]
-})
-  
-mock.onPost(/\/apps\/calendar\/events\/\d+/).reply(config => {
-  const { event: eventData } = JSON.parse(config.data)
-  const event = data.events.find(e => e.id === eventData.id)
-  if (event) {
-    Object.assign(event, eventData)
-      
-    return [200, { event }]
-  }
-    
-  return [400, { message: 'Something went wrong' }]
-})
-
-// ------------------------------------------------
-// DELETE: Remove Event
-// ------------------------------------------------
-mock.onDelete(/\/apps\/calendar\/events\/\d+/).reply(config => {
-  // Get event id from URL
-  const eventId = config.url?.substring(config.url.lastIndexOf('/') + 1)
-  const eventIndex = data.events.findIndex(e => e.id === eventId)
-
-  data.events.splice(eventIndex, 1)
-  
-  return [200]
-})
+export const calendarEvents = data.events
