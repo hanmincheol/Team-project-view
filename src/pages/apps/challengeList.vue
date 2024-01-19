@@ -1,9 +1,13 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import axios from '@axios'
+import AddChallRoomSetting from '@/components/dialogs/AddChallRoomSetting.vue';
+import AddMateRoomSetting from '@/components/dialogs/AddMateRoomSetting.vue';
 
 const router = useRoute()
 const projectData = ref([])
+const isAddChallRoomSettingDialogVisible = ref(false)
+const isAddMateRoomSettingDialogVisible = ref(false)
 
 const fetchProjectData = () => {
     axios.get('/pages/profile', { params: { tab: 'projects' } }).then(response => {
@@ -178,6 +182,12 @@ const currentDate = (() => {
                     </div>
                 </VCardText>
             </VCard>
+        </VCol>
+        <VCol>        
+            <v-btn :style="{'margin-left':'10px'}" @click="isAddChallRoomSettingDialogVisible = !isAddChallRoomSettingDialogVisible">챌린지방 생성</v-btn>
+            <AddChallRoomSetting v-model:isDialogVisible="isAddChallRoomSettingDialogVisible"/>
+            <v-btn :style="{'margin-left':'10px'}" @click="isAddMateRoomSettingDialogVisible = !isAddMateRoomSettingDialogVisible">Mate</v-btn>
+            <AddMateRoomSetting v-model:isDialogVisible="isAddMateRoomSettingDialogVisible"/>
         </VCol>
     </VRow>
 </template>

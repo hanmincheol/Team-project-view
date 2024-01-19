@@ -19,6 +19,7 @@ const isEventHandlerSidebarActive = ref(false)
 watch(isEventHandlerSidebarActive, val => {
   if (!val)
     event.value = structuredClone(blankEvent)
+  console.log(event.value)
 })
 
 const { isLeftSidebarOpen } = useResponsiveLeftSidebar()

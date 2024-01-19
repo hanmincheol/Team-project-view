@@ -1,4 +1,7 @@
 <script setup>
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import { VForm } from 'vuetify/components/VForm'
+import { useCalendarStore } from './useCalendarStore'
 import avatar1 from '@images/avatars/avatar-1.png'
 import avatar2 from '@images/avatars/avatar-2.png'
 import avatar3 from '@images/avatars/avatar-3.png'
@@ -9,9 +12,6 @@ import {
   requiredValidator,
   urlValidator,
 } from '@validators'
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
-import { VForm } from 'vuetify/components/VForm'
-import { useCalendarStore } from './useCalendarStore'
 
 const props = defineProps({
   isDrawerOpen: {
@@ -227,38 +227,6 @@ const endDateTimePickerConfig = computed(() => {
                   :rules="[requiredValidator]"
                   label="End date"
                   :config="endDateTimePickerConfig"
-                />
-              </VCol>
-
-              <!-- 👉 All day -->
-              <VCol cols="12">
-                <VSwitch
-                  v-model="event.allDay"
-                  label="All day"
-                />
-              </VCol>
-
-              <!-- 👉 Event URL -->
-              <VCol cols="12">
-                <VTextField
-                  v-model="event.url"
-                  label="Event URL"
-                  :rules="[urlValidator]"
-                  type="url"
-                />
-              </VCol>
-
-              <!-- 👉 Guests -->
-              <VCol cols="12">
-                <VSelect
-                  v-model="event.extendedProps.guests"
-                  label="Guests"
-                  :items="guestsOptions"
-                  :item-title="item => item.name"
-                  :item-value="item => item.name"
-                  chips
-                  multiple
-                  eager
                 />
               </VCol>
 
