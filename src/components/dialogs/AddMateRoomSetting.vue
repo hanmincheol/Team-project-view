@@ -48,8 +48,7 @@ const date = ref('')
 
 const router = useRouter()
 const createRoom = () => {
-    console.log("들어옴");
-    router.push({path:"/"}); //넘겨줄 Vue 경로 입력하기
+    router.push({ name: 'mate' }); //넘겨줄 Vue 경로 입력하기
 }
 </script>
 

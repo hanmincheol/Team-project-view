@@ -28,14 +28,14 @@ export default [
     icon: { icon: 'mdi-notebook' },
   },
   {
-    title: '메이트',
-    to: { name: 'mate' },
-    icon: { icon: 'mdi-family-tree' },
-  },
-  {
     title: '자가진단',
     to: { name: 'selfTest' },
-    icon: { icon: 'mdi-head-check' },
+    icon: { icon: 'mdi-account-check-outline' },
+  },
+  {
+    title: '메이트',
+    to: { name: 'mate' },
+    icon: { icon: 'mdi-notebook' },
   },
   ...management,
 ]
