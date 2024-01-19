@@ -1,7 +1,8 @@
 <script setup>
+import Sub from '@/views/demos/DemoSelectCustomTextAndValue.vue'
 import AddressApi from '@/views/demos/register/AddressApi.vue'
 import ChooseRadios from '@/views/demos/register/ChooseRadios.vue'
-import axios from '@axios'
+import axios from 'axios'
 import { computed, ref } from 'vue'
 
 const idText=ref(null)
@@ -572,6 +573,18 @@ const onSubmitPhone = () => {
             <div :style="{ color: PNError ? (PNError === '올바른 형식입니다!' ? 'greenyellow' : 'red') : '' }">
               {{ PNError }}
             </div> <!-- 아이디 오류 메세지 -->
+          </VCol>
+        </VRow>
+        <VRow>
+          <VCol
+            cols="12"
+            md="4"
+          />
+          <VCol
+            cols="12"
+            md="4"
+          >
+            <Sub />
           </VCol>
         </VRow>
       </VCol>
