@@ -177,47 +177,51 @@ const loadMore = () => {
               </VCol>
             </VRow>
 
-            <VCol cols="12">
-              <VBtn 
-                style="float: inline-end;"
-                @click="writingModal=true"
-              >
-                글 등록
-              </VBtn>
-            </VCol>
-            <VRow>
+            
+            <VCol>
               <!-- 카테고리 추가 -->
-              <VCol
-                cols="5"
-                style="margin-top: -15px;"
-              >
-                <Category />
-              </VCol>
-              <VCol
-                cols="6"
-                style="margin-top: -16px;"
-              >
-                <VTextField
-                  v-model="q"
-                  class="search px-1 flex-grow-1"
-                  placeholder="Search"
-                  :style="{ border: `1px solid ${borderColor}`, borderRadius: '5px' }"  
-                  @focus="borderColor = '#28a745'"  
-                  @blur="borderColor = '#ccc'" 
+              <VRow>
+                <VCol
+                  cols="5"
+                  style="margin-top: -15px;"
                 >
-                  <!-- 아이콘에 클릭 이벤트 추가 -->
-                  <template #append>
-                    <VBtn
-                      icon
-                      style="margin-top: -8px;"
-                      @click="searchItems"
-                    >
-                      <VIcon>mdi-magnify</VIcon>
-                    </VBtn>
-                  </template>
-                </VTextField>
-              </VCol>
-            </VRow>
+                  <Category />
+                </VCol>
+                <VCol
+                  cols="5"
+                  style="margin-top: -15px;"
+                >
+                  <VTextField
+                    v-model="q"
+                    class="search px-1 flex-grow-1"
+                    placeholder="Search"
+                    :style="{ border: `1px solid ${borderColor}`, borderRadius: '5px' }"  
+                    @focus="borderColor = '#28a745'"  
+                    @blur="borderColor = '#ccc'" 
+                  >
+                    <!-- 아이콘에 클릭 이벤트 추가 -->
+                    <template #append>
+                      <VBtn
+                        icon
+                        style="margin-top: -8px;"
+                        @click="searchItems"
+                      >
+                        <VIcon>mdi-magnify</VIcon>
+                      </VBtn>
+                    </template>
+                  </VTextField>
+                </VCol>
+                <VCol cols="2">
+                  <VBtn 
+                    style=" margin-top: -15px;float: inline-end;"
+                    size="x-large"
+                    @click="writingModal=true"
+                  >
+                    글 등록
+                  </VBtn>
+                </VCol>
+              </VRow>
+            </VCol>
             <VCol>
               <VCol>
                 <!-- 게시물 작성 공간 -->
@@ -279,7 +283,7 @@ const loadMore = () => {
                 width="40"
                 @click="isInvitedUpdate"
               >
-                친구추가
+                친구요청
               </VBtn>
               <!-- 구독 버튼 -->
               <VBtn

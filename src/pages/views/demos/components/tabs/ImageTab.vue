@@ -11,7 +11,7 @@ async function uploadImages() {
   })
 
   try {
-    const response = await axios.post('/넘길 서버적기', formData, {
+    const response = await axios.post('저장할 스프링 서버', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -24,13 +24,51 @@ async function uploadImages() {
 
 } //위부터 여기까지 값 넘기는 구간
 
+
+// 이미지 생성 요청 함수
+async function createImage() {
+  isLoading.value = true  // 요청 전에 로딩 상태를 true로 설정
+  try {
+    const response = await axios.post('http://localhost:5000/CreateIm', { message: message.value })
+
+    console.log(response.data.image_url)
+
+    images.files.unshift({ url: 'http://localhost:5000'+response.data.image_url, name: '생성된 이미지' })  // 이미지 정보를 객체로 저장
+  } catch (e) {
+    console.error(e)
+  } finally {
+    isLoading.value = false  // 요청 완료 후에 로딩 상태를 false로 설정
+  }
+}
+
+// 파일 입력을 처리하는 함수
+const onFileChange = e => {
+  for (let file of e.target.files) {
+    images.files.push({ url: URL.createObjectURL(file), name: file.name })  // 이미지 정보를 객체로 저장
+  }
+}
+
+const handleFileInput = files => {
+  for (let file of files) {
+    images.files.push({ url: URL.createObjectURL(file), name: file.name })  // 이미지 정보를 배열에 추가
+  }
+}
+
+
+let message = ref('')  // 텍스트 박스의 데이터
+
+const sendMessage = () => {
+  createImage()   // 이미지 생성 요청
+}
+
 let images = reactive({ files: [] })  // 선택된 이미지 파일을 저장하는 배열
 let activeTab = ref(0)
 
 let maxNameLength = 100  // 합쳐진 파일 이름의 최대 길이
 
+// 파일 이름을 가져오는 계산된 속성
 let fileNames = computed(() => {
-  let names = files.value.map(file => file.name)
+  let names = files.value.map(file => file.name)  // 이미지 정보에서 이름을 추출
   let totalLength = names.join(', ').length
   if (totalLength > maxNameLength) {
     while (names.join(', ').length > maxNameLength) {
@@ -43,9 +81,10 @@ let fileNames = computed(() => {
   return names.join(', ')
 })
 
+
 // 이미지 URL을 생성하는 함수
-const createImageUrl = file => {
-  return URL.createObjectURL(file)
+const createImageUrl = image => {
+  return image.url  // 이미지 정보에서 URL을 반환
 }
 
 // 이미지를 제거하는 함수
@@ -56,24 +95,52 @@ const removeImage = index => {
     activeTab.value = images.files.length - 1
   }
 
-  fileInput.value = null  // 파일 선택 상태 초기화
+  inputValue.value = images.files  // 입력 값을 업데이트
   
 }
 
 const { files } = toRefs(images)
 
 let fileInput = ref(null)  // 파일 입력을 위한 ref 생성
+
+let isLoading = ref(false)  // 로딩 상태를 나타내는 데이터 추가
 </script>
 
 <template>
   <div>
+    <VTextarea
+      v-model="message"
+      label="원하는 사진을 입력하세요"
+      rows="2"
+      no-resize
+      style="margin-top: 10px;"
+    />
+
+    <VRow>
+      <VCol cols="12">
+        <VBtn
+          block
+          style="margin: 15px 0;"
+          @click="sendMessage"
+        >
+          이미지 생성하기
+        </VBtn>
+      </VCol>
+    </VRow>
     <div class="image-container">
       <img
+        v-if="!isLoading"
         class="preview-image"
         :src="files.length > 0 ? createImageUrl(files[activeTab]) : bg"
-      > <!-- 이미지에 클래스 추가 -->
+      >
+      <VProgressCircular
+        v-else
+        class="loading"
+        indeterminate
+        color="primary"
+      />
       <VBtn
-        v-if="files.length > 0" 
+        v-if="!isLoading && files.length > 0" 
         class="delete-button"
         icon
         small
@@ -82,6 +149,7 @@ let fileInput = ref(null)  // 파일 입력을 위한 ref 생성
         <VIcon>mdi-close-outline</VIcon>
       </VBtn>
     </div>
+
 
     <VTabs
       v-model="activeTab"
@@ -98,13 +166,15 @@ let fileInput = ref(null)  // 파일 입력을 위한 ref 생성
 
     <VFileInput
       ref="fileInput"
-      :key="files.length"
-      v-model="files"
-      multiple 
-      label="파일을 첨부하세요"
-      :show-size="false"
+      input-value="inputValue"
+      :value="files"
+      multiple
+      label="파일을 첨부하세요" 
+      show-size
       prepend-icon="mdi-instagram"
       accept="image/*"
+      @change="onFileChange"
+      @file-input="handleFileInput"
     >
       <template #selection="{ text }">
         <div class="text-truncate">
@@ -136,7 +206,7 @@ export default {
   position: relative;
   display: inline-block;
   border-style: solid;
-  block-size: 450px;
+  block-size: 400px;
   inline-size: 100%;
 }
 
@@ -150,5 +220,12 @@ export default {
   position: absolute;
   inset-block-start: 0;
   inset-inline-end: 0;
+}
+
+.loading {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>

@@ -20,7 +20,7 @@ const radioContent = [
     
     title: `${email.value}`,
     subtitle: '선택',
-    desc: '이메일로 인증해주세요',
+    desc: `이메일로 인증해주세요 ${email.value}`,
     value: 'email',
     
   },
@@ -30,7 +30,6 @@ const radioContent = [
     desc: '이메일 인증이 불가능 하다면 휴대전화인증을 이용하세요!',
     value: 'phoneNumber',
 
-    //onclick: 이벤트로 값 넘기고 인증 모달창 띄우기
   },
 ]
 
