@@ -1,6 +1,7 @@
 <script setup>
+import ChooseRadios from '@/views/demos/register/ChooseRadios.vue'
+import axios from '@axios'
 import { computed, ref } from 'vue'
-import ChooseRadios from './chooseRadios.vue'
 
 const idText=ref(null)
 const id = ref('')
@@ -19,6 +20,18 @@ const userHeight = ref('')
 const heightError = ref('')
 const userWeight = ref('')
 const weightError = ref('')
+const email = ref('')
+const emailError = ref('')
+const phoneNumber = ref('')
+const PNError = ref('')
+
+function handleFormSubmit(formData) {
+  // 전달받은 데이터 값을 처리합니다.
+  const phoneNumber = formData.phoneNumber
+  const email = formData.email
+
+  // 처리 로직 작성
+}
 
 
 const iconsSteps = [
@@ -45,6 +58,20 @@ const iconsSteps = [
 ]
 
 
+// 인증요청 버튼활성화 로직
+/*
+const isButtonDisabled = computed(() => {
+  return phoneNumber.value === '' && email.value === '' || id.value === '' ||
+    fullName.value === '' ||
+    password.value === '' ||
+    passwordCK.value === '' ||
+    userHeight.value === '' ||
+    userWeight.value === ''
+}) */
+
+
+
+
 const validateId = () => {
   const regex = /^[a-zA-Z0-9]{4,10}$/
   if (!regex.test(id.value)){
@@ -56,6 +83,10 @@ const validateId = () => {
     idError.value = '사용가능!'
 
   }
+}
+
+const components = {
+  ChooseRadios,
 }
 
 const validatePassword = () => {
@@ -112,7 +143,44 @@ const validateWeight = () => {
   }
 }
 
+const validateEmailCK = () => {
+  const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/ 
+  if (!regex.test(email.value)) {
+    emailError.value= '올바른 이메일형식으로 입력해주세요.' 
+  }
+  else{
+    emailError.value= '올바른 형식입니다!'
+  }
+}
 
+const validatePNCK = () => {
+  const regex = /^01([0|1|6|7|8|9]?)-?([0-9]{3,4})-?([0-9]{4})$/
+  if (!regex.test(phoneNumber.value)){
+    PNError.value= '올바른 전화번호를 입력해주세요' 
+  }
+  else{
+    PNError.value= '올바른 형식입니다!' 
+  }
+}
+
+const userCheck=()=>{
+  console.log(phoneNumber.value)
+  axios.post('http://localhost:9999/user/check', phoneNumber.value)
+    .then(response=>console.log(response))
+    .catch(error=>console.error(error))
+}
+
+const AxiosInst = axios.create({
+  baseURL: 'http://localhost:9999',
+})
+
+AxiosInst.interceptors.request.use(
+  config => {
+    config.headers['Access-Control-Allow-Origin'] = '*'  // CORS 설정(모든 리소스 허용)
+    
+    return config
+  },
+)
 
 /* axios 설치 
 npm install axios
@@ -142,6 +210,7 @@ const onSubmitIdCK = () => {
   // }
 }
 
+
 const onSubmitPassword = () => {
   validatePassword()
 }
@@ -161,13 +230,21 @@ const onSubmitHeight = () => {
 const onSubmitWeight = () => {
   validateWeight()
 }
+
+const onSubmitEmail = () => {
+  validateEmailCK()
+}
+
+const onSubmitPhone = () => {
+  validatePNCK()
+}
 </script>
 
 
 
 
 <template>
-  <VForm @submit.prevent="onSubmitIdCK,onSubmitPassword,onSubmitPasswordCK,onSubmitName,onSubmitHeight,onSubmitWeight">
+  <VForm @submit.prevent="handleFormSubmit,onSubmitIdCK,onSubmitPassword,onSubmitPasswordCK,onSubmitName,onSubmitHeight,onSubmitWeight,onSubmitEmail,onSubmitPhone">
     <!-- () => {} -->
     <VRow>
       <VCol cols="12">
@@ -318,6 +395,7 @@ const onSubmitWeight = () => {
             cols="12"
             md="2"
           />
+          
 
           <VTextField
             id="userHeight"
@@ -383,8 +461,69 @@ const onSubmitWeight = () => {
           </VCol>
         </VRow>
       </VCol>
+      <VCol cols="12">
+        <VRow no-gutters>
+          <!-- 👉 ID -->
+          <VCol
+            cols="12"
+            md="3"
+          />
 
+          <VCol
+            cols="12"
+            md="1"
+          />
+          
+          <VCol
+            cols="12"
+            md="4"
+          >
+            <VTextField
+              id="email"
+              v-model="email"
+              placeholder="이메일"
+              persistent-placeholder
+              @input="validateEmailCK"
+            />
+            <!-- 입력 변경시 마다 아이디 유효성 검사 호출 -->
+            <div :style="{ color: emailError ? (emailError === '올바른 형식입니다!' ? 'greenyellow' : 'red') : '' }">
+              {{ emailError }}
+            </div>
+          </VCol>
+        </VRow>
+      </VCol>
 
+      <VCol cols="12">
+        <VRow no-gutters>
+          <!-- 👉 ID -->
+          <VCol
+            cols="12"
+            md="3"
+          />
+
+          <VCol
+            cols="12"
+            md="1"
+          />
+          
+          <VCol
+            cols="12"
+            md="4"
+          >
+            <VTextField
+              id="phoneNumber"
+              v-model="phoneNumber"
+              placeholder="휴대전화 번호(-생략 가능)"
+              persistent-placeholder
+              @input="validatePNCK"
+            />
+            <!-- 입력 변경시 마다 아이디 유효성 검사 호출 -->
+            <div :style="{ color: PNError ? (PNError === '올바른 형식입니다!' ? 'greenyellow' : 'red') : '' }">
+              {{ PNError }}
+            </div> <!-- 아이디 오류 메세지 -->
+          </VCol>
+        </VRow>
+      </VCol>
       
       <AddressApi />
 
@@ -411,11 +550,15 @@ const onSubmitWeight = () => {
               <!-- Dialog Activator -->
               <template #activator="{ props }">
                 <VBtn
+                  :phone-number="phoneNumber"
+                  :email="email"
                   v-bind="props"
+                  :disabled="isButtonDisabled"
                   color="primary"
                   class="my-custom-button"
                   height="55px"
                   width="800"
+                  @submit="handleFormSubmit"
                 >
                   인증요청
                 </VBtn>
@@ -429,7 +572,10 @@ const onSubmitWeight = () => {
                   @click="isDialogVisible = false"
                 />
                 <!---->
-                <ChooseRadios />
+                <ChooseRadios
+                  :email="email"
+                  :phone-number="phoneNumber"
+                />
                 <VCardActions>
                   <VSpacer />
                   <VBtn
@@ -440,7 +586,7 @@ const onSubmitWeight = () => {
                   </VBtn>
                   <VBtn
                     color="success"
-                    @click="isDialogVisible = false"
+                    @click="userCheck"
                   >
                     요청하기
                   </VBtn>
