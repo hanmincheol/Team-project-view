@@ -3,7 +3,7 @@ import avatar1 from '@images/avatars/avatar-1.png'
 import avatar2 from '@images/avatars/avatar-2.png'
 import avatar3 from '@images/avatars/avatar-3.png'
 import avatar4 from '@images/avatars/avatar-4.png'
-import pages2 from '@images/pages/2.png'
+import pages7 from '@images/pages/7.jpg'
 
 const props = defineProps({
   isDialogVisible: {
@@ -44,7 +44,7 @@ const dialogVisibleUpdate = value => {
     <VCol cols="12">
       <VCard>
         <!-- 대표사진 -->
-        <VImg :src="pages2" />
+        <VImg :src="pages7" />
         <!-- 대표사진이 없을 경우 뿌려주는 img -->
         <VImg 
           v-if="false"

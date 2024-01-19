@@ -1,4 +1,7 @@
 <script setup>
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import { VForm } from 'vuetify/components/VForm'
+import { useCalendarStore } from './useCalendarStore'
 import avatar1 from '@images/avatars/avatar-1.png'
 import avatar2 from '@images/avatars/avatar-2.png'
 import avatar3 from '@images/avatars/avatar-3.png'
@@ -9,9 +12,6 @@ import {
   requiredValidator,
   urlValidator,
 } from '@validators'
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
-import { VForm } from 'vuetify/components/VForm'
-import { useCalendarStore } from './useCalendarStore'
 
 const props = defineProps({
   isDrawerOpen: {
@@ -57,11 +57,11 @@ const handleSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
 
-      // event.value안에 id가 있는 경우는 이미 등록되어 있는 경우이기 때문에 update로 넘어감
+      // If id exist on id => Update event
       if ('id' in event.value)
         emit('updateEvent', event.value)
 
-      // Else 인 경우 id가 없으면 새로운 event등록이기 때문에 addEvent로 넘어감
+      // Else => add new event
       else
         emit('addEvent', event.value)
 
@@ -110,9 +110,6 @@ const onCancel = () => {
   })
 }
 
-// event.value.allDay가 값에 따라서 enableTime속성을 사용함 / allDay가 활성화되면 필요가 없기 때문
-// allDay가 활성화되지 않았으면 dateFormat형식을 H:i 식으로 사용 / allDay활성화 되면 시간 정보가 포함되어 있지 않음
-// if는 event.value.end가 있으면 최대 설정할 수 있는 값을 end시간과 동일하게 설정함
 const startDateTimePickerConfig = computed(() => {
   const config = {
     enableTime: !event.value.allDay,
@@ -125,9 +122,6 @@ const startDateTimePickerConfig = computed(() => {
   return config
 })
 
-// event.value.allDay가 값에 따라서 enableTime속성을 사용함 / allDay가 활성화되면 필요가 없기 때문
-// allDay가 활성화되지 않았으면 dateFormat형식을 H:i 식으로 사용 / allDay활성화 되면 시간 정보가 포함되어 있지 않음
-// if는 event.value.start가 있으면 최소 설정할 수 있는 값을 start시간과 동일하게 설정함
 const endDateTimePickerConfig = computed(() => {
   const config = {
     enableTime: !event.value.allDay,
@@ -171,11 +165,7 @@ const endDateTimePickerConfig = computed(() => {
     <PerfectScrollbar :options="{ wheelPropagation: false }">
       <VCard flat>
         <VCardText>
-          <!-- SECTION Form ref="refForm"  -->
-          <!--  컴포넌트에 ref 속성을 설정하여 해당 컴포넌트를 참조할 수 있다. -->
-          <!--  이를 통해 JavaScript 코드에서 폼 컴포넌트에 접근하고 조작할 수 있다. -->
-          <!-- 이 코드를 기반으로 <VForm> 컴포넌트는 폼을 렌더링하고, 사용자가 폼을 제출할 때 handleSubmit 메서드가 호출되도록 구성되어 있다. -->
-          <!--  이렇게 하면 폼 데이터를 처리하거나 유효성 검사 등의 작업을 수행할 수 있다. -->
+          <!-- SECTION Form -->
           <VForm
             ref="refForm"
             @submit.prevent="handleSubmit"
@@ -237,38 +227,6 @@ const endDateTimePickerConfig = computed(() => {
                   :rules="[requiredValidator]"
                   label="End date"
                   :config="endDateTimePickerConfig"
-                />
-              </VCol>
-
-              <!-- 👉 All day -->
-              <VCol cols="12">
-                <VSwitch
-                  v-model="event.allDay"
-                  label="All day"
-                />
-              </VCol>
-
-              <!-- 👉 Event URL -->
-              <VCol cols="12">
-                <VTextField
-                  v-model="event.url"
-                  label="Event URL"
-                  :rules="[urlValidator]"
-                  type="url"
-                />
-              </VCol>
-
-              <!-- 👉 Guests -->
-              <VCol cols="12">
-                <VSelect
-                  v-model="event.extendedProps.guests"
-                  label="Guests"
-                  :items="guestsOptions"
-                  :item-title="item => item.name"
-                  :item-value="item => item.name"
-                  chips
-                  multiple
-                  eager
                 />
               </VCol>
 
