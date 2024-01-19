@@ -283,7 +283,7 @@ const loadMore = () => {
                 width="40"
                 @click="isInvitedUpdate"
               >
-                친구추가
+                친구요청
               </VBtn>
               <!-- 구독 버튼 -->
               <VBtn

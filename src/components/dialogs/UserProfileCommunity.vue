@@ -43,38 +43,31 @@ const dialogVisibleUpdate = value => {
     </VBtn>
     <VCol cols="12">
       <VCard>
+        <!-- 대표사진 -->
         <VImg :src="pages2" />
-
+        <!-- 대표사진이 없을 경우 뿌려주는 img -->
+        <VImg 
+          v-if="false"
+          :src="pages2"
+        />
         <VCardText class="position-relative">
-          <!-- User Avatar -->
+          <!-- 유저 프로필 사진 -->
           <VAvatar
             size="75"
             class="avatar-center"
-            :src="avatar2"
+            :image="avatar1"
           />
           <div class="d-flex justify-space-between flex-wrap pt-8">
             <div class="me-2 mb-2">
-              <VCardTitle class="pa-0">
-                Robert Meyer
+              <!-- 클릭 이벤트 : 해당 유저가 올린 게시물 보기 -->
+              <VCardTitle class="pa-0 pointer-cursor">
+                유저 이름
               </VCardTitle>
               <VCardSubtitle class="text-caption pa-0">
-                London, UK
+                자기 소개
               </VCardSubtitle>
             </div>
-            <VBtn>send request</VBtn>
-          </div>
-          <!--  Mutual Friends -->
-          <div class="d-flex justify-space-between align-center mt-8">
-            <span class="font-weight-medium">18 mutual friends</span>
-
-            <div class="v-avatar-group">
-              <VAvatar
-                v-for="(avatar, index) in avatars"
-                :key="index"
-                :image="avatar"
-                size="40"
-              />
-            </div>
+            <VBtn>친구 요청</VBtn>
           </div>
         </VCardText>
       </VCard>
@@ -89,4 +82,9 @@ const dialogVisibleUpdate = value => {
   inset-block-start: -2rem;
   inset-inline-start: 1rem;
 }
+
+.pointer-cursor {
+  cursor: pointer;
+}
 </style>
+
