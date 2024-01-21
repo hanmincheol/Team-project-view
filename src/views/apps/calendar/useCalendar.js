@@ -17,7 +17,6 @@ export const blankEvent = {
           Hence, we need to set it to undefined or null
         */
     calendar: undefined,
-    guests: [],
     location: '',
     description: '',
   },
@@ -45,7 +44,7 @@ export const useCalendar = (event, isEventHandlerSidebarActive, isLeftSidebarOpe
 
   // ℹ️ Extract event data from event API
   const extractEventDataFromEventApi = eventApi => {
-    const { id, title, start, end, url, extendedProps: { calendar, guests, location, description }, allDay } = eventApi
+    const { id, title, start, end, url, extendedProps: { calendar, location, description }, allDay } = eventApi
     
     return {
       id,
@@ -55,7 +54,6 @@ export const useCalendar = (event, isEventHandlerSidebarActive, isLeftSidebarOpe
       url,
       extendedProps: {
         calendar,
-        guests,
         location,
         description,
       },

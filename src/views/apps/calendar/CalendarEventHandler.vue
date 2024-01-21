@@ -1,7 +1,4 @@
 <script setup>
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
-import { VForm } from 'vuetify/components/VForm'
-import { useCalendarStore } from './useCalendarStore'
 import avatar1 from '@images/avatars/avatar-1.png'
 import avatar2 from '@images/avatars/avatar-2.png'
 import avatar3 from '@images/avatars/avatar-3.png'
@@ -10,8 +7,10 @@ import avatar6 from '@images/avatars/avatar-6.png'
 import avatar7 from '@images/avatars/avatar-7.png'
 import {
   requiredValidator,
-  urlValidator,
 } from '@validators'
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import { VForm } from 'vuetify/components/VForm'
+import { useCalendarStore } from './useCalendarStore'
 
 const props = defineProps({
   isDrawerOpen: {
@@ -56,7 +55,8 @@ const removeEvent = () => {
 const handleSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
-
+      console.log(event.value)
+      
       // If id exist on id => Update event
       if ('id' in event.value)
         emit('updateEvent', event.value)
