@@ -1,5 +1,5 @@
 <script setup>
-import axios from 'axios'
+import axios from '@axios'
 import bg from '@images/pages/writing.jpg'
 import { reactive, ref, toRefs } from 'vue'
 
@@ -54,6 +54,7 @@ const handleFileInput = files => {
   }
 }
 
+let dialog = ref(false)
 
 let message = ref('')  // 텍스트 박스의 데이터
 
@@ -132,6 +133,9 @@ let isLoading = ref(false)  // 로딩 상태를 나타내는 데이터 추가
         v-if="!isLoading"
         class="preview-image"
         :src="files.length > 0 ? createImageUrl(files[activeTab]) : bg"
+        @click="dialog = true"
+        @mouseover="zoomIn"
+        @mouseout="zoomOut"
       >
       <VProgressCircular
         v-else
@@ -149,7 +153,14 @@ let isLoading = ref(false)  // 로딩 상태를 나타내는 데이터 추가
         <VIcon>mdi-close-outline</VIcon>
       </VBtn>
     </div>
-
+    <VDialog
+      v-model="dialog"
+      max-width="500px"
+    >
+      <VCard>
+        <VImg :src="files.length > 0 ? createImageUrl(files[activeTab]) : bg" />
+      </VCard>
+    </VDialog>
 
     <VTabs
       v-model="activeTab"
@@ -193,6 +204,12 @@ export default {
     }
   },
   methods: {
+    zoomIn(e) {
+      e.target.style.transform = 'scale(1.05)'
+    },
+    zoomOut(e) {
+      e.target.style.transform = 'scale(1)'
+    },
     deleteAllFiles() {
       this.files = [] // 파일 전체 삭제
       this.$refs.fileInput.reset() // VFileInput 컴포넌트 초기화
@@ -205,6 +222,7 @@ export default {
 .image-container {
   position: relative;
   display: inline-block;
+  overflow: visible;  /* 이미지 크기 제한 풀기 */
   border-style: solid;
   block-size: 400px;
   inline-size: 100%;
@@ -214,6 +232,7 @@ export default {
   block-size: 100%;
   inline-size: 100%;
   object-fit: cover;
+  transition: transform 0.5s ease-in-out; /* 이 부분을 추가하여 확대/축소 애니메이션을 부드럽게 만듬. */
 }
 
 .delete-button {

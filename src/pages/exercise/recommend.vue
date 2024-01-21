@@ -435,20 +435,21 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 @import url('../exercise/mapCss.css');
 #map {
-  width: 500px;
-  height: 500px;
+  block-size: 500px;
+  inline-size: 500px;
 }
 
 .button-group {
-  margin: 10px 0px;
+  margin-block: 10px;
+  margin-inline: 0;
 }
 
 button {
-  margin: 0 3px;
+  margin-block: 0;
+  margin-inline: 3px;
 }
 
 .dot {overflow:hidden;float:left;width:12px;height:12px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/mini_circle.png');}    
