@@ -74,12 +74,20 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 
 const postcode = ref('')
 const address = ref('')
 const detailAddress = ref('')
 const extraAddress = ref('')
+
+const userAddress = reactive({
+  postcode: postcode.value,
+  address: address.value,
+})
+
+
+
 
 function execDaumPostcode() {
   new daum.Postcode({
