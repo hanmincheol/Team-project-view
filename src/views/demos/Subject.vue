@@ -16,21 +16,18 @@ const selectedOption = ref(props.modelValue)
 const items = [
   {
     state: '운동',
-    value: '운동',
+    value: 2,
   },
   {
     state: '식단',
-    value: '식단',
+    value: 1,
   },
   {
     state: '심리',
-    value: '심리',
+    value: 4,
   },
 ]
 
-watchEffect(() => {
-  selectedOption.value = props.modelValue
-})
 
 const updateSelectedOption = newOption => {
   selectedOption.value = newOption

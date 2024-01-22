@@ -3,26 +3,6 @@ import axios from '@axios'
 import bg from '@images/pages/writing.jpg'
 import { reactive, ref, toRefs } from 'vue'
 
-async function uploadImages() {
-  let formData = new FormData()
-
-  images.files.forEach((file, index) => {
-    formData.append(`file${index}`, file)
-  })
-
-  try {
-    const response = await axios.post('저장할 스프링 서버', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-
-    console.log(response.data)
-  } catch (e) {
-    console.error(e)
-  }
-
-} //위부터 여기까지 값 넘기는 구간
 
 
 // 이미지 생성 요청 함수
@@ -33,7 +13,7 @@ async function createImage() {
 
     console.log(response.data.image_url)
 
-    images.files.unshift({ url: 'http://localhost:5000'+response.data.image_url, name: '생성된 이미지' })  // 이미지 정보를 객체로 저장
+    images.files.unshift({ url: 'http://localhost:5000'+response.data.image_url, name: response.data.image_name })  // 이미지 정보를 객체로 저장
   } catch (e) {
     console.error(e)
   } finally {
@@ -44,14 +24,16 @@ async function createImage() {
 // 파일 입력을 처리하는 함수
 const onFileChange = e => {
   for (let file of e.target.files) {
-    images.files.push({ url: URL.createObjectURL(file), name: file.name })  // 이미지 정보를 객체로 저장
+    images.files.push({ url: URL.createObjectURL(file), name: file.name, file: file })  // 이미지 정보를 객체로 저장
   }
+
 }
 
 const handleFileInput = files => {
   for (let file of files) {
-    images.files.push({ url: URL.createObjectURL(file), name: file.name })  // 이미지 정보를 배열에 추가
+    images.files.push({ url: URL.createObjectURL(file), name: file.name, file: file })  // 이미지 정보를 배열에 추가
   }
+  fileInput.value.reset()  // VFileInput 컴포넌트를 리셋
 }
 
 let dialog = ref(false)
@@ -90,14 +72,11 @@ const createImageUrl = image => {
 
 // 이미지를 제거하는 함수
 const removeImage = index => {
-  URL.revokeObjectURL(createImageUrl(images.files[index]))  // URL 해제를 먼저 수행
-  images.files.splice(index, 1)
   if (activeTab.value >= images.files.length) {
     activeTab.value = images.files.length - 1
   }
-
-  inputValue.value = images.files  // 입력 값을 업데이트
-  
+  URL.revokeObjectURL(createImageUrl(images.files[index]))  // URL 해제를 먼저 수행
+  images.files.splice(index, 1)
 }
 
 const { files } = toRefs(images)
@@ -105,6 +84,19 @@ const { files } = toRefs(images)
 let fileInput = ref(null)  // 파일 입력을 위한 ref 생성
 
 let isLoading = ref(false)  // 로딩 상태를 나타내는 데이터 추가
+
+const zoomIn = e => {
+  e.target.style.transform = 'scale(1.05)'
+}
+
+const zoomOut = e => {
+  e.target.style.transform = 'scale(1)'
+}
+
+const deleteAllFiles = () => {
+  images.files = [] // 파일 전체 삭제
+  this.$refs.fileInput.reset() // VFileInput 컴포넌트 초기화
+}
 </script>
 
 <template>
@@ -177,8 +169,6 @@ let isLoading = ref(false)  // 로딩 상태를 나타내는 데이터 추가
 
     <VFileInput
       ref="fileInput"
-      input-value="inputValue"
-      :value="files"
       multiple
       label="파일을 첨부하세요" 
       show-size
@@ -195,28 +185,6 @@ let isLoading = ref(false)  // 로딩 상태를 나타내는 데이터 추가
     </VFileInput>
   </div>
 </template>
-
-<script>
-export default {
-  data() {
-    return {
-      files: [],
-    }
-  },
-  methods: {
-    zoomIn(e) {
-      e.target.style.transform = 'scale(1.05)'
-    },
-    zoomOut(e) {
-      e.target.style.transform = 'scale(1)'
-    },
-    deleteAllFiles() {
-      this.files = [] // 파일 전체 삭제
-      this.$refs.fileInput.reset() // VFileInput 컴포넌트 초기화
-    },
-  },
-}
-</script>
 
 <style scoped>
 .image-container {

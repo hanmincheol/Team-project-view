@@ -1,6 +1,5 @@
 <script setup>
 import It from '@/pages/views/demos/components/tabs/ImageTab.vue'
-import Hashtag from '@/pages/views/demos/forms/form-elements/textarea/Hashtag.vue'
 import Text from '@/pages/views/demos/forms/form-elements/textarea/WritingText.vue'
 import Sub from '@/views/demos/Subject.vue'
 import axios from '@axios'
@@ -23,6 +22,7 @@ const imageUrls = ref([]) // 각 이미지의 URL을 저장하는 배열
 const isprofile = ref(false)
 
 const people = ref(false)
+const switchValue = computed(() => people.value ? 'Y' : 'N')
 
 
 const subValue = ref('카테고리')
@@ -48,24 +48,56 @@ const members = [
 
 // axios를 사용하여 데이터를 서버로 보내는 함수
 const submitData = async () => {
-  try {
-    const response = await axios.post('http://localhost:4000', {
-      text: textValue.value,
-      hashtag: hashtagValue.value,
-      images: imageUrlsValue.value,
-      sub: subValue.value,
-    })
+  let formData = new FormData()
+  formData.append('id', 'M')
+  formData.append('content', textValue.value)
+  formData.append('hashTag', hashtagValue.value)
+  formData.append('type', subValue.value.value )
+  formData.append('disclosureYN', switchValue.value)
+  console.log(hashtagValue.value)
 
-    console.log('text', text, 'hashtag', hashtag, 'images', images)
+  console.log(imageUrlsValue.value)
+
+  // 이미지 파일 추가
+  imageUrlsValue.value.forEach((file, index) => {
+    console.log(file)
+    formData.append(`file${index}`, file)
+  })
+
+  try {
+    const response = await axios.post('http://localhost:4000/bbs/Write.do', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
 
     // 응답 처리
     if (response.status === 200) {
-      console.log('데이터 전송 선공')
+      console.log('데이터 전송 성공')
     } else {
       console.log('데이터 전송 실패')
     }
   } catch (error) {
     console.error(`데이터 전송 실패: ${error}`)
+  }
+}
+
+// 해시태그를 저장하는 ref
+const hashtags = ref([])
+
+// hashtagValue를 감시하도록 watch 함수를 설정
+watch(hashtagValue, () => {
+  const matches = hashtagValue.value.match(/#\s*\S+/g) || []
+
+  hashtags.value = matches.map(hashtag => hashtag.replace(/\s/g, ''))
+})
+
+// 해시태그를 삭제하는 함수
+const removeHashtag = hashtag => {
+  const index = hashtags.value.indexOf(hashtag)
+  if (index > -1) {
+    hashtags.value.splice(index, 1)
+    hashtagValue.value = hashtags.value.join(' ')
   }
 }
 </script>
@@ -145,7 +177,28 @@ const submitData = async () => {
               </VRow>
               <VRow style=" margin-top: -10px;">
                 <VCol cols="12">
-                  <Hashtag v-model="hashtagValue" />
+                  <VTextarea
+                    v-model="hashtagValue"
+                    rows="2"
+                    placeholder="#해쉬태그"
+                    no-resize
+                  />
+
+                  <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+                    <span
+                      v-for="(hashtag, index) in hashtags"
+                      :key="index"
+                      style="margin-right: 10px;"
+                    >
+                      {{ hashtag }} 
+                      <button 
+                        style="padding: 10px; margin-left: 5px; cursor: pointer;" 
+                        @click="() => removeHashtag(hashtag)"
+                      >
+                        x
+                      </button>
+                    </span>
+                  </div>
                 </VCol>
               </VRow>
               <VRow style="margin-top: -10px;">
@@ -153,10 +206,7 @@ const submitData = async () => {
                   class="demo-space-x"
                   style="display: flex; width: 100%; justify-content: flex-end;"
                 >
-                  <VSwitch
-                    v-model="people"
-                    value="people"
-                  />
+                  <VSwitch v-model="people" />
                   <h3
                     v-if="people"
                     style="margin-top: 17px; margin-left: 2px;"
