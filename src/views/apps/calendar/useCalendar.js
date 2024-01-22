@@ -10,7 +10,6 @@ export const blankEvent = {
   start: '',
   end: '',
   allDay: false,
-  url: '',
   extendedProps: {
     /*
           ℹ️ We have to use undefined here because if we have blank string as value then select placeholder will be active (moved to top).
@@ -44,14 +43,13 @@ export const useCalendar = (event, isEventHandlerSidebarActive, isLeftSidebarOpe
 
   // ℹ️ Extract event data from event API
   const extractEventDataFromEventApi = eventApi => {
-    const { id, title, start, end, url, extendedProps: { calendar, location, description }, allDay } = eventApi
+    const { id, title, start, end, extendedProps: { calendar, location, description }, allDay } = eventApi
     
     return {
       id,
       title,
       start,
       end,
-      url,
       extendedProps: {
         calendar,
         location,
