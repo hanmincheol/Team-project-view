@@ -6,26 +6,36 @@ export const useCalendarStore = defineStore('calendar', {
     availableCalendars: [
       {
         color: 'error',
-        label: 'Personal',
+        label: '일정',
+        value: 0,
       },
       {
         color: 'primary',
-        label: 'Business',
+        label: '아침',
+        value: 1,
       },
       {
         color: 'warning',
-        label: 'Family',
+        label: '점심',
+        value: 2,
       },
       {
         color: 'success',
-        label: 'Holiday',
+        label: '저녁',
+        value: 3,
+      },
+      {
+        color: 'secondary',
+        label: '기타',
+        value: 4,
       },
       {
         color: 'info',
-        label: 'ETC',
+        label: '운동',
+        value: 5,
       },
     ],
-    selectedCalendars: ['Personal', 'Business', 'Family', 'Holiday', 'ETC'],
+    selectedCalendars: ['일정', '아침', '점심', '저녁', '기타', '운동'],
   }),
   actions: {
     async fetchEvents() {
