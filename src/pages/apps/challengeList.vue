@@ -69,6 +69,7 @@ const currentDate = (() => {
 </script>
 
 <template>
+<section>
     <VRow v-if="projectData">
         <VCol
             v-for="data in projectData"
@@ -190,4 +191,5 @@ const currentDate = (() => {
         <v-btn :style="{'margin-left':'10px'}" @click="isAddMateRoomSettingDialogVisible = !isAddMateRoomSettingDialogVisible">Mate</v-btn>
         <AddMateRoomSetting v-model:isDialogVisible="isAddMateRoomSettingDialogVisible"/>
     </VCol>
+</section>
 </template>
