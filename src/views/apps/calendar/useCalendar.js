@@ -6,19 +6,17 @@ import listPlugin from '@fullcalendar/list'
 import timeGridPlugin from '@fullcalendar/timegrid'
 
 export const blankEvent = {
-  title: '',
-  start: '',
-  end: '',
-  allDay: false,
-  url: '',
+  sch_title: '',
+  sch_start: '',
+  sch_end: '',
   extendedProps: {
     /*
           ℹ️ We have to use undefined here because if we have blank string as value then select placeholder will be active (moved to top).
           Hence, we need to set it to undefined or null
         */
     calendar: undefined,
-    location: '',
-    description: '',
+    sch_area: '',
+    sch_memo: '',
   },
 }
 export const useCalendar = (event, isEventHandlerSidebarActive, isLeftSidebarOpen) => {
@@ -44,20 +42,19 @@ export const useCalendar = (event, isEventHandlerSidebarActive, isLeftSidebarOpe
 
   // ℹ️ Extract event data from event API
   const extractEventDataFromEventApi = eventApi => {
-    const { id, title, start, end, url, extendedProps: { calendar, location, description }, allDay } = eventApi
+    const { id, sch_title, sch_start, sch_end, extendedProps: { calendar, sch_area, sch_memo } } = eventApi
     
     return {
       id,
-      title,
-      start,
-      end,
-      url,
+      sch_title,
+      sch_start,
+      sch_end,
       extendedProps: {
         calendar,
-        location,
-        description,
+        sch_area,
+        sch_memo,
       },
-      allDay,
+
     }
   }
 
@@ -149,8 +146,8 @@ export const useCalendar = (event, isEventHandlerSidebarActive, isLeftSidebarOpe
   const updateEvent = _event => {
     store.updateEvent(_event)
       .then(r => {
-        const propsToUpdate = ['id', 'title', 'url']
-        const extendedPropsToUpdate = ['calendar', 'guests', 'location', 'description']
+        const propsToUpdate = ['id', 'sch_title']
+        const extendedPropsToUpdate = ['calendar', 'sch_area', 'sch_memo']
 
         updateEventInCalendar(r.data.event, propsToUpdate, extendedPropsToUpdate)
       })
@@ -224,7 +221,7 @@ export const useCalendar = (event, isEventHandlerSidebarActive, isLeftSidebarOpe
 
     // customButtons
     dateClick(info) {
-      event.value = { ...event.value, start: info.date }
+      event.value = { ...event.value, sch_start: info.date }
       isEventHandlerSidebarActive.value = true
     },
 
