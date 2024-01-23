@@ -1,4 +1,5 @@
 <script setup>
+import AddressApi from '@/components/dialogs/RoomSetAddressApi.vue'
 
 const props = defineProps({
   isDialogVisible: {
@@ -106,17 +107,16 @@ const createRoom = () => {
                         :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
                     />
             </VCol>
-            <VCol>
+            <!-- <VCol>
                 {{type}}
-            </VCol>
+            </VCol> -->
             <VCol
                 class="fitem"
                 cols="4"
                 rows="5" 
                 style="text-align:center;"
             >
-                <VBtn style="margin-top:10px">지역 설정(시/동) - 필수</VBtn>                
-                <!-- <VCol style="background-color:#e9e9e9;border-radius: 10px;"><h4>지역 설정(시/동) - 옵션</h4></VCol>                 -->
+                <AddressApi/>
             </VCol>
         </VCol>
         <VCol>
