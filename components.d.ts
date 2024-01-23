@@ -65,7 +65,6 @@ declare module '@vue/runtime-core' {
     NutrientAnalysis: typeof import('./src/components/dialogs/NutrientAnalysis.vue')['default']
     PhoneApi: typeof import('./src/views/demos/register/PhoneApi.vue')['default']
     PricingPlanDialog: typeof import('./src/components/dialogs/PricingPlanDialog.vue')['default']
-    pricingtest: typeof import('./src/components/dialogs/pricingtest.vue')['default']
     Pricingtest: typeof import('./src/components/dialogs/pricingtest.vue')['default']
     ReferAndEarnDialog: typeof import('./src/components/dialogs/ReferAndEarnDialog.vue')['default']
     RoomSetAddressApi: typeof import('./src/components/dialogs/RoomSetAddressApi.vue')['default']

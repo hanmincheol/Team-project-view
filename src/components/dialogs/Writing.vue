@@ -32,6 +32,9 @@ let fileInput = ref(null)  // 파일 입력을 위한 ref 생성
 let isLoading = ref(false)  // 로딩 상태를 나타내는 데이터 추가
 const ciu = ref([])
 
+// 해시태그를 저장하는 ref
+const hashtags = ref([])
+
 const dialogVisibleUpdate = value => {
   emit('update:isDialogVisible', value)
 }
@@ -51,12 +54,12 @@ const members = [
 // axios를 사용하여 데이터를 서버로 보내는 함수
 const submitData = async () => {
   let formData = new FormData()
-  formData.append('id', 'M')
+  formData.append('id', '한민철')
   formData.append('content', textValue.value)
   formData.append('hashTag', hashtagValue.value)
   formData.append('type', subValue.value.value )
   formData.append('disclosureYN', switchValue.value)
-  formData.append('ciu', ciu.value)
+  formData.append('ciu', JSON.stringify(ciu.value))  // ciu 리스트를 JSON 문자열로 변환
   console.log(ciu.value)
 
 
@@ -84,8 +87,7 @@ const submitData = async () => {
   }
 }
 
-// 해시태그를 저장하는 ref
-const hashtags = ref([])
+
 
 // hashtagValue를 감시하도록 watch 함수를 설정
 watch(hashtagValue, () => {
@@ -115,7 +117,7 @@ async function createImage() {
     images.files.unshift({ url: 'http://localhost:5000'+response.data.image_url, name: response.data.image_name })  // 이미지 정보를 객체로 저장
 
     ciu.value.push({ url: 'http://localhost:5000'+response.data.image_url })
-    console.log(cimages.value)
+    console.log(ciu.value)
   } catch (e) {
     console.error(e)
   } finally {
