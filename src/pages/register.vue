@@ -57,7 +57,7 @@ const onSubmit = () => {
 
     <VDivider />
 
-    <VCardText>
+    <VCardText cols="6">
       <!-- 👉 stepper content -->
       <VForm>
         <VWindow
@@ -66,48 +66,44 @@ const onSubmit = () => {
         >
           <VWindowItem>
             <VRow>
-              <TermsAndConditions />
-            </VRow>
-          </VWindowItem>
-
-          <VWindowItem>
-            <VRow>
-              <VCol
-                cols="12"
-                margin-left="50px"
-                class="centered-content"
-              >
-                <h6 class="text-lg font-weight-medium">
-                  회원가입 정보 입력
-                </h6>
-                <p class="text-md mb-0">
-                  HealthyReal의 회원이 되어보세요!
-                </p>
+              <VCol cols="3" />
+              <VCol cols="6">
+                <TermsAndConditions />
               </VCol>
-
-
-
-
-
-              <DemoFormLayoutHorizontalForm />
             </VRow>
           </VWindowItem>
 
           <VWindowItem>
+            <VCol
+              cols="12"
+              margin-left="50px"
+              class="centered-content"
+            >
+              <h6 class="text-lg font-weight-medium">
+                회원가입 정보 입력
+              </h6>
+              <p class="text-md mb-0">
+                HealthyReal의 회원이 되어보세요!
+              </p>
+            </VCol>
+            <DemoFormLayoutHorizontalForm />
+          </VWindowItem>
+
+          <VWindowItem>
             <VRow>
-              <VCol cols="12">
-                <h6 class="text-sm font-weight-medium">
+              <VCol cols="3" />
+              <VCol cols="6">
+                <h6 class="text-sm font-weight-medium text-center">
                   자동 회원가입 방지
                 </h6>
-                <p class="text-xs mb-0">
+                <p class="text-xs mb-0 text-center">
                   ㅇㅇㅇㅇㅇㅇㅇ
                 </p>
               </VCol>
-
-              <VCol
-                cols="12"
-                md="6"
-              >
+            </VRow>
+            <VRow>
+              <VCol cols="3" />
+              <VCol cols="3">
                 <VTextField
                   v-model="formData.address"
                   placeholder="98 Borough bridge Road, Birmingham"
@@ -115,21 +111,17 @@ const onSubmit = () => {
                 />
               </VCol>
 
-              <VCol
-                cols="12"
-                md="6"
-              >
+              <VCol cols="3">
                 <VTextField
                   v-model="formData.landmark"
                   placeholder="Borough bridge"
                   label="Landmark"
                 />
               </VCol>
-
-              <VCol
-                cols="12"
-                md="6"
-              >
+            </VRow>
+            <VRow>
+              <VCol cols="3" />
+              <VCol cols="3">
                 <VTextField
                   v-model="formData.pincode"
                   placeholder="658921"
@@ -138,10 +130,7 @@ const onSubmit = () => {
                 />
               </VCol>
 
-              <VCol
-                cols="12"
-                md="6"
-              >
+              <VCol cols="3">
                 <VTextField
                   v-model="formData.city"
                   placeholder="City"
@@ -283,3 +272,11 @@ const onSubmit = () => {
   font-size: 1rem; /* 원하는 폰트 크기로 조정 */
 }
 </style>
+
+<route lang="yaml">
+meta:
+  layout: blank
+  action: read
+  subject: Auth
+  redirectIfLoggedIn: true
+</route>
