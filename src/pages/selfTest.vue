@@ -1,7 +1,46 @@
 <script setup>
-import bg1 from '@images/pages/background-1.jpg'
-import bg2 from '@images/pages/background-2.jpg'
-import bg3 from '@images/pages/background-3.jpg'
+import bg1 from '@images/allergy/1.jpg'
+import bg10 from '@images/allergy/10.jpg'
+import bg11 from '@images/allergy/11.jpg'
+import bg12 from '@images/allergy/12.jpg'
+import bg13 from '@images/allergy/13.jpg'
+import bg14 from '@images/allergy/14.jpg'
+import bg15 from '@images/allergy/15.jpg'
+import bg16 from '@images/allergy/16.jpg'
+import bg17 from '@images/allergy/17.jpg'
+import bg18 from '@images/allergy/18.jpg'
+import bg2 from '@images/allergy/2.jpg'
+import bg3 from '@images/allergy/3.jpg'
+import bg4 from '@images/allergy/4.jpg'
+import bg5 from '@images/allergy/5.jpg'
+import bg6 from '@images/allergy/6.jpg'
+import bg7 from '@images/allergy/7.jpg'
+import bg8 from '@images/allergy/8.jpg'
+import bg9 from '@images/allergy/9.jpg'
+
+import ht1 from '@images/Unbalanced/1.jpg'
+import ht10 from '@images/Unbalanced/10.jpg'
+import ht11 from '@images/Unbalanced/11.jpg'
+import ht12 from '@images/Unbalanced/12.jpg'
+import ht13 from '@images/Unbalanced/13.jpg'
+import ht14 from '@images/Unbalanced/14.jpg'
+import ht15 from '@images/Unbalanced/15.jpg'
+import ht16 from '@images/Unbalanced/16.jpg'
+import ht17 from '@images/Unbalanced/17.jpg'
+import ht18 from '@images/Unbalanced/18.jpg'
+import ht19 from '@images/Unbalanced/19.jpg'
+import ht2 from '@images/Unbalanced/2.jpg'
+import ht20 from '@images/Unbalanced/20.jpg'
+import ht21 from '@images/Unbalanced/21.jpg'
+import ht22 from '@images/Unbalanced/22.jpg'
+import ht3 from '@images/Unbalanced/3.jpg'
+import ht4 from '@images/Unbalanced/4.jpg'
+import ht5 from '@images/Unbalanced/5.jpg'
+import ht6 from '@images/Unbalanced/6.jpg'
+import ht7 from '@images/Unbalanced/7.jpg'
+import ht8 from '@images/Unbalanced/8.jpg'
+import ht9 from '@images/Unbalanced/9.jpg'
+
 import { ref } from 'vue'
 
 const isDialogVisible = ref(false)
@@ -46,92 +85,160 @@ const checkboxContent = [
     value: '3',
   },
   {
-    bgImage: bg1,
+    bgImage: bg4,
     value: '4',
   },
   {
-    bgImage: bg2,
+    bgImage: bg5,
     value: '5',
   },
   {
-    bgImage: bg3,
+    bgImage: bg6,
     value: '6',
   },
   {
-    bgImage: bg1,
+    bgImage: bg7,
     value: '7',
   },
   {
-    bgImage: bg2,
+    bgImage: bg8,
     value: '8',
   },
   {
-    bgImage: bg3,
+    bgImage: bg9,
     value: '9',
   },
   {
-    bgImage: bg1,
+    bgImage: bg10,
     value: '10',
   },
   {
-    bgImage: bg2,
+    bgImage: bg11,
     value: '11',
   },
   {
-    bgImage: bg3,
+    bgImage: bg12,
     value: '12',
+  },
+  {
+    bgImage: bg12,
+    value: '12',
+  },
+  {
+    bgImage: bg13,
+    value: '13',
+  },
+  {
+    bgImage: bg14,
+    value: '14',
+  },
+  {
+    bgImage: bg15,
+    value: '15',
+  },
+  {
+    bgImage: bg16,
+    value: '16',
+  },
+  {
+    bgImage: bg17,
+    value: '17',
+  },
+  {
+    bgImage: bg18,
+    value: '18',
   },
 ]
 
 // 탭에다 뿌려줄 사진 및 밸류
 const checkboxContent2 = [
   {
-    bgImage: bg3,
+    bgImage: ht1,
+    value: '1',
+  },
+  {
+    bgImage: ht2,
+    value: '2',
+  },
+  {
+    bgImage: ht3,
+    value: '3',
+  },
+  {
+    bgImage: ht4,
+    value: '4',
+  },
+  {
+    bgImage: ht5,
+    value: '5',
+  },
+  {
+    bgImage: ht6,
+    value: '6',
+  },
+  {
+    bgImage: ht7,
+    value: '7',
+  },
+  {
+    bgImage: ht8,
+    value: '8',
+  },
+  {
+    bgImage: ht9,
+    value: '9',
+  },
+  {
+    bgImage: ht10,
+    value: '10',
+  },
+  {
+    bgImage: ht11,
+    value: '11',
+  },
+  {
+    bgImage: ht12,
+    value: '12',
+  },
+  {
+    bgImage: ht13,
     value: '13',
   },
   {
-    bgImage: bg2,
+    bgImage: ht14,
     value: '14',
   },
   {
-    bgImage: bg1,
+    bgImage: ht15,
     value: '15',
-  },
+  },  
   {
-    bgImage: bg3,
+    bgImage: ht16,
     value: '16',
   },
   {
-    bgImage: bg2,
+    bgImage: ht17,
     value: '17',
   },
   {
-    bgImage: bg1,
+    bgImage: ht18,
     value: '18',
-  },
+  },  
   {
-    bgImage: bg3,
+    bgImage: ht19,
     value: '19',
   },
   {
-    bgImage: bg2,
+    bgImage: ht20,
     value: '20',
   },
   {
-    bgImage: bg1,
+    bgImage: ht21,
     value: '21',
   },
   {
-    bgImage: bg3,
+    bgImage: ht22,
     value: '22',
-  },
-  {
-    bgImage: bg2,
-    value: '23',
-  },
-  {
-    bgImage: bg1,
-    value: '24',
   },
 ]
 
@@ -188,7 +295,7 @@ const isSelected = value => {
             <VRow>
               <CustomCheckboxesWithImage
                 v-model:selected-checkbox="selectedCheckbox"
-                :checkbox-content="checkboxContent2"
+                :checkbox-content="checkboxContent"
                 :grid-column="{ sm: '3', cols: '12' }"
               />
             </VRow>
@@ -199,7 +306,7 @@ const isSelected = value => {
             <VRow>
               <CustomCheckboxesWithImageIcon
                 v-model:selected-checkbox="selectedCheckbox"
-                :checkbox-content="checkboxContent"
+                :checkbox-content="checkboxContent2"
                 :grid-column="{ sm: '3', cols: '12' }"
               />
             </VRow>

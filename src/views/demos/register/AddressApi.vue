@@ -11,12 +11,12 @@
           size="large"
         />
       </VCol>
-      <VCol cols="2">
+      <VCol cols="5">
         <VBtn
           color="primary"
           class="my-custom-button"
           height="55px"
-          width="200"
+          width="40%"
           @click="execDaumPostcode"
         >
           우편번호 찾기

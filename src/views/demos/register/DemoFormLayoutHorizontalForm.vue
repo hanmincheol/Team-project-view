@@ -2,7 +2,7 @@
 import Sub from '@/views/demos/DemoSelectCustomTextAndValue.vue'
 import AddressApi from '@/views/demos/register/AddressApi.vue'
 import ChooseRadios from '@/views/demos/register/ChooseRadios.vue'
-import axios from 'axios'
+import axios from '@axios'
 import { computed, ref } from 'vue'
 
 const idText=ref(null)
@@ -285,400 +285,349 @@ const onSubmitPhone = () => {
 <template>
   <VForm @submit.prevent="handleFormSubmit,onSubmitIdCK,onSubmitPassword,onSubmitPasswordCK,onSubmitName,onSubmitHeight,onSubmitWeight,onSubmitEmail,onSubmitPhone,CertiPN">
     <!-- () => {} -->
-    <VRow>
-      <VCol cols="12">
-        <VRow no-gutters>
-          <!-- 👉 ID -->
-          <VCol
-            cols="12"
-            md="3"
-          />
-
-          <VCol
-            cols="12"
-            md="1"
-          />
+    <VCol cols="12">
+      <VRow no-gutters>
+        <!-- 👉 ID -->
+        <VCol cols="4" />
           
-          <VCol
-            cols="12"
-            md="4"
-          >
-            <VTextField
-              id="id"
-              ref="idText"
-              v-model="id"
-              placeholder="아이디"
-              persistent-placeholder
-              @input="validateId"
-            />
-            <!-- 입력 변경시 마다 아이디 유효성 검사 호출 -->
-            <div :style="{ color: idError ? (idError === '사용가능!' ? 'greenyellow' : 'red') : '' }">
-              {{ idError }}
-            </div> <!-- 아이디 오류 메세지 -->
-          </VCol>
-        </VRow>
-      </VCol>
-
-
-
-      <VCol cols="12">
-        <VRow no-gutters>
-          <!-- 👉 Password -->
-          <VCol
-            cols="12"
-            md="3"
+        <VCol cols="4">
+          <VTextField
+            id="id"
+            ref="idText"
+            v-model="id"
+            placeholder="아이디"
+            persistent-placeholder
+            @input="validateId"
           />
+          <!-- 입력 변경시 마다 아이디 유효성 검사 호출 -->
+          <div :style="{ color: idError ? (idError === '사용가능!' ? 'greenyellow' : 'red') : '' }">
+            {{ idError }}
+          </div> <!-- 아이디 오류 메세지 -->
+        </VCol>
+      </VRow>
+    </VCol>
+
+
+
+    <VCol cols="12">
+      <VRow no-gutters>
+        <!-- 👉 Password -->
+        <VCol
+          cols="12"
+          md="3"
+        />
             
-          <VCol
-            cols="12"
-            md="1"
-          />
+        <VCol
+          cols="12"
+          md="1"
+        />
 
-          <VCol
-            cols="12"
-            md="4"
-          >
-            <VTextField
+        <VCol
+          cols="12"
+          md="4"
+        >
+          <VTextField
             
-              id="pwd"
-              v-model="pwd"
-              placeholder="비밀번호"
-              persistent-placeholder
-              :type="isPasswordVisible ? 'text' : 'pwd'"
-              :append-inner-icon="isPasswordVisible ? 'mdi-eye-outline' : 'mdi-eye-off-outline'"
-              @input="validatePassword"
-              @click:append-inner="isPasswordVisible = !isPasswordVisible"
-            />
-            <div :style="{ color: passwordError ? (passwordError === '사용가능!' ? 'greenyellow' : 'red') : '' }">
-              {{ passwordError }}
-            </div>
-          </VCol>
-        </VRow>
-      </VCol>
-
-      <VCol cols="12">
-        <VRow no-gutters>
-          <!-- 👉 Password -->
-          <VCol
-            cols="12"
-            md="3"
+            id="pwd"
+            v-model="pwd"
+            placeholder="비밀번호"
+            persistent-placeholder
+            :type="isPasswordVisible ? 'text' : 'pwd'"
+            :append-inner-icon="isPasswordVisible ? 'mdi-eye-outline' : 'mdi-eye-off-outline'"
+            @input="validatePassword"
+            @click:append-inner="isPasswordVisible = !isPasswordVisible"
           />
+          <div :style="{ color: passwordError ? (passwordError === '사용가능!' ? 'greenyellow' : 'red') : '' }">
+            {{ passwordError }}
+          </div>
+        </VCol>
+      </VRow>
+    </VCol>
 
-          <VCol
-            cols="12"
-            md="1"
+    <VCol cols="12">
+      <VRow no-gutters>
+        <!-- 👉 Password -->
+        <VCol
+          cols="12"
+          md="3"
+        />
+
+        <VCol
+          cols="12"
+          md="1"
+        />
+
+        <VCol
+          cols="12"
+          md="4"
+        >
+          <VTextField
+            id="passwordCK"
+            v-model="passwordCK"
+            placeholder="비밀번호 확인"
+            persistent-placeholder
+            :type="isCPasswordVisible ? 'text' : 'password'"
+            :append-inner-icon="isCPasswordVisible ? 'mdi-eye-outline' : 'mdi-eye-off-outline'"
+            @input="validatePasswordCK"
+            @click:append-inner="isCPasswordVisible = !isCPasswordVisible"
           />
+          <div :style="{ color: passwordCKError ? (passwordCKError === '일치합니다!' ? 'greenyellow' : 'red') : '' }">
+            {{ passwordCKError }}
+          </div>
+        </VCol>
+      </VRow>
+    </VCol>
 
-          <VCol
-            cols="12"
-            md="4"
-          >
-            <VTextField
-              id="passwordCK"
-              v-model="passwordCK"
-              placeholder="비밀번호 확인"
-              persistent-placeholder
-              :type="isCPasswordVisible ? 'text' : 'password'"
-              :append-inner-icon="isCPasswordVisible ? 'mdi-eye-outline' : 'mdi-eye-off-outline'"
-              @input="validatePasswordCK"
-              @click:append-inner="isCPasswordVisible = !isCPasswordVisible"
-            />
-            <div :style="{ color: passwordCKError ? (passwordCKError === '일치합니다!' ? 'greenyellow' : 'red') : '' }">
-              {{ passwordCKError }}
-            </div>
-          </VCol>
-        </VRow>
-      </VCol>
+    <VCol cols="12">
+      <VRow no-gutters>
+        <!-- 👉 fullName -->
+        <VCol
+          cols="12"
+          md="3"
+        />
 
-      <VCol cols="12">
-        <VRow no-gutters>
-          <!-- 👉 fullName -->
-          <VCol
-            cols="12"
-            md="3"
+        <VCol
+          cols="12"
+          md="1"
+        />
+
+        <VCol
+          cols="12"
+          md="4"
+        >
+          <VTextField
+            id="name"
+            v-model="name"
+            type="name"
+            placeholder="이름"
+            persistent-placeholder
+            @input="validatenameCK"
           />
+          <div :style="{ color: nameError ? (nameError === '사용가능!' ? 'greenyellow' : 'red') : '' }">
+            {{ nameError }}
+          </div>
+        </VCol>
+      </VRow>
+    </VCol>
 
-          <VCol
-            cols="12"
-            md="1"
-          />
-
-          <VCol
-            cols="12"
-            md="4"
-          >
-            <VTextField
-              id="name"
-              v-model="name"
-              type="name"
-              placeholder="이름"
-              persistent-placeholder
-              @input="validatenameCK"
-            />
-            <div :style="{ color: nameError ? (nameError === '사용가능!' ? 'greenyellow' : 'red') : '' }">
-              {{ nameError }}
-            </div>
-          </VCol>
-        </VRow>
-      </VCol>
-
-      <VCol cols="12">
-        <VRow no-gutters>
-          <!-- 👉 fullName -->
-          <VCol cols="4" />
+    <VCol cols="12">
+      <VRow no-gutters>
+        <!-- 👉 fullName -->
+        <VCol cols="4" />
 
          
-          <CustomRadios
-            v-model:selected-radio="selectedRadio"
-            :radio-content="radioContent"
-            :grid-column="{ sm: '6', cols: '12' }"
-          />
-          <VCol cols="4" />
-        </VRow>
-      </VCol>
+        <CustomRadios
+          v-model:selected-radio="selectedRadio"
+          :radio-content="radioContent"
+          :grid-column="{ sm: '6', cols: '12' }"
+        />
+        <VCol cols="4" />
+      </VRow>
+    </VCol>
 
-      <VCol cols="12">
-        <VRow no-gutters>
-          <!-- 👉 fullName -->
-          <VCol
-            cols="12"
-            md="2"
-          />
+    <VCol cols="12">
+      <VRow no-gutters>
+        <!-- 👉 fullName -->
+        <VCol
+          cols="12"
+          md="4"
+        />
 
-          <VCol
-            cols="12"
-            md="2"
-          />
-          
-
-          <VTextField
-            id="height"
-            v-model="heighteight"
-            type="height"
-            placeholder="키"
-            persistent-placeholder
-            label="CM"
+        <VTextField
+          id="height"
+          v-model="heighteight"
+          type="height"
+          placeholder="키"
+          persistent-placeholder
+          label="CM"
             
-            @input="validateHeight"
+          @input="validateHeight"
+        />
+        <div :style="{ color: heightError ? (heightError === '성공!' ? 'greenyellow' : 'red') : '' }">
+          {{ heightError }}
+        </div>
+
+
+
+        <VTextField
+          id="weight"
+          v-model="weight"
+          type="weight"
+          placeholder="몸무게"
+          persistent-placeholder
+          label="KG"
+          @input="validateWeight"
+        />
+        <div
+          :style="{ color: weightError ? (weightError === '성공!' ? 'greenyellow' : 'red') : '' }"
+          height="50px"
+        >
+          {{ weightError }}
+        </div>
+        <VCol
+          cols="12"
+          md="4"
+        />
+      </VRow>
+    </VCol>
+
+      
+
+
+    <VCol cols="12">
+      <VRow no-gutters>
+        <!-- 👉 birthday -->
+        <VCol
+          cols="12"
+          md="4"
+        />
+        <VCol
+          cols="12"
+          md="4"
+        >
+          <AppDateTimePicker
+            v-model="birthday"
+            label="생년월일"
           />
-          <div :style="{ color: heightError ? (heightError === '성공!' ? 'greenyellow' : 'red') : '' }">
-            {{ heightError }}
-          </div>
-
-
-
+        </VCol>
+      </VRow>
+    </VCol>
+    <VCol cols="12">
+      <VRow no-gutters>
+        <!-- 👉 ID -->
+        <VCol
+          cols="12"
+          md="4"
+        />
+        <VCol
+          cols="12"
+          md="4"
+        >
           <VTextField
-            id="weight"
-            v-model="weight"
-            type="weight"
-            placeholder="몸무게"
+            id="email"
+            v-model="email"
+            placeholder="이메일"
             persistent-placeholder
-            label="KG"
-            @input="validateWeight"
+            @input="validateEmailCK"
           />
-          <div
-            :style="{ color: weightError ? (weightError === '성공!' ? 'greenyellow' : 'red') : '' }"
-            height="50px"
-          >
-            {{ weightError }}
+          <!-- 입력 변경시 마다 아이디 유효성 검사 호출 -->
+          <div :style="{ color: emailError ? (emailError === '올바른 형식입니다!' ? 'greenyellow' : 'red') : '' }">
+            {{ emailError }}
           </div>
-          <VCol
-            cols="12"
-            md="4"
-          />
-        </VRow>
-      </VCol>
+        </VCol>
+      </VRow>
+    </VCol>
 
+    <VCol cols="12">
+      <VRow no-gutters>
+        <!-- 👉 ID -->
+        <VCol
+          cols="12"
+          md="4"
+        />
+        <VCol
+          cols="12"
+          md="4"
+        >
+          <VTextField
+            id="tel"
+            v-model="tel"
+            placeholder="휴대전화 번호(-생략 가능)"
+            persistent-placeholder
+            @input="validatePNCK"
+          />
+          <!-- 입력 변경시 마다 아이디 유효성 검사 호출 -->
+          <div :style="{ color: PNError ? (PNError === '올바른 형식입니다!' ? 'greenyellow' : 'red') : '' }">
+            {{ PNError }}
+          </div> <!-- 아이디 오류 메세지 -->
+        </VCol>
+      </VRow>
+      <VRow>
+        <VCol
+          cols="12"
+          md="4"
+        />
+        <VCol
+          cols="12"
+          md="4"
+        >
+          <Sub />
+        </VCol>
+      </VRow>
+    </VCol>
       
+    <AddressApi :user-address="userAddress" />
 
-
-      <VCol cols="12">
-        <VRow no-gutters>
-          <!-- 👉 birthday -->
-          <VCol
-            cols="12"
-            md="3"
-          />
-
-          <VCol
-            cols="12"
-            md="1"
-          />
-
-          <VCol
-            cols="12"
-            md="4"
-          >
-            <AppDateTimePicker
-              v-model="birthday"
-              label="생년월일"
-            />
-          </VCol>
-        </VRow>
-      </VCol>
-      <VCol cols="12">
-        <VRow no-gutters>
-          <!-- 👉 ID -->
-          <VCol
-            cols="12"
-            md="3"
-          />
-
-          <VCol
-            cols="12"
-            md="1"
-          />
-          
-          <VCol
-            cols="12"
-            md="4"
-          >
-            <VTextField
-              id="email"
-              v-model="email"
-              placeholder="이메일"
-              persistent-placeholder
-              @input="validateEmailCK"
-            />
-            <!-- 입력 변경시 마다 아이디 유효성 검사 호출 -->
-            <div :style="{ color: emailError ? (emailError === '올바른 형식입니다!' ? 'greenyellow' : 'red') : '' }">
-              {{ emailError }}
-            </div>
-          </VCol>
-        </VRow>
-      </VCol>
-
-      <VCol cols="12">
-        <VRow no-gutters>
-          <!-- 👉 ID -->
-          <VCol
-            cols="12"
-            md="3"
-          />
-
-          <VCol
-            cols="12"
-            md="1"
-          />
-          
-          <VCol
-            cols="12"
-            md="4"
-          >
-            <VTextField
-              id="tel"
-              v-model="tel"
-              placeholder="휴대전화 번호(-생략 가능)"
-              persistent-placeholder
-              @input="validatePNCK"
-            />
-            <!-- 입력 변경시 마다 아이디 유효성 검사 호출 -->
-            <div :style="{ color: PNError ? (PNError === '올바른 형식입니다!' ? 'greenyellow' : 'red') : '' }">
-              {{ PNError }}
-            </div> <!-- 아이디 오류 메세지 -->
-          </VCol>
-        </VRow>
-        <VRow>
-          <VCol
-            cols="12"
-            md="4"
-          />
-          <VCol
-            cols="12"
-            md="4"
-          >
-            <Sub />
-          </VCol>
-        </VRow>
-      </VCol>
-      
-      <AddressApi :user-address="userAddress" />
-
-      <VCol cols="12">
-        <VRow no-gutters>
-          <VCol
-            cols="12"
-            md="2"
-          />
-
-          <VCol
-            cols="12"
-            md="2"
-          />
-
-          <VCol
-            cols="12"
-            md="4"
-          >
-            <VDialog
-              v-model="isDialogVisible"
-              max-width="800"
+    <VRow no-gutters>
+      <VCol cols="4" />
+      <VCol cols="4">
+        <VDialog
+          v-model="isDialogVisible"
+          max-width="800"
+        >
+          <!-- Dialog Activator -->
+          <template #activator="{ props }">
+            <VBtn
+              :phone-number="tel"
+              :email="email"
+              v-bind="props"
+              :disabled="isButtonDisabled"
+              color="primary"
+              class="my-custom-button"
+              size="x-large"
+              width="100%"
+              @submit="handleFormSubmit"
+              @click="isDialogTwoShow = !isDialogTwoShow"
             >
-              <!-- Dialog Activator -->
-              <template #activator="{ props }">
-                <VBtn
-                  :phone-number="tel"
-                  :email="email"
-                  v-bind="props"
-                  :disabled="isButtonDisabled"
-                  color="primary"
-                  class="my-custom-button"
-                  height="55px"
-                  width="800"
-                  @submit="handleFormSubmit"
-                  @click="isDialogTwoShow = !isDialogTwoShow"
-                >
-                  인증요청
-                </VBtn>
-              </template>
+              인증요청
+            </VBtn>
+          </template>
 
-              <!-- Dialog Content -->
+          <!-- Dialog Content -->
               
 
-              <VDialog
-                v-model="isDialogTwoShow"
-                class="v-dialog-sm text-center"
-              >
-                <VCard title="인증번호 입력+">
-                  <DialogCloseBtn
-                    variant="text"
-                    size="small"
-                    @click="isDialogTwoShow = false"
+          <VDialog
+            v-model="isDialogTwoShow"
+            class="v-dialog-sm text-center"
+          >
+            <VCard title="인증번호 입력+">
+              <DialogCloseBtn
+                variant="text"
+                size="small"
+                @click="isDialogTwoShow = false"
+              />
+              <VRow no-gutters>
+                <VCol cols="12">
+                  <VCol
+                    cols="12"
+                    md="6"
                   />
-                  <VRow no-gutters>
-                    <VCol cols="12">
-                      <VCol
-                        cols="12"
-                        md="6"
-                      />
 
-                      <VTextField
-                        id="certifiedPN"
-                        v-model="certifiedPN"
-                        type="certifiedPN"
-                        placeholder="인증번호"
-                        persistent-placeholder
-                        inputmode="numeric"
-                        @input="CertiPN"
-                      />
-                      <VCol
-                        cols="12"
-                        md="12"
-                      >
-                        <VCardActions>
-                          <VSpacer />
-                          <VBtn @click="handleCertification">
-                            인증하기
-                          </VBtn>
-                        </VCardActions>
-                      </vcol>
-                    </vcol>
-                  </VRow>
-                </VCard>
-              </VDialog>
-            </vdialog>
-          </VCol>
-        </VRow>
+                  <VTextField
+                    id="certifiedPN"
+                    v-model="certifiedPN"
+                    type="certifiedPN"
+                    placeholder="인증번호"
+                    persistent-placeholder
+                    inputmode="numeric"
+                    @input="CertiPN"
+                  />
+                  <VCol
+                    cols="12"
+                    md="12"
+                  >
+                    <VCardActions>
+                      <VSpacer />
+                      <VBtn @click="handleCertification">
+                        인증하기
+                      </VBtn>
+                    </VCardActions>
+                  </vcol>
+                </vcol>
+              </VRow>
+            </VCard>
+          </VDialog>
+        </vdialog>
       </VCol>
     </VRow>
   </VForm>

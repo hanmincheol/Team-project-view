@@ -7,13 +7,13 @@ import authV2LoginIllustrationDark from '@images/pages/auth-v2-login-illustratio
 import authV2LoginIllustrationLight from '@images/pages/auth-v2-login-illustration-light.png'
 import authV2MaskDark from '@images/pages/auth-v2-mask-dark.png'
 import authV2MaskLight from '@images/pages/auth-v2-mask-light.png'
-import tree from '@images/pages/tree.png'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
 
 import {
   requiredValidatorId,
 } from '@validators'
+
 const router = useRouter()
 
 // const form = ref({
@@ -31,7 +31,7 @@ const authThemeImg = useGenerateImageVariant(authV2LoginIllustrationLight, authV
 const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
 
 const loginId = () => {
-  router.push({path:"/login-password", query:{ userid: id.value }});
+  router.push({ path: "/login-password", query: { userid: id.value } })
 }
 
 const loginNext = () => {
@@ -41,14 +41,16 @@ const loginNext = () => {
   })
 }
 </script>
+
 <script>
 export default{
   data() {
     return {
       keyCombination: [], //사용자가 누른 키 조합을 저장하는 역할
-      timer: null
-    }; 
+      timer: null,
+    } 
   },
+
   // mounted(){
   //   this.timer = setTimeout(() => {
   //     // 타이머가 만료되었을때 실행될 코드
@@ -56,47 +58,56 @@ export default{
   //   }, 30000); // 30초를 밀리초 단위로 설정    
   // },
   created(){
-    window.addEventListener('keydown',this.handleKeyDown);
+    window.addEventListener('keydown', this.handleKeyDown)
   },
-  destroyed(){
-    window.removeEventListener('keydown', this.handleKeyDown);
+  unmounted(){
+    window.removeEventListener('keydown', this.handleKeyDown)
   },
   methods: {
     handleKeyDown(event) {
-      const key = event.key;
-      this.keyCombination.push(key);
+      const key = event.key
 
-      clearTimeout(this.timer);
+      this.keyCombination.push(key)
+
+      clearTimeout(this.timer)
       this.timer = setTimeout(() => {
-        this.resetKeyCombination();
+        this.resetKeyCombination()
+
         //console.log('타이머가 만료되었습니다.');
-      }, 5000);
+      }, 5000)
 
       if (this.checkKeyCombination()) {
-        this.enterAdminMode();
+        this.enterAdminMode()
       }
     },
     checkKeyCombination() {
-      const targetKeys = ['ArrowUp','ArrowUp', 'ArrowRight','ArrowRight', 'ArrowDown','ArrowDown', 'ArrowLeft','ArrowLeft'];
-      return this.keyCombination.length === targetKeys.length && this.keyCombination.every((key, index) => key === targetKeys[index]);
+      const targetKeys = ['ArrowUp', 'ArrowUp', 'ArrowRight', 'ArrowRight', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowLeft']
+      
+      return this.keyCombination.length === targetKeys.length && this.keyCombination.every((key, index) => key === targetKeys[index])
     },
     resetKeyCombination() {
-      this.keyCombination = [];
+      this.keyCombination = []
     },
     enterAdminMode() {
       // 관리자 모드로 변경
       //console.log('관리자 모드를 실행합니다.');
-      location.href = '/login-admin';
-    }
-  }
-};
-
+      location.href = '/login-admin'
+    },
+  },
+}
 </script>
 
 <template>
   <div>
-    <video autoplay loop muted>
-      <source src="@/assets/video/sample.mp4" type="video/mp4">
+    <video
+      autoplay
+      loop
+      muted
+    >
+      <source
+        src="@/assets/video/sample.mp4"
+        type="video/mp4"
+      >
     </video>
     <!-- Title and Logo -->
     <div class="auth-logo d-flex align-start gap-x-3">
@@ -111,10 +122,7 @@ export default{
       no-gutters
       class="auth-wrapper"
     >
-      <VCol
-        class="d-none d-md-flex align-center justify-center position-relative"
-      >
-      </VCol>
+      <VCol class="d-none d-md-flex align-center justify-center position-relative" />
 
       <VCol
         cols="12"
@@ -124,11 +132,9 @@ export default{
           flat
           :max-width="500"
           class="mt-12 mt-sm-0 pa-4"
-          style="border:solid 2px gray;width:500px;height:500px;opacity: 0.8;"
+          style="width: 500px;height: 500px;border: solid 2px gray;opacity: 0.8;"
         >
-          <VCol
-            class="text-center" 
-          >
+          <VCol class="text-center">
             <VCardText>              
               <h5 class="text-h5 mb-1">
                 &#128100;로그인
@@ -138,7 +144,8 @@ export default{
           <VCardText>
             <VForm
               ref="refVForm" 
-              @submit.prevent="router.push('/')">
+              @submit.prevent="router.push('/')"
+            >
               <VRow>
                 <!-- 아이디 입력란 -->
                 <VCol cols="12">
@@ -155,7 +162,9 @@ export default{
                       v-model="rememberMe"
                       label="Remember me"
                     />
-                    <VBtn @click="loginNext()">다음</VBtn>
+                    <VBtn @click="loginNext">
+                      다음
+                    </VBtn>
                   </div>
                   <VCol
                     cols="12"                  
@@ -170,7 +179,7 @@ export default{
                 <VCol
                   cols="12"
                   class="text-center"
-                  style="margin-top:-30px"
+                  style="margin-top: -30px;"
                 >
                   <!-- /AuthProvider.vue -->
                   <!-- 소셜로그인(AuthProvider) 부분 정렬 -->                
@@ -187,13 +196,13 @@ export default{
                   >
                     회원가입
                   </RouterLink>
-                  <br/><br/>
+                  <br><br>
                   <RouterLink
-                      class="text-primary ms-2 mb-1"
-                      :to="{ name: 'forgot-id' }"
-                    >
-                      아이디 찾기
-                    </RouterLink>
+                    class="text-primary ms-2 mb-1"
+                    :to="{ name: 'forgot-id' }"
+                  >
+                    아이디 찾기
+                  </RouterLink>
                 </VCol>
               </VRow>
             </VForm>
@@ -206,12 +215,13 @@ export default{
 
 <style lang="scss">
 @use "@core/scss/template/pages/page-auth.scss";
+
 video {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  block-size: 100%;
+  inline-size: 100%;
+  inset-block-start: 0;
+  inset-inline-start: 0;
   object-fit: cover;
 }
 </style>
