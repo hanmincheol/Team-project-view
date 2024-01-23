@@ -102,4 +102,12 @@ export default defineConfig({
       './src/**/*.vue',
     ],
   },
+  devServer: {
+    proxy: {
+      '/user/check': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+    },
+  },
 })

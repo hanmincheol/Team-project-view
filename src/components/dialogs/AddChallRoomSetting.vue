@@ -1,4 +1,5 @@
 <script setup>
+import AddressApi from '@/components/dialogs/RoomSetAddressApi.vue'
 
 const props = defineProps({
   isDialogVisible: {
@@ -123,17 +124,16 @@ const createRoom = () => {
                     tick-size="4"
                 />
             </VCol>
-            <VCol>
+            <!-- <VCol>
                 {{type}}
-            </VCol>
+            </VCol> -->
             <VCol
                 class="fitem"
                 cols="4"
                 rows="5" 
                 style="text-align:center;"
             >
-                <VBtn style="margin-top:10px">지역 설정(시/동) - 옵션</VBtn>                
-                <!-- <VCol style="background-color:#e9e9e9;border-radius: 10px;"><h4>지역 설정(시/동) - 옵션</h4></VCol>                 -->
+                <AddressApi/>
             </VCol>
         </VCol>
         <VCol>
@@ -223,6 +223,7 @@ const createRoom = () => {
                 />
             </VCol>
         </VCol>
+
         <VCol
             cols="12"
             rows="4"
@@ -240,9 +241,9 @@ const createRoom = () => {
 <style>
 .fbox{
     display:flex;
-    /* border:2px solid red; */
+    border:2px solid red;
 }
 .fitem{
-    /* border:1px solid green; */
+    border:1px solid green;
 }
 </style>

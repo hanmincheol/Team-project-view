@@ -11,6 +11,7 @@
     "postinstall": "npm run build:icons"
   },
   "dependencies": {
+    "@bootpay/client-js": "^4.3.4",
     "@casl/ability": "6.5.0",
     "@casl/vue": "2.2.1",
     "@floating-ui/dom": "1.2.8",
@@ -25,6 +26,8 @@
     "bootstrap": "^5.3.2",
     "bootstrap-vue-3": "^0.5.1",
     "chart.js": "4.3.0",
+    "coolsms-node-sdk": "^2.0.1",
+    "cors": "^2.8.5",
     "eslint-import-resolver-alias": "^1.1.2",
     "jwt-decode": "3.1.2",
     "pinia": "2.0.36",
