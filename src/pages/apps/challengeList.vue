@@ -183,11 +183,11 @@ const currentDate = (() => {
                 </VCardText>
             </VCard>
         </VCol>
-        <VCol>        
-            <v-btn :style="{'margin-left':'10px'}" @click="isAddChallRoomSettingDialogVisible = !isAddChallRoomSettingDialogVisible">챌린지방 생성</v-btn>
-            <AddChallRoomSetting v-model:isDialogVisible="isAddChallRoomSettingDialogVisible"/>
-            <v-btn :style="{'margin-left':'10px'}" @click="isAddMateRoomSettingDialogVisible = !isAddMateRoomSettingDialogVisible">Mate</v-btn>
-            <AddMateRoomSetting v-model:isDialogVisible="isAddMateRoomSettingDialogVisible"/>
-        </VCol>
     </VRow>
+    <VCol>        
+        <v-btn :style="{'margin-left':'10px'}" @click="isAddChallRoomSettingDialogVisible = !isAddChallRoomSettingDialogVisible">챌린지방 생성</v-btn>
+        <AddChallRoomSetting v-model:isDialogVisible="isAddChallRoomSettingDialogVisible"/>
+        <v-btn :style="{'margin-left':'10px'}" @click="isAddMateRoomSettingDialogVisible = !isAddMateRoomSettingDialogVisible">Mate</v-btn>
+        <AddMateRoomSetting v-model:isDialogVisible="isAddMateRoomSettingDialogVisible"/>
+    </VCol>
 </template>

@@ -1,17 +1,11 @@
 <script setup>
+import axios from '@axios'
+import {
+  requiredValidator,
+} from '@validators'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import { VForm } from 'vuetify/components/VForm'
 import { useCalendarStore } from './useCalendarStore'
-import avatar1 from '@images/avatars/avatar-1.png'
-import avatar2 from '@images/avatars/avatar-2.png'
-import avatar3 from '@images/avatars/avatar-3.png'
-import avatar5 from '@images/avatars/avatar-5.png'
-import avatar6 from '@images/avatars/avatar-6.png'
-import avatar7 from '@images/avatars/avatar-7.png'
-import {
-  requiredValidator,
-  urlValidator,
-} from '@validators'
 
 const props = defineProps({
   isDrawerOpen: {
@@ -56,6 +50,25 @@ const removeEvent = () => {
 const handleSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
+      console.log(event.value)
+      
+      const url = 'http://localhost:4000/api/calendar'
+      const data = event.value
+
+      console.log(data)
+      axios.post(url, data)
+        .then(response => {
+          // 요청이 성공적으로 완료된 경우의 처리
+          console.log(response.data)
+
+          // 추가적인 작업 수행 가능
+        })
+        .catch(error => {
+          // 요청이 실패한 경우의 처리
+          console.error(error)
+
+          // 에러 처리 및 추가 작업 수행 가능
+        })
 
       // If id exist on id => Update event
       if ('id' in event.value)
@@ -70,33 +83,6 @@ const handleSubmit = () => {
     }
   })
 }
-
-const guestsOptions = [
-  {
-    avatar: avatar1,
-    name: 'Jane Foster',
-  },
-  {
-    avatar: avatar3,
-    name: 'Donna Frank',
-  },
-  {
-    avatar: avatar5,
-    name: 'Gabrielle Robertson',
-  },
-  {
-    avatar: avatar7,
-    name: 'Lori Spears',
-  },
-  {
-    avatar: avatar6,
-    name: 'Sandy Vega',
-  },
-  {
-    avatar: avatar2,
-    name: 'Cheryl May',
-  },
-]
 
 // 👉 Form
 const onCancel = () => {
@@ -174,7 +160,7 @@ const endDateTimePickerConfig = computed(() => {
               <!-- 👉 Title -->
               <VCol cols="12">
                 <VTextField
-                  v-model="event.title"
+                  v-model="event.sch_title"
                   label="Title"
                   :rules="[requiredValidator]"
                 />
@@ -188,7 +174,7 @@ const endDateTimePickerConfig = computed(() => {
                   :rules="[requiredValidator]"
                   :items="store.availableCalendars"
                   :item-title="item => item.label"
-                  :item-value="item => item.label"
+                  :item-value="item => item.value"
                 >
                   <template #selection="{ item }">
                     <div
@@ -212,7 +198,7 @@ const endDateTimePickerConfig = computed(() => {
               <VCol cols="12">
                 <AppDateTimePicker
                   :key="JSON.stringify(startDateTimePickerConfig)"
-                  v-model="event.start"
+                  v-model="event.sch_start"
                   :rules="[requiredValidator]"
                   label="Start date"
                   :config="startDateTimePickerConfig"
@@ -223,7 +209,7 @@ const endDateTimePickerConfig = computed(() => {
               <VCol cols="12">
                 <AppDateTimePicker
                   :key="JSON.stringify(endDateTimePickerConfig)"
-                  v-model="event.end"
+                  v-model="event.sch_end"
                   :rules="[requiredValidator]"
                   label="End date"
                   :config="endDateTimePickerConfig"
@@ -233,7 +219,7 @@ const endDateTimePickerConfig = computed(() => {
               <!-- 👉 Location -->
               <VCol cols="12">
                 <VTextField
-                  v-model="event.extendedProps.location"
+                  v-model="event.extendedProps.sch_area"
                   label="Location"
                 />
               </VCol>
@@ -241,8 +227,8 @@ const endDateTimePickerConfig = computed(() => {
               <!-- 👉 Description -->
               <VCol cols="12">
                 <VTextarea
-                  v-model="event.extendedProps.description"
-                  label="Description"
+                  v-model="event.extendedProps.sch_memo"
+                  label="content"
                 />
               </VCol>
 
@@ -270,3 +256,4 @@ const endDateTimePickerConfig = computed(() => {
     </PerfectScrollbar>
   </VNavigationDrawer>
 </template>
+
