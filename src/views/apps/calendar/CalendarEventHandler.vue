@@ -1,4 +1,5 @@
 <script setup>
+import axios from '@axios'
 import {
   requiredValidator,
 } from '@validators'
@@ -51,6 +52,24 @@ const handleSubmit = () => {
     if (valid) {
       console.log(event.value)
       
+      const url = 'http://localhost:4000/api/calendar'
+      const data = event.value
+
+      console.log(data)
+      axios.post(url, data)
+        .then(response => {
+          // 요청이 성공적으로 완료된 경우의 처리
+          console.log(response.data)
+
+          // 추가적인 작업 수행 가능
+        })
+        .catch(error => {
+          // 요청이 실패한 경우의 처리
+          console.error(error)
+
+          // 에러 처리 및 추가 작업 수행 가능
+        })
+
       // If id exist on id => Update event
       if ('id' in event.value)
         emit('updateEvent', event.value)
@@ -237,3 +256,4 @@ const endDateTimePickerConfig = computed(() => {
     </PerfectScrollbar>
   </VNavigationDrawer>
 </template>
+

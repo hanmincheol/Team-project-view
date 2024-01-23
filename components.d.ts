@@ -52,6 +52,7 @@ declare module '@vue/runtime-core' {
     DemoSelectCustomTextAndValue: typeof import('./src/views/demos/DemoSelectCustomTextAndValue.vue')['default']
     DemoSwitchBasic: typeof import('./src/views/demos/DemoSwitchBasic.vue')['default']
     DialogCloseBtn: typeof import('./src/@core/components/DialogCloseBtn.vue')['default']
+    Editing: typeof import('./src/components/dialogs/Editing.vue')['default']
     EmailPhone: typeof import('./src/views/demos/register/EmailPhone.vue')['default']
     EnableOneTimePasswordDialog: typeof import('./src/components/dialogs/EnableOneTimePasswordDialog.vue')['default']
     ErrorHeader: typeof import('./src/components/ErrorHeader.vue')['default']
@@ -83,6 +84,7 @@ declare module '@vue/runtime-core' {
     UserProfileCommunity: typeof import('./src/components/dialogs/UserProfileCommunity.vue')['default']
     UserUpgradedietPlan: typeof import('./src/components/dialogs/UserUpgradedietPlan.vue')['default']
     UserUpgradePlanDialog: typeof import('./src/components/dialogs/UserUpgradePlanDialog.vue')['default']
+    ViewPostPage: typeof import('./src/components/dialogs/ViewPostPage.vue')['default']
     Write: typeof import('./src/views/demos/register/Write.vue')['default']
     Writing: typeof import('./src/components/dialogs/Writing.vue')['default']
   }

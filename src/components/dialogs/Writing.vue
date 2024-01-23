@@ -42,7 +42,7 @@ const isButtonDisabled = computed(() => {
 const members = [
   {
     avatar: avatar1,
-    name: '멋쟁이 승환이',
+    name: '멋쟁이 승영이',
   },
 ]
 
