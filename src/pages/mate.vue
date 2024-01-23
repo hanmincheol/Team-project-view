@@ -1,5 +1,6 @@
 <script setup>
 import ShareProjectDialogTemp from '@/components/dialogs/ShareProjectDialogTemp.vue';
+import areaCrawlingResult from '@/components/dialogs/areaCrawling_result.vue';
 import chat from '@/pages/apps/mateChat.vue';
 import VColmateRoomParticipants from '@/pages/apps/mateRoomParticipants.vue';
 import axios from 'axios';
@@ -11,6 +12,7 @@ const capitalizedLabel = label => {
   const convertLabelText = label.toString()
   return convertLabelText.charAt(0).toUpperCase() + convertLabelText.slice(1)
 }
+const isareaCrawlingResultDialogVisible = ref(false)
 
 const RoomList = [
     {
@@ -28,21 +30,6 @@ function togglechatFlag() {
     chatflag.value = !chatflag.value;
 }
 
-const startCrawling = () => {
-  const matearea = "경기"; // 지역명 변수
-  const matemonth = 5; // 월별 변수
-  const matedate = 21; // 일자 변수
-  
-  axios.post('http://127.0.0.1:5000/areaCrawling', { matearea, matemonth, matedate})
-    .then(response => {
-        // 서버로부터의 응답 처리
-        console.log(JSON.parse(response.data));
-    })
-    .catch(error => {
-      // 에러 처리
-      console.error(error);
-    });
-}
 </script>
 
 
@@ -55,7 +42,8 @@ const startCrawling = () => {
                     <VCol md="8">
                         <v-btn @click="isShareProjectDialogVisible = !isShareProjectDialogVisible">Invite</v-btn>
                         <ShareProjectDialogTemp v-model:isDialogVisible="isShareProjectDialogVisible"/>
-                        <VBtn style="margin-left:10px;" @click="startCrawling">장소 조회</VBtn>
+                        <v-btn :style="{'margin-left':'10px'}" @click="isareaCrawlingResultDialogVisible = !isareaCrawlingResultDialogVisible;">장소 찾기</v-btn>                        
+                        <areaCrawlingResult v-model:isDialogVisible="isareaCrawlingResultDialogVisible"/>
                     </VCol>                        
                     <!-- 아래 방공개는 방장에게만 보여주기 / 조건 추가 필요 -->
                     <VCol md="4" class="d-flex justify-end align-center">

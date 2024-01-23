@@ -66,7 +66,10 @@ const isButtonDisabled = computed(() => {
     passwordCK.value === '' ||
     userHeight.value === '' ||
     userWeight.value === ''
+
 }) */ 
+
+
 
 /*
 const CertiPN = () => {
