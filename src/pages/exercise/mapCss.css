@@ -3,7 +3,7 @@
   z-index: 1;
   padding: 5px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 70%);
+  background: rgba(255, 255, 255, 90%);
   font-size: 12px;
   inline-size: 250px;
   inset-block: 0;
@@ -12,7 +12,10 @@
   margin-inline: 10px 0;
   overflow-y: auto;
 }
-.bg_white { background: #fff; }
+
+.bg_white {
+  background: #fff;
+}
 
 #menu-wrap hr {
   display: block;
@@ -31,7 +34,10 @@
   margin-block: 10px;
   margin-inline: 0;
 }
-#menu-wrap .option button { margin-inline-start: 5px; }
+
+#menu-wrap .option button {
+  margin-inline-start: 5px;
+}
 
 #placesList li {
   list-style: none;
@@ -70,7 +76,10 @@
   background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;
   padding-inline-start: 26px;
 }
-#placesList .info .tel { color: #090; }
+
+#placesList .info .tel {
+  color: #090;
+}
 
 #placesList .item .markerbg {
   position: absolute;

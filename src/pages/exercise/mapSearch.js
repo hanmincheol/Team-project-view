@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 
+export var isSearchListClicked = ref(false)
 var map = ref(null)
 var markers = ref([])
 var infowindow = ref(null)
@@ -9,6 +10,7 @@ var markerClicked = ref(0) //마커를 클릭한 회수에 따라 출발 위치�
 var startPosition = ref(null) //출발 위치와 도착위치가 겹치는 것을 방지하기 위함
 
 // 키워드 검색을 요청하는 함수입니다
+// 장소 검색 객체와 지도 객체를 인자로 받음
 export function searchPlaces(ps, map_param) { //, markers_param
   map.value = map_param
   console.log('markers.value:', typeof markers.value)
@@ -77,7 +79,7 @@ export function displayPlaces(places) {
 
     var marker = addMarker(placePosition, i)
     var itemEl = getListItem(i, places[i]) // 검색 결과 항목 Element를 생성합니다
-
+    
     // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
     // LatLngBounds 객체에 좌표를 추가합니다
     bounds.extend(placePosition)
@@ -90,13 +92,9 @@ export function displayPlaces(places) {
     // displayInfowindow(marker, places[i].place_name)
 
     //마커이미지 생성
-    //var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png'
     var  imageSize = new kakao.maps.Size(50, 45),  // 마커 이미지의 크기
       startMarkerImage = new kakao.maps.MarkerImage(startImageSrc, imageSize), //출발 이미지
       endMarkerImage = new kakao.maps.MarkerImage(endImageSrc, imageSize) //도착 이미지
-
-    // imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png' //도착 이미지
-    // endMarkerImage = new kakao.maps.MarkerImage(imageSrc, imageSize)
 
     function infoFunc(marker, title) {
       kakao.maps.event.addListener(marker, 'mouseover', function() {
@@ -113,6 +111,11 @@ export function displayPlaces(places) {
 
       itemEl.onmouseout =  function () {
         infowindow.value.close()
+      }
+
+      itemEl.onclick = function() {
+        isSearchListClicked = true
+        console.log('itemEl클릭:', typeof isSearchListClicked)
       }
       kakao.maps.event.addListener(marker, 'click', function() {
         if(markerClicked.value === 0) {
@@ -131,16 +134,6 @@ export function displayPlaces(places) {
           }
         } //도착좌표 등록
         
-        // console.log('마커 클릭 이벤트 이후:', markerClicked.value)
-        // if (markerClicked.value===2){
-        //   console.log('도착위치 설정됨')
-        //   var startEndBounds = new kakao.maps.LatLngBounds()
-        //   var tempPosition = new kakao.maps.LatLng(startPosition.value.La, startPosition.value.Ma)
-        //   startEndBounds.extend(tempPosition)
-        //   tempPosition = new kakao.maps.LatLng(marker.n.La, marker.n.Ma)
-        //   startEndBounds.extend(tempPosition)
-        //   map.value.setBounds(startEndBounds)
-        // }
       }) //마커 클릭 이벤트
     }
     infoFunc(marker, places[i].place_name)
@@ -164,7 +157,7 @@ export function displayPlaces(places) {
 export function getListItem(index, places) {
 
   var el = document.createElement('li'),
-    itemStr = '<span class="markerbg marker_' + (index+1) + '"></span>' +
+    itemStr = '<a href="#"><span class="markerbg marker_' + (index+1) + '"></span>' +
                 '<div class="info">' +
                 '   <h5>' + places.place_name + '</h5>'
 
@@ -176,7 +169,7 @@ export function getListItem(index, places) {
   }
                  
   itemStr += '  <span class="tel">' + places.phone  + '</span>' +
-                '</div>'           
+                '</div></a>'           
 
   el.innerHTML = itemStr
   el.className = 'item'
