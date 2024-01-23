@@ -143,8 +143,8 @@ const iconsSteps = [
     icon: 'mdi-allergy',
   },
   {
-    title: '좋아하는 음식',
-    icon: 'mdi-food-variant',
+    title: '싫어하는 음식',
+    icon: 'mdi-food-variant-off',
   },
   {
     title: '기타',
@@ -189,7 +189,7 @@ const isSelected = value => {
               <CustomCheckboxesWithImage
                 v-model:selected-checkbox="selectedCheckbox"
                 :checkbox-content="checkboxContent2"
-                :grid-column="{ sm: '6', cols: '12' }"
+                :grid-column="{ sm: '3', cols: '12' }"
               />
             </VRow>
           </VWindowItem>
@@ -200,7 +200,7 @@ const isSelected = value => {
               <CustomCheckboxesWithImageIcon
                 v-model:selected-checkbox="selectedCheckbox"
                 :checkbox-content="checkboxContent"
-                :grid-column="{ sm: '6', cols: '12' }"
+                :grid-column="{ sm: '3', cols: '12' }"
               />
             </VRow>
           </VWindowItem>
