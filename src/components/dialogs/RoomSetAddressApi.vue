@@ -1,80 +1,5 @@
-<template>
-  <VCol cols="12">
-    <VRow>
-      <VCol cols="4" />
-      <VCol cols="2">
-        <VTextField 
-          id="postcode"
-          v-model="postcode"
-          type="text"
-          placeholder="우편번호"
-          size="large"
-        />
-      </VCol>
-      <VCol cols="2">
-        <VBtn
-          color="primary"
-          class="my-custom-button"
-          height="55px"
-          width="200"
-          @click="execDaumPostcode"
-        >
-          우편번호 찾기
-        </VBtn>
-      </VCol>
-    </VRow>
-  </VCol>
-
-  <br>
-  <VCol cols="12">
-    <VRow>
-      <VCol
-        cols="12"
-        md="4"
-      />
-      <VCol
-        cols="12"
-        md="4"
-      >
-        <VTextField
-          id="address"
-          v-model="address"
-          type="text"
-          placeholder="주소"
-        />
-      </VCol>
-    </VRow>
-  </VCol>
-  <br>
-
-  <VCol
-    v-if="hidden"
-    cols="12"
-  >
-    <VRow>
-      <VCol
-        cols="12"
-        md="4"
-      >
-        <label for="extraAddress">참고항목</label>
-      </VCol>
-      <VCol
-        cols="12"
-        md="4"
-      >
-        <VTextField
-          id="extraAddress"
-          v-model="extraAddress"
-          type="text"
-          placeholder="참고항목"
-        />
-      </VCol>
-    </VRow>
-  </VCol>
-</template>
-
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue';
 
 const postcode = ref('')
 const address = ref('')
@@ -86,20 +11,19 @@ const userAddress = reactive({
   address: address.value,
 })
 
-
-
-
 function execDaumPostcode() {
   new daum.Postcode({
     oncomplete: function(data) {
       let addr = ''
       let extraAddr = ''
 
+      //사용자가 지번을 클릭해도 도로명을 클릭해도 무조건 지번값으로 넣기
       if (data.userSelectedType === 'R') {
-        addr = data.roadAddress
+        addr = data.jibunAddress
       } else {
         addr = data.jibunAddress
       }
+
 
       if (data.userSelectedType === 'R') {
         if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
@@ -117,7 +41,11 @@ function execDaumPostcode() {
       }
 
       postcode.value = data.zonecode
-      address.value = addr
+      //인덱싱을 통해 지번 Data를 동/읍.. 등 3번째 주소까지 나오게 설정
+      const addressArray = addr.split(' ')
+      let addrindextwo = ''
+      addrindextwo = addressArray.slice(0, 3).join(' ')
+      address.value = addrindextwo  
       detailAddress.value = ''
 
       // 추가적인 작업이 필요한 경우 여기에 작성
@@ -128,7 +56,10 @@ function execDaumPostcode() {
       // 팝업창 닫기
       execDaumPostcode.close()
     },
-  }).open()
+  }).open({
+    popupTitle: '장소 설정',
+    popupKey: 'popup1', //팝업창 Key값 설정 (계속 팝업창이 뜨는 것을 방지하기 위함)
+  })
 }
 
 onMounted(() => {
@@ -143,4 +74,17 @@ onMounted(() => {
 })
 </script>
 
-
+<template>
+    <VBtn
+        @click="execDaumPostcode"
+        style="width: 100%;"
+    >
+        장소 설정
+    </VBtn>
+    <VTextField
+        id="address"
+        v-model="address"
+        type="text"
+        placeholder="주소"
+    />             
+</template>

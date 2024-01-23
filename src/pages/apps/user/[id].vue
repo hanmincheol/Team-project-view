@@ -1,5 +1,6 @@
 <script setup>
 import ShareProjectDialogTemp from '@/components/dialogs/ShareProjectDialogTemp.vue';
+import pricingtest from '@/components/dialogs/pricingtest.vue';
 import chat from '@/pages/apps/challengeChat.vue';
 import { useUserListStore } from '@/views/apps/user/useUserListStore';
 import UserProfileForChellenge from '@/views/apps/user/view/UserProfileForChellenge.vue';
@@ -27,6 +28,9 @@ const series = [{ data: [200] }]
 userListStore.fetchUser(Number(route.params.id)).then(response => {
   userData.value = response.data
 })
+
+//참여비 변수
+const pay = ref("10000")
 </script>
 
 <template>
@@ -106,9 +110,12 @@ userListStore.fetchUser(Number(route.params.id)).then(response => {
           <VRow :style="{'display':'flex', 'justify-content': 'space-around'}"> <!--경고창-->
             <VCard :style="{'width':'90%', 'margin-top':'50px'}">
               <VRow :style="{'padding':'5px', 'margin-top':'5px', 'margin-left':'5px'}">
-                <VCardText class="float-left"><h3>참여비 10000원</h3></VCardText>
+                <VCardText class="float-left"><h3>참여비 {{pay}}원</h3></VCardText>
               </VRow>
+              <VCol class="d-flex">
                 <VCardText>⚠️ 챌린지 하루 전 자동 결제됩니다</VCardText>
+                <pricingtest :pay="parseInt(pay)"/>
+              </VCol>
             </VCard>
           </VRow> <!--경고창 end-->
           <VRow :style="{'display':'flex', 'justify-content': 'space-around'}"> <!--목표관련 정보 end-->

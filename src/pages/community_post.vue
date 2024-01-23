@@ -13,7 +13,9 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 const userProfileModal = ref(false)
 const writingModal = ref(false)
+const editingModal = ref(false)
 const borderColor = ref('#ccc')
+const viewPostPageModal = ref(false)
 let q = ref('')
 
 //검색기능
@@ -231,12 +233,44 @@ const loadMore = () => {
                   cols="12"
                 >
                   <VCard>
+                    <!-- 게시물의 상단 유저 프로필/ 유저 닉네임 / MoreBtn -->
+                    <VCol>
+                      <VRow>
+                        <VCol cols="1">
+                          <VAvatar 
+                            class="text-sm pointer-cursor"
+                            :image="avatar1"
+                            @click="userProfileModal=true"
+                          />
+                        </VCol>
+                        <VCol cols="4">
+                          <VCol cols="12">
+                            <VCardSubtitle
+                              class="text-sm pointer-cursor"
+                              style="margin-left: -5%;"
+                              @click="userProfileModal=true"
+                            >
+                              유저 닉네임 뿌려주기
+                            </VCardSubtitle>
+                          </VCol>
+                        </VCol>
+                        <VCol cols="6" />
+                        <VCol cols="1">
+                          <MoreBtn @click="editingModal=true" />
+                        </VCol>
+                      </VRow>
+                    </VCol>
+                    <hr style=" margin-top: -6px;margin-bottom: 5px; opacity: 0.3;">
                     <VCarousel show-arrows-on-hover>
                       <VCarouselItem
                         v-for="(image, i) in images[0].src" 
                         :key="i"
                       >
-                        <VImg :src="image" />
+                        <VImg
+                          :src="image"
+                          class="pointer-cursor"
+                          @click="viewPostPageModal=true"
+                        />
                       </VCarouselItem>
                     </VCarousel>
 
@@ -301,6 +335,8 @@ const loadMore = () => {
     </VRow>
     <UserProfileCommunity v-model:isDialogVisible="userProfileModal" />
     <Writing v-model:isDialogVisible="writingModal" />
+    <Editing v-model:isDialogVisible="editingModal" />
+    <ViewPostPage v-model:isDialogVisible="viewPostPageModal" />
   </section>
 </template>
 
