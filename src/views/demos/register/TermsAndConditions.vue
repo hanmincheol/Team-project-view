@@ -16,7 +16,7 @@ const checkboxThr = ref(false)
 const checkboxFour = ref(false)
 const checkboxFive = ref(false)
 const checkboxAll = ref(false)
-
+let nextButtonDisabled = ref(true)
 
 const handleCheckboxAllChanged = () => {
   if (checkboxAll.value) {
@@ -38,6 +38,8 @@ const handleCheckboxAllChanged = () => {
 // 콜백함수 => 각 체크박스의 상태를 개별적으로 감시하여 checkboxall의 true 및 false값을 정합니다. 
 watch([checkboxOne, checkboxTwo, checkboxThr, checkboxFour, checkboxFive], () => {
   checkboxAll.value = checkboxOne.value && checkboxTwo.value && checkboxThr.value && checkboxFour.value && checkboxFive.value
+  nextButtonDisabled.value = !checkboxAll.value
+
 })
 
 /*

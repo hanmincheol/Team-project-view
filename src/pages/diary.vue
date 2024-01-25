@@ -1,11 +1,13 @@
 <script setup>
-import Calendar from '@/pages/apps/calendar.vue'
+import DiaryView from '@/pages/diaryView.vue'
 import DiaryPage from '@images/cards/DiaryPage.png'
+
 import timelineCardHeader from '@images/cards/timeline-card-header.png'
 import {
   requiredValidatorDiaryPassword,
 } from '@validators'
 import { ref } from 'vue'
+
 
 const biggeImgFile = ref(false)
 const previousBtn = ref(null)
@@ -138,6 +140,10 @@ const uploadImgMultiple = e => {
   }
 }
 
+const deleteImage = index =>{
+  imgUrls.value.splice(index, 1)
+}
+
 //input file에 사이즈에 대한 룰 설정
 const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1000000 || 'Avatar size should be less than 1 MB!']
 </script>
@@ -158,7 +164,10 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
         :max-width="auto"
         class="mt-4 mt-sm- pa-0"
       >
-        <VRow cols="12">
+        <VRow
+          v-if="!readDiaryContent"
+          cols="12"
+        >
           <VCol cols="2" />
           <VRow cols="8">
             <!-- 기분 표시하는 아이콘 -->
@@ -303,7 +312,7 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
         </VCard>
         <!-- 일기 보기 버튼 클릭 -->
         <VCard v-if="readDiaryContent">
-          <Calendar />
+          <DiaryView :img-urls="imgUrls" />
           <!-- 일기 보기 버튼 다시 비활성화하는 버튼 -->
           <VCol cols="2">
             <VBtn 
@@ -333,12 +342,25 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
                       width: imageSize === index ? '200px' : '150px',
                       height: imageSize === index ? '200px' : '150px',
                       alignSelf: 'center',
-                      transition: 'width 0.2s, height 0.2s' // Transition for smooth size change
+                      transition: 'width 0.2s, height 0.2s', // Transition for smooth size change
+                      position: 'relative'
                     }"
                     @click="handleImageClick(url)"
                     @mouseover="handleMouseOver(index)"
                     @mouseleave="handleMouseLeave"
-                  />
+                  >
+                    <VBtn
+                      :key="index"
+                      icon
+                      size="small"
+                      color="error"
+                      class="delete-button"
+                      style="position: absolute; top: 0; right: 0;"
+                      @click.stop="() => deleteImage(index)"
+                    >
+                      <VIcon>mdi-close</VIcon>
+                    </VBtn>
+                  </VImg>
                 </VRow>
               </Transition>
             </VCol>
@@ -473,7 +495,7 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
 .fade-enter,
 .fade-enter-active {
   opacity: 0;
-  transition: opacity 0.5s;
+  transition: opacity 1s;
 }
 
 .fade-enter-to {
@@ -483,7 +505,7 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
 .fade-leave-active,
 .fade-leave {
   opacity: 1;
-  transition: opacity 0.5s;
+  transition: opacity 1s;
 }
 
 .fade-leave-to {

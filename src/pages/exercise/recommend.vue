@@ -55,14 +55,10 @@
             variant="text"
             color="success"
           />
-          <!-- 지도 검색창 화면 활성화 스위치(직접설정 클릭시 show) -->
-          <VSwitch
-            v-show="searchSwitch"
-            label="검색창 보기"
-            :value="Info"
-            :color="'Info'.toLowerCase()"
-            :style="{'float':'right', 'margin':'5px','margin-right':'20px'}"
-            @click="showSearchUi"
+          <DrawMap
+            v-show="isSelfControlMap"
+            ref="childMap"
+            @refresh-child-road="createRoadView"
           />
           <!-- 즐겨찾기 목록화(즐겨찾기 클릭시 show) -->
           <VSelect
@@ -125,6 +121,14 @@
                 </button> 
               </form>
             </div>
+            <hr>
+            <div v-show="!isMyPlace">
+              <ul
+                id="placesList"
+                @click="searchListClickController"
+              />
+              <div id="pagination" />
+            </div>
           </div>
           <hr>
           <div v-show="!isMyPlace">
@@ -134,33 +138,18 @@
             />
             <div id="pagination" />
           </div>
-        </div>
-        <!-- 지도 검색창 end -->
-        <div :style="{'display':'flex','justify-content':'center','margin-top':'10px'}">
-          <VTabs
-            next-icon="mdi-arrow-right"
-            prev-icon="mdi-arrow-left"
-          >
-            <VTab
-              v-for="i in 3"
-              :key="i"
-              @click="whatBtnClick"
-            >
-              {{ tabs[i] }}
-            </VTab>
-          </VTabs>
-        </div>
-      </VCard>
-    </VCol> <!-- 지도 보여주는 영역 end -->
-    <VCol cols="6">
-      <VCard :style="{'height':'600px'}">
-        <div
-          id="roadview"
-          :style="{'width':'100%','height':'100%'}"
-        />
-      </VCard>
-    </VCol>
-  </VRow>
+        </VCard>
+      </VCol> <!-- 지도 보여주는 영역 end -->
+      <VCol cols="6">
+        <VCard :style="{'height':'600px'}">
+          <div
+            id="roadview"
+            :style="{'width':'100%','height':'100%'}"
+          />
+        </VCard>
+      </VCol>
+    </VRow>
+  </section>
 </template>
 
 <script>
@@ -546,7 +535,8 @@ export default {
 </script>
 
 <style scoped>
-@import url('../exercise/mapCss.css');
+@import "../exercise/mapCss.css";
+
 #map {
   block-size: 500px;
   inline-size: 500px;
@@ -562,12 +552,12 @@ button {
   margin-inline: 3px;
 }
 
-.dot {overflow:hidden;float:left;width:12px;height:12px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/mini_circle.png');}    
-.dotOverlay {position:relative;bottom:10px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;font-size:12px;padding:5px;background:#fff;}
-.dotOverlay:nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;}    
-.number {font-weight:bold;color:#ee6152;}
-.dotOverlay:after {content:'';position:absolute;margin-left:-6px;left:50%;bottom:-8px;width:11px;height:8px;background:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white_small.png')}
-.distanceInfo {position:relative;top:5px;left:5px;list-style:none;margin:0;}
-.distanceInfo .label {display:inline-block;width:50px;}
-.distanceInfo:after {content:none;}
+.dot { overflow: hidden; background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/mini_circle.png"); block-size: 12px; float: inline-start; inline-size: 12px; }
+.dotOverlay { position: relative; padding: 5px; border: 1px solid #ccc; border-radius: 6px; background: #fff; border-block-end: 2px solid #ddd; float: inline-start; font-size: 12px; inset-block-end: 10px; }
+.dotOverlay:nth-of-type(n) { border: 0; box-shadow: 0 1px 2px #888; }
+.number { color: #ee6152; font-weight: bold; }
+.dotOverlay::after { position: absolute; background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white_small.png"); block-size: 8px; content: ""; inline-size: 11px; inset-block-end: -8px; inset-inline-start: 50%; margin-inline-start: -6px; }
+.distanceInfo { position: relative; margin: 0; inset-block-start: 5px; inset-inline-start: 5px; list-style: none; }
+.distanceInfo .label { display: inline-block; inline-size: 50px; }
+.distanceInfo::after { content: none; }
 </style>

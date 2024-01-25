@@ -3,7 +3,7 @@
     <VRow>
       <VCol cols="4" />
       <VCol cols="2">
-        <VTextField 
+        <VTextField
           id="postcode"
           v-model="postcode"
           type="text"
@@ -13,6 +13,7 @@
       </VCol>
       <VCol cols="2">
         <VBtn
+          v-model="userAddress"
           color="primary"
           class="my-custom-button"
           height="55px"
@@ -24,7 +25,6 @@
       </VCol>
     </VRow>
   </VCol>
-
   <br>
   <VCol cols="12">
     <VRow>
@@ -46,7 +46,6 @@
     </VRow>
   </VCol>
   <br>
-
   <VCol
     v-if="hidden"
     cols="12"
@@ -74,33 +73,34 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { defineEmits, onMounted, reactive, ref } from 'vue'
 
+const emit = defineEmits(['updateAddress', 'useraddress'])
 const postcode = ref('')
 const address = ref('')
 const detailAddress = ref('')
 const extraAddress = ref('')
 
 const userAddress = reactive({
-  postcode: postcode.value,
-  address: address.value,
+  postcode,
+  address,
 })
 
-
-
-
+function updateAndEmitUserAddress() {
+  userAddress.postcode = postcode.value
+  userAddress.address = address.value
+  emit('updateAddress', userAddress)
+}
 function execDaumPostcode() {
   new daum.Postcode({
     oncomplete: function(data) {
       let addr = ''
       let extraAddr = ''
-
       if (data.userSelectedType === 'R') {
         addr = data.roadAddress
       } else {
         addr = data.jibunAddress
       }
-
       if (data.userSelectedType === 'R') {
         if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
           extraAddr += data.bname
@@ -115,22 +115,32 @@ function execDaumPostcode() {
       } else {
         extraAddress.value = ''
       }
-
       postcode.value = data.zonecode
       address.value = addr
       detailAddress.value = ''
 
       // 추가적인 작업이 필요한 경우 여기에 작성
-
       // 상세주소 입력란에 포커스 설정
-      document.getElementById("detailAddressInput").focus()
-
-      // 팝업창 닫기
-      execDaumPostcode.close()
+      document.getElementById("detailAddressInput")
+      window.close()
+      updateAndEmitUserAddress()
     },
+<<<<<<< Updated upstream
+<<<<<<< HEAD
   }).open()
+  console.log("주소", userAddress)
+=======
+=======
+>>>>>>> Stashed changes
+  }).open({
+    popupTitle: '주소 설정',
+    popupKey: 'popup1', //팝업창 Key값 설정 (계속 팝업창이 뜨는 것을 방지하기 위함)
+  })
+<<<<<<< Updated upstream
+>>>>>>> origin/hmc
+=======
+>>>>>>> Stashed changes
 }
-
 onMounted(() => {
   const script = document.createElement('script')
 
@@ -142,5 +152,3 @@ onMounted(() => {
   document.head.appendChild(script)
 })
 </script>
-
-
