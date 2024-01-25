@@ -5,7 +5,7 @@
 // Read more: https://github.com/vuejs/core/pull/3399
 import '@vue/runtime-core'
 
-export { }
+export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
@@ -25,7 +25,7 @@ declare module '@vue/runtime-core' {
     AppPricing: typeof import('./src/components/AppPricing.vue')['default']
     AppSearchHeader: typeof import('./src/components/AppSearchHeader.vue')['default']
     AppStepper: typeof import('./src/@core/components/AppStepper.vue')['default']
-    AreaCrawlingresult: typeof import('./src/components/dialogs/areaCrawling_result.vue')['default']
+    AreaCrawling_result: typeof import('./src/components/dialogs/areaCrawling_result.vue')['default']
     Authenticate: typeof import('./src/views/demos/register/Authenticate.vue')['default']
     Birthyday: typeof import('./src/views/demos/register/Birthyday.vue')['default']
     BuyNow: typeof import('./src/@core/components/BuyNow.vue')['default']
