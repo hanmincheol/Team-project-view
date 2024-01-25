@@ -102,51 +102,13 @@ const onSubmit = () => {
                 <p class="text-xs mb-0">
                   ㅇㅇㅇㅇㅇㅇㅇ
                 </p>
-              </VCol>
-
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <VTextField
-                  v-model="formData.address"
-                  placeholder="98 Borough bridge Road, Birmingham"
-                  label="Address"
-                />
-              </VCol>
-
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <VTextField
-                  v-model="formData.landmark"
-                  placeholder="Borough bridge"
-                  label="Landmark"
-                />
-              </VCol>
-
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <VTextField
-                  v-model="formData.pincode"
-                  placeholder="658921"
-                  label="Pincode"
-                  type="number"
-                />
-              </VCol>
-
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <VTextField
-                  v-model="formData.city"
-                  placeholder="City"
-                  label="City"
-                />
+                <VCol cols="12">
+                  <VImg
+                    src="https://i.pinimg.com/originals/19/70/c1/1970c1040f8e94767a62674f07e9d2d9.gif"
+                    alt="설명"
+                    max-width="500"
+                  />
+                </VCol>
               </VCol>
             </VRow>
           </VWindowItem>
