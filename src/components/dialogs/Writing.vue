@@ -4,9 +4,10 @@ import Sub from '@/views/demos/Subject.vue'
 import axios from '@axios'
 import { size } from '@floating-ui/dom'
 import avatar1 from '@images/avatars/avatar-1.png'
-import logo from '@images/logo.svg' // 로고 이미지 불러오기
+import logo from '@images/logo.svg'; // 로고 이미지 불러오기
 import bg from '@images/pages/writing.jpg'
 import { computed, reactive, ref, toRefs } from 'vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
   isDialogVisible: {
@@ -17,6 +18,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:isDialogVisible'])
 const isprofile = ref(false)
+const router = useRouter()
 const people = ref(false)
 const switchValue = computed(() => people.value ? 'Y' : 'N')
 const subValue = ref('카테고리')
@@ -52,7 +54,7 @@ const members = [
 ]
 
 // axios를 사용하여 데이터를 서버로 보내는 함수
-const submitData = async () => {
+const submitData = async function() {
   let formData = new FormData()
   formData.append('id', 'HMC')
   formData.append('content', textValue.value)
@@ -79,6 +81,13 @@ const submitData = async () => {
     // 응답 처리
     if (response.status === 200) {
       console.log('데이터 전송 성공')
+      console.log(`response.data: ${response.data}`)
+      if(response.data !== 0){
+        console.log(`response.data:${response.data}`)
+        emit('update:isDialogVisible', false)  // 이벤트 발생
+        router.push({ name: 'community_post' }) // community_post.vue 페이지로 이동
+        //router.replace({ name: 'community_post' })
+      }
     } else {
       console.log('데이터 전송 실패')
     }
