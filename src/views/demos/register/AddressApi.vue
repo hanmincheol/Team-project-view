@@ -1,13 +1,37 @@
 <template>
-  <VRow>
-    <VCol cols="4" />
-    <VCol cols="3">
-      <VTextField 
-        id="postcode"
-        v-model="postcode"
-        type="text"
-        placeholder="우편번호"
-        size="large"
+  <VCol cols="12">
+    <VRow>
+      <VCol cols="4" />
+      <VCol cols="2">
+        <VTextField 
+          id="postcode"
+          v-model="postcode"
+          type="text"
+          placeholder="우편번호"
+          size="large"
+        />
+      </VCol>
+      <VCol cols="2">
+        <VBtn
+          v-model="userAddress"
+          color="primary"
+          class="my-custom-button"
+          height="55px"
+          width="200"
+          @click="execDaumPostcode"
+        >
+          우편번호 찾기
+        </VBtn>
+      </VCol>
+    </VRow>
+  </VCol>
+
+  <br>
+  <VCol cols="12">
+    <VRow>
+      <VCol
+        cols="12"
+        md="4"
       />
     </VCol>
     <VCol cols="2">
@@ -68,17 +92,27 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { defineEmits, onMounted, reactive, ref } from 'vue'
+
+const emit = defineEmits(['updateAddress', 'useraddress'])
+
 
 const postcode = ref('')
 const address = ref('')
 const detailAddress = ref('')
 const extraAddress = ref('')
 
+
 const userAddress = reactive({
-  postcode: postcode.value,
-  address: address.value,
+  postcode,
+  address,
 })
+
+function updateAndEmitUserAddress() {
+  userAddress.postcode = postcode.value
+  userAddress.address = address.value
+  emit('updateAddress', userAddress)
+}
 
 
 
@@ -117,12 +151,15 @@ function execDaumPostcode() {
       // 추가적인 작업이 필요한 경우 여기에 작성
 
       // 상세주소 입력란에 포커스 설정
-      document.getElementById("detailAddressInput").focus()
+      document.getElementById("detailAddressInput")
+      
 
-      // 팝업창 닫기
-      execDaumPostcode.close()
+      window.close()
+      updateAndEmitUserAddress()
+      
     },
-  }).open()
+  }).open() 
+  console.log("주소", userAddress)
 }
 
 onMounted(() => {

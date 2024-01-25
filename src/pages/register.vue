@@ -240,10 +240,10 @@ const onSubmit = () => {
 
           <VBtn
             v-else
+          
             @click="currentStep++"
           >
             다음
-
             <VIcon
               icon="mdi-arrow-right"
               end

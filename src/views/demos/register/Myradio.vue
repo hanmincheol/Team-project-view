@@ -1,4 +1,6 @@
 <script setup>
+import { defineEmits, defineProps, ref, toRaw } from 'vue'
+
 const props = defineProps({
   selectedRadio: {
     type: String,
@@ -12,24 +14,58 @@ const props = defineProps({
     type: null,
     required: false,
   },
+  gender: {
+    type: String,
+    required: true,
+  },
+  
 })
 
-const emit = defineEmits(['update:selectedRadio'])
+const emit = defineEmits('updategender', gender)
+
+const gender = ref("")
+
+const radioContent = [
+  
+  {
+    title: '남자',
+    subtitle: '성별',
+    value: 'M',
+  },
+  {
+    title: '여자',
+    subtitle: '성별',
+    value: 'W',
+  },
+]
 
 function handleSelectedRadios(value) {
-  selectedOption.value = value
-}
-const selectedOption = ref(structuredClone(toRaw(props.selectedRadio)))
+  //var gender = document.querySelector('[name=gender]')
 
-watch(selectedOption, () => {
-  emit('update:selectedRadio', selectedOption.value)
-})
+  // gender.value = value ? 'M' : 'W'
+  // console.log('handleSelectedRadios호출:', gender.value)
+  emit('updateGender', value)  // gender의 값을 부모 컴포넌트로 넘김
+}
+
+function testRadio(value){
+  console.log('라디오에 클릭이벤트 발생', value)
+}
+const selectedOption = ref(toRaw(props.selectedRadio))
 </script>
 
 <template>
+  <CustomRadios
+    id="gender"
+    :radio-content="radioContent"
+    :grid-column="{ sm: '6', cols: '12' }"
+    @change="handleSelectedRadios"
+  />
+
   <VRadioGroup
     v-if="props.radioContent"
     v-model="selectedOption"
+    v-bind="gridColumn"
+    @change="handleSelectedRadios($event.target.value)"
   >
     <VRow>
       <VCol
