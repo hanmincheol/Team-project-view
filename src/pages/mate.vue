@@ -1,5 +1,6 @@
 <script setup>
 import ShareProjectDialogTemp from '@/components/dialogs/ShareProjectDialogTemp.vue'
+import AreaCrawlingresult from '@/components/dialogs/areaCrawling_result.vue';
 import Chat from '@/pages/apps/mateChat.vue'
 import VColmateRoomParticipants from '@/pages/apps/mateRoomParticipants.vue'
 import { ref } from 'vue'
@@ -57,7 +58,7 @@ function togglechatFlag() {
                   >
                     장소 찾기
                   </VBtn>                        
-                  <AreaCrawlingResult v-model:isDialogVisible="isareaCrawlingResultDialogVisible" />
+                  <AreaCrawlingresult v-model:isDialogVisible="isareaCrawlingResultDialogVisible" />
                 </VCol>                        
                 <!-- 아래 방공개는 방장에게만 보여주기 / 조건 추가 필요 -->
                 <VCol
