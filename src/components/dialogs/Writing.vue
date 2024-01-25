@@ -52,7 +52,7 @@ const members = [
 ]
 
 // axios를 사용하여 데이터를 서버로 보내는 함수
-const submitData = async () => {
+const submitData = async function() {
   let formData = new FormData()
   formData.append('id', 'HMC')
   formData.append('content', textValue.value)
@@ -79,6 +79,11 @@ const submitData = async () => {
     // 응답 처리
     if (response.status === 200) {
       console.log('데이터 전송 성공')
+      console.log(`response.data: ${response.data}`)
+      if(response.data !== 0){
+        console.log(`response.data:${response.data}`)
+        this.$router.push('/community_post')  // community_post.vue 페이지로 이동
+      }
     } else {
       console.log('데이터 전송 실패')
     }

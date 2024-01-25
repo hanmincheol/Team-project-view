@@ -51,7 +51,7 @@ declare module '@vue/runtime-core' {
     DemoFormLayoutHorizontalForm: typeof import('./src/views/demos/register/DemoFormLayoutHorizontalForm.vue')['default']
     DemoFormWizardIconsBasic: typeof import('./src/views/demos/register/DemoFormWizardIconsBasic.vue')['default']
     DemoMenuBasic: typeof import('./src/views/demos/register/DemoMenuBasic.vue')['default']
-    DemoSelectCustomTextAndValue: typeof import('./src/views/demos/register/DemoSelectCustomTextAndValue.vue')['default']
+    DemoSelectCustomTextAndValue: typeof import('./src/views/demos/DemoSelectCustomTextAndValue.vue')['default']
     DemoSwitchBasic: typeof import('./src/views/demos/DemoSwitchBasic.vue')['default']
     DialogCloseBtn: typeof import('./src/@core/components/DialogCloseBtn.vue')['default']
     Editing: typeof import('./src/components/dialogs/Editing.vue')['default']

@@ -71,7 +71,7 @@ const currentDate = (() => {
 </script>
 
 <template>
-<section>
+  <section>
     <VRow v-if="projectData">
       <VCol
         v-for="data in projectData"
@@ -203,5 +203,5 @@ const currentDate = (() => {
       </VBtn>
       <AddMateRoomSetting v-model:isDialogVisible="isAddMateRoomSettingDialogVisible" />
     </VCol>
-</section>
+  </section>
 </template>
