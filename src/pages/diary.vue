@@ -140,6 +140,10 @@ const uploadImgMultiple = e => {
   }
 }
 
+const deleteImage = index =>{
+  imgUrls.value.splice(index, 1)
+}
+
 //input file에 사이즈에 대한 룰 설정
 const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1000000 || 'Avatar size should be less than 1 MB!']
 </script>
@@ -338,12 +342,25 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
                       width: imageSize === index ? '200px' : '150px',
                       height: imageSize === index ? '200px' : '150px',
                       alignSelf: 'center',
-                      transition: 'width 0.2s, height 0.2s' // Transition for smooth size change
+                      transition: 'width 0.2s, height 0.2s', // Transition for smooth size change
+                      position: 'relative'
                     }"
                     @click="handleImageClick(url)"
                     @mouseover="handleMouseOver(index)"
                     @mouseleave="handleMouseLeave"
-                  />
+                  >
+                    <VBtn
+                      :key="index"
+                      icon
+                      size="small"
+                      color="error"
+                      class="delete-button"
+                      style="position: absolute; top: 0; right: 0;"
+                      @click.stop="() => deleteImage(index)"
+                    >
+                      <VIcon>mdi-close</VIcon>
+                    </VBtn>
+                  </VImg>
                 </VRow>
               </Transition>
             </VCol>

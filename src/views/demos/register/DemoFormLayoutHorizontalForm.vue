@@ -2,7 +2,7 @@
 import AddressApi from '@/views/demos/register/AddressApi.vue'
 import Sub from '@/views/demos/register/DemoSelectCustomTextAndValue.vue'
 import axios from '@axios'
-import { computed, onBeforeUnmount, onMounted, provide, reactive, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, provide, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import Birthyday from './Birthyday.vue'
 
@@ -31,6 +31,35 @@ const emits = defineEmits({
 
 })
 
+
+// Axios 인스턴스 생성
+const instance = axios.create({
+  baseURL: 'http://localhost:4000/',
+})
+
+// 응답 인터셉터 설정
+instance.interceptors.response.use(
+  response => {
+    // 응답 코드가 200이면, 응답을 그대로 반환
+    if (response.status === 200) {
+      return response
+    }
+  },
+  error => {
+    // 오류 응답이 401이면, 사용자 정의 오류 메시지를 반환
+    if (error.response && error.response.status === 401) {
+      
+      console.log("무슨에러냐 도대체", error.response.status)
+      
+      return Promise.reject('인증번호를 다시 확인해주세요.')
+    }
+    
+    console.log("무슨에러냐 도대체", error.response.status)
+
+    // 그 외의 오류는 그대로 반환
+    return Promise.reject(error)
+  },
+)
 
 
 const router = useRouter()
@@ -71,11 +100,7 @@ const timerSeconds = ref(0)
 let timerInterval = null
 const goal_No = ref("")
 const gender = ref("")
-const address =ref('')
-const postcode = ref('')
-const registerUserError = ref('')
 
-let certificationData
 
 const userAddress = reactive({
   postcode: '',
@@ -186,11 +211,12 @@ const CertiPN = () => {
   }
 }
 
+const isValidCertifiedPN = ref(false) // ref로 선언
 
-const isValidCertifiedPN = computed(() => {
+watch(certifiedPN, newValue => {
   const regex = /^[0-9]{6}$/ // 6자리 숫자만 허용하는 정규식
-  
-  return regex.test(certifiedPN.value)
+
+  isValidCertifiedPN.value = regex.test(newValue)
 })
 
 
@@ -380,9 +406,9 @@ const sendMessage = async () => {
 }
 
 // 인증을 검증하는 함수
-const verifyCertification = async initialData => {
+const verifyCertification = async() => {
   try {
-    const response = await axios.post('http://localhost:4000/user/verify', {
+    const response = await instance.post('/user/verify', {
       phone: tel.value,
       authCode: certifiedPN.value,
     })
@@ -394,36 +420,17 @@ const verifyCertification = async initialData => {
       // 유효성 검사 및 회원 데이터를 가져옵니다.
       const data = await handleCertification()
 
-      isDialogTwoShow.value="false"
-
       // 회원가입 함수를 호출하며, data를 인자로 전달합니다.
       await registerUser(data, isValidCertifiedPN)
-    } else {
-      // 인증 실패
-      certifiedFa.value = response.data
-      alert(response.data)
-      isValidCertifiedPN.value = false
-      isDialogTwoShow.value="false"
     }
   } 
   catch (error) {
-    // 인증 실패를 나타내는 상태 코드인 경우 또는 인증 과정에서 오류 발생
-    if (error.response && error.response.status === 401) {
-      certifiedFa.value = error.response.data
-      alert(error.response.data)
-      isValidCertifiedPN.value = false
-    }
-
-    // 서버에서 다른 오류 응답을 반환했다면
-    else if (error.response) {
-      alert('서버 오류.. 다시 시도해주세요')
-      isValidCertifiedPN.value = false
-    } else {
-      alert('서버와의 연결에 문제가 발생했습니다. 잠시 후에 다시 시도해주세요.')
-      isValidCertifiedPN.value = false
-    }
+    // 인증 실패 메시지 출력
+    alert(error)
+    isValidCertifiedPN.value = false
   }
 }
+
 
 const resendVerificationCode = async () => {
   try {
@@ -460,10 +467,12 @@ const registerUser = async (data, isValidCertifiedPN) => {
       // 회원가입 성공 시 Snackbar를 보여줍니다.
       isSnackbarVisible.value = true
 
-      // 3초 후에 메인 페이지로 이동합니다.
-      setTimeout(() => {
-        router.replace({ name: 'login' })
-      }, 3000)
+      // 회원가입 요청의 응답이 성공적으로 수신된 경우에만 페이지 이동을 실행합니다.
+      if (registerResponse.status === 200) {
+        setTimeout(() => {
+          router.replace({ name: 'login' })
+        }, 3000)
+      }
     } else {
       console.log('인증 실패')
       alert('인증번호를 확인해주세요.')
@@ -537,7 +546,7 @@ onSubmitIdCK()
 
 
 <template>
-  <VForm @submit.prevent="handleCertification">
+  <VForm>
     <!-- () => {} -->
     <VRow>
       <VCol cols="12">
@@ -911,7 +920,6 @@ onSubmitIdCK()
                   class="my-custom-button"
                   height="55px"
                   width="800"
-                  :disabled="isButtonDisabled"
                   @click="handleButtonClick"
                 >
                   인증요청
