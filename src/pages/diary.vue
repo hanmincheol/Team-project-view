@@ -478,7 +478,7 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
 .fade-enter,
 .fade-enter-active {
   opacity: 0;
-  transition: opacity 0.5s;
+  transition: opacity 1s;
 }
 
 .fade-enter-to {
@@ -488,7 +488,7 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
 .fade-leave-active,
 .fade-leave {
   opacity: 1;
-  transition: opacity 0.5s;
+  transition: opacity 1s;
 }
 
 .fade-leave-to {
