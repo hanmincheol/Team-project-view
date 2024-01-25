@@ -260,7 +260,6 @@ const loadMore = () => {
                         </VCol>
                       </VRow>
                     </VCol>
-                    <hr style=" margin-top: -6px;margin-bottom: 5px; opacity: 0.3;">
                     <VCarousel show-arrows-on-hover>
                       <VCarouselItem
                         v-for="(image, i) in images[0].src" 
