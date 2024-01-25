@@ -11,18 +11,20 @@
 
 <body>
   <div id="app">
-    <div id="loading-bg">
-      <div class="loading-logo">
-        <!-- SVG Logo -->
-        <img src="src\assets\images\logo_healtyReal.png" alt="로고" fill="none">
-      </div>
-
+    <div class="loading-logo" style="margin-left: -37px;">
+      <img src=" src\assets\images\logo_healtyReal.png" alt="로고">
     </div>
+    <div class=" loading">
+      <div class="effect-1 effects"></div>
+      <div class="effect-2 effects"></div>
+      <div class="effect-3 effects"></div>
+    </div>
+  </div>
   </div>
   <script type="module" src="/src/main.js"></script>
   <script>
     const loaderColor = localStorage.getItem('materio-initial-loader-bg') || '#FFFFFF'
-    const primaryColor = localStorage.getItem('materio-initial-loader-color') || '#9155FD'
+    const primaryColor = localStorage.getItem('materio-initial-loader-color') || '#45d15a'
 
     if (loaderColor)
       document.documentElement.style.setProperty('--initial-loader-bg', loaderColor)

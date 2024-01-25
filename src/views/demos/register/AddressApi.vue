@@ -11,12 +11,13 @@
           size="large"
         />
       </VCol>
-      <VCol cols="5">
+      <VCol cols="2">
         <VBtn
+          v-model="userAddress"
           color="primary"
           class="my-custom-button"
           height="55px"
-          width="40%"
+          width="200"
           @click="execDaumPostcode"
         >
           우편번호 찾기
@@ -32,20 +33,37 @@
         cols="12"
         md="4"
       />
-      <VCol
-        cols="12"
-        md="4"
+    </VCol>
+    <VCol cols="2">
+      <VBtn
+        color="primary"
+        class="my-custom-button"
+        height="55px"
+        width="40%"
+        @click="execDaumPostcode"
       >
-        <VTextField
-          id="address"
-          v-model="address"
-          type="text"
-          placeholder="주소"
-        />
-      </VCol>
-    </VRow>
-  </VCol>
-  <br>
+        우편번호 찾기
+      </VBtn>
+    </VCol>
+  </VRow>
+
+  <VRow>
+    <VCol
+      cols="12"
+      md="4"
+    />
+    <VCol
+      cols="12"
+      md="4"
+    >
+      <VTextField
+        id="address"
+        v-model="address"
+        type="text"
+        placeholder="주소"
+      />
+    </VCol>
+  </VRow>
 
   <VCol
     v-if="hidden"
@@ -74,17 +92,27 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { defineEmits, onMounted, reactive, ref } from 'vue'
+
+const emit = defineEmits(['updateAddress', 'useraddress'])
+
 
 const postcode = ref('')
 const address = ref('')
 const detailAddress = ref('')
 const extraAddress = ref('')
 
+
 const userAddress = reactive({
-  postcode: postcode.value,
-  address: address.value,
+  postcode,
+  address,
 })
+
+function updateAndEmitUserAddress() {
+  userAddress.postcode = postcode.value
+  userAddress.address = address.value
+  emit('updateAddress', userAddress)
+}
 
 
 
@@ -123,10 +151,12 @@ function execDaumPostcode() {
       // 추가적인 작업이 필요한 경우 여기에 작성
 
       // 상세주소 입력란에 포커스 설정
-      document.getElementById("detailAddressInput").focus()
+      document.getElementById("detailAddressInput")
+      
 
-      // 팝업창 닫기
-      execDaumPostcode.close()
+      window.close()
+      updateAndEmitUserAddress()
+      
     },
   }).open({
     popupTitle: '주소 설정',

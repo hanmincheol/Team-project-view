@@ -16,6 +16,9 @@ const props = defineProps({
 
 const emit = defineEmits(['update:selectedRadio'])
 
+function handleSelectedRadios(value) {
+  selectedOption.value = value
+}
 const selectedOption = ref(structuredClone(toRaw(props.selectedRadio)))
 
 watch(selectedOption, () => {

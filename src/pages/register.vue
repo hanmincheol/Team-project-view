@@ -46,7 +46,7 @@ const onSubmit = () => {
 </script>
 
 <template>
-  <VCard>
+  <VCard style="width: 70%; margin-left: 15%;">
     <VCardText>
       <!-- 👉 Stepper -->
       <AppStepper
@@ -240,10 +240,10 @@ const onSubmit = () => {
 
           <VBtn
             v-else
+          
             @click="currentStep++"
           >
             다음
-
             <VIcon
               icon="mdi-arrow-right"
               end
