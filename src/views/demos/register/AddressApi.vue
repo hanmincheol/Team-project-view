@@ -1,51 +1,45 @@
 <template>
-  <VCol cols="12">
-    <VRow>
-      <VCol cols="4" />
-      <VCol cols="2">
-        <VTextField 
-          id="postcode"
-          v-model="postcode"
-          type="text"
-          placeholder="우편번호"
-          size="large"
-        />
-      </VCol>
-      <VCol cols="5">
-        <VBtn
-          color="primary"
-          class="my-custom-button"
-          height="55px"
-          width="40%"
-          @click="execDaumPostcode"
-        >
-          우편번호 찾기
-        </VBtn>
-      </VCol>
-    </VRow>
-  </VCol>
-
-  <br>
-  <VCol cols="12">
-    <VRow>
-      <VCol
-        cols="12"
-        md="4"
+  <VRow>
+    <VCol cols="4" />
+    <VCol cols="3">
+      <VTextField 
+        id="postcode"
+        v-model="postcode"
+        type="text"
+        placeholder="우편번호"
+        size="large"
       />
-      <VCol
-        cols="12"
-        md="4"
+    </VCol>
+    <VCol cols="2">
+      <VBtn
+        color="primary"
+        class="my-custom-button"
+        height="55px"
+        width="40%"
+        @click="execDaumPostcode"
       >
-        <VTextField
-          id="address"
-          v-model="address"
-          type="text"
-          placeholder="주소"
-        />
-      </VCol>
-    </VRow>
-  </VCol>
-  <br>
+        우편번호 찾기
+      </VBtn>
+    </VCol>
+  </VRow>
+
+  <VRow>
+    <VCol
+      cols="12"
+      md="4"
+    />
+    <VCol
+      cols="12"
+      md="4"
+    >
+      <VTextField
+        id="address"
+        v-model="address"
+        type="text"
+        placeholder="주소"
+      />
+    </VCol>
+  </VRow>
 
   <VCol
     v-if="hidden"

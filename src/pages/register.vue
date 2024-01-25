@@ -46,7 +46,7 @@ const onSubmit = () => {
 </script>
 
 <template>
-  <VCard>
+  <VCard style="width: 70%; margin-left: 15%;">
     <VCardText>
       <!-- 👉 Stepper -->
       <AppStepper

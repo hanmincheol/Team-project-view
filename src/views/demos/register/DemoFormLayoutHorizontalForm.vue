@@ -349,12 +349,7 @@ const onSubmitPhone = () => {
         <!-- 👉 Password -->
         <VCol
           cols="12"
-          md="3"
-        />
-
-        <VCol
-          cols="12"
-          md="1"
+          md="4"
         />
 
         <VCol
@@ -383,12 +378,7 @@ const onSubmitPhone = () => {
         <!-- 👉 fullName -->
         <VCol
           cols="12"
-          md="3"
-        />
-
-        <VCol
-          cols="12"
-          md="1"
+          md="4"
         />
 
         <VCol
@@ -557,79 +547,80 @@ const onSubmitPhone = () => {
     </VCol>
       
     <AddressApi :user-address="userAddress" />
+    <VCol cols="12">
+      <VRow no-gutters>
+        <VCol cols="4" />
+        <VCol cols="4">
+          <VDialog
+            v-model="isDialogVisible"
+            max-width="800"
+          >
+            <!-- Dialog Activator -->
+            <template #activator="{ props }">
+              <VBtn
+                :phone-number="tel"
+                :email="email"
+                v-bind="props"
+                :disabled="isButtonDisabled"
+                color="primary"
+                class="my-custom-button"
+                size="x-large"
+                width="100%"
+                @submit="handleFormSubmit"
+                @click="isDialogTwoShow = !isDialogTwoShow"
+              >
+                인증요청
+              </VBtn>
+            </template>
 
-    <VRow no-gutters>
-      <VCol cols="4" />
-      <VCol cols="4">
-        <VDialog
-          v-model="isDialogVisible"
-          max-width="800"
-        >
-          <!-- Dialog Activator -->
-          <template #activator="{ props }">
-            <VBtn
-              :phone-number="tel"
-              :email="email"
-              v-bind="props"
-              :disabled="isButtonDisabled"
-              color="primary"
-              class="my-custom-button"
-              size="x-large"
-              width="100%"
-              @submit="handleFormSubmit"
-              @click="isDialogTwoShow = !isDialogTwoShow"
-            >
-              인증요청
-            </VBtn>
-          </template>
-
-          <!-- Dialog Content -->
+            <!-- Dialog Content -->
               
 
-          <VDialog
-            v-model="isDialogTwoShow"
-            class="v-dialog-sm text-center"
-          >
-            <VCard title="인증번호 입력+">
-              <DialogCloseBtn
-                variant="text"
-                size="small"
-                @click="isDialogTwoShow = false"
-              />
-              <VRow no-gutters>
-                <VCol cols="12">
-                  <VCol
-                    cols="12"
-                    md="6"
-                  />
+            <VDialog
+              v-model="isDialogTwoShow"
+              class="v-dialog-sm text-center"
+            >
+              <VCard title="인증번호 입력+">
+                <DialogCloseBtn
+                  variant="text"
+                  size="small"
+                  @click="isDialogTwoShow = false"
+                />
+                <VRow no-gutters>
+                  <VCol cols="12">
+                    <VCol
+                      cols="12"
+                      md="6"
+                    />
 
-                  <VTextField
-                    id="certifiedPN"
-                    v-model="certifiedPN"
-                    type="certifiedPN"
-                    placeholder="인증번호"
-                    persistent-placeholder
-                    inputmode="numeric"
-                    @input="CertiPN"
-                  />
-                  <VCol
-                    cols="12"
-                    md="12"
-                  >
-                    <VCardActions>
-                      <VSpacer />
-                      <VBtn @click="handleCertification">
-                        인증하기
-                      </VBtn>
-                    </VCardActions>
+                    <VTextField
+                      id="certifiedPN"
+                      v-model="certifiedPN"
+                      type="certifiedPN"
+                      placeholder="인증번호"
+                      persistent-placeholder
+                      inputmode="numeric"
+                      @input="CertiPN"
+                    />
+                    <VCol
+                      cols="12"
+                      md="12"
+                    >
+                      <VCardActions>
+                        <VSpacer />
+                        <VBtn @click="handleCertification">
+                          인증하기
+                        </VBtn>
+                      </VCardActions>
+                    </vcol>
                   </vcol>
-                </vcol>
-              </VRow>
-            </VCard>
-          </VDialog>
-        </vdialog>
-      </VCol>
-    </VRow>
+                </VRow>
+              </VCard>
+            </VDialog>
+          </vdialog>
+        </VCol>
+      </VRow>
+    </VCol>
   </VForm>
 </template>
 
