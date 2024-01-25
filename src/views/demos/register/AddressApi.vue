@@ -125,8 +125,15 @@ function execDaumPostcode() {
       window.close()
       updateAndEmitUserAddress()
     },
+<<<<<<< HEAD
   }).open()
   console.log("주소", userAddress)
+=======
+  }).open({
+    popupTitle: '주소 설정',
+    popupKey: 'popup1', //팝업창 Key값 설정 (계속 팝업창이 뜨는 것을 방지하기 위함)
+  })
+>>>>>>> origin/hmc
 }
 onMounted(() => {
   const script = document.createElement('script')
