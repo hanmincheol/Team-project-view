@@ -1,28 +1,65 @@
 <script setup>
 import axios from '@axios'
+import { reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const router = useRoute()
 const connectionData = ref([])
+const isMateExist = ref(false)
 
-const rating = ref(3)
+const rating = reactive({}) //호감도 뿌려주기 위한 변수
+const beforeRating = {}
 
 const ratingColors = [
   'warning',
 ]
 
-//axios로 가짜 데이터 가져오기
-const fetchProjectData = () => {
+
+const fetchProjectData = () => { //유저 값 가져오기
   if (router.params.tab === 'mate') {
-    axios.get('/pages/profile', { params: { tab: 'connections' } }).then(response => {
-      connectionData.value = response.data
+    axios.get('http://127.0.0.1:4000/comm/mate', {
+      params: {
+        id: 'HMC',
+      },
     })
+      .then(response => {
+        console.log(response.data)
+        connectionData.value = response.data
+        if (Object.keys(response.data).length == 0) isMateExist.value = true
+        else {
+          //호감도 Vrating에 설정해줄 값
+          connectionData.value.forEach(user => {
+            rating[user.mate_id] = ref(user.favorable_rating)
+          })}
+      })
+      .catch(error => { 
+        // 에러 처리
+        console.error(error)
+      })
   }
 }
 
-//watch 함수를 사용하여 router 객체를 감시하고, 변경이 있을 때마다 fetchProjectData 함수를 실행합니다. 
-//immediate: true 옵션을 사용하여 초기 로드 시에도 함수를 실행합니다.
+
 watch(router, fetchProjectData, { immediate: true })
+
+watch(rating, ()=>{
+  if(beforeRating != {}){
+    for(const key in rating){
+      if (beforeRating[key] != rating[key]){
+        axios.put('http://127.0.0.1:4000/comm/mate/changeFavorable', JSON.stringify({
+          mate_id: key,
+          favorable_rating: rating[key],
+        }), { headers: { "Content-Type": `application/json` } })
+          .catch(error=>{console.log(error)})
+      }
+    }
+  }
+  for(const key in rating){
+    beforeRating[key] = rating[key]
+  }
+}, { immediate: true })
+
+
 
 const moreBtnList = [
   {
@@ -54,10 +91,19 @@ const moreBtnList = [
       메이트 목록
     </h5>
   </VCardText>
+  <VAlert
+    v-show="isMateExist"
+    density="default"
+    color="secondary"
+    variant="tonal"
+    :style="{'margin-bottom':'200px'}"
+  >
+    메이트 목록이 없습니다
+  </VAlert>
   <VRow>
     <VCol
       v-for="data in connectionData"
-      :key="data.name"
+      :key="data.mate_id"
       sm="6"
       lg="4"
       cols="12"
@@ -74,21 +120,20 @@ const moreBtnList = [
           <VCardTitle class="d-flex flex-column align-center justify-center">
             <VAvatar
               size="100"
-              :image="data.avatar"
+              :image="data.profilePath" 
               class="mt-3"
             />
-
             <p class="mt-6 mb-0">
-              {{ data.name }}
+              {{ data.mate_id }}
             </p>
-            <span class="text-body-1">{{ data.designation }}</span>
+            <span class="text-body-1">{{ data.name }}</span>
 
             <div class="d-flex align-center flex-wrap gap-2 mt-6">
               <div class="d-flex flex-column">
                 <VRating
                   v-for="color in ratingColors"
                   :key="color"
-                  v-model="rating"
+                  v-model="rating[data.mate_id]"
                   :color="color"
                 />
               </div>
@@ -100,19 +145,19 @@ const moreBtnList = [
           <div class="d-flex justify-space-around mt-1">
             <div class="text-center">
               <h6 class="text-h6">
-                {{ data.projects }}
+                {{ data.fnum }}
               </h6>
               <span class="text-body-1">친구</span>
             </div>
             <div class="text-center">
               <h6 class="text-h6">
-                {{ data.tasks }}
+                {{ data.mnum }}
               </h6>
               <span class="text-body-1">메이트</span>
             </div>
             <div class="text-center">
               <h6 class="text-h6">
-                {{ data.connections }}
+                {{ data.snum }}
               </h6>
               <span class="text-body-1">구독자</span>
             </div>
@@ -123,14 +168,7 @@ const moreBtnList = [
               :prepend-icon="data.isConnected ? 'mdi-account-check-outline' : 'mdi-account-plus-outline'"
               :variant="data.isConnected ? 'elevated' : 'tonal'"
             >
-              {{ data.isConnected ? '친구취소' : '친구신청' }}
-            </VBtn>
-
-            <VBtn
-              :prepend-icon="data.isConnected ? 'mdi-account-check-outline' : 'mdi-account-plus-outline'"
-              :variant="data.isConnected ? 'elevated' : 'tonal'"
-            >
-              {{ data.isConnected ? '구독취소' : '구독신청' }}
+              {{ data.isConnected ? '메이트취소' : '메이트신청' }}
             </VBtn>
           </div>
         </VCardText>

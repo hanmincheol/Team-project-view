@@ -3,16 +3,26 @@ import axios from '@axios'
 import { useRoute } from 'vue-router'
 
 const router = useRoute()
-const connectionData = ref([])
+const subscribeTo = ref([])
+const subscribers = ref([])
+const isSubToExist = ref(false)
+const isMySubExist = ref(false)
 
-//axios로 가짜 데이터 가져오기
 const fetchProjectData = () => {
   if (router.params.tab === 'subscriber') {
-    axios.get('/pages/profile', { params: { tab: 'connections' } }).then(response => {
-      connectionData.value = response.data
+    axios.get('http://127.0.0.1:4000/comm/subscribe', { params: { id: 'HMC' } }).then(response => {
+      subscribeTo.value = response.data['subTo']
+      subscribers.value = response.data['MySub']
+      console.log(typeof subscribers.value)
+
+      if(Object.keys(subscribeTo.value).length==0) isSubToExist.value = true
+      if(Object.keys(subscribers.value).length==0) isMySubExist.value = true
+      console.log(isSubToExist)
     })
   }
 }
+
+
 
 //watch 함수를 사용하여 router 객체를 감시하고, 변경이 있을 때마다 fetchProjectData 함수를 실행합니다. 
 //immediate: true 옵션을 사용하여 초기 로드 시에도 함수를 실행합니다.
@@ -47,11 +57,25 @@ const moreBtnList = [
     >
       구독한 목록
     </h5>
+    <hr
+      :style="{'margin-top':'30px', 'margin-bottom':'10px',
+               'background-color' :'#DEDEDE', 'height':'1px', 'border':'0'
+      }"
+    >
   </VCardText>
+  <VAlert
+    v-show="isSubToExist"
+    density="default"
+    color="secondary"
+    variant="tonal"
+    :style="{'margin-bottom':'200px'}"
+  >
+    구독한 목록이 없습니다
+  </VAlert>
   <VRow>
     <VCol
-      v-for="data in connectionData"
-      :key="data.name"
+      v-for="data in subscribeTo"
+      :key="data.subscribe_id"
       sm="6"
       lg="4"
       cols="12"
@@ -68,27 +92,14 @@ const moreBtnList = [
           <VCardTitle class="d-flex flex-column align-center justify-center">
             <VAvatar
               size="100"
-              :image="data.avatar"
+              :image="data.profilePath"
               class="mt-3"
             />
 
             <p class="mt-6 mb-0">
               {{ data.name }}
             </p>
-            <span class="text-body-1">{{ data.designation }}</span>
-
-            <div class="d-flex align-center flex-wrap gap-2 mt-6">
-              <VChip
-                v-for="chip in data.chips"
-                :key="chip.title"
-                :color="chip.color"
-                density="compact"
-              >
-                <span class="text-xs">
-                  {{ chip.title }}
-                </span>
-              </VChip>
-            </div>
+            <span class="text-body-1">{{ data.name }}</span>
           </VCardTitle>
         </VCardItem>
 
@@ -96,19 +107,19 @@ const moreBtnList = [
           <div class="d-flex justify-space-around mt-1">
             <div class="text-center">
               <h6 class="text-h6">
-                {{ data.projects }}
+                {{ data.fnum }}
               </h6>
               <span class="text-body-1">친구</span>
             </div>
             <div class="text-center">
               <h6 class="text-h6">
-                {{ data.tasks }}
+                {{ data.mnum }}
               </h6>
               <span class="text-body-1">메이트</span>
             </div>
             <div class="text-center">
               <h6 class="text-h6">
-                {{ data.connections }}
+                {{ data.snum }}
               </h6>
               <span class="text-body-1">구독자</span>
             </div>
@@ -133,6 +144,7 @@ const moreBtnList = [
       </VCard>
     </VCol>
   </VRow>
+  
   <VCardText>
     <h5
       class="text-h5"
@@ -140,11 +152,25 @@ const moreBtnList = [
     >
       구독받은 목록
     </h5>
+    <hr
+      :style="{'margin-top':'30px', 'margin-bottom':'10px',
+               'background-color' :'#DEDEDE', 'height':'1px', 'border':'0'
+      }"
+    >
   </VCardText>
+  <VAlert
+    v-show="isMySubExist"
+    density="default"
+    color="secondary"
+    variant="tonal"
+    :style="{'margin-bottom':'200px'}"
+  >
+    구독받은 목록이 없습니다
+  </VAlert>
   <VRow>
     <VCol
-      v-for="data in connectionData"
-      :key="data.name"
+      v-for="data in subscribers"
+      :key="data.id"
       sm="6"
       lg="4"
       cols="12"
@@ -161,27 +187,14 @@ const moreBtnList = [
           <VCardTitle class="d-flex flex-column align-center justify-center">
             <VAvatar
               size="100"
-              :image="data.avatar"
+              :image="data.profilePath"
               class="mt-3"
             />
 
             <p class="mt-6 mb-0">
-              {{ data.name }}
+              {{ data.id }}
             </p>
-            <span class="text-body-1">{{ data.designation }}</span>
-
-            <div class="d-flex align-center flex-wrap gap-2 mt-6">
-              <VChip
-                v-for="chip in data.chips"
-                :key="chip.title"
-                :color="chip.color"
-                density="compact"
-              >
-                <span class="text-xs">
-                  {{ chip.title }}
-                </span>
-              </VChip>
-            </div>
+            <span class="text-body-1">{{ data.name }}</span>
           </VCardTitle>
         </VCardItem>
 
@@ -189,19 +202,19 @@ const moreBtnList = [
           <div class="d-flex justify-space-around mt-1">
             <div class="text-center">
               <h6 class="text-h6">
-                {{ data.projects }}
+                {{ data.fnum }}
               </h6>
               <span class="text-body-1">친구</span>
             </div>
             <div class="text-center">
               <h6 class="text-h6">
-                {{ data.tasks }}
+                {{ data.mnum }}
               </h6>
               <span class="text-body-1">메이트</span>
             </div>
             <div class="text-center">
               <h6 class="text-h6">
-                {{ data.connections }}
+                {{ data.snum }}
               </h6>
               <span class="text-body-1">구독자</span>
             </div>

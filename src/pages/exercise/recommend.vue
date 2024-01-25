@@ -1,44 +1,47 @@
 <template>
   <!-- <VRow> -->
-    <VAlert
-      v-show="timeValidityAlert"
-      variant="outlined"
-      color="error"
-      :style="{'margin-bottom':'20px'}"
-    >
-      시작시간은 종료시간보다 10분 이상 앞서야 합니다.
-    </VAlert>
-    <VCard :style="{'margin-bottom':'10px', 'padding':'10px'}">
-      <VCardTitle :style="{'margin-bottom':'20px'}">
-        <VIcon icon="mdi-clock-edit-outline"/>
-        원하는 시간을 선택하세요
-      </VCardTitle>
-      <VRow>
-        <VCol cols="3">
-          <AppDateTimePicker
-            v-model="startTime"
-            label="시작시간"
-            :config="{ enableTime: true, noCalendar: true, dateFormat: 'H:i' }"
-            @change="checkTimeValidity"
-          />
-        </VCol>
-        <VCol cols="1" :style="{'display':'flex','justify-content':'center', 'align-items':'center'}">
-          <h2><VIcon icon="mdi-arrow-right-bold"/></h2>
-        </VCol>
-        <VCol cols="3">
-          <AppDateTimePicker
-            v-model="endTime"
-            label="종료시간"
-            :config="{ enableTime: true, noCalendar: true, dateFormat: 'H:i' }"
-            @change="checkTimeValidity"
-          />
-        </VCol>
-        <VCol :style="{'display':'flex','align-items':'flex-end'}">
-          total<br/>{{ hour }} h : {{ minute }} m
-        </VCol>
-      </VRow>
-      <!-- </VCardItem> -->
-    </VCard>
+  <VAlert
+    v-show="timeValidityAlert"
+    variant="outlined"
+    color="error"
+    :style="{'margin-bottom':'20px'}"
+  >
+    시작시간은 종료시간보다 10분 이상 앞서야 합니다.
+  </VAlert>
+  <VCard :style="{'margin-bottom':'10px', 'padding':'10px'}">
+    <VCardTitle :style="{'margin-bottom':'20px'}">
+      <VIcon icon="mdi-clock-edit-outline" />
+      원하는 시간을 선택하세요
+    </VCardTitle>
+    <VRow>
+      <VCol cols="3">
+        <AppDateTimePicker
+          v-model="startTime"
+          label="시작시간"
+          :config="{ enableTime: true, noCalendar: true, dateFormat: 'H:i' }"
+          @change="checkTimeValidity"
+        />
+      </VCol>
+      <VCol
+        cols="1"
+        :style="{'display':'flex','justify-content':'center', 'align-items':'center'}"
+      >
+        <h2><VIcon icon="mdi-arrow-right-bold" /></h2>
+      </VCol>
+      <VCol cols="3">
+        <AppDateTimePicker
+          v-model="endTime"
+          label="종료시간"
+          :config="{ enableTime: true, noCalendar: true, dateFormat: 'H:i' }"
+          @change="checkTimeValidity"
+        />
+      </VCol>
+      <VCol :style="{'display':'flex','align-items':'flex-end'}">
+        total<br>{{ hour }} h : {{ minute }} m
+      </VCol>
+    </VRow>
+    <!-- </VCardItem> -->
+  </VCard>
   <!-- </VRow> -->
   <VRow>
     <VCol cols="6">
@@ -61,7 +64,7 @@
             :style="{'float':'right', 'margin':'5px','margin-right':'20px'}"
             @click="showSearchUi"
           />
-          <!--즐겨찾기 목록화(즐겨찾기 클릭시 show)-->
+          <!-- 즐겨찾기 목록화(즐겨찾기 클릭시 show) -->
           <VSelect
             v-show="likeCategoryMenu"
             :items="items"
@@ -76,7 +79,11 @@
           id="map"
           :style="{'width':'100%','height':'450px'}"
         />
-        <DrawMap ref="childMap" v-show="isSelfControlMap" @refresh-child-road="createRoadView" />
+        <DrawMap
+          v-show="isSelfControlMap"
+          ref="childMap"
+          @refresh-child-road="createRoadView"
+        />
         <!-- @refresh-child-road="createRoadView" -->
         <!-- 지도 검색창 -->
         <div
@@ -102,7 +109,10 @@
                   @click="isMyPlace = true"
                 />
               </VRadioGroup>
-              <form @submit="searchPosition" v-show="!isMyPlace">
+              <form
+                v-show="!isMyPlace"
+                @submit="searchPosition"
+              >
                 키워드 : <input
                   id="keyword"
                   type="text"
@@ -118,7 +128,10 @@
           </div>
           <hr>
           <div v-show="!isMyPlace">
-            <ul id="placesList" @click="searchListClickController"/>
+            <ul
+              id="placesList"
+              @click="searchListClickController"
+            />
             <div id="pagination" />
           </div>
         </div>
@@ -151,10 +164,10 @@
 </template>
 
 <script>
-import DrawMap from '@/pages/exercise/DrawMap.vue';
-import * as mapData from '@/pages/exercise/mapData';
-import { isSearchListClicked } from '@/pages/exercise/mapSearch';
-import { ref } from 'vue';
+import DrawMap from '@/pages/exercise/DrawMap.vue'
+import * as mapData from '@/pages/exercise/mapData'
+import { isSearchListClicked } from '@/pages/exercise/mapSearch'
+import { ref } from 'vue'
 
 //지도위에 현재 로드뷰의 위치와, 각도를 표시하기 위한 map walker 아이콘 생성 클래스
 function MapWalker(position){
@@ -298,22 +311,24 @@ export default {
   methods: {
     //위치 리스트 클릭
     searchListClickController(e){
-      e.stopPropagation();
-      console.log('ul태그 클릭 이벤트',this.isSearchListClicked)
+      e.stopPropagation()
+      console.log('ul태그 클릭 이벤트', this.isSearchListClicked)
       this.isSearchListClicked = false
     },
     searchPosition(e){
       e.preventDefault()
-      console.log('부모 컴포넌트에서 값을 보냄');
+      console.log('부모 컴포넌트에서 값을 보냄')
       var ps = new kakao.maps.services.Places() 
-      this.$refs.childMap.displayMarker(ps);
+      this.$refs.childMap.displayMarker(ps)
+
       // 장소 검색 객체를 생성합니다
       // mapSearch.searchPlaces(ps, this.map)
     },
 
     //로드 뷰 관련 함수---------------------------------------------------------
     createRoadView(lat, lng, map){ //로드뷰 보여주기
-      console.log('drawmap확인용:',lat)
+      console.log('drawmap확인용:', lat)
+
       // 로드뷰 도로를 지도위에 올린다. (근데 올리면 정신없음)
       // map.addOverlayMapTypeId(kakao.maps.MapTypeId.ROADVIEW)
 
@@ -368,6 +383,7 @@ export default {
 
     initMap() { //지도 초기화 함수
       const container = document.getElementById("map")
+
       //const drawingContainer = document.getElementById("drawingMap")
       var lat = ref(33.450701)
       var lng = ref(126.570667) //디폴트 값
@@ -401,8 +417,8 @@ export default {
 
     //지도 목록 버튼 이벤트 함수
     likePathClicked(){ //즐겨찾기 클릭 시 실행되는 함수 - 보여주어야 할 경로가 많음
-      console.log('지도 디버깅:',this.map.a)
-      this.isSelfControlMap = false;
+      console.log('지도 디버깅:', this.map.a)
+      this.isSelfControlMap = false
 
       const searchDiv = document.getElementById("menu-wrap")
 
@@ -415,7 +431,8 @@ export default {
       this.setCenter(33.450701, 126.570667, this.map) //지도의 중심 이동 및 로드뷰 이동
     }, //likePathClicked
     recoPathClicked(){ //추천경로 클릭 시 실행되는 함수
-      this.isSelfControlMap = false;
+      this.isSelfControlMap = false
+
       const searchDiv = document.getElementById("menu-wrap")
 
       searchDiv.hidden = true
@@ -437,7 +454,8 @@ export default {
       //console.log('selfPathClicked지도:',this.drawingMap);
 
       //this.drawingMap.relayout();
-      this.isSelfControlMap = true;
+      this.isSelfControlMap = true
+
       const searchDiv = document.getElementById("menu-wrap")
       
       searchDiv.hidden = false
@@ -509,17 +527,17 @@ export default {
         var startMin = parseInt(this.startTime.split(':')[0])*60+parseInt(this.startTime.split(':')[1])
         var endMin = parseInt(this.endTime.split(':')[0])*60+parseInt(this.endTime.split(':')[1])
         if(startMin >= endMin || Math.abs(startMin-endMin) < 10) {
-          this.timeValidityAlert = true;
-          this.hour = '00';
-          this.minute = '00';
+          this.timeValidityAlert = true
+          this.hour = '00'
+          this.minute = '00'
         }
         else{
-          this.timeValidityAlert = false;
-          this.totalTime = endMin-startMin;
-          this.hour = String((this.totalTime/60).toFixed());
-          this.minute = String(this.totalTime%60);
-          if(this.hour.length == 1) this.hour = '0'+this.hour;
-          if(this.minute.length == 1) this.minute = '0'+this.minute;
+          this.timeValidityAlert = false
+          this.totalTime = endMin-startMin
+          this.hour = String((this.totalTime/60).toFixed())
+          this.minute = String(this.totalTime%60)
+          if(this.hour.length == 1) this.hour = '0'+this.hour
+          if(this.minute.length == 1) this.minute = '0'+this.minute
         }
       }
     },
