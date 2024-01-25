@@ -138,18 +138,18 @@
             />
             <div id="pagination" />
           </div>
-        </VCard>
-      </VCol> <!-- 지도 보여주는 영역 end -->
-      <VCol cols="6">
-        <VCard :style="{'height':'600px'}">
-          <div
-            id="roadview"
-            :style="{'width':'100%','height':'100%'}"
-          />
-        </VCard>
-      </VCol>
-    </VRow>
-  </section>
+        </div>
+      </VCard>
+    </VCol> <!-- 지도 보여주는 영역 end -->
+    <VCol cols="6">
+      <VCard :style="{'height':'600px'}">
+        <div
+          id="roadview"
+          :style="{'width':'100%','height':'100%'}"
+        />
+      </VCard>
+    </VCol>
+  </VRow>
 </template>
 
 <script>
