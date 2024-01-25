@@ -4,15 +4,21 @@ import { useRoute } from 'vue-router'
 
 const router = useRoute()
 const connectionData = ref([])
+const isFriendExist = ref(false)
 
 //axios로 가짜 데이터 가져오기
 const fetchProjectData = () => {
   if (router.params.tab === 'friend') {
-    axios.get('/pages/profile', { params: { tab: 'connections' } }).then(response => {
-      connectionData.value = response.data
-    })
+    axios.get("http://127.0.0.1:4000/comm/friend", { params: { id: 'HMC' } })
+      .then(response=>{
+        console.log(response.data)
+        connectionData.value = response.data
+        if(Object.keys(connectionData.value).length == 0) isFriendExist.value = true
+      })
+      .catch(error=>{console.error(error)})
   }
 }
+
 
 
 //watch 함수를 사용하여 router 객체를 감시하고, 변경이 있을 때마다 fetchProjectData 함수를 실행합니다. 
@@ -50,10 +56,19 @@ const moreBtnList = [
       친구 목록
     </h5>
   </VCardText>
+  <VAlert
+    v-show="isFriendExist"
+    density="default"
+    color="secondary"
+    variant="tonal"
+    :style="{'margin-bottom':'200px'}"
+  >
+    친구 목록이 없습니다
+  </VAlert>
   <VRow>
     <VCol
       v-for="data in connectionData"
-      :key="data.name"
+      :key="data.friend_id"
       sm="6"
       lg="4"
       cols="12"
@@ -70,32 +85,17 @@ const moreBtnList = [
           <VCardTitle class="d-flex flex-column align-center justify-center">
             <VAvatar
               size="100"
-              :image="data.avatar"
+              :image="data.profilePath"
               class="mt-3"
             />
             <!-- 이름 부분 -->
             <p class="mt-6 mb-0">
-              {{ data.name }}
+              {{ data.friend_id }}
             </p>
             <!-- 이름 부분 -->
             <!-- 직업 부분 -->
-            <span class="text-body-1">{{ data.designation }}</span>
+            <span class="text-body-1">{{ data.name }}</span>
             <!-- 직업 부분 -->
-
-            <div class="d-flex align-center flex-wrap gap-2 mt-6">
-              <!-- 주 전문분야 부분 -->
-              <VChip
-                v-for="chip in data.chips"
-                :key="chip.title"
-                :color="chip.color"
-                density="compact"
-              >
-                <span class="text-xs">
-                  {{ chip.title }}
-                </span>
-              </VChip>
-              <!-- 주 전문분야 부분 -->
-            </div>
           </VCardTitle>
         </VCardItem>
 
@@ -103,19 +103,19 @@ const moreBtnList = [
           <div class="d-flex justify-space-around mt-1">
             <div class="text-center">
               <h6 class="text-h6">
-                {{ data.projects }}
+                {{ data.fnum }}
               </h6>
               <span class="text-body-1">친구</span>
             </div>
             <div class="text-center">
               <h6 class="text-h6">
-                {{ data.tasks }}
+                {{ data.mnum }}
               </h6>
               <span class="text-body-1">메이트</span>
             </div>
             <div class="text-center">
               <h6 class="text-h6">
-                {{ data.connections }}
+                {{ data.snum }}
               </h6>
               <span class="text-body-1">구독자</span>
             </div>
@@ -126,7 +126,7 @@ const moreBtnList = [
               :prepend-icon="data.isConnected ? 'mdi-account-check-outline' : 'mdi-account-plus-outline'"
               :variant="data.isConnected ? 'elevated' : 'tonal'"
             >
-              {{ data.isConnected ? '메이트취소' : '메이트신청' }}
+              {{ data.isConnected ? '친구취소' : '친구신청' }}
             </VBtn>
 
             <VBtn

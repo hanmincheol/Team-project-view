@@ -1,131 +1,125 @@
 <template>
-  <section>
-    <!-- <VRow> -->
-    <VAlert
-      v-show="timeValidityAlert"
-      variant="outlined"
-      color="error"
-      :style="{'margin-bottom':'20px'}"
-    >
-      시작시간은 종료시간보다 10분 이상 앞서야 합니다.
-    </VAlert>
-    <VCard :style="{'margin-bottom':'10px', 'padding':'10px'}">
-      <VCardTitle :style="{'margin-bottom':'20px'}">
-        <VIcon icon="mdi-clock-edit-outline" />
-        원하는 시간을 선택하세요
-      </VCardTitle>
-      <VRow>
-        <VCol cols="3">
-          <AppDateTimePicker
-            v-model="startTime"
-            label="시작시간"
-            :config="{ enableTime: true, noCalendar: true, dateFormat: 'H:i' }"
-            @change="checkTimeValidity"
-          />
-        </VCol>
-        <VCol
-          cols="1"
-          :style="{'display':'flex','justify-content':'center', 'align-items':'center'}"
-        >
-          <h2><VIcon icon="mdi-arrow-right-bold" /></h2>
-        </VCol>
-        <VCol cols="3">
-          <AppDateTimePicker
-            v-model="endTime"
-            label="종료시간"
-            :config="{ enableTime: true, noCalendar: true, dateFormat: 'H:i' }"
-            @change="checkTimeValidity"
-          />
-        </VCol>
-        <VCol :style="{'display':'flex','align-items':'flex-end'}">
-          total<br>{{ hour }} h : {{ minute }} m
-        </VCol>
-      </VRow>
-    <!-- </VCardItem> -->
-    </VCard>
-    <!-- </VRow> -->
+  <!-- <VRow> -->
+  <VAlert
+    v-show="timeValidityAlert"
+    variant="outlined"
+    color="error"
+    :style="{'margin-bottom':'20px'}"
+  >
+    시작시간은 종료시간보다 10분 이상 앞서야 합니다.
+  </VAlert>
+  <VCard :style="{'margin-bottom':'10px', 'padding':'10px'}">
+    <VCardTitle :style="{'margin-bottom':'20px'}">
+      <VIcon icon="mdi-clock-edit-outline" />
+      원하는 시간을 선택하세요
+    </VCardTitle>
     <VRow>
-      <VCol cols="6">
-        <!-- 지도 보여주는 영역 -->
-        <VCard :style="{'height':'600px'}">
-          <div :style="{'height':'50px'}">
-            <!-- 새로고침 버튼(추천경로 클릭시 show) -->
-            <VBtn
-              v-show="refreshBtn"
-              icon="mdi-refresh"
-              variant="text"
-              color="success"
-            />
-            <!-- 지도 검색창 화면 활성화 스위치(직접설정 클릭시 show) -->
-            <VSwitch
-              v-show="searchSwitch"
-              label="검색창 보기"
-              :value="Info"
-              :color="'Info'.toLowerCase()"
-              :style="{'float':'right', 'margin':'5px','margin-right':'20px'}"
-              @click="showSearchUi"
-            />
-            <!-- 즐겨찾기 목록화(즐겨찾기 클릭시 show) -->
-            <VSelect
-              v-show="likeCategoryMenu"
-              :items="items"
-              label="원하는 동을 선택하세요"
-              variant="filled"
-              :style="{'width':'50%','float':'right'}"
-              prepend-icon="mdi-map-search-outline"
-            />
-          </div>
-          <div
-            v-show="!isSelfControlMap"
-            id="map"
-            :style="{'width':'100%','height':'450px'}"
+      <VCol cols="3">
+        <AppDateTimePicker
+          v-model="startTime"
+          label="시작시간"
+          :config="{ enableTime: true, noCalendar: true, dateFormat: 'H:i' }"
+          @change="checkTimeValidity"
+        />
+      </VCol>
+      <VCol
+        cols="1"
+        :style="{'display':'flex','justify-content':'center', 'align-items':'center'}"
+      >
+        <h2><VIcon icon="mdi-arrow-right-bold" /></h2>
+      </VCol>
+      <VCol cols="3">
+        <AppDateTimePicker
+          v-model="endTime"
+          label="종료시간"
+          :config="{ enableTime: true, noCalendar: true, dateFormat: 'H:i' }"
+          @change="checkTimeValidity"
+        />
+      </VCol>
+      <VCol :style="{'display':'flex','align-items':'flex-end'}">
+        total<br>{{ hour }} h : {{ minute }} m
+      </VCol>
+    </VRow>
+    <!-- </VCardItem> -->
+  </VCard>
+  <!-- </VRow> -->
+  <VRow>
+    <VCol cols="6">
+      <!-- 지도 보여주는 영역 -->
+      <VCard :style="{'height':'600px'}">
+        <div :style="{'height':'50px'}">
+          <!-- 새로고침 버튼(추천경로 클릭시 show) -->
+          <VBtn
+            v-show="refreshBtn"
+            icon="mdi-refresh"
+            variant="text"
+            color="success"
           />
           <DrawMap
             v-show="isSelfControlMap"
             ref="childMap"
             @refresh-child-road="createRoadView"
           />
-          <!-- @refresh-child-road="createRoadView" -->
-          <!-- 지도 검색창 -->
-          <div
-            v-show="isSearchShow"
-            id="menu-wrap"
-            class="bg_white"
-            :style="{'height':'80%'}"
-          >
-            <div class="option">
-              <div>
-                <VRadioGroup
-                  inline
-                  :style="{'padding-left':'10px'}"
-                >
-                  <VRadio
-                    label="검색"
-                    value="search"
-                    @click="isMyPlace = false"
-                  />
-                  <VRadio
-                    label="내장소"
-                    value="myPlace"
-                    @click="isMyPlace = true"
-                  />
-                </VRadioGroup>
-                <form
-                  v-show="!isMyPlace"
-                  @submit="searchPosition"
-                >
-                  키워드 : <input
-                    id="keyword"
-                    type="text"
-                    value=""
-                    size="15"
-                    placeholder="검색어를 입력하세요"
-                  > 
-                  <button type="submit">
-                    검색
-                  </button> 
-                </form>
-              </div>
+          <!-- 즐겨찾기 목록화(즐겨찾기 클릭시 show) -->
+          <VSelect
+            v-show="likeCategoryMenu"
+            :items="items"
+            label="원하는 동을 선택하세요"
+            variant="filled"
+            :style="{'width':'50%','float':'right'}"
+            prepend-icon="mdi-map-search-outline"
+          />
+        </div>
+        <div
+          v-show="!isSelfControlMap"
+          id="map"
+          :style="{'width':'100%','height':'450px'}"
+        />
+        <DrawMap
+          v-show="isSelfControlMap"
+          ref="childMap"
+          @refresh-child-road="createRoadView"
+        />
+        <!-- @refresh-child-road="createRoadView" -->
+        <!-- 지도 검색창 -->
+        <div
+          v-show="isSearchShow"
+          id="menu-wrap"
+          class="bg_white"
+          :style="{'height':'80%'}"
+        >
+          <div class="option">
+            <div>
+              <VRadioGroup
+                inline
+                :style="{'padding-left':'10px'}"
+              >
+                <VRadio
+                  label="검색"
+                  value="search"
+                  @click="isMyPlace = false"
+                />
+                <VRadio
+                  label="내장소"
+                  value="myPlace"
+                  @click="isMyPlace = true"
+                />
+              </VRadioGroup>
+              <form
+                v-show="!isMyPlace"
+                @submit="searchPosition"
+              >
+                키워드 : <input
+                  id="keyword"
+                  type="text"
+                  value=""
+                  size="15"
+                  placeholder="검색어를 입력하세요"
+                > 
+                <button type="submit">
+                  검색
+                </button> 
+              </form>
             </div>
             <hr>
             <div v-show="!isMyPlace">
@@ -136,20 +130,13 @@
               <div id="pagination" />
             </div>
           </div>
-          <!-- 지도 검색창 end -->
-          <div :style="{'display':'flex','justify-content':'center','margin-top':'10px'}">
-            <VTabs
-              next-icon="mdi-arrow-right"
-              prev-icon="mdi-arrow-left"
-            >
-              <VTab
-                v-for="i in 3"
-                :key="i"
-                @click="whatBtnClick"
-              >
-                {{ tabs[i] }}
-              </VTab>
-            </VTabs>
+          <hr>
+          <div v-show="!isMyPlace">
+            <ul
+              id="placesList"
+              @click="searchListClickController"
+            />
+            <div id="pagination" />
           </div>
         </VCard>
       </VCol> <!-- 지도 보여주는 영역 end -->

@@ -62,7 +62,7 @@ onMounted(fetchData);
             align="start"
             truncate-line="both"
             class="v-timeline-density-compact"
-            v-if="mhdate.length > 0"                        
+            v-if="mhdate.length > 0"
           >
             <VTimelineItem
               v-for="(data, index) in mhdate"
@@ -71,14 +71,14 @@ onMounted(fetchData);
               size="x-small"
             >
               <div class="d-flex justify-space-between align-center flex-wrap gap-2 mb-3">
-                <span class="app-timeline-title">                  
-                  {{data.mem_colname == 'NAME' ? '이름을' : 
+                <span class="app-timeline-title">
+                  {{data.mem_colname == 'NAME' ? '이름을' :
                     data.mem_colname == 'GENDER' ? '성별을' :
-                    data.mem_colname == 'B_DAY' ? '생일을' : 
+                    data.mem_colname == 'B_DAY' ? '생일을' :
                     data.mem_colname == 'TEL' ? '번호를' :
-                    data.mem_colname == 'USERADDRESS' ? '주소를' : 
+                    data.mem_colname == 'USERADDRESS' ? '주소를' :
                     data.mem_colname == 'HEIGHT' ? '키를' :
-                    data.mem_colname == 'WEIGHT' ? '몸무게를' : 
+                    data.mem_colname == 'WEIGHT' ? '몸무게를' :
                     data.mem_colname == 'GOAL_NO' ? '목표를' : ''}} '{{data.before_value}}'에서 '{{data.after_value}}'로 수정하셨습니다.
                 </span>
                 <span class="app-timeline-meta">{{data.update_day}}</span>

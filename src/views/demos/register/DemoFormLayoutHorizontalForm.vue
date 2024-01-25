@@ -2,7 +2,7 @@
 import AddressApi from '@/views/demos/register/AddressApi.vue'
 import Sub from '@/views/demos/register/DemoSelectCustomTextAndValue.vue'
 import axios from '@axios'
-import { computed, onBeforeUnmount, onMounted, provide, reactive, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, provide, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import Birthyday from './Birthyday.vue'
 
@@ -31,6 +31,35 @@ const emits = defineEmits({
 
 })
 
+
+// Axios 인스턴스 생성
+const instance = axios.create({
+  baseURL: 'http://localhost:4000/',
+})
+
+// 응답 인터셉터 설정
+instance.interceptors.response.use(
+  response => {
+    // 응답 코드가 200이면, 응답을 그대로 반환
+    if (response.status === 200) {
+      return response
+    }
+  },
+  error => {
+    // 오류 응답이 401이면, 사용자 정의 오류 메시지를 반환
+    if (error.response && error.response.status === 401) {
+      
+      console.log("무슨에러냐 도대체", error.response.status)
+      
+      return Promise.reject('인증번호를 다시 확인해주세요.')
+    }
+    
+    console.log("무슨에러냐 도대체", error.response.status)
+
+    // 그 외의 오류는 그대로 반환
+    return Promise.reject(error)
+  },
+)
 
 
 const router = useRouter()
@@ -71,11 +100,7 @@ const timerSeconds = ref(0)
 let timerInterval = null
 const goal_No = ref("")
 const gender = ref("")
-const address =ref('')
-const postcode = ref('')
-const registerUserError = ref('')
 
-let certificationData
 
 const userAddress = reactive({
   postcode: '',
@@ -107,18 +132,24 @@ onBeforeUnmount(() => {
   clearInterval(timerInterval)
 })
 
+let isTimerRunning = false
+
 const startTimer = () => {
-  timerInterval = setInterval(() => {
-    if (timerSeconds.value > 0) {
-      timerSeconds.value--
-    } else if (timerMinutes.value > 0) {
-      timerMinutes.value--
-      timerSeconds.value = 59
-    } else {
-      clearInterval(timerInterval)
-      isDialogTwoShow.value = false
-    }
-  }, 1000)
+  if (!isTimerRunning) {
+    isTimerRunning = true
+    timerInterval = setInterval(() => {
+      if (timerSeconds.value > 0) {
+        timerSeconds.value--
+      } else if (timerMinutes.value > 0) {
+        timerMinutes.value--
+        timerSeconds.value = 59
+      } else {
+        clearInterval(timerInterval)
+        isDialogTwoShow.value = false
+        isTimerRunning = false
+      }
+    }, 1000)
+  }
 }
 
 
@@ -180,11 +211,12 @@ const CertiPN = () => {
   }
 }
 
+const isValidCertifiedPN = ref(false) // ref로 선언
 
-const isValidCertifiedPN = computed(() => {
+watch(certifiedPN, newValue => {
   const regex = /^[0-9]{6}$/ // 6자리 숫자만 허용하는 정규식
-  
-  return regex.test(certifiedPN.value)
+
+  isValidCertifiedPN.value = regex.test(newValue)
 })
 
 
@@ -374,64 +406,31 @@ const sendMessage = async () => {
 }
 
 // 인증을 검증하는 함수
-const verifyCertification = async initialData => {
-  console.log(initialData)
+const verifyCertification = async() => {
   try {
-    const response = await axios.post('http://localhost:4000/user/verify', {
+    const response = await instance.post('/user/verify', {
       phone: tel.value,
       authCode: certifiedPN.value,
     })
 
     // 인증 성공
     if (response.status === 200) {
-      console.log('인증 성공')
-      console.log(initialData)
       isValidCertifiedPN.value = true
 
       // 유효성 검사 및 회원 데이터를 가져옵니다.
       const data = await handleCertification()
 
-      // 여기서 예외 처리를 추가합니다.
-      try {
-        // 회원가입 함수를 호출하며, data를 인자로 전달합니다.
-        await registerUser(data, isValidCertifiedPN)
-      } catch (error) {
-        console.error('회원가입 과정에서 오류 발생:', error)
-
-        // 회원 가입 실패 메시지를 설정합니다.
-        registerUserError.value = "회원가입에 실패했습니다. 다시 시도해주세요."
-      }
-    } else {
-      // 인증 실패
-      console.log('인증 실패')
-      console.log(initialData)
-      certifiedFa.value = "인증번호를 확인해주세요"
-      alert('인증번호를 확인해주세요')
-      isValidCertifiedPN.value = false
+      // 회원가입 함수를 호출하며, data를 인자로 전달합니다.
+      await registerUser(data, isValidCertifiedPN)
     }
-  } catch (error) {
-    console.log(initialData)
-    
-    // 인증 실패를 나타내는 상태 코드인 경우
-    if (error.response && error.response.status === 401) {
-      console.log('인증 실패')
-      certifiedFa.value = "인증번호를 확인해주세요"
-      alert('인증번호를 확인해주세요')
-      isValidCertifiedPN.value = false
-    }
-
-    // 서버에서 오류 응답을 반환했다면
-    else if (error.response) {
-      console.error('서버에서 오류 반환:', error.response)
-      alert('서버 오류.. 다시 시도해주세요')
-      isValidCertifiedPN.value = false
-    } else {
-      console.error('인증 과정에서 오류 발생:', error)
-      alert('서버 오류.. 다시 시도해주세요')
-      isValidCertifiedPN.value = false
-    }
+  } 
+  catch (error) {
+    // 인증 실패 메시지 출력
+    alert(error)
+    isValidCertifiedPN.value = false
   }
 }
+
 
 const resendVerificationCode = async () => {
   try {
@@ -468,10 +467,12 @@ const registerUser = async (data, isValidCertifiedPN) => {
       // 회원가입 성공 시 Snackbar를 보여줍니다.
       isSnackbarVisible.value = true
 
-      // 3초 후에 메인 페이지로 이동합니다.
-      setTimeout(() => {
-        router.replace({ name: 'login' })
-      }, 3000)
+      // 회원가입 요청의 응답이 성공적으로 수신된 경우에만 페이지 이동을 실행합니다.
+      if (registerResponse.status === 200) {
+        setTimeout(() => {
+          router.replace({ name: 'login' })
+        }, 3000)
+      }
     } else {
       console.log('인증 실패')
       alert('인증번호를 확인해주세요.')
@@ -545,29 +546,16 @@ onSubmitIdCK()
 
 
 <template>
-  <VForm @submit.prevent="handleCertification">
+  <VForm>
     <!-- () => {} -->
-    <VCol cols="12">
-      <VRow no-gutters>
-        <!-- 👉 ID -->
-        <VCol cols="4" />
-          
-        <VCol cols="4">
-          <VTextField
-            id="id"
-            ref="idText"
-            v-model="id"
-            placeholder="아이디"
-            persistent-placeholder
-            @input="validateId"
+    <VRow>
+      <VCol cols="12">
+        <VRow no-gutters>
+          <!-- 👉 ID -->
+          <VCol
+            cols="12"
+            md="3"
           />
-          <!-- 입력 변경시 마다 아이디 유효성 검사 호출 -->
-          <div :style="{ color: idError ? (idError === '사용가능!' ? 'greenyellow' : 'red') : '' }">
-            {{ idError }}
-          </div> <!-- 아이디 오류 메세지 -->
-        </VCol>
-      </VRow>
-    </VCol>
 
           <VCol
             cols="12"
@@ -605,24 +593,25 @@ onSubmitIdCK()
       </VCol>
 
 
-    <VCol cols="12">
-      <VRow no-gutters>
-        <!-- 👉 Password -->
-        <VCol
-          cols="12"
-          md="3"
-        />
-            
-        <VCol
-          cols="12"
-          md="1"
-        />
 
-        <VCol
-          cols="12"
-          md="4"
-        >
-          <VTextField
+      <VCol cols="12">
+        <VRow no-gutters>
+          <!-- 👉 Password -->
+          <VCol
+            cols="12"
+            md="3"
+          />
+            
+          <VCol
+            cols="12"
+            md="1"
+          />
+
+          <VCol
+            cols="12"
+            md="4"
+          >
+            <VTextField
             
               id="pwd"
               v-model="pwd"
@@ -657,20 +646,11 @@ onSubmitIdCK()
             cols="12"
             md="3"
           />
-          <div :style="{ color: passwordError ? (passwordError === '사용가능!' ? 'greenyellow' : 'red') : '' }">
-            {{ passwordError }}
-          </div>
-        </VCol>
-      </VRow>
-    </VCol>
 
-    <VCol cols="12">
-      <VRow no-gutters>
-        <!-- 👉 Password -->
-        <VCol
-          cols="12"
-          md="4"
-        />
+          <VCol
+            cols="12"
+            md="1"
+          />
 
           <VCol
             cols="12"
@@ -760,112 +740,76 @@ onSubmitIdCK()
       <VCol cols="12">
         <VRow no-gutters>
           <!-- 👉 fullName -->
-          <VCol
-            cols="12"
-            md="2"
-          />
+          <VCol cols="4" />
+          <VCol cols="2">
+            <VTextField
+              id="height"
+              v-model="height"
+              type="height"
+              placeholder="키"
+              persistent-placeholder
+              label="CM"
+            
+              @input="validateHeight"
+            />
+            <div
+              v-if="heightError"
+              :style="{ color: 'red' }"
+            >
+              {{ heightError }}
+            </div> <!-- 아이디 오류 메세지 -->
 
-          <VCol
-            cols="12"
-            md="2"
-          />
-          
+            <div
+              v-if="heightSuccess"
+              :style="{ color: 'greenyellow' }"
+            >
+              {{ heightSuccess }}
+            </div> <!-- 아이디 성공 메세지 -->
+          </VCol>
+          <VCol cols="2">
+            <VTextField
+              id="weight"
+              v-model="weight"
+              type="weight"
+              placeholder="몸무게"
+              persistent-placeholder
+              label="KG"
+              @input="validateWeight"
+            />
+            <div
+              v-if="weightError"
+              :style="{ color: 'red' }"
+            >
+              {{ weightError }}
+            </div> <!-- 아이디 오류 메세지 -->
 
-          <VTextField
-            id="height"
-            v-model="height"
-            type="height"
-            placeholder="키"
-            persistent-placeholder
-            :type="isCPasswordVisible ? 'text' : 'password'"
-            :append-inner-icon="isCPasswordVisible ? 'mdi-eye-outline' : 'mdi-eye-off-outline'"
-            @input="validatePasswordCK"
-            @click:append-inner="isCPasswordVisible = !isCPasswordVisible"
-          />
-          <div
-            v-if="heightError"
-            :style="{ color: 'red' }"
-          >
-            {{ heightError }}
-          </div> <!-- 아이디 오류 메세지 -->
+            <div
+              v-if="weightSuccess"
+              :style="{ color: 'greenyellow' }"
+            >
+              {{ weightSuccess }}
+            </div> <!-- 아이디 성공 메세지 -->
+          </VCol>
 
-          <div
-            v-if="heightSuccess"
-            :style="{ color: 'greenyellow' }"
-          >
-            {{ heightSuccess }}
-          </div> <!-- 아이디 성공 메세지 -->
-
-
-
-
-
-          <VTextField
-            id="name"
-            v-model="name"
-            type="name"
-            placeholder="이름"
-            persistent-placeholder
-            @input="validatenameCK"
-          />
-          <div
-            v-if="weightError"
-            :style="{ color: 'red' }"
-          >
-            {{ weightError }}
-          </div> <!-- 아이디 오류 메세지 -->
-
-          <div
-            v-if="weightSuccess"
-            :style="{ color: 'greenyellow' }"
-          >
-            {{ weightSuccess }}
-          </div> <!-- 아이디 성공 메세지 -->
-
-
-          <VCol
-            cols="12"
-            md="4"
-          />
+          <VCol cols="4" />
         </VRow>
       </VCol>
 
-    <VCol cols="12">
-      <VRow no-gutters>
-        <!-- 👉 fullName -->
-        <VCol cols="4" />
+      
 
-         
-        <CustomRadios
-          v-model:selected-radio="selectedRadio"
-          :radio-content="radioContent"
-          :grid-column="{ sm: '6', cols: '12' }"
-        />
-        <VCol cols="4" />
-      </VRow>
-    </VCol>
 
-    <VCol cols="12">
-      <VRow no-gutters>
-        <!-- 👉 fullName -->
-        <VCol
-          cols="12"
-          md="4"
-        />
+      <VCol cols="12">
+        <VRow no-gutters>
+          <!-- 👉 birthday -->
+          <VCol
+            cols="12"
+            md="3"
+          />
 
-        <VTextField
-          id="height"
-          v-model="heighteight"
-          type="height"
-          placeholder="키"
-          persistent-placeholder
-          label="CM"
-            
-          @input="validateHeight"
-        />
-        <div :style="{ color: heightError ? (heightError === '성공!' ? 'greenyellow' : 'red') : '' }">
-          {{ heightError }}
-        </div>
+          <VCol
+            cols="12"
+            md="1"
+          />
 
           <VCol
             cols="12"
@@ -947,115 +891,22 @@ onSubmitIdCK()
         @update-address="handleUpdateAddress"
       />
 
+      <VCol cols="12">
+        <VRow no-gutters>
+          <VCol
+            cols="12"
+            md="2"
+          />
 
-    <VCol cols="12">
-      <VRow no-gutters>
-        <!-- 👉 birthday -->
-        <VCol
-          cols="12"
-          md="4"
-        />
-        <VCol
-          cols="12"
-          md="4"
-        >
-          <AppDateTimePicker
-            v-model="birthday"
-            label="생년월일"
+          <VCol
+            cols="12"
+            md="2"
           />
-        </VCol>
-      </VRow>
-    </VCol>
-    <VCol cols="12">
-      <VRow no-gutters>
-        <!-- 👉 ID -->
-        <VCol
-          cols="12"
-          md="4"
-        />
-        <VCol
-          cols="12"
-          md="4"
-        >
-          <VTextField
-            id="email"
-            v-model="email"
-            placeholder="이메일"
-            persistent-placeholder
-            @input="validateEmailCK"
-          />
-          <!-- 입력 변경시 마다 아이디 유효성 검사 호출 -->
-          <div :style="{ color: emailError ? (emailError === '올바른 형식입니다!' ? 'greenyellow' : 'red') : '' }">
-            {{ emailError }}
-          </div>
-        </VCol>
-      </VRow>
-    </VCol>
 
-    <VCol cols="12">
-      <VRow no-gutters>
-        <!-- 👉 ID -->
-        <VCol
-          cols="12"
-          md="4"
-        />
-        <VCol
-          cols="12"
-          md="4"
-        >
-          <VTextField
-            id="tel"
-            v-model="tel"
-            placeholder="휴대전화 번호(-생략 가능)"
-            persistent-placeholder
-            @input="validatePNCK"
-          />
-          <!-- 입력 변경시 마다 아이디 유효성 검사 호출 -->
-          <div :style="{ color: PNError ? (PNError === '올바른 형식입니다!' ? 'greenyellow' : 'red') : '' }">
-            {{ PNError }}
-          </div> <!-- 아이디 오류 메세지 -->
-        </VCol>
-      </VRow>
-      <VRow>
-        <VCol
-          cols="12"
-          md="4"
-        />
-        <VCol
-          cols="12"
-          md="4"
-        >
-          <Sub />
-        </VCol>
-      </VRow>
-    </VCol>
-      
-    <AddressApi :user-address="userAddress" />
-    <VCol cols="12">
-      <VRow no-gutters>
-        <VCol cols="4" />
-        <VCol cols="4">
-          <VDialog
-            v-model="isDialogVisible"
-            max-width="800"
+          <VCol
+            cols="12"
+            md="4"
           >
-            <!-- Dialog Activator -->
-            <template #activator="{ props }">
-              <VBtn
-                :phone-number="tel"
-                :email="email"
-                v-bind="props"
-                :disabled="isButtonDisabled"
-                color="primary"
-                class="my-custom-button"
-                size="x-large"
-                width="100%"
-                @submit="handleFormSubmit"
-                @click="isDialogTwoShow = !isDialogTwoShow"
-              >
-                인증요청
-              </VBtn>
-            </template>
             <VDialog
               v-model="isDialogVisible"
               max-width="800"
@@ -1069,14 +920,13 @@ onSubmitIdCK()
                   class="my-custom-button"
                   height="55px"
                   width="800"
-                  :disabled="isButtonDisabled"
                   @click="handleButtonClick"
                 >
                   인증요청
                 </VBtn>
               </template>
 
-            <!-- Dialog Content -->
+              <!-- Dialog Content -->
               
 
               <VDialog
@@ -1220,7 +1070,3 @@ onSubmitIdCK()
   inset-inline-start: 120px;
 }
 </style>
-
-
-
-

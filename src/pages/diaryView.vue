@@ -68,23 +68,26 @@ const handleMouseLeave = () => {
             />
           </VCol>
             
-          <VCol cols="12">
+          <VCol cols="10">
             <!-- 텍스트 영역 위 img 뿌려주는 공간 -->
-            <VRow style="height: 125px; margin-top: -15px;">
-              <VImg 
-                v-for="(url, index) in imgUrls" 
-                :key="index"
-                :src="url"
-                :style="{
-                  alignSelf: 'center',
-                  width: imageSize === index ? '150px' : '120px',
-                  height: imageSize === index ? '150px' : '120px',
-                }"
-                @click="handleImageClick(url)"
-                @mouseover="handleMouseOver(index)"
-                @mouseleave="handleMouseLeave"
-              />
-            </VRow>
+            <Transition name="fade">
+              <VRow style="height: 125px; margin-top: -15px;">
+                <VImg 
+                  v-for="(url, index) in imgUrls" 
+                  :key="index"
+                  :src="url"
+                  :style="{
+                    transition: 'width 0.1s, height 0.1s',
+                    alignSelf: 'center',
+                    width: imageSize === index ? '125px' : '120px',
+                    height: imageSize === index ? '125px' : '120px',
+                  }"
+                  @click="handleImageClick(url)"
+                  @mouseover="handleMouseOver(index)"
+                  @mouseleave="handleMouseLeave"
+                />
+              </VRow>
+            </Transition>
           </VCol>
           <VCol>
             <VCol
@@ -96,12 +99,27 @@ const handleMouseLeave = () => {
                 placeholder="오늘의 일기 내용"
                 disabled=""
                 rows="27"
-                style=" width: 70%; padding: 10px; margin-top: -15px;"
+                style=" width: 72%; padding: 10px; margin-top: -15px;"
                 class="disabled-textarea"
               />
             </VCol>
           </VCol>
         </VCard>
+        <VDialog
+          v-model="biggeImgFile"
+          width="600"
+          height="650"
+        >
+          <VCard cols="12">
+            <VCardText>
+              <VImg
+                :src="clickedImageUrl"
+                width="600px"
+                height="600px"
+              />
+            </VCardText>
+          </VCard>
+        </VDialog>
       </VCard>
     </VCol>
   </VRow>
@@ -110,6 +128,29 @@ const handleMouseLeave = () => {
 <style>
 .disabled-textarea {
   color: black; /* 텍스트 색상을 검정색으로 설정합니다. */
+}
+</style>
+
+
+<style lang="scss">
+.fade-enter,
+.fade-enter-active {
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.fade-enter-to {
+  opacity: 1;
+}
+
+.fade-leave-active,
+.fade-leave {
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
 
