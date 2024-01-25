@@ -13,6 +13,7 @@
       </VCol>
       <VCol cols="2">
         <VBtn
+          v-model="userAddress"
           color="primary"
           class="my-custom-button"
           height="55px"
@@ -134,12 +135,14 @@ function execDaumPostcode() {
 
       // 상세주소 입력란에 포커스 설정
       document.getElementById("detailAddressInput")
-      updateAndEmitUserAddress()
+      
 
       window.close()
-
+      updateAndEmitUserAddress()
+      
     },
-  }).open()
+  }).open() 
+  console.log("주소", userAddress)
 }
 
 onMounted(() => {

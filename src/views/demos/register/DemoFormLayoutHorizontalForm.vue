@@ -2,8 +2,10 @@
 import AddressApi from '@/views/demos/register/AddressApi.vue'
 import Sub from '@/views/demos/register/DemoSelectCustomTextAndValue.vue'
 import axios from '@axios'
-import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, provide, reactive, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import Birthyday from './Birthyday.vue'
+
 
 const emits = defineEmits({
   goal_No: {
@@ -18,10 +20,22 @@ const emits = defineEmits({
     type: String,
     required: true,
   },
+  address: {
+    type: String,
+    required: true,
+  },
+  postcode: {
+    type: String,
+    required: true,
+  },
 
 })
 
 
+
+const router = useRouter()
+
+const isSnackbarVisible = ref(false)
 const idText=ref(null)
 const id = ref('')
 const name = ref('')
@@ -57,20 +71,21 @@ const timerSeconds = ref(0)
 let timerInterval = null
 const goal_No = ref("")
 const gender = ref("")
+const address =ref('')
+const postcode = ref('')
+const registerUserError = ref('')
 
-
-
-
+let certificationData
 
 const userAddress = reactive({
   postcode: '',
   address: '',
 })
 
-
-
 const handleUpdateAddress = newAddress => {
-  userAddress.value = newAddress // 'update-address' 이벤트에 담긴 데이터를 받아 'userAddress'에 저장합니다.
+  // newAddress가 객체라고 가정하고, 그 객체의 구조가 { postcode, address }라고 할 때:
+  userAddress.postcode = newAddress.postcode
+  userAddress.address = newAddress.address
 }
 
 const handleGoalNoChanged = newGoalNo => {
@@ -121,9 +136,6 @@ const closeDialogAndResetTimer = () => {
 const formatTime = value => {
   return value.toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
 }
-
-
-
 
 
 
@@ -208,7 +220,9 @@ const validatePasswordCK = () => {
     passwordCKSuccess.value = ''
   }
   else{
-    passwordCKSuccess.value = '일치합니다!'
+    if(passwordCK.value !== ''){
+      passwordCKSuccess.value = '일치합니다!'
+    }
     passwordCKError.value = ''
   }
 }
@@ -266,66 +280,209 @@ const validatePNCK = () => {
 }
 
 
-const handleCertification = () => {
-  // 인증번호가 유효한지 확인합니다.
-  if (isValidCertifiedPN.value) {
-    console.log('인증이 완료되었습니다.')
-    certifiedSc.value = "인증이 완료되었습니다."
+const handleCertification = async () => {
+  // 유효성 검사 함수 호출
+  validateId()
+  validatePassword()
+  validatePasswordCK()
+  validatenameCK()
+  validateHeight()
+  validateWeight()
+  validatePNCK()
 
-    // 유효성 검사를 수행합니다.
-    validateId()
-    validatePassword()
-    validatePasswordCK()
-    validatenameCK()
-    validateHeight()
-    validateWeight()
-    validatePNCK()
+  // 모든 유효성 검사를 통과했을 때
+  if (idError.value === '' &&
+      passwordError.value === '' &&
+      passwordCKError.value === '' &&
+      nameError.value === '' &&
+      heightError.value === '' &&
+      weightError.value === '' &&
+      PNError.value === '') {
 
-    // 유효성 검사 결과를 확인합니다.
-    if (idError.value === '' &&
-        passwordError.value === '' &&
-        passwordCKError.value === '' &&
-        nameError.value === '' &&
-        heightError.value === '' &&
-        weightError.value === '' &&
-        PNError.value === '') {
-      
-      // 모든 유효성 검사를 통과했을 때 데이터 객체를 구성합니다.
-      const data = {
-        id: id.value,
-        pwd: pwd.value,
-        name: name.value,
-        gender: gender.value,
-        b_day: b_day.value,
-        tel: tel.value,
-        height: height.value,
-        weight: weight.value,
-        goal_No: goal_No.value.value,
-        userAddress: `${userAddress.value.postcode} ${userAddress.value.address}`,
-      }
-
-      console.log(b_day.value)
-      console.log(data)
-
-      // 유효성 검사를 통과한 데이터를 서버에 전송합니다.
-      axios.post('http://localhost:4000/register', data)
-        .then(response => {
-          // 데이터 전송 성공 시 처리할 코드 작성
-          console.log(response.data, '회원가입 성공')
-        })
-        .catch(error => {
-          // 데이터 전송 실패 시 처리할 코드 작성
-          console.error(error)
-        })
-    } else {
-      // 유효성 검사를 통과하지 못했을 때 처리할 코드 작성
-      console.log('유효성 검사를 통과하지 못했습니다.')
+    const data = {
+      id: id.value,
+      pwd: pwd.value,
+      name: name.value,
+      gender: gender.value,
+      b_day: b_day.value,
+      tel: tel.value,
+      height: height.value,
+      weight: weight.value,
+      goal_No: goal_No.value.value,
+      userAddress: `${userAddress.postcode} ${userAddress.address}`,
     }
+
+    console.log("유저데이터,수정이?", data)
+    console.log("주소", userAddress)
+
+    // 모든 유효성 검사를 통과한 데이터를 반환합니다.
+    return data
+
   } else {
-    console.log('인증번호를 확인해주세요.')
-    certifiedFa.value = "인증번호를 확인해주세요"
+    console.log('유효성 검사를 통과하지 못했습니다.')
+    throw new Error('Validation failed')
   }
 }
+
+const handleButtonClick = async () => {
+  if (handleCertification()) {
+    const result = await sendMessage()
+    if (result) {
+      isDialogTwoShow.value = !isDialogTwoShow.value
+    }
+  }
+}
+
+const sendMessage = async () => {
+  try {
+    // 유효성 검사를 수행합니다.
+    const data = await handleCertification()
+
+    // 해당 번호가 이미 존재하는지 확인하는 API를 호출합니다.
+    const checkResponse = await axios.post('http://localhost:4000/user/checkPhoneNumber', { phone: data.tel })
+
+    // 이미 존재하는 번호라면, 에러 메시지를 보여줍니다.
+    if (checkResponse.data.exists) {
+      alert('이미 가입된 번호입니다.')
+      
+      return false
+    }
+
+    // 인증번호를 요청하는 기존 로직
+    const response = await axios.post('http://localhost:4000/user/send', { phone: data.tel })
+
+    console.log(response)
+    alert('인증번호가 발송되었습니다.')
+    
+    // 타이머 초기화 및 시작
+    resetTimer()
+    startTimer()
+
+    return true
+  } catch (error) {
+    if (error.message === 'Validation failed') {
+      // 유효성 검사에 실패했을 때는 사용자에게 알립니다.
+      alert('회원정보를 올바르게 입력했는지 확인해주세요.')
+    } else {
+      // 그 외의 오류는 로그를 출력하고, 사용자에게 알립니다.
+      console.error(error)
+      alert('인증번호 발송에 실패하였습니다. 다시 시도해주세요.')
+    }
+    
+    return false
+  }
+}
+
+// 인증을 검증하는 함수
+const verifyCertification = async initialData => {
+  console.log(initialData)
+  try {
+    const response = await axios.post('http://localhost:4000/user/verify', {
+      phone: tel.value,
+      authCode: certifiedPN.value,
+    })
+
+    // 인증 성공
+    if (response.status === 200) {
+      console.log('인증 성공')
+      console.log(initialData)
+      isValidCertifiedPN.value = true
+
+      // 유효성 검사 및 회원 데이터를 가져옵니다.
+      const data = await handleCertification()
+
+      // 여기서 예외 처리를 추가합니다.
+      try {
+        // 회원가입 함수를 호출하며, data를 인자로 전달합니다.
+        await registerUser(data, isValidCertifiedPN)
+      } catch (error) {
+        console.error('회원가입 과정에서 오류 발생:', error)
+
+        // 회원 가입 실패 메시지를 설정합니다.
+        registerUserError.value = "회원가입에 실패했습니다. 다시 시도해주세요."
+      }
+    } else {
+      // 인증 실패
+      console.log('인증 실패')
+      console.log(initialData)
+      certifiedFa.value = "인증번호를 확인해주세요"
+      alert('인증번호를 확인해주세요')
+      isValidCertifiedPN.value = false
+    }
+  } catch (error) {
+    console.log(initialData)
+    
+    // 인증 실패를 나타내는 상태 코드인 경우
+    if (error.response && error.response.status === 401) {
+      console.log('인증 실패')
+      certifiedFa.value = "인증번호를 확인해주세요"
+      alert('인증번호를 확인해주세요')
+      isValidCertifiedPN.value = false
+    }
+
+    // 서버에서 오류 응답을 반환했다면
+    else if (error.response) {
+      console.error('서버에서 오류 반환:', error.response)
+      alert('서버 오류.. 다시 시도해주세요')
+      isValidCertifiedPN.value = false
+    } else {
+      console.error('인증 과정에서 오류 발생:', error)
+      alert('서버 오류.. 다시 시도해주세요')
+      isValidCertifiedPN.value = false
+    }
+  }
+}
+
+const resendVerificationCode = async () => {
+  try {
+    // 인증번호를 만료하고 새로운 인증번호를 발급합니다.
+    const response = await axios.post('http://localhost:4000/user/resendVerificationCode', {
+      phone: tel.value,
+    })
+
+    // 인증번호 발급이 성공하면 사용자에게 재발송합니다.
+    if (response.status === 200) {
+      console.log('인증번호 재발송 성공')
+      alert('인증번호가 재발송되었습니다.')
+      resetTimer()
+      startTimer()
+    } else {
+      console.log('인증번호 재발송 실패')
+      alert('인증번호 재발송에 실패하였습니다. 다시 시도해주세요.')
+    }
+  } catch (error) {
+    console.error('인증번호 재발송 과정에서 오류 발생:', error)
+    alert('인증번호 재발송 중 오류가 발생하였습니다. 다시 시도해주세요.')
+  }
+}
+
+provide('isSnackbarVisible', isSnackbarVisible)
+
+const registerUser = async (data, isValidCertifiedPN) => {
+  try {
+    if (isValidCertifiedPN.value) {
+      const registerResponse = await axios.post('http://localhost:4000/register', data)
+
+      console.log(registerResponse.data, '회원가입 성공')
+
+      // 회원가입 성공 시 Snackbar를 보여줍니다.
+      isSnackbarVisible.value = true
+
+      // 3초 후에 메인 페이지로 이동합니다.
+      setTimeout(() => {
+        router.replace({ name: 'login' })
+      }, 3000)
+    } else {
+      console.log('인증 실패')
+      alert('인증번호를 확인해주세요.')
+    }
+  } catch (error) {
+    console.log('회원가입 실패', error.response?.data || error.message)
+    alert('회원가입에 실패하였습니다. 다시 시도해주세요.')
+  }
+}
+
+
 
 // 유효성 검사 에러 메시지 초기화 함수
 const clearValidationErrors = () => {
@@ -339,16 +496,8 @@ const clearValidationErrors = () => {
 }
 
 clearValidationErrors() // 유효성 검사 에러 메시지를 초기화합니다.
-handleCertification() // 인증 및 데이터 전송을 위한 함수를 호출합니다.
+//handleCertification() // 인증 및 데이터 전송을 위한 함수를 호출합니다.
 
-
-
-// const userPNCheck=()=>{
-//   console.log(phoneNumber.value)
-//   axios.post('http://localhost:4000/user/check', phoneNumber.value)
-//     .then(response=>console.log(response))
-//     .catch(error=>console.error(error))
-// }
 
 // const AxiosInst = axios.create({
 //   baseURL: 'http://localhost:9999',
@@ -517,18 +666,18 @@ onSubmitIdCK()
               @click:append-inner="isCPasswordVisible = !isCPasswordVisible"
             />
             <div
-              v-if="passwordCKError"
+              v-if="passwordCKError && passwordCK !== ''"
               :style="{ color: 'red' }"
             >
               {{ passwordCKError }}
-            </div> <!-- 아이디 오류 메세지 -->
+            </div> <!-- passwordCKError 오류 메세지 -->
 
             <div
-              v-if="passwordCKSuccess"
+              v-if="passwordCKSuccess && passwordCK !== ''"
               :style="{ color: 'greenyellow' }"
             >
               {{ passwordCKSuccess }}
-            </div> <!-- 아이디 성공 메세지 -->
+            </div> <!-- passwordCKError 성공 메세지 -->
           </VCol>
         </VRow>
       </VCol>
@@ -751,7 +900,8 @@ onSubmitIdCK()
       </VCol>
       
       <AddressApi
-        :new-address="userAddress"
+        v-model="userAddress"
+        :new-address="userAddress" 
         @update-address="handleUpdateAddress"
       />
 
@@ -785,7 +935,7 @@ onSubmitIdCK()
                   height="55px"
                   width="800"
                   :disabled="isButtonDisabled"
-                  @click="isDialogTwoShow = !isDialogTwoShow "
+                  @click="handleButtonClick"
                 >
                   인증요청
                 </VBtn>
@@ -841,7 +991,7 @@ onSubmitIdCK()
                       
                       <VCol
                         cols="12"
-                        md="12"
+                        md="7"
                       >
                         <VAlert
                           color="red"
@@ -856,9 +1006,18 @@ onSubmitIdCK()
                             class="btn"
                             variant="flat"
                             color="success"
-                            @click="handleCertification "
+                            @click="verifyCertification"
                           >
-                            인증하기
+                            인증 확인
+                          </VBtn>
+                          <VBtn
+                            block
+                            class="btn"
+                            variant="flat"
+                            color="info"
+                            @click="resendVerificationCode"
+                          >
+                            인증번호 재발송
                           </VBtn>
                         </VCardActions>
                       </vcol>
@@ -872,6 +1031,16 @@ onSubmitIdCK()
       </VCol>
     </VRow>
   </VForm>
+
+  <div>
+    <!-- Snackbar -->
+    <VSnackbar
+      v-model="isSnackbarVisible"
+      :timeout="3000"
+    >
+      회원가입을 축하드립니다! 3초후 로그인 페이지로 이동합니다.
+    </VSnackbar>
+  </div>
 </template>
 
 <style scoped>
@@ -907,8 +1076,8 @@ onSubmitIdCK()
 
 .btn {
   block-size: 50px;
-  inline-size: 100px;
-  inset-inline: px;
+  inline-size: 50px;
+  inset-inline-end: 20px;
 }
 
 .modal {
