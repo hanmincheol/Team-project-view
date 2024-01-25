@@ -54,7 +54,7 @@ const members = [
 // axios를 사용하여 데이터를 서버로 보내는 함수
 const submitData = async () => {
   let formData = new FormData()
-  formData.append('id', '한민철')
+  formData.append('id', 'HMC')
   formData.append('content', textValue.value)
   formData.append('hashTag', hashtagValue.value)
   formData.append('type', subValue.value.value )
