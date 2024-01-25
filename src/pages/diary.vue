@@ -343,7 +343,20 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
                     @click="handleImageClick(url)"
                     @mouseover="handleMouseOver(index)"
                     @mouseleave="handleMouseLeave"
-                  />
+                  >
+                    <template #overlay>
+                      <VOverlay
+                        absolute
+                        top
+                        right
+                      >
+                        <VIconButton
+                          icon="mdi-close"
+                          @click="deleteImage(index)"
+                        />
+                      </VOverlay>
+                    </template>
+                  </VImg>
                 </VRow>
               </Transition>
             </VCol>

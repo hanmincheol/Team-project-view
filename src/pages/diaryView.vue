@@ -68,7 +68,7 @@ const handleMouseLeave = () => {
             />
           </VCol>
             
-          <VCol cols="12">
+          <VCol cols="10">
             <!-- 텍스트 영역 위 img 뿌려주는 공간 -->
             <Transition name="fade">
               <VRow style="height: 125px; margin-top: -15px;">
@@ -77,6 +77,7 @@ const handleMouseLeave = () => {
                   :key="index"
                   :src="url"
                   :style="{
+                    transition: 'width 0.1s, height 0.1s',
                     alignSelf: 'center',
                     width: imageSize === index ? '125px' : '120px',
                     height: imageSize === index ? '125px' : '120px',
