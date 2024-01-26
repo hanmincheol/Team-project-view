@@ -1,8 +1,8 @@
 <script setup>
-import AddChallRoomSetting from '@/components/dialogs/AddChallRoomSetting.vue'
-import AddMateRoomSetting from '@/components/dialogs/AddMateRoomSetting.vue'
-import axios from '@axios'
-import { useRoute } from 'vue-router'
+import AddChallRoomSetting from '@/components/dialogs/AddChallRoomSetting.vue';
+import AddMateRoomSetting from '@/components/dialogs/AddMateRoomSetting.vue';
+import axios from '@axios';
+import { useRoute } from 'vue-router';
 
 const router = useRoute()
 const projectData = ref([])
@@ -72,6 +72,7 @@ const currentDate = (() => {
 
 <template>
   <section>
+    <VCol>
     <VRow v-if="projectData">
       <VCol
         v-for="data in projectData"
@@ -91,8 +92,7 @@ const currentDate = (() => {
 
             <VCardTitle>{{ data.title }}</VCardTitle>
             <div class="d-flex align-center flex-wrap justify-space-between mt-1 mb-0">
-              <span class="font-weight-medium me-1">방장:{{ data.client }}</span>
-              <span>모인 금액 : {{ parseInt(data.pay) * parseInt(data.members) }}원</span>
+              <span class="font-weight-medium me-1">Host:{{ data.client }}</span>
             </div>
 
             <template #append>
@@ -108,9 +108,9 @@ const currentDate = (() => {
           <VCardText>
             <div class="d-flex align-center justify-space-between flex-wrap gap-x-2 gap-y-4">
               <div class="pa-2 bg-var-theme-background rounded">              
-                <h6 class="text-base font-weight-medium">
+                <span class="text-base font-weight-medium">
                   참가비 : <span class="text-body-1"> {{ data.pay }}원</span>
-                </h6>
+                </span>
               </div>
 
               <div>
@@ -131,28 +131,29 @@ const currentDate = (() => {
           <VDivider />
 
           <VCardText>
-            <div class="d-flex align-center justify-space-between flex-wrap gap-2">
+            <div class="d-flex align-center justify-end flex-wrap gap-2">
               <VChip
-                color="error"
+                color="info"
                 density="compact"
               >
                 <span class="text-xs">
-                  전체 일자 : {{ getHourDifference(data.deadline, data.startDate)/24 }}일                
+                  total : {{ getHourDifference(data.deadline, data.startDate)/24 }}일                
                 </span>
-              </VChip>
-
+                </VChip>
+              </div>
+              <div class="d-flex align-center justify-end flex-wrap gap-2 mt-2">
               <VChip
                 color="success"
                 density="compact"
               >
                 <span class="text-xs">
-                  종료일까지 : {{ (getHourDifference(data.deadline, currentDate)+9)/24 }}일
+                  D-day : -{{ (getHourDifference(data.deadline, currentDate)+9)/24 }}일
                 </span>
               </VChip>
             </div>
 
             <div class="d-flex align-center justify-space-between flex-wrap text-xs mt-4 mb-2">
-              <span>목표 이행률: {{ data.percent }}%</span>
+              <span>Goal achiv : {{ data.percent }}%</span>
               <span>{{ Math.round((data.completedTask / data.totalTask) * 100) }}% Completed</span>
             </div>
             <VProgressLinear
@@ -187,9 +188,11 @@ const currentDate = (() => {
         </VCard>
       </VCol>
     </VRow>
-    <VCol>        
+  </VCol>
+  <VRow style="margin-top: 50px;">
+    <VCol cols="4"/>
+    <VCol cols="4" class="align-self-center">    
       <VBtn
-        :style="{'margin-left':'10px'}"
         @click="isAddChallRoomSettingDialogVisible = !isAddChallRoomSettingDialogVisible"
       >
         챌린지방 생성
@@ -203,5 +206,6 @@ const currentDate = (() => {
       </VBtn>
       <AddMateRoomSetting v-model:isDialogVisible="isAddMateRoomSettingDialogVisible" />
     </VCol>
+  </VRow>
   </section>
 </template>

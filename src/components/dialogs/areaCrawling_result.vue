@@ -1,5 +1,6 @@
 <script setup>
 import axios from '@axios'
+import { ref } from 'vue'
 
 const props = defineProps({
   isDialogVisible: {
@@ -23,16 +24,14 @@ const matedate = ref("")  // 검색할 일자
 const mateareaerr = ref('')
 const matemontherr = ref('')
 const matedateerr = ref('')
+const searchList = ref(['서울', '부산', '인천', '대전', '광주', '대구', '울산', '세종', '경기', '충북', '충남', '전북', '전남', '경북', '경남', '강원', '제주', '제주', '경기'])
 
+const validatematearea = value => {
+  const userInput = value // 사용자 입력값
 
-const validatematearea = () => {
-  const searchList = ['서울', '부산', '인천', '대전', '광주', '대구', '울산', '세종', '경기', '충북', '충남', '전북', '전남', '경북', '경남', '강원', '제주', '제주', '경기'] // 검색 가능한 리스트
-  const userInput = matearea.value // 사용자 입력값
-  
-  if (searchList.includes(userInput)){
+  if (searchList.value.includes(userInput)) {
     mateareaerr.value = '검색 가능!'
-  }
-  else{
+  } else {
     mateareaerr.value = '검색 가능한 지역명으로 입력해주세요.'
   }
 }
@@ -93,7 +92,7 @@ const validatematedate = () => {
 
 //유효성에 따른 버튼 활성화 함수
 function checkValidity() {
-  return mateareaerr.value === '검색 가능!' && matemontherr.value === '검색 가능!' && matedateerr.value === '검색 가능!'
+  return matemontherr.value === '검색 가능!' && matedateerr.value === '검색 가능!'
 }
 
 // 크롤링 함수
@@ -152,17 +151,17 @@ function encodeToBase64(binaryData) {
       <VCard
         cols="12"
         class="d-flex"
-        style="margin-right:10px;magin-left:10px;"
+        style="margin-right: 10px;magin-left: 10px;"
       >
         <VCol>
-          <VTextField
-            id="matearea"
+          <VSelect
             v-model="matearea"
-            placeholder="지역 입력"
-            @input="validatematearea('matearea')"
+            :items="searchList"
+            label="지역 선택"
+            placeholder="지역 선택"
+            @change="validatematearea(matearea)"
           />
-          <!-- 입력 변경시 마다 유효성 검사 호출 -->
-          <div :style="{ color: mateareaerr ? (mateareaerr === '검색 가능!' ? 'green' : 'red') : '' , fontSize: 'smaller'}">
+          <div :style="{ color: mateareaerr ? (mateareaerr === '검색 가능!' ? 'green' : 'red') : '', fontSize: 'smaller' }">
             {{ mateareaerr }}
           </div>
         </VCol>
@@ -170,7 +169,7 @@ function encodeToBase64(binaryData) {
           <VTextField
             id="matemonth"
             v-model="matemonth"
-            style="margin-left:15px;"
+            style="margin-left: 15px;"
             placeholder="월 입력"
             @input="validatematemonth('matemonth')"
           />
@@ -183,7 +182,7 @@ function encodeToBase64(binaryData) {
           <VTextField
             id="matedate"
             v-model="matedate"
-            style="margin-left:15px;"
+            style="margin-left: 15px;"
             placeholder="일자 입력"
             @input="validatematedate('matedate')"
           />
@@ -195,7 +194,7 @@ function encodeToBase64(binaryData) {
         <!-- <VCol> -->
         <VBtn
           :disabled="!checkValidity()" 
-          style="margin-left:15px; margin-right:5px; margin-top:20px;"
+          style=" margin-top: 20px; margin-right: 5px;margin-left: 15px;"
           @click="startCrawling(matearea,matemonth,matedate)"
         >
           검색
@@ -216,32 +215,29 @@ function encodeToBase64(binaryData) {
           <VCol
             v-for="data in crawlingData"
             :key="data.index"
-            cols="12"
-            sm="6"
-            lg="4"
+            cols="4"
           >
-            <VCard
-              cols="12"
-              style="border:1px solid gray;"
-            >
-              <!--
-                <VCardItem
-                cols="12"
-                style="border:1px solid blue;"
-                >      
-              -->
+            <VCard cols="12">
               <VCol
                 cols="12"
-                style="hegiht:100px; align-items: center; justify-content: center;border:1px solid black; display: flex;flex-wrap: wrap;"
+                style=" display: flex;flex-wrap: wrap; align-items: center; justify-content: center;"
               >
                 <img
                   :src="data.src"
                   alt="이미지"
-                  style="width: 100%;height: 100%;object-fit: cover;"
+                  style="width: 300px;height: 200px;object-fit: cover;"
                 >
               </VCol>
+              <VCol
+                cols="12"
+                style="height: 50px;"
+              >
+                <a
+                  :href="data.link"
+                  class="my-custom-button"
+                >{{ data.title }}</a>
+              </VCol>
               <VCol cols="12">
-                <a :href="data.link">{{ data.title }}</a><br>
                 요금 : {{ data.pay }}         
               </VCol>
               <!-- 금액 : {{data.pay}}  -->
@@ -269,3 +265,13 @@ function encodeToBase64(binaryData) {
   transform: translate(-50%, -50%);
 }
 </style>
+<!-- 
+  <style>
+  .my-custom-button {
+  overflow: hidden;
+  max-inline-size: 90%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  }
+  </style> 
+-->
