@@ -25,26 +25,22 @@ const searchuser = 'HMC' //접속중인 유저 아이디값 받아넣기
 const form = ref('')
 
 const fetchData = async () => {
-  try {
-    const response = await axios.post('http://localhost:4000/memberhistory/View.do', form.value, {
+  axios
+    .get('http://localhost:4000/memberhistory/View.do',{
       params: {
         id: searchuser,
       },
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (response.status === 200) {
-      console.log('데이터 가져오기 성공');
-      // console.log(response.data);
-      mhdate.value = response.data;
-    } else {
-      console.log('데이터 가져오기 실패');
-    }
-  } catch (error) {
-    console.error(error);
-  }
+    })
+    .then((response) => {
+      if (response.status === 200) {
+        mhdate.value = response.data;
+      } else {
+        console.log('데이터 가져오기 실패');
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+   });
 };
 
 onMounted(fetchData);
