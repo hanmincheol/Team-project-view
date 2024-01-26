@@ -60,7 +60,7 @@ const submit = () => {
 <template>
   <VRow>
     <VCol cols="12">
-      <AppCardCode
+      <VCard
         variant="outlined"
         title="HealthyReal 이용약관"
         :code="demoCode.vertical"
@@ -255,7 +255,7 @@ const submit = () => {
             </VCol>
           </VCard>
         </VCol>
-      </AppCardCode>
+      </VCard>
     </VCol>
   </VRow>
 </template>
