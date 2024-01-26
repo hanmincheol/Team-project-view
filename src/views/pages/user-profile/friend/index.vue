@@ -126,7 +126,7 @@ const moreBtnList = [
               :prepend-icon="data.isConnected ? 'mdi-account-check-outline' : 'mdi-account-plus-outline'"
               :variant="data.isConnected ? 'elevated' : 'tonal'"
             >
-              {{ data.isConnected ? '친구취소' : '친구신청' }}
+              {{ data.isConnected ? '친구 요청 취소' : '친구신청' }}
             </VBtn>
 
             <VBtn

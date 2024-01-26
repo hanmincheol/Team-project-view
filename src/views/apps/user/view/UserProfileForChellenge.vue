@@ -1,7 +1,7 @@
 <script setup>
 import {
-avatarText
-} from '@core/utils/formatters';
+  avatarText,
+} from '@core/utils/formatters'
 
 const props = defineProps({
   userData: {
@@ -71,19 +71,23 @@ const resolveUserRoleVariant = role => {
 <template>
   <VRow>
     <!-- SECTION User Details -->
-    <VCol cols="12">
-      <VCard v-if="props.userData" >
+    <VCol
+      v-if="props.userData"
+      cols="12"
+    >
+      <VCard v-if="props.userData">
         <VCardText class="text-center mt-12 mt-sm-0 pa-0">
           <!-- 👉 Avatar -->
           <VAvatar
             rounded="sm"
-            :size="100"
+            :size="120"
             :color="!props.userData.avatar ? 'primary' : undefined"
             :variant="!props.userData.avatar ? 'tonal' : undefined"
           >
             <VImg
               v-if="props.userData.avatar"
               :src="props.userData.avatar"
+              style="margin-top: 15px;"
             />
             <span
               v-else
@@ -100,10 +104,10 @@ const resolveUserRoleVariant = role => {
 
           <!-- 👉 이행률 -->
           <VChip
-            label
             :color="resolveUserRoleVariant(props.userData.role).color"
             density="comfortable"
             class="text-capitalize mt-4"
+            style="margin-bottom: 15px;"
           >
             {{ props.userData.role }}
           </VChip>
