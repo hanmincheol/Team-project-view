@@ -4,7 +4,7 @@ import Sub from '@/views/demos/Subject.vue'
 import axios from '@axios'
 import { size } from '@floating-ui/dom'
 import avatar1 from '@images/avatars/avatar-1.png'
-import logo from '@images/logo.svg'; // 로고 이미지 불러오기
+import logo from '@images/logo.svg' // 로고 이미지 불러오기
 import bg from '@images/pages/writing.jpg'
 import { computed, reactive, ref, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
@@ -85,7 +85,7 @@ const submitData = async function() {
       if(response.data !== 0){
         console.log(`response.data:${response.data}`)
         emit('update:isDialogVisible', false)  // 이벤트 발생
-        router.push({ name: 'community_post' }) // community_post.vue 페이지로 이동
+        router.push({ name: 'community_post' }).then(() => router.go(0)) // community_post.vue 페이지로 이동 후 리로드
         //router.replace({ name: 'community_post' })
       }
     } else {
