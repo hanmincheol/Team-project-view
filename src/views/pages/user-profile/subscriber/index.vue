@@ -5,8 +5,8 @@ import { useRoute } from 'vue-router'
 const router = useRoute()
 const subscribeTo = ref([])
 const subscribers = ref([])
-const isSubToExist = ref(false)
-const isMySubExist = ref(false)
+const isSubToExist = ref(true)
+const isMySubExist = ref(true)
 
 const fetchProjectData = () => {
   if (router.params.tab === 'subscriber') {
@@ -15,10 +15,23 @@ const fetchProjectData = () => {
       subscribers.value = response.data['MySub']
       console.log(typeof subscribers.value)
 
-      if(Object.keys(subscribeTo.value).length==0) isSubToExist.value = true
-      if(Object.keys(subscribers.value).length==0) isMySubExist.value = true
+      if(Object.keys(subscribeTo.value).length==0) {
+        isSubToExist.value = true
+        console.log('값이 존재하지 않음')
+      }
+      else if (Object.keys(subscribeTo.value).length!=0){
+        isSubToExist.value = false
+      }
+      if(Object.keys(subscribers.value).length==0) {
+        isMySubExist.value = true
+        console.log('값이 존재하지 않음')
+      }
+      else if (Object.keys(subscribers.value).length!=0) {
+        isMySubExist.value = false
+      }
       console.log(isSubToExist)
     })
+      .catch(()=>{console.log('서버가 꺼져있습니다')})
   }
 }
 
