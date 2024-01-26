@@ -5,7 +5,7 @@ import { useRoute } from 'vue-router'
 
 const router = useRoute()
 const connectionData = ref([])
-const isMateExist = ref(false)
+const isMateExist = ref(true)
 
 const rating = reactive({}) //호감도 뿌려주기 위한 변수
 const beforeRating = {}
@@ -27,22 +27,21 @@ const fetchProjectData = () => { //유저 값 가져오기
         connectionData.value = response.data
         if (Object.keys(response.data).length == 0) isMateExist.value = true
         else {
+          isMateExist.value = false
+
           //호감도 Vrating에 설정해줄 값
           connectionData.value.forEach(user => {
             rating[user.mate_id] = ref(user.favorable_rating)
           })}
       })
-      .catch(error => { 
-        // 에러 처리
-        console.error(error)
-      })
+      .catch(()=>{console.log('서버가 꺼져있습니다.')})
   }
 }
 
 
 watch(router, fetchProjectData, { immediate: true })
 
-watch(rating, ()=>{
+watch(rating, ()=>{ //호감도 관련 기능
   if(beforeRating != {}){
     for(const key in rating){
       if (beforeRating[key] != rating[key]){

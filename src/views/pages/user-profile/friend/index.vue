@@ -1,12 +1,13 @@
 <script setup>
 import axios from '@axios'
+import { watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const router = useRoute()
 const connectionData = ref([])
-const isFriendExist = ref(false)
+const isFriendExist = ref(true)
+const isConnected = {}
 
-//axios로 가짜 데이터 가져오기
 const fetchProjectData = () => {
   if (router.params.tab === 'friend') {
     axios.get("http://127.0.0.1:4000/comm/friend", { params: { id: 'HMC' } })
@@ -14,16 +15,37 @@ const fetchProjectData = () => {
         console.log(response.data)
         connectionData.value = response.data
         if(Object.keys(connectionData.value).length == 0) isFriendExist.value = true
+        else {
+          isFriendExist.value = false
+          for(const key in connectionData.value) {
+            isConnected[connectionData.value[key]['friend_id']] = ref(true)
+          }
+        }
       })
-      .catch(error=>{console.error(error)})
+      .catch(()=>{console.log('서버가 꺼져있습니다.')})
   }
 }
 
+const connectionController = temp => {
+  temp.value = !temp.value
+}
 
+window.addEventListener('beforeunload', event=>{
+  console.log('확인')
+
+  //window.removeEventListener('beforeunload')
+  event.preventDefault()
+  
+  return ''
+})
+
+const test = () => {console.log('test')}
 
 //watch 함수를 사용하여 router 객체를 감시하고, 변경이 있을 때마다 fetchProjectData 함수를 실행합니다. 
 //immediate: true 옵션을 사용하여 초기 로드 시에도 함수를 실행합니다.
 watch(router, fetchProjectData, { immediate: true })
+
+watch(router, test, { immediate: true })
 
 //햄버거를 누를 때 버튼 목록을 표시.
 const moreBtnList = [
@@ -123,17 +145,18 @@ const moreBtnList = [
 
           <div class="d-flex justify-center gap-4 mt-6">
             <VBtn
-              :prepend-icon="data.isConnected ? 'mdi-account-check-outline' : 'mdi-account-plus-outline'"
-              :variant="data.isConnected ? 'elevated' : 'tonal'"
+              :prepend-icon="isConnected[data.friend_id].value ? 'mdi-account-check-outline' : 'mdi-account-plus-outline'"
+              :variant="isConnected[data.friend_id].value ? 'elevated' : 'tonal'"
+              @click="connectionController(isConnected[data.friend_id])"
             >
-              {{ data.isConnected ? '친구취소' : '친구신청' }}
+              {{ isConnected[data.friend_id].value ? '친구취소' : '친구신청' }}
             </VBtn>
 
             <VBtn
               :prepend-icon="data.isConnected ? 'mdi-account-check-outline' : 'mdi-account-plus-outline'"
               :variant="data.isConnected ? 'elevated' : 'tonal'"
             >
-              {{ data.isConnected ? '구독취소' : '구독신청' }}
+              차단하기
             </VBtn>
           </div>
         </VCardText>

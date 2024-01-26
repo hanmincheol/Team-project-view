@@ -139,12 +139,12 @@ export const getBarChartConfig = themeColors => {
       parentHeightOffset: 0,
       toolbar: { show: false },
     },
-    colors: ['#00cfe8'],
+    colors: ['#45d15a'],
     dataLabels: { enabled: false },
     plotOptions: {
       bar: {
-        borderRadius: 8,
-        barHeight: '30%',
+        borderRadius: 6,
+        barHeight: '20%',
         horizontal: true,
         startingShape: 'rounded',
       },
@@ -166,7 +166,7 @@ export const getBarChartConfig = themeColors => {
     xaxis: {
       axisBorder: { show: false },
       axisTicks: { color: themeBorderColor },
-      categories: ['목표 달성률'],
+      categories: ['Goal achievement'],
       labels: {
         style: { colors: themeDisabledTextColor },
       },
