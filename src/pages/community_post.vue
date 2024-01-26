@@ -1,5 +1,6 @@
 <script setup>
 import Category from '@/pages/views/demos/forms/form-elements/select/category.vue'
+import axios from '@axios'
 import { size } from '@floating-ui/dom'
 import avatar1 from '@images/avatars/avatar-1.png'
 import avatar2 from '@images/avatars/avatar-2.png'
@@ -9,7 +10,7 @@ import avatar5 from '@images/avatars/avatar-5.png'
 import avatar6 from '@images/avatars/avatar-6.png'
 import avatar7 from '@images/avatars/avatar-7.png'
 import avatar8 from '@images/avatars/avatar-8.png'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 
 const userProfileModal = ref(false)
 const writingModal = ref(false)
@@ -17,6 +18,11 @@ const editingModal = ref(false)
 const borderColor = ref('#ccc')
 const viewPostPageModal = ref(false)
 let q = ref('')
+
+const state = reactive({
+  items: [],
+  avatar1: '', // avatar1에 대한 초기값을 설정해주세요.
+})
 
 //검색기능
 const filteredItems = computed(() => {
@@ -27,12 +33,28 @@ const filteredItems = computed(() => {
   return items.value
 })
 
-const images = [
-  {
-    src: [avatar1, avatar2, avatar3, avatar4],
-  },
+// axios를 사용하여 데이터를 받는 함수
+const getData = async function() {
 
-]
+  try {
+    const response = await axios.get('http://localhost:4000/bbs/List.do', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    // 응답 처리
+    if (response.status === 200) {
+      console.log('데이터 받기 성공')
+      state.items = response.data // 데이터 저장
+      console.log(state.items[1].files)
+    } else {
+      console.log('데이터 전송 실패')
+    }
+  } catch (error) {
+    console.error(`데이터 전송 실패: ${error}`)
+  }
+}
 
 const membersList = [
   {
@@ -112,6 +134,11 @@ const handleScroll = () => {
 
 //이벤트 리스터 추가 
 onMounted(() => {
+  getData() // 컴포넌트가 마운트될 때 getData 함수 실행
+
+  // 그 후 매 5초마다 getData 함수를 반복해서 실행
+  //setInterval(getData, 5000)
+  
   window.addEventListener('scroll', handleScroll)
 })
 
@@ -227,64 +254,83 @@ const loadMore = () => {
             <VCol>
               <VCol>
                 <!-- 게시물 작성 공간 -->
-                <VCol
-                  v-for="(item, index) in items"
-                  :key="index"
-                  cols="12"
-                >
-                  <VCard>
-                    <!-- 게시물의 상단 유저 프로필/ 유저 닉네임 / MoreBtn -->
-                    <VCol>
-                      <VRow>
-                        <VCol cols="1">
-                          <VAvatar 
-                            class="text-sm pointer-cursor"
-                            :image="avatar1"
-                            @click="userProfileModal=true"
-                          />
-                        </VCol>
-                        <VCol cols="4">
-                          <VCol cols="12">
-                            <VCardSubtitle
+                <VCol v-if="state.items.length > 0">
+                  <!-- 게시물이 있을 때의 템플릿 -->
+                  <VCol
+                    v-for="(item, index) in state.items"
+                    :key="index"
+                    cols="12"
+                  >
+                    <VCard>
+                      <!-- 게시물의 상단 유저 프로필/ 유저 닉네임 / MoreBtn :image="state.avatar1" -->
+                      <VCol>
+                        <VRow>
+                          <VCol cols="1">
+                            <VAvatar 
                               class="text-sm pointer-cursor"
-                              style="margin-left: -5%;"
+                              :image="avatar1"
                               @click="userProfileModal=true"
-                            >
-                              유저 닉네임 뿌려주기
-                            </VCardSubtitle>
+                            />
                           </VCol>
-                        </VCol>
-                        <VCol cols="6" />
-                        <VCol cols="1">
-                          <MoreBtn @click="editingModal=true" />
-                        </VCol>
-                      </VRow>
-                    </VCol>
-                    <VCarousel show-arrows-on-hover>
-                      <VCarouselItem
-                        v-for="(image, i) in images[0].src" 
-                        :key="i"
-                      >
-                        <VImg
-                          :src="image"
-                          class="pointer-cursor"
-                          @click="viewPostPageModal=true"
-                        />
-                      </VCarouselItem>
-                    </VCarousel>
+                          <VCol cols="4">
+                            <VCol cols="12">
+                              <VCardSubtitle
+                                class="text-sm pointer-cursor"
+                                style="margin-left: -5%;"
+                                @click="userProfileModal=true"
+                              >
+                                {{ item.id }}  <!-- 유저 닉네임 뿌려주기 -->
+                              </VCardSubtitle>
+                            </VCol>
+                          </VCol>
+                          <VCol cols="6" />
+                          <VCol cols="1">
+                            <MoreBtn @click="editingModal=true" />
+                          </VCol>
+                        </VRow>
+                      </VCol>
+                      <VCarousel show-arrows-on-hover>
+                        <VCarouselItem
+                          v-for="(image, i) in item.files" 
+                          :key="i"
+                        >
+                          <VImg
+                            :src="image"
+                            class="pointer-cursor"
+                            @click="viewPostPageModal=true"
+                          />
+                        </VCarouselItem>
+                      </VCarousel>
 
-                    <VCardItem>
-                      <VCardTitle>멋쟁이 승영이</VCardTitle>
-                    </VCardItem>
+                      <VCardItem>
+                        <VCardTitle>{{ item.content }}  </VCardTitle> 
+                      </VCardItem>
 
-                    <VCardText>
-                      나는 자랑스러운 3조라네 하하
-                    </VCardText>
-                  </VCard>
-                </VCol> 
+                      <VCardText>
+                        여기엔 댓글 넣을거지롱
+                      </VCardText>
+                    </VCard>
+                  </VCol> 
+                </VCol>
               </VCol>
             </VCol>
           </VCardText>
+          <VCol
+            v-if="state.items.length <= 0"
+            class="d-flex justify-center align-center"
+            style="height: 300px;"
+          >
+            <!-- 게시물이 없을 때의 템플릿 -->
+            <VCol
+              class="d-flex flex-column align-center justify-center"
+              style="height: 100%;"
+            >
+              <VCardTitle class="headline font-weight-bold">
+                등록된 게시물이 없습니다
+              </VCardTitle>
+              <VCardText>새로운 게시물을 작성해보세요!</VCardText>
+            </VCol>
+          </VCol>
         </VCard>
       </VCol>
       <VCol cols="4">
