@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref } from 'vue';
+import { reactive, ref } from 'vue'
 
 const postcode = ref('')
 const address = ref('')
@@ -41,6 +41,8 @@ function execDaumPostcode() {
       }
 
       postcode.value = data.zonecode
+
+
       //인덱싱을 통해 지번 Data를 동/읍.. 등 3번째 주소까지 나오게 설정
       const addressArray = addr.split(' ')
       let addrindextwo = ''
@@ -75,16 +77,17 @@ onMounted(() => {
 </script>
 
 <template>
-    <VBtn
-        @click="execDaumPostcode"
-        style="width: 100%;"
-    >
-        장소 설정
-    </VBtn>
-    <VTextField
-        id="address"
-        v-model="address"
-        type="text"
-        placeholder="주소"
-    />             
+  <VBtn
+    style="width: 100%;"
+    @click="execDaumPostcode"
+  >
+    장소 설정
+  </VBtn>
+  <VTextField
+    id="address"
+    v-model="address"
+    type="text"
+    placeholder="주소"
+    style="margin-top: 10px;"
+  />             
 </template>
