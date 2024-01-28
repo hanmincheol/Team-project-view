@@ -17,6 +17,7 @@ const writingModal = ref(false)
 const editingModal = ref(false)
 const borderColor = ref('#ccc')
 const viewPostPageModal = ref(false)
+let postToEdit = ref(null)
 let q = ref('')
 
 const state = reactive({
@@ -72,6 +73,23 @@ const deleteItem = async bno => {
     console.error(error)
   }
 }
+
+// 글 수정 코드
+const submitEdit = async bno => {
+  postIDToEdit.value = bno  // 클릭된 글 번호 저장
+  try {
+    const response = await axios.post('http://localhost:4000/bbs/Edit.do', { id: bno })
+
+    if (response.status === 200) {
+      console.log('글 번호 전송 성공')
+    } else {
+      console.log('글 번호 전송 실패')
+    }
+  } catch (error) {
+    console.error(`글 번호 전송 실패: ${error}`)
+  }
+}
+
 
 const membersList = [
   {
@@ -316,7 +334,7 @@ const loadMore = () => {
 
                                 <VMenu activator="parent">
                                   <VList>
-                                    <VListItem @click="editingModal=true">
+                                    <VListItem @click="editingModal=true; submitEdit(item.bno)">
                                       <template #prepend>
                                         <VIcon icon="mdi-comment-edit-outline" />
                                       </template>
@@ -433,7 +451,10 @@ const loadMore = () => {
     </VRow>
     <UserProfileCommunity v-model:isDialogVisible="userProfileModal" />
     <Writing v-model:isDialogVisible="writingModal" />
-    <Editing v-model:isDialogVisible="editingModal" />
+    <Editing
+      v-model:isDialogVisible="editingModal"
+      :edit-number="postToEdit"
+    />
     <ViewPostPage v-model:isDialogVisible="viewPostPageModal" />
   </section>
 </template>

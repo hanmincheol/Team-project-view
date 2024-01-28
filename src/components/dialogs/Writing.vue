@@ -43,7 +43,7 @@ const dialogVisibleUpdate = value => {
 
 
 const isButtonDisabled = computed(() => {
-  return subValue.value === '카테고리' || !textValue.value && !hashtagValue.value === 0 
+  return subValue.value == '카테고리' || !textValue.value && !hashtagValue.value === 0 
 })
 
 const members = [

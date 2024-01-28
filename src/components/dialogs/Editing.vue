@@ -10,9 +10,12 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  editNumber: [String, Number],
 })
 
+
 const emit = defineEmits(['update:isDialogVisible'])
+
 
 const avatars = [
   avatar1,
@@ -42,7 +45,7 @@ const avatars = [
           </VCol>
           <VCol cols="10">
             <VCol style=" font-size: 20px; font-weight: bold;text-align: center;">
-              정보 수정
+              게시글 수정
             </VCol>
           </VCol>
           <VCol>
