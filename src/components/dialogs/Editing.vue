@@ -3,7 +3,9 @@ import avatar1 from '@images/avatars/avatar-1.png'
 import avatar2 from '@images/avatars/avatar-2.png'
 import avatar3 from '@images/avatars/avatar-3.png'
 import avatar4 from '@images/avatars/avatar-4.png'
+
 import backgroundimg from '@images/pages/writing.jpg'
+import { ref } from 'vue'
 
 const props = defineProps({
   isDialogVisible: {
@@ -19,6 +21,8 @@ const props = defineProps({
 
 const emit = defineEmits(['update:isDialogVisible'])
 
+const hashtags = ref([])
+const hashtagValue = ref('')
 
 const avatars = [
   avatar1,
@@ -26,6 +30,22 @@ const avatars = [
   avatar3,
   avatar4,
 ]
+
+// hashtagValue를 감시하도록 watch 함수를 설정
+watch(hashtagValue, () => {
+  const matches = hashtagValue.value.match(/#\s*\S+/g) || []
+
+  hashtags.value = matches.map(hashtag => hashtag.replace(/\s/g, ''))
+})
+
+// 해시태그를 삭제하는 함수
+const removeHashtag = hashtag => {
+  const index = hashtags.value.indexOf(hashtag)
+  if (index > -1) {
+    hashtags.value.splice(index, 1)
+    hashtagValue.value = hashtags.value.join(' ')
+  }
+}
 
 const switch2 = ref('Show')
 </script>
@@ -141,6 +161,7 @@ const switch2 = ref('Show')
               />
             </VCol>
             
+            
             <VRow>
               <VCol cols="9">
                 <VTextarea 
@@ -155,19 +176,31 @@ const switch2 = ref('Show')
                 </VBtn>
               </VCol>
             </VRow>
-            <VRow>
-              <VCol
-                cols="10"
-                style=" margin-top: 5px;margin-left: 2%; font-weight: bolder;"
-              >
-                위치 추가
+            <VRow style=" margin-top: 5; margin-right: 2%; margin-bottom: 0;">
+              <VCol cols="12">
+                <VTextarea
+                  v-model="hashtagValue"
+                  rows="2"
+                  placeholder="#해쉬태그"
+                  no-resize
+                />
+            
+                <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+                  <span
+                    v-for="(hashtag, index) in hashtags"
+                    :key="index"
+                    style="margin-right: 10px;"
+                  >
+                    {{ hashtag }} 
+                    <button 
+                      style="padding: 10px; margin-left: 5px; cursor: pointer;" 
+                      @click="() => removeHashtag(hashtag)"
+                    >
+                      x
+                    </button>
+                  </span>
+                </div>
               </VCol>
-              <VIcon
-                size="35"
-                icon="mdi-map-marker"
-                class="mt-2"
-                color="success"
-              />
             </VRow>
           </VCol>
         </VRow>
@@ -175,7 +208,7 @@ const switch2 = ref('Show')
     </VCol>
   </VDialog>
 </template>
-
+                    
 
 
 <style scoped>
@@ -187,5 +220,34 @@ const switch2 = ref('Show')
 <style>
 .disabled-textarea {
   color: black; /* 텍스트 색상을 검정색으로 설정합니다. */
+}
+
+.image-container {
+  position: relative;
+  display: inline-block;
+  overflow: visible;  /* 이미지 크기 제한 풀기 */
+  border-style: solid;
+  block-size: 400px;
+  inline-size: 100%;
+}
+
+.preview-image {
+  block-size: 100%;
+  inline-size: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease-in-out; /* 이 부분을 추가하여 확대/축소 애니메이션을 부드럽게 만듬. */
+}
+
+.delete-button {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+}
+
+.loading {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
