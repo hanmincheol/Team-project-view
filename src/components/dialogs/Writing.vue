@@ -16,7 +16,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:isDialogVisible'])
+const emit = defineEmits(['update:isDialogVisible', "update-success"])
 const isprofile = ref(false)
 const router = useRouter()
 const people = ref(false)
@@ -83,6 +83,7 @@ const submitData = async function() {
     // 응답 처리
     if (response.status === 200) {
       console.log('데이터 전송 성공')
+      emit('update-success')
       console.log(`response.data: ${response.data}`)
     } else {
       console.log('데이터 전송 실패')
@@ -90,8 +91,11 @@ const submitData = async function() {
   } catch (error) {
     console.error(`데이터 전송 실패: ${error}`)
   }finally {
+
+
+
     emit('update:isDialogVisible', false)  // 모달 닫기
-    router.push({ name: 'community_post' }).then(() => router.go(0)) // community_post.vue 페이지로 이동 후 리로드
+    //router.push({ name: 'community_post' }).then(() => router.go(0)) // community_post.vue 페이지로 이동 후 리로드
   }
 
 }
