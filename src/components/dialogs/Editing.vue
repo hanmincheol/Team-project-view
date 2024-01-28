@@ -20,7 +20,7 @@ const props = defineProps({
 })
 
 
-const emit = defineEmits(['update:isDialogVisible'])
+const emit = defineEmits(['update:isDialogVisible', 'update-success'])
 
 // switch2의 초기값은 postToEdit.disclosureYN의 값에 따라 결정됩니다.
 const switch2 = ref(props.postToEdit.disclosureYN === 'Y')
@@ -78,6 +78,12 @@ const submitEdit = async function() {
     // 응답 처리
     if (response.status === 200) {
       console.log('데이터 수정 성공')
+
+      // 부모 컴포넌트에 알림
+      emit('update-success')
+
+      // 모달창 닫기
+      emit('update:isDialogVisible', false)
     } else {
       console.log('데이터 수정 실패')
     }
