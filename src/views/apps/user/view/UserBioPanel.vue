@@ -4,9 +4,8 @@ import {
   kFormatter,
 } from '@core/utils/formatters'
 
-import SelfEdit from '@/pages/views/demos/forms/form-elements/textarea/self-edit.vue'
 import Btnsu from '@/pages/views/demos/components/button/self-suc.vue'
-import { faL } from '@fortawesome/free-solid-svg-icons'
+import SelfEdit from '@/pages/views/demos/forms/form-elements/textarea/self-edit.vue'
 
 
 const props = defineProps({
@@ -168,11 +167,12 @@ const resolveUserRoleVariant = role => {
         <!-- 👉 Details -->
         <VCardText>
           <VRow align="center ml-4">
-            <h6 class="text-h6" style="margin-top: 10px;">
+            <h6 class="text-h6">
               Self-Introduction
             </h6>
             <IconBtn>
               <VIcon
+                v-if="!edit"
                 icon="mdi-lead-pencil"
                 size="22"
                 @click="editClick=false, edit=true"
@@ -187,7 +187,10 @@ const resolveUserRoleVariant = role => {
             style="height: 380px;"
           >
             <SelfEdit :readonly="editClick" />
-            <div style="float: right; margin-top: 10px;" v-if="edit">
+            <div
+              v-if="edit"
+              style=" margin-top: 10px;float: inline-end;"
+            >
               <Btnsu @click="editClick=true, edit=false" />
             </div>
           </VCol>

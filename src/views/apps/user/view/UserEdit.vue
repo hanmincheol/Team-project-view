@@ -88,27 +88,23 @@ onMounted(fetchData)
         <VCol cols="6">
           <!-- 첫 번째 카드 텍스트 - 이름 -->
           <VChip label>
-            <VCol cols="6">
-              <strong>이름</strong>
-            </VCol>
-            <VCol cols="6">
-              <IconBtn
-                v-if="!edit1"
-                style=" float: inline-end;"
-              >
-                <VIcon
-                  size="22"
-                  icon="mdi-lead-pencil"
-                  @click="editClick1=false, edit1=true" 
-                /> <!-- editClick1이 false일때는 입력이 안됨 / editClick이 true일때 입력 가능 -->
-              </IconBtn>
+            <strong>이름</strong>
+            <IconBtn
+              v-if="!edit1"
+              style=" float: inline-end;"
+            >
+              <VIcon
+                size="22"
+                icon="mdi-lead-pencil"
+                @click="editClick1=false, edit1=true" 
+              /> <!-- editClick1이 false일때는 입력이 안됨 / editClick이 true일때 입력 가능 -->
+            </IconBtn>
               
-              <Btnsu
-                v-if="edit1"
-                style="width: 60px;"
-                @click="editClick1=true, edit1=false, updatedata('name', nameval)"
-              />
-            </VCol>
+            <Btnsu
+              v-if="edit1"
+              style="width: 60px; margin-left: 10px;"
+              @click="editClick1=true, edit1=false, updatedata('name', nameval)"
+            />
           </VChip>
           <Edit
             v-model="nameval"
@@ -120,24 +116,20 @@ onMounted(fetchData)
         <!-- 비밀번호 -->
         <VCol cols="6">
           <VChip label>
-            <VCol cols="6">
-              <strong>비밀번호</strong>
-            </VCol>
-            <VCol cols="6">
-              <IconBtn v-if="!edit2">
-                <VIcon
-                  size="22"
-                  icon="mdi-lead-pencil"
-                  @click="editClick2=false, edit2=true"
-                />
-              </IconBtn>
-            
-              <Btnsu
-                v-if="edit2"
-                style="width: 60px;"
-                @click="editClick2=true, edit2=false , updatedata('pwd', pwdval)"
+            <strong>비밀번호</strong>
+            <IconBtn v-if="!edit2">
+              <VIcon
+                size="22"
+                icon="mdi-lead-pencil"
+                @click="editClick2=false, edit2=true"
               />
-            </VCol>
+            </IconBtn>
+            
+            <Btnsu
+              v-if="edit2"
+              style="width: 60px; margin-left: 10px;"
+              @click="editClick2=true, edit2=false , updatedata('pwd', pwdval)"
+            />
           </VChip>
 
           <PW
@@ -151,29 +143,13 @@ onMounted(fetchData)
     <!-- 이름 비밀번호 수정 끝 -->
 
 
-    <!-- 성별 -->
-    <VRow>
-      <VCol cols="3" />
-      <VCol cols="6">
-        <VCard
-          cols="6"
-          style="padding: 10px; margin: 10px;"
-        >
-          <VChip label>
-            <strong>성별</strong>
-          </VChip>
-          <Gender :placeholder="memberdata.gender" />
-        </VCard>
-      </VCol>
-    </VRow>
-    <!-- 성별 끝 -->
 
     <!-- 키 / 몸무게  -->
     <VCol>
       <VRow>
         <VCol cols="6">
           <VChip label>
-            키
+            <strong>키</strong>
             <IconBtn v-if="!edit3">
               <VIcon
                 size="22"
@@ -184,7 +160,7 @@ onMounted(fetchData)
 
             <Btnsu
               v-if="edit3"
-              style=" margin-top: 5px;float: inline-end;"
+              style="width: 60px; margin-left: 10px;"
               @click="editClick3=true, edit3=false, updatedata('height', heightval)"
             />
           </VChip>
@@ -201,7 +177,7 @@ onMounted(fetchData)
 
         <VCol cols="6">
           <VChip label>
-            몸무게
+            <strong>몸무게</strong>
             <IconBtn v-if="!edit4">
               <VIcon
                 size="22"
@@ -212,7 +188,7 @@ onMounted(fetchData)
           
             <Btnsu
               v-if="edit4"
-              style=" margin-top: 5px;float: inline-end;"
+              style="width: 60px; margin-left: 10px;"
               @click="editClick4=true, edit4=false, updatedata('weight', weightval)"
             />
           </VChip>
@@ -227,12 +203,11 @@ onMounted(fetchData)
     </VCol>
     <!-- 키 / 몸무게 끝 -->
 
-
-    <VCardText>
+    <VCol>
       <VRow>
         <VCol cols="6">
           <VChip label>
-            전화번호
+            <strong>전화번호</strong>
             <IconBtn v-if="!edit5">
               <VIcon
                 size="22"
@@ -243,7 +218,7 @@ onMounted(fetchData)
 
             <Btnsu
               v-if="edit5"
-              style=" margin-top: 5px;float: inline-end;"
+              style="width: 60px; margin-left: 10px;"
               @click="editClick5=true, edit5=false, updatedata('tel', telval)"
             />
           </VChip>
@@ -257,7 +232,7 @@ onMounted(fetchData)
 
         <VCol cols="6">
           <VChip label>
-            생년월일
+            <strong>생년월일</strong>
             <IconBtn v-if="!edit6">
               <VIcon
                 size="22"
@@ -268,7 +243,7 @@ onMounted(fetchData)
 
             <Btnsu
               v-if="edit6"
-              style=" margin-top: 5px;float: inline-end;"
+              style="width: 60px; margin-left: 10px;"
               @click="editClick6=true, edit6=false, updatedata('b_day', b_dayval)"
             />
           </VChip>
@@ -280,16 +255,48 @@ onMounted(fetchData)
           />
         </VCol>
       </VRow>
+    </VCol>
 
 
 
-      <!-- 입력 부분 -->
-    </VCardText>
-    <VCardText>
-      <VRow align="center ml-2">
-        <VCol cols="12">
+    
+
+    <VCol>
+      <VRow>
+        <VCol cols="9">
           <VChip label>
-            주소
+            <strong>사용 목적</strong>
+          </VChip>
+          <Sub
+            :value="memberdata.goal_No"
+            style="margin-top: 10px;"
+          />
+        </VCol>
+    
+        <!-- 성별 -->
+        <VCol cols="3">
+          <VCard
+            cols="6"
+            style="padding: 10px; margin: 10px;"
+          >
+            <VChip label>
+              <strong>성별</strong>
+            </VChip>
+            <Gender :placeholder="memberdata.gender" />
+          </VCard>
+        </VCol>
+      </VRow>
+    </VCol>
+    <!-- 성별 끝 -->
+    <!-- 입력 부분 -->
+    <VCol>
+      <VRow>
+        <VCol cols="12">
+          <VChip
+            label
+            cols="6"
+          >
+            <strong>주소</strong>
             <IconBtn v-if="!edit7">
               <VIcon
                 size="22"
@@ -299,38 +306,18 @@ onMounted(fetchData)
             </IconBtn>
             <Btnsu
               v-if="edit7"
-              style=" float: inline-end;"
+              style="width: 60px; margin-left: 10px;"
               @click="editClick7=true, edit7=false, updatedata('userAddress', userAddressval)"
             />
           </VChip>
+          <Edit
+            v-model="userAddressval"
+            style="margin-top: 10px;"
+            :readonly="editClick7"
+            :placeholder="memberdata.userAddress"
+          />
         </VCol>
       </VRow>
-      <VRow>
-        <VCol
-          cols="12"
-          md="12"
-        >
-          <div style=" margin-top: -20px;">
-            <Edit
-              v-model="userAddressval"
-              :readonly="editClick7"
-              :placeholder="memberdata.userAddress"
-            />
-          </div>
-        </VCol>
-      </VRow>
-    </VCardText>
-    <VCol
-      cols="12"
-      md="12"
-    >
-      <h6
-        class="text-h6"
-        style=" margin: -10px 20px 10px;"
-      >
-        사용 목적
-      </h6>
-      <Sub :value="memberdata.goal_No" />
     </VCol>
   </VCard>
 </template>
