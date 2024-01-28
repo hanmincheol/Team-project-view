@@ -380,7 +380,9 @@ const loadMore = () => {
                       </VCarousel>
 
                       <VCardItem>
-                        <VCardTitle>{{ item.content }}  </VCardTitle> 
+                        <VCardTitle @click="viewPostPageModal=true">
+                          {{ item.content }}
+                        </VCardTitle> 
                       </VCardItem>
 
                       <VCardText>
@@ -456,10 +458,14 @@ const loadMore = () => {
       </VCol>
     </VRow>
     <UserProfileCommunity v-model:isDialogVisible="userProfileModal" />
-    <Writing v-model:isDialogVisible="writingModal" />
+    <Writing
+      v-model:isDialogVisible="writingModal" 
+      @update-success="getData"
+    />
     <Editing
       v-model:isDialogVisible="editingModal"
       :post-to-edit="postToEdit"
+      @update-success="getData"
     />
     <ViewPostPage v-model:isDialogVisible="viewPostPageModal" />
   </section>
