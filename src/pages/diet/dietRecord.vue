@@ -49,7 +49,9 @@ const isNutrientAnalysisVisible = ref(false) //모달창 컨트롤 변수
         <p class="text-h4">
           식단의 사진을 등록해주세요
         </p>
-        <p>⚠️ 식전 사진 등록은 필수입니다</p>
+        <VChip color="warning">
+          ⚠️ 식전 사진 등록은 필수입니다
+        </VChip>
       </VCardText>
     </VCardItem>
     <VRow :style="{'margin-top':'120px', 'display':'flex', 'justify-content':'center'}">
@@ -78,7 +80,7 @@ const isNutrientAnalysisVisible = ref(false) //모달창 컨트롤 변수
               for="filebtn"
               class="input-plus"
             > 
-              <div :style="{'border-style':'dashed', 'width':'100%', 'height':'300px', 'display':'flex','justify-content': 'center','align-items': 'center'}">
+              <div :style="{'width':'100%', 'height':'300px', 'display':'flex','justify-content': 'center','align-items': 'center'}">
                 <img
                   id="imgBefore"
                   :style="{'width':'50px', 'height':'60px'}"
@@ -109,7 +111,7 @@ const isNutrientAnalysisVisible = ref(false) //모달창 컨트롤 변수
         >
           <!-- 식후사진 업로드 -->
           <div :style="{'display':'flex', 'justify-content':'center','margin':'30px'}">
-            <h2>식후 사진</h2>
+            <strong style="font-size: x-large;">식후 사진</strong>
           </div>
           <VCardItem :style="{'margin-top':'10px'}">
             <input
@@ -123,7 +125,7 @@ const isNutrientAnalysisVisible = ref(false) //모달창 컨트롤 변수
               for="filebtnAfter"
               class="input-plus"
             >
-              <div :style="{'border-style':'dashed', 'width':'100%', 'height':'300px', 'display':'flex','justify-content': 'center','align-items': 'center'}">
+              <div :style="{ 'width':'100%', 'height':'300px', 'display':'flex','justify-content': 'center','align-items': 'center'}">
                 <img
                   id="imgAfter"
                   :style="{'width':'50px', 'height':'60px'}"
@@ -157,4 +159,5 @@ const isNutrientAnalysisVisible = ref(false) //모달창 컨트롤 변수
     </VRow>
   </VCard>
 </template>
+
 
