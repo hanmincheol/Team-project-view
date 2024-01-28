@@ -1,4 +1,5 @@
 <script setup>
+import { isfriendscreenchanged } from '@/router/index'
 import axios from '@axios'
 import { watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -12,7 +13,6 @@ const fetchProjectData = () => {
   if (router.params.tab === 'friend') {
     axios.get("http://127.0.0.1:4000/comm/friend", { params: { id: 'HMC' } })
       .then(response=>{
-        console.log(response.data)
         connectionData.value = response.data
         if(Object.keys(connectionData.value).length == 0) isFriendExist.value = true
         else {
@@ -30,22 +30,33 @@ const connectionController = temp => {
   temp.value = !temp.value
 }
 
-window.addEventListener('beforeunload', event=>{
-  console.log('확인')
 
-  //window.removeEventListener('beforeunload')
-  event.preventDefault()
+//페이지 이동 감시 테스트----------------------------------
+const url = ref('')
+
+window.addEventListener('click', event=>{ //beforeunload
+  if(isfriendscreenchanged.value) {
+    console.log('url변경감지')
+
+    for(const id in isConnected) {
+      console.log('url변경감지 및 반복문')
+      console.log(id, isConnected[id].value)
+      if (!isConnected[id].value){
+        axios.put("http://127.0.0.1:4000/comm/friendblock", { params: { id: id } })
+          .catch(err=>console.log(err))
+      }
+    }
+
+    isfriendscreenchanged.value = false
+  }
   
-  return ''
 })
 
-const test = () => {console.log('test')}
-
+//페이지 이동 감시 테스트 end----------------------------------
 //watch 함수를 사용하여 router 객체를 감시하고, 변경이 있을 때마다 fetchProjectData 함수를 실행합니다. 
 //immediate: true 옵션을 사용하여 초기 로드 시에도 함수를 실행합니다.
 watch(router, fetchProjectData, { immediate: true })
 
-watch(router, test, { immediate: true })
 
 //햄버거를 누를 때 버튼 목록을 표시.
 const moreBtnList = [
