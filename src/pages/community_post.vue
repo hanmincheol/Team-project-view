@@ -47,7 +47,6 @@ const getData = async function() {
     if (response.status === 200) {
       console.log('데이터 받기 성공')
       state.items = response.data // 데이터 저장
-      console.log(state.items[1].files)
       console.log(state.items[0])
     } else {
       console.log('데이터 전송 실패')
@@ -62,7 +61,9 @@ const deleteItem = async bno => {
   try {
     const response = await axios.get(`http://localhost:4000/bbs/${bno}/Delete.do`)
     if (response.data === 1) {
-      state.items = state.items.filter(item => item.bno !== bno) // items 배열에서 삭제된 항목 제거
+      const bnoInt = parseInt(bno) // bno를 숫자로 변환
+
+      state.items = state.items.filter(item => item.bno !== bnoInt) // items 배열에서 삭제된 항목 제거
     } else {
       console.log(response.data, "response.data")
       alert('삭제에 실패했습니다.')
