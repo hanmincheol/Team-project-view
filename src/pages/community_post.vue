@@ -17,7 +17,7 @@ const writingModal = ref(false)
 const editingModal = ref(false)
 const borderColor = ref('#ccc')
 const viewPostPageModal = ref(false)
-let postToEdit = ref(null)
+let postToEdit = ref("")
 let q = ref('')
 
 const state = reactive({
@@ -76,12 +76,15 @@ const deleteItem = async bno => {
 
 // 글 수정 코드
 const submitEdit = async bno => {
-  postIDToEdit.value = bno  // 클릭된 글 번호 저장
   try {
-    const response = await axios.post('http://localhost:4000/bbs/Edit.do', { id: bno })
+    const response = await axios.get('http://localhost:4000/bbs/ViewOne.do', { params: { bno: bno } })
 
     if (response.status === 200) {
       console.log('글 번호 전송 성공')
+      console.log(response.data, "response.data")
+
+      // 서버로부터 받은 데이터를 자식 컴포넌트에게 전달하기 위해 저장
+      postToEdit.value = response.data
     } else {
       console.log('글 번호 전송 실패')
     }
@@ -453,7 +456,7 @@ const loadMore = () => {
     <Writing v-model:isDialogVisible="writingModal" />
     <Editing
       v-model:isDialogVisible="editingModal"
-      :edit-number="postToEdit"
+      :post-to-edit="postToEdit"
     />
     <ViewPostPage v-model:isDialogVisible="viewPostPageModal" />
   </section>

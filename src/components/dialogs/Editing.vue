@@ -10,7 +10,10 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
-  editNumber: [String, Number],
+  postToEdit: {
+    type: Object,
+    default: () => ({}),
+  },
 })
 
 
@@ -66,7 +69,17 @@ const switch2 = ref('Show')
           </VCol>
         </VRow>
         <VRow>
-          <VImg :src="backgroundimg" />
+          <VImg
+            v-for="(img, index) in postToEdit.files"
+            v-if="postToEdit.files && postToEdit.files.length"
+            :key="index"
+            :src="img"
+          />
+          <VImg
+            v-else
+            :src="backgroundimg"
+          />
+
           <VCol cols="6">
             <VRow>
               <VCol>
@@ -85,7 +98,7 @@ const switch2 = ref('Show')
                         style="margin-left: -5%;"
                         @click="userProfileModal=true"
                       >
-                        유저 닉네임 뿌려주기
+                        {{ postToEdit.id }}  <!-- 유저 닉네임 뿌려주기 -->
                       </VCardSubtitle>
                     </VCol>
                   </VCol>
@@ -98,10 +111,11 @@ const switch2 = ref('Show')
             </VRow>
             <VCol cols="12">
               <VTextarea 
-                label="내용" 
                 rows="10"
                 style="height: 250px; margin-right: 2%;"
                 class="disabled-textarea"
+                no-resize
+                :placeholder="postToEdit.content"
               />
             </VCol>
             <VCol>
