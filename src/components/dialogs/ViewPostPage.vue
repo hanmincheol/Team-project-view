@@ -51,9 +51,10 @@ const avatars = [
               <VCol>
                 <VRow style="margin-top: 1%;">
                   <VCol cols="1">
+                    <!-- image도 대표사진 받아와서 뿌려야합니다 -->
                     <VAvatar 
                       class="text-sm pointer-cursor"
-                      :image="avatar1"
+                      :image="avatar1" 
                       @click="userProfileModal=true"
                     />
                   </VCol>
@@ -75,15 +76,26 @@ const avatars = [
                 </VRow>
               </VCol>
             </VRow>
-            <VCol cols="12">
-              <VTextarea 
-                label="내용" 
-                rows="10"
-                style="height: 250px; margin-right: 2%;"
-                disabled="true"
-                class="disabled-textarea"
-              />
-            </VCol>
+            <!-- 여기는 if문으로 데이터 있는 만큼 가져와야 하는 부분이고요 -->
+            <!-- 많아지면 여기도 무한스크롤을 적용해야 할 겁니다~ 근데 여긴 윈도우 창이 아니라 어떤 이벤트를 걸어야할지 감도 안오네요 -->
+            <VRow>
+              <VCol cols="1">
+                <VAvatar 
+                  class="text-sm pointer-cursor"
+                  :image="avatar1"
+                  @click="userProfileModal=true"
+                />
+              </VCol>
+              <VCol
+                cols="10"
+                style="height: 400px; margin-left: 10px;"
+              >
+                여기는 글씨 크기만큼 뿌려주는 공간이 될 거 같음 아아아아아 이렇게 말이죠 엔터나 그런것도 처리해서 
+                <br> 이렇게 처리를 해야할 거 같네요
+                <br> 여기도 해시태그 받아와서 뿌려야 줘야! 합니다! 
+                <br>#해시태그 #뿌려주세요
+              </VCol>
+            </VRow>
             <VCol>
               <VBtn
                 icon="mdi-heart-outline"
@@ -123,7 +135,7 @@ const avatars = [
                 멋쟁이 승녕님 외 18명이 좋아합니다
               </VCol>
             </VRow>
-            <VRow>
+            <VRow style="margin-bottom: 5px;">
               <VCol cols="1">
                 <VBtn
                   icon="mdi-emoticon"

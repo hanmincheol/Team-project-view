@@ -372,6 +372,7 @@ const loadMore = () => {
                         <VCarouselItem
                           v-for="(image, i) in item.files" 
                           :key="i"
+                          :class="{'active-slide': i === activeIndex}"
                         >
                           <VImg
                             :src="image"
@@ -481,6 +482,10 @@ const loadMore = () => {
   .v-field__outline {
     display: none;
   }
+}
+
+.active-slide {
+  color: success;
 }
 
 .transparent-carousel .v-carousel__controls {
