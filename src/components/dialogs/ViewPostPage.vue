@@ -10,6 +10,10 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  postToEdit: {
+    type: Object,
+    default: () => ({}),
+  },
 })
 
 const emit = defineEmits(['update:isDialogVisible'])
@@ -45,7 +49,23 @@ const avatars = [
 
       <VCard>
         <VRow>
-          <VImg :src="backgroundimg" />
+          <VCol cols="6">
+            <VCarousel
+              v-if="postToEdit.files && postToEdit.files.length"
+              show-arrows-on-hover
+            >
+              <VCarouselItem
+                v-for="(img, index) in postToEdit.files"
+                :key="index"
+              >
+                <VImg :src="img" />
+              </VCarouselItem>
+            </VCarousel>
+            <VImg
+              v-else
+              :src="backgroundimg"
+            />
+          </VCol>
           <VCol cols="6">
             <VRow>
               <VCol>
@@ -64,24 +84,22 @@ const avatars = [
                         style="margin-left: -5%;"
                         @click="userProfileModal=true"
                       >
-                        유저 닉네임 뿌려주기
+                        {{ postToEdit.id }}  <!-- 유저 닉네임 뿌려주기 -->
                       </VCardSubtitle>
                     </VCol>
                   </VCol>
                   <VSpacer />
-                  <VCol cols="2">
-                    <MoreBtn />
-                  </VCol>
                 </VRow>
               </VCol>
             </VRow>
             <VCol cols="12">
               <VTextarea 
-                label="내용" 
                 rows="10"
                 style="height: 250px; margin-right: 2%;"
                 disabled="true"
                 class="disabled-textarea"
+                no-resize
+                :value="postToEdit.content"
               />
             </VCol>
             <VCol>

@@ -382,7 +382,10 @@ const loadMore = () => {
                       </VCarousel>
 
                       <VCardItem>
-                        <VCardTitle @click="viewPostPageModal=true">
+                        <VCardTitle
+                          class="pointer-cursor"
+                          @click="viewPostPageModal=true; submitEdit(item.bno)"
+                        >
                           {{ item.content }}
                         </VCardTitle> 
                       </VCardItem>
@@ -469,7 +472,10 @@ const loadMore = () => {
       :post-to-edit="postToEdit"
       @update-success="getData"
     />
-    <ViewPostPage v-model:isDialogVisible="viewPostPageModal" />
+    <ViewPostPage
+      v-model:isDialogVisible="viewPostPageModal" 
+      :post-to-edit="postToEdit"
+    />
   </section>
 </template>
 
