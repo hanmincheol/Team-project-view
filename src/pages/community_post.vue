@@ -48,11 +48,27 @@ const getData = async function() {
       console.log('데이터 받기 성공')
       state.items = response.data // 데이터 저장
       console.log(state.items[1].files)
+      console.log(state.items[0])
     } else {
       console.log('데이터 전송 실패')
     }
   } catch (error) {
     console.error(`데이터 전송 실패: ${error}`)
+  }
+}
+
+//삭제코드
+const deleteItem = async bno => {
+  try {
+    const response = await axios.get(`http://localhost:4000/bbs/${bno}/Delete.do`)
+    if (response.data === 1) {
+      state.items = state.items.filter(item => item.bno !== bno) // items 배열에서 삭제된 항목 제거
+    } else {
+      console.log(response.data, "response.data")
+      alert('삭제에 실패했습니다.')
+    }
+  } catch (error) {
+    console.error(error)
   }
 }
 
@@ -285,7 +301,43 @@ const loadMore = () => {
                           </VCol>
                           <VCol cols="6" />
                           <VCol cols="1">
-                            <MoreBtn @click="editingModal=true" />
+                            <VCol cols="1">
+                              <VBtn
+                                icon
+                                variant="text"
+                                size="small"
+                                color="medium-emphasis"
+                              >
+                                <VIcon
+                                  size="24"
+                                  icon="mdi-dots-vertical"
+                                />
+
+                                <VMenu activator="parent">
+                                  <VList>
+                                    <VListItem @click="editingModal=true">
+                                      <template #prepend>
+                                        <VIcon icon="mdi-comment-edit-outline" />
+                                      </template>
+                                      <VListItemTitle>수정하기</VListItemTitle>
+                                    </VListItem>
+
+                                    <VListItem @click="deleteItem(item.bno)">
+                                      <template #prepend>
+                                        <VIcon icon="mdi-delete-outline" />
+                                      </template>
+                                      <VListItemTitle>삭제하기</VListItemTitle>
+                                    </VListItem>
+                                    <VListItem @click="editingModal=true">
+                                      <template #prepend>
+                                        <VIcon icon="mdi-account-alert" />
+                                      </template>
+                                      <VListItemTitle>신고하기</VListItemTitle>
+                                    </VListItem>
+                                  </VList>
+                                </VMenu>
+                              </VBtn>
+                            </VCol>
                           </VCol>
                         </VRow>
                       </VCol>
