@@ -363,7 +363,10 @@ const loadMore = () => {
                           </VCol>
                         </VRow>
                       </VCol>
-                      <VCarousel show-arrows-on-hover>
+                      <VCarousel
+                        v-if="item.files && item.files.length"
+                        show-arrows-on-hover
+                      >
                         <VCarouselItem
                           v-for="(image, i) in item.files" 
                           :key="i"

@@ -4,6 +4,7 @@ import avatar2 from '@images/avatars/avatar-2.png'
 import avatar3 from '@images/avatars/avatar-3.png'
 import avatar4 from '@images/avatars/avatar-4.png'
 
+import axios from '@axios'
 import backgroundimg from '@images/pages/writing.jpg'
 import { ref } from 'vue'
 
@@ -21,8 +22,20 @@ const props = defineProps({
 
 const emit = defineEmits(['update:isDialogVisible'])
 
+// switch2의 초기값은 postToEdit.disclosureYN의 값에 따라 결정됩니다.
+const switch2 = ref(props.postToEdit.disclosureYN === 'Y')
+
+// postToEdit가 변경될 때마다 switch2의 값을 업데이트합니다.
+watch(() => props.postToEdit.disclosureYN, newVal => {
+  switch2.value = newVal === 'Y'
+})
+
+
+const disclosureValue = computed(() => switch2.value ? 'Y' : 'N')
+
 const hashtags = ref([])
 const hashtagValue = ref('')
+const content = ref('') // 콘텐츠를 저장할 ref를 추가
 
 const avatars = [
   avatar1,
@@ -47,7 +60,31 @@ const removeHashtag = hashtag => {
   }
 }
 
-const switch2 = ref('Show')
+const submitEdit = async function() {
+  // 수정할 데이터를 객체에 저장
+  let data = {
+    content: content.value,  // content ref의 값을 사용
+    disclosureYN: disclosureValue.value,  // computed property의 값을 사용
+    hashTag: hashtags.value.join(','),  // 해시태그 배열을 콤마로 연결한 문자열로 변환
+    bno: props.postToEdit.bno,
+  }
+  console.log("props.postToEdit.bno", props.postToEdit.bno)
+  console.log("data", data)
+
+
+  try {
+    const response = await axios.post('http://localhost:4000/bbs/Edit.do', data)
+
+    // 응답 처리
+    if (response.status === 200) {
+      console.log('데이터 수정 성공')
+    } else {
+      console.log('데이터 수정 실패')
+    }
+  } catch (error) {
+    console.error(`데이터 수정 실패: ${error}`)
+  }
+}
 </script>
 
 
@@ -77,29 +114,35 @@ const switch2 = ref('Show')
           <VCol cols="2">
             <VSwitch
               v-model="switch2"
-              :label="switch2.toString()"
-              true-value="Show"
-              false-value="Hide"
+              :label="switch2 ? '공개' : '비공개'"
+              :true-value="Y"
+              :false-value="N"
             />
           </VCol>
           <VCol>
-            <VBtn>
+            <VBtn @click="submitEdit">
               수정
             </VBtn>
           </VCol>
         </VRow>
         <VRow>
-          <VImg
-            v-for="(img, index) in postToEdit.files"
-            v-if="postToEdit.files && postToEdit.files.length"
-            :key="index"
-            :src="img"
-          />
-          <VImg
-            v-else
-            :src="backgroundimg"
-          />
-
+          <VCol cols="6">
+            <VCarousel
+              v-if="postToEdit.files && postToEdit.files.length"
+              show-arrows-on-hover
+            >
+              <VCarouselItem
+                v-for="(img, index) in postToEdit.files"
+                :key="index"
+              >
+                <VImg :src="img" />
+              </VCarouselItem>
+            </VCarousel>
+            <VImg
+              v-else
+              :src="backgroundimg"
+            />
+          </VCol>
           <VCol cols="6">
             <VRow>
               <VCol>
@@ -123,14 +166,12 @@ const switch2 = ref('Show')
                     </VCol>
                   </VCol>
                   <VSpacer />
-                  <VCol cols="2">
-                    <MoreBtn />
-                  </VCol>
                 </VRow>
               </VCol>
             </VRow>
             <VCol cols="12">
               <VTextarea 
+                v-model="content"
                 rows="10"
                 style="height: 250px; margin-right: 2%;"
                 class="disabled-textarea"
@@ -181,7 +222,7 @@ const switch2 = ref('Show')
                 <VTextarea
                   v-model="hashtagValue"
                   rows="2"
-                  placeholder="#해쉬태그"
+                  :placeholder="postToEdit.hashTag"
                   no-resize
                 />
             

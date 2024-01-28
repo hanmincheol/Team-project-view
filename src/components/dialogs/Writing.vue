@@ -66,9 +66,11 @@ const submitData = async function() {
 
 
   // 각 파일을 FormData에 추가
-  images.files.forEach(file => {
-    formData.append('files', file.file)  // 파일의 이름을 'files'로 지정
-  })
+  if (images.files.length > 0) {
+    images.files.forEach(file => {
+      formData.append('files', file.file)  // 파일의 이름을 'files'로 지정
+    })
+  }
 
 
   try {
@@ -82,18 +84,16 @@ const submitData = async function() {
     if (response.status === 200) {
       console.log('데이터 전송 성공')
       console.log(`response.data: ${response.data}`)
-      if(response.data !== 0){
-        console.log(`response.data:${response.data}`)
-        emit('update:isDialogVisible', false)  // 이벤트 발생
-        router.push({ name: 'community_post' }).then(() => router.go(0)) // community_post.vue 페이지로 이동 후 리로드
-        //router.replace({ name: 'community_post' })
-      }
     } else {
       console.log('데이터 전송 실패')
     }
   } catch (error) {
     console.error(`데이터 전송 실패: ${error}`)
+  }finally {
+    emit('update:isDialogVisible', false)  // 모달 닫기
+    router.push({ name: 'community_post' }).then(() => router.go(0)) // community_post.vue 페이지로 이동 후 리로드
   }
+
 }
 
 
