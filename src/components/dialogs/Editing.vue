@@ -23,7 +23,10 @@ const avatars = [
   avatar3,
   avatar4,
 ]
+
+const switch2 = ref('Show')
 </script>
+
 
 <template>
   <VDialog
@@ -43,10 +46,18 @@ const avatars = [
               <VIcon>mdi-close</VIcon>
             </VBtn>
           </VCol>
-          <VCol cols="10">
+          <VCol cols="8">
             <VCol style=" font-size: 20px; font-weight: bold;text-align: center;">
               게시글 수정
             </VCol>
+          </VCol>
+          <VCol cols="2">
+            <VSwitch
+              v-model="switch2"
+              :label="switch2.toString()"
+              true-value="Show"
+              false-value="Hide"
+            />
           </VCol>
           <VCol>
             <VBtn>
@@ -150,6 +161,8 @@ const avatars = [
     </VCol>
   </VDialog>
 </template>
+
+
 
 <style scoped>
 .pointer-cursor {
