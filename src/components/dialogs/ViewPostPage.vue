@@ -10,6 +10,10 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  postToEdit: {
+    type: Object,
+    default: () => ({}),
+  },
 })
 
 const emit = defineEmits(['update:isDialogVisible'])
@@ -45,7 +49,23 @@ const avatars = [
 
       <VCard>
         <VRow>
-          <VImg :src="backgroundimg" />
+          <VCol cols="6">
+            <VCarousel
+              v-if="postToEdit.files && postToEdit.files.length"
+              show-arrows-on-hover
+            >
+              <VCarouselItem
+                v-for="(img, index) in postToEdit.files"
+                :key="index"
+              >
+                <VImg :src="img" />
+              </VCarouselItem>
+            </VCarousel>
+            <VImg
+              v-else
+              :src="backgroundimg"
+            />
+          </VCol>
           <VCol cols="6">
             <VRow>
               <VCol>
@@ -65,14 +85,11 @@ const avatars = [
                         style="margin-left: -5%;"
                         @click="userProfileModal=true"
                       >
-                        유저 닉네임 뿌려주기
+                        {{ postToEdit.id }}  <!-- 유저 닉네임 뿌려주기 -->
                       </VCardSubtitle>
                     </VCol>
                   </VCol>
                   <VSpacer />
-                  <VCol cols="2">
-                    <MoreBtn />
-                  </VCol>
                 </VRow>
               </VCol>
             </VRow>
@@ -91,10 +108,8 @@ const avatars = [
                 cols="10"
                 style="height: 400px; margin-left: 10px;"
               >
-                여기는 글씨 크기만큼 뿌려주는 공간이 될 거 같음 아아아아아 이렇게 말이죠 엔터나 그런것도 처리해서 
-                <br> 이렇게 처리를 해야할 거 같네요
-                <br> 여기도 해시태그 받아와서 뿌려야 줘야! 합니다! 
-                <br>#해시태그 #뿌려주세요
+                {{ postToEdit.content }}
+                <br>{{ postToEdit.hashTag }}
               </VCol>
             </VRow>
             <VCol>
