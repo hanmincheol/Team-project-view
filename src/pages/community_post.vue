@@ -1,4 +1,5 @@
 <script setup>
+import InviteFriendConfirmModal from '@/pages/community/InviteFriendConfirmModal.vue'
 import Category from '@/pages/views/demos/forms/form-elements/select/category.vue'
 import axios from '@axios'
 import { size } from '@floating-ui/dom'
@@ -17,6 +18,9 @@ const writingModal = ref(false)
 const editingModal = ref(false)
 const borderColor = ref('#ccc')
 const viewPostPageModal = ref(false)
+
+const isInvited = {}
+const isSubscribed = {}
 let q = ref('')
 
 const state = reactive({
@@ -63,62 +67,60 @@ const membersList = [
     email: 'jerrod98@gmail.com',
     permission: 'Can Edit',
 
-    isInvited: false, //초대하기를 눌렀는지 여부를 체크하는 변수
   },
   {
     avatar: avatar2,
     name: 'Mattie Blair',
     email: 'prudence.boehm@yahoo.com',
     permission: 'Owner',
-    isInvited: false, 
   },
   {
     avatar: avatar3,
     name: 'Marvin Wheeler',
     email: 'rumet@jujpejah.net',
     permission: 'Can Comment',
-    isInvited: false, 
   },
   {
     avatar: avatar4,
     name: 'Nannie Ford',
     email: 'negza@nuv.io',
     permission: 'Can View',
-    isInvited: false, 
   },
   {
     avatar: avatar5,
     name: 'Julian Murphy',
     email: 'lunebame@umdomgu.net',
     permission: 'Can Edit',
-    isInvited: false, 
   },
   {
     avatar: avatar6,
     name: 'Sophie Gilbert',
     email: 'ha@sugit.gov',
     permission: 'Can View',
-    isInvited: false, 
   },
   {
     avatar: avatar7,
     name: 'Chris Watkins',
     email: 'zokap@mak.org',
     permission: 'Can Comment',
-    isInvited: false, 
   },
   {
     avatar: avatar8,
     name: 'Adelaide Nichols',
     email: 'ujinomu@jigo.com',
     permission: 'Can Edit',
-    isInvited: false, 
   },
 ]
 
+for(const id in membersList){
+  isInvited[membersList[id]['name']] = ref(false) //📌값을 직접 받아야 함
+  isSubscribed[membersList[id]['name']] = ref(false) //📌값을 직접 받아야 함
+}
+console.log('isInvited: ', isInvited)
 
 //스크롤 이벤트 리스터 추가 - 화면 하단에 스크롤 도착 시 loadMore()함수 호출
 const scrollTimeout = ref(null)
+
 
 const handleScroll = () => {
   if(scrollTimeout.value !== null) 
@@ -162,6 +164,25 @@ const loadMore = () => {
 
   items.value = items.value.concat(moreItems)
   console.log("leadMore..")
+}
+
+const modalControll = ref(false)
+
+const controllInviteFunc = (ans, id) => {
+  console.log('이벤트 발생')
+  console.log(ans, id)
+  isInvited[id] = ref(ans)
+}
+const username = ref('')
+const requestFriend = (temp) => {
+  modalControll.value = !modalControll.value
+  console.log(temp)
+  username.value = temp
+}
+
+const subscribe = name => {
+  isSubscribed[name].value = !isSubscribed[name].value
+
 }
 </script>
 
@@ -358,20 +379,41 @@ const loadMore = () => {
             <!-- 친구 추가 버튼 -->
             <template #append>
               <VBtn
+                v-show="!isInvited[member.name].value"
                 id="myButton"
                 width="40"
-                @click="isInvitedUpdate"
+                @click="requestFriend(member.name)"
               >
-                친구요청
+              친구요청
+              </VBtn>
+              <InviteFriendConfirmModal @check-confirm="controllInviteFunc" :message='username' v-model:isDialogVisible="modalControll"/>
+              <VBtn
+                v-show="isInvited[member.name].value"
+                width="40"
+                :disabled="true"
+              >
+              요청완료
               </VBtn>
               <!-- 구독 버튼 -->
               <VBtn
+                v-show="!isSubscribed[member.name].value"
                 id="myButton"
                 width="40"
                 style="margin-left: 5px;"
-                @click="isInvitedUpdate"
+                :variant="'outlined'"
+                @click="subscribe(member.name)"
               >
                 구독
+              </VBtn>
+              <VBtn
+                v-show="isSubscribed[member.name].value"
+                id="myButton"
+                style="margin-left: 5px;"
+                :variant="'tonal'"
+                @click="subscribe(member.name)"
+              >
+                <VIcon icon="mdi-bell"/>
+                구독중
               </VBtn>
             </template>
           </VListItem>
