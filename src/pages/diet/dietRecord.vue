@@ -1,8 +1,7 @@
 <script setup>
-
-//영양소 분석 모달창
 import NutrientAnalysis from '@/components/dialogs/NutrientAnalysis.vue'
 
+//영양소 분석 모달창
 const isSubmitDisabled = ref(true) //submit버튼 활성화 컨트롤 변수
 
 //이미지 파일 업로드 시 업로드한 이미지가 미리 보이도록 하는 함수

@@ -365,7 +365,9 @@ const loadMore = () => {
                       </VCol>
                       <VCarousel
                         v-if="item.files && item.files.length"
+                        class="transparent-carousel"
                         show-arrows-on-hover
+                        color="success"
                       >
                         <VCarouselItem
                           v-for="(image, i) in item.files" 
@@ -479,5 +481,9 @@ const loadMore = () => {
   .v-field__outline {
     display: none;
   }
+}
+
+.transparent-carousel .v-carousel__controls {
+  background-color: transparent;
 }
 </style>
