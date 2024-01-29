@@ -4,6 +4,7 @@ import Gender from '@/pages/views/demos/forms/form-elements/radio/Gender.vue'
 import Edit from '@/pages/views/demos/forms/form-elements/textarea/Edit.vue'
 import PW from '@/pages/views/demos/forms/form-elements/textfield/PasswordEdit.vue'
 import Sub from '@/views/demos/DemoSelectCustomTextAndValue.vue'
+
 const editClick1 = ref(true)
 const edit1 = ref(false)
 const editClick2 = ref(true)
@@ -15,6 +16,7 @@ const edit4 = ref(false)
 const editClick5 = ref(true)
 const edit5 = ref(false)
 </script>
+
 <template>
   <VCard class="fill-height">
     <VCardText>
@@ -227,80 +229,80 @@ const edit5 = ref(false)
 </template>
 
 <!--
-<script setup>
+  <script setup>
 
-const props = defineProps({
+  const props = defineProps({
   value : {
-    type : String,
-    required: true
+  type : String,
+  required: true
   },
-})
+  })
 
-const show1 = ref(false)
-const password = ref(props.value)
+  const show1 = ref(false)
+  const password = ref(props.value)
 
-const rules = {
+  const rules = {
   required: value => !!value || '입력하세요.',
   min: v => v.length >= 8 || '8자리 이상',
-}
+  }
 
-watch(() => props.value, (newValue) => {
+  watch(() => props.value, (newValue) => {
   password.value
-})
-</script>
+  })
+  </script>
 
-<template>
+  <template>
   <VRow>
-    <VCol
-      cols="12"
-      sm="12"
-    >
-      <VTextField
-        v-model="password"
-        :append-inner-icon="show1 ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
-        :rules="[rules.required, rules.min]"
-        :type="show1 ? 'text' : 'password'"
-        name="input-10-1"
-        label="비밀번호"
-        hint="8자리 이상"
-        counter
-        @click:append-inner="show1 = !show1"
-        :value= props.value
-      />
-    </VCol>
+  <VCol
+  cols="12"
+  sm="12"
+  >
+  <VTextField
+  v-model="password"
+  :append-inner-icon="show1 ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+  :rules="[rules.required, rules.min]"
+  :type="show1 ? 'text' : 'password'"
+  name="input-10-1"
+  label="비밀번호"
+  hint="8자리 이상"
+  counter
+  @click:append-inner="show1 = !show1"
+  :value= props.value
+  />
+  </VCol>
   </VRow>
-</template>
+  </template>
 
 -->
 
 <!-- 
-<script setup>
-import { ref } from 'vue'
+  <script setup>
+  import { ref } from 'vue'
 
-const selectedRadio = ref('')
+  const selectedRadio = ref('')
 
-const colorsRadio = [
+  const colorsRadio = [
   { value: 'Info', gender: '남자' },
   { value: 'Warning', gender: '여자' },
-]
-</script>
+  ]
+  </script>
 
-<template>
+  <template>
   <VRadioGroup
-    v-model="selectedRadio"
-    inline
+  v-model="selectedRadio"
+  inline
   >
-    <div>
-      <VRadio
-        v-for="radio in colorsRadio"
-        :key="radio.value"
-        v-model="selectedRadio"
-        :label="radio.gender"
-        :color="radio.value.toLocaleLowerCase()"
-        :value="radio.value.toLocaleLowerCase()"
-      />
-    </div>
+  <div>
+  <VRadio
+  v-for="radio in colorsRadio"
+  :key="radio.value"
+  v-model="selectedRadio"
+  :label="radio.gender"
+  :color="radio.value.toLocaleLowerCase()"
+  :value="radio.value.toLocaleLowerCase()"
+  />
+  </div>
   </VRadioGroup>
-</template>
+  </template>
 
 --> 

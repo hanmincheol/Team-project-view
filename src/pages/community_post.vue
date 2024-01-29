@@ -1,4 +1,5 @@
 <script setup>
+import InviteFriendConfirmModal from '@/pages/community/InviteFriendConfirmModal.vue'
 import Category from '@/pages/views/demos/forms/form-elements/select/category.vue'
 import axios from '@axios'
 import { size } from '@floating-ui/dom'
@@ -18,12 +19,19 @@ const editingModal = ref(false)
 const borderColor = ref('#ccc')
 const viewPostPageModal = ref(false)
 let postToEdit = ref("")
+
+const isInvited = {}
+const isSubscribed = {}
+
 let q = ref('')
+const users = ref([])
+const usersView = ref([])
 
 const state = reactive({
   items: [],
   avatar1: '', // avatar1에 대한 초기값을 설정해주세요.
 })
+
 
 //검색기능
 const filteredItems = computed(() => {
@@ -34,28 +42,92 @@ const filteredItems = computed(() => {
   return items.value
 })
 
+
+
 // axios를 사용하여 데이터를 받는 함수
 const getData = async function() {
-
+  
   try {
     const response = await axios.get('http://localhost:4000/bbs/List.do', {
       headers: {
         'Content-Type': 'application/json',
       },
     })
-
+    
+    
     // 응답 처리
     if (response.status === 200) {
       console.log('데이터 받기 성공')
       state.items = response.data // 데이터 저장
-      console.log(state.items[0])
+
+      const tempUserKeys = []
+      for(var i=0; i<state.items.length; i++){
+        tempUserKeys[i] = state.items[i].id
+      }
+
+      const tempUserKeysSet = new Set(tempUserKeys) //중복 아이디 제거
+
+      const temp = [...tempUserKeysSet] //ids
+
+      /*
+      temp의 앞에 현재 서비스를 이용 중인 유저의 아이디가 들어가야 함.
+      뿌려주는 게시글 작성자들의 목록을 불러옴.
+      */
+      temp.unshift('OSH')
+      console.log(temp)
+      axios.post("http://localhost:4000/bbs/userProfile", JSON.stringify({
+        ids: temp,
+      }), { headers: { 'Content-Type': 'application/json' } })
+        .then(resp=>{
+          console.log('요청받은 값:', resp.data)
+          users.value = resp.data
+          console.log(users.value)
+          users.value.forEach(ele=>{
+            if(ele.isFriend != 0 || ele.isSubTo != 0) {
+              console.log(ele)
+              console.log(typeof usersView.value)
+              usersView.value.push(ele)
+            }
+            console.log(usersView.value)
+            
+            console.log(usersView)
+            for(const id in usersView){
+              console.log(usersView[id])
+              if(usersView[id]['isFriend']==0) {
+                isInvited[usersView[id]['id']] = ref(false)
+              }
+              else if(usersView[id]['isFriend']!=0) {
+                isInvited[usersView[id]['id']] = ref(true)
+              }
+              if(usersView[id]['isSubTo']==0) {
+                isSubscribed[usersView[id]['id']] = ref(true)
+              }
+              else if(usersView[id]['isSubTo']!=0) {
+                isSubscribed[usersView[id]['id']] = ref(false)
+              }
+              console.log(isInvited)
+            }
+
+          })
+        })
+        .catch(err=>console.log(err))
+
+      console.log(state.items[1].files)
+      console.log('데이터 체크',response.data);
     } else {
       console.log('데이터 전송 실패')
     }
   } catch (error) {
     console.error(`데이터 전송 실패: ${error}`)
   }
+
 }
+//////////////////////////////////////
+/* 댓글 */
+let group = ref([]);
+const statecomm = ref({
+  comment:[]
+})
 
 //삭제코드
 const deleteItem = async bno => {
@@ -94,6 +166,66 @@ const submitEdit = async bno => {
 }
 
 
+const getComment = async function() {
+
+  try {
+    const response = await axios.get('http://localhost:4000/commentline/View.do', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    // 응답 처리
+    if (response.status === 200) {
+      console.log('댓글 성공')
+      console.log('데이터 체크',response.data);
+
+      // // BBS_NO 값을 기준으로 데이터 묶기
+      // const groupedData = response.data.reduce((acc, curr) => {
+      //   const bbsNo = curr.BBS_NO;
+      //   if (acc[bbsNo]) {
+      //     acc[bbsNo].push(curr);
+      //   } else {
+      //     acc[bbsNo] = [curr];
+      //   }
+      //   return acc;
+      // }, {});
+
+      // BBS_NO 값을 기준으로 데이터 묶기
+      const groupedData = response.data.reduce((acc, curr) => {
+        const bbsNo = curr.BBS_NO;
+        if (acc[bbsNo]) {
+          // parent_comment가 null인 값들 중에서 C_NO가 가장 큰 댓글만 선택
+          if (curr.parent_comment === null) {
+            const existingComment = acc[bbsNo].find(comment => comment.parent_comment === null);
+            if (existingComment) {
+              if (curr.C_NO > existingComment.C_NO) {
+                acc[bbsNo] = [curr];
+              }
+            } else {
+              acc[bbsNo].push(curr);
+            }
+          }
+        } else {
+          acc[bbsNo] = [curr];
+        }
+        return acc;
+      }, {});
+
+      statecomm.comment = toRaw(groupedData);
+      console.log('그룹 체크',statecomm.comment);
+      group.value = toRaw(statecomm.comment);
+      console.log(group.value[45]);
+    } else {
+      console.log('데이터 전송 실패')
+    }
+  } catch (error) {
+    console.error(`데이터 전송 실패: ${error}`)
+  }
+}
+
+//////////////////////////////////////
+
 const membersList = [
   {
     avatar: avatar1,
@@ -101,66 +233,60 @@ const membersList = [
     email: 'jerrod98@gmail.com',
     permission: 'Can Edit',
 
-    isInvited: false, //초대하기를 눌렀는지 여부를 체크하는 변수
   },
   {
     avatar: avatar2,
     name: 'Mattie Blair',
     email: 'prudence.boehm@yahoo.com',
     permission: 'Owner',
-    isInvited: false, 
   },
   {
     avatar: avatar3,
     name: 'Marvin Wheeler',
     email: 'rumet@jujpejah.net',
     permission: 'Can Comment',
-    isInvited: false, 
   },
   {
     avatar: avatar4,
     name: 'Nannie Ford',
     email: 'negza@nuv.io',
     permission: 'Can View',
-    isInvited: false, 
   },
   {
     avatar: avatar5,
     name: 'Julian Murphy',
     email: 'lunebame@umdomgu.net',
     permission: 'Can Edit',
-    isInvited: false, 
   },
   {
     avatar: avatar6,
     name: 'Sophie Gilbert',
     email: 'ha@sugit.gov',
     permission: 'Can View',
-    isInvited: false, 
   },
   {
     avatar: avatar7,
     name: 'Chris Watkins',
     email: 'zokap@mak.org',
     permission: 'Can Comment',
-    isInvited: false, 
   },
   {
     avatar: avatar8,
     name: 'Adelaide Nichols',
     email: 'ujinomu@jigo.com',
     permission: 'Can Edit',
-    isInvited: false, 
   },
 ]
-
 
 //스크롤 이벤트 리스터 추가 - 화면 하단에 스크롤 도착 시 loadMore()함수 호출
 const scrollTimeout = ref(null)
 
+
 const handleScroll = () => {
   if(scrollTimeout.value !== null) 
     clearTimeout(scrollTimeout.value)  
+
+  
 
   scrollTimeout.value = setTimeout(function() {
     // 스크롤이 페이지 하단에서 100px 이내로 가까워졌을 때 loadMore 함수 호출
@@ -172,7 +298,8 @@ const handleScroll = () => {
 
 //이벤트 리스터 추가 
 onMounted(() => {
-  getData() // 컴포넌트가 마운트될 때 getData 함수 실행
+  getData(), // 컴포넌트가 마운트될 때 getData 함수 실행
+  getComment()
 
   // 그 후 매 5초마다 getData 함수를 반복해서 실행
   //setInterval(getData, 5000)
@@ -180,7 +307,7 @@ onMounted(() => {
   window.addEventListener('scroll', handleScroll)
 })
 
-//이벤트 리스너 제거
+// 이벤트 리스너 제거
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
 })
@@ -198,8 +325,29 @@ const loadMore = () => {
   
   //items 배열에 moreItems 배열 추가해서 화면에 표시되는 게시글 추가
 
-  items.value = items.value.concat(moreItems)
-  console.log("leadMore..")
+  items.value = items.value.concat(moreItems);
+  console.log("leadMore..");
+}
+
+const modalControll = ref(false)
+
+const controllInviteFunc = (ans, id) => {
+  console.log('이벤트 발생')
+  console.log(ans, id)
+  isInvited[id] = ref(ans)
+}
+
+const username = ref('')
+
+const requestFriend = temp => {
+  modalControll.value = !modalControll.value
+  console.log(temp)
+  username.value = temp
+}
+
+const subscribe = name => {
+  isSubscribed[name].value = !isSubscribed[name].value
+
 }
 </script>
 
@@ -219,8 +367,8 @@ const loadMore = () => {
               style=" overflow: hidden;max-height: 90px;"
             >
               <VCol
-                v-for="member in membersList"
-                :key="member.name"
+                v-for="user in users"
+                :key="user.id"
                 cols="auto"
                 class="ma-2"
               >
@@ -228,7 +376,7 @@ const loadMore = () => {
                   <VListItemContent class="d-flex flex-column align-center text-center">
                     <VAvatar 
                       class="text-sm pointer-cursor"
-                      :image="member.avatar" 
+                      :image="user.profilePath" 
                       @click="userProfileModal=true"
                     />
 
@@ -237,7 +385,7 @@ const loadMore = () => {
                       @click="userProfileModal=true"
                       @mouseover="size"  
                     >
-                      {{ member.name }}
+                      {{ user.id }}
                     </VListItemTitle>
                   </VListItemContent>
                 </VListItem>
@@ -437,6 +585,9 @@ const loadMore = () => {
                           color="success"
                         />
                       </VCol>
+                      <VCol v-if="group[item.bno]?.[0]">
+                        <VTextField readonly :value="group[item.bno][0].CCOMMENT" />
+                      </VCol>
                     </VCard>
                   </VCol> 
                 </VCol>
@@ -465,13 +616,13 @@ const loadMore = () => {
         <VCol class="card-list mt-12 mt-sm- pa-0">
           <!-- 친구 리스트 공간 -->
           <VListItem
-            v-for="member in membersList"
-            :key="member.name"
+            v-for="member in usersView"
+            :key="member.id"
           >
             <template #prepend>
               <VAvatar 
                 class="text-sm pointer-cursor"
-                :image="member.avatar" 
+                :image="member.profilePath" 
                 @click="userProfileModal=true"
               />
             </template>
@@ -481,25 +632,50 @@ const loadMore = () => {
               @click="userProfileModal=true"
               @mouseover="size"  
             >
-              {{ member.name }}
+              {{ member.id }}
             </VListItemTitle>
             <!-- 친구 추가 버튼 -->
             <template #append>
               <VBtn
+                v-show="!isInvited[member.name].value"
                 id="myButton"
                 width="40"
-                @click="isInvitedUpdate"
+                @click="requestFriend(member.name)"
               >
                 친구요청
               </VBtn>
+              <InviteFriendConfirmModal
+                v-model:isDialogVisible="modalControll"
+                :message="username"
+                @check-confirm="controllInviteFunc"
+              />
+              <VBtn
+                v-show="isInvited[member.name].value"
+                width="40"
+                disabled="true"
+              >
+                신청완료
+              </VBtn>
               <!-- 구독 버튼 -->
               <VBtn
+                v-show="!isSubscribed[member.name].value"
                 id="myButton"
                 width="40"
                 style="margin-left: 5px;"
-                @click="isInvitedUpdate"
+                variant="outlined"
+                @click="subscribe(member.name)"
               >
                 구독
+              </VBtn>
+              <VBtn
+                v-show="isSubscribed[member.name].value"
+                id="myButton"
+                style="margin-left: 5px;"
+                variant="tonal"
+                @click="subscribe(member.name)"
+              >
+                <VIcon icon="mdi-bell" />
+                구독중
               </VBtn>
             </template>
           </VListItem>

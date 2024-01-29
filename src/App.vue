@@ -1,8 +1,10 @@
 <script setup>
-import { useTheme } from 'vuetify'
 import ScrollToTop from '@core/components/ScrollToTop.vue'
 import { useThemeConfig } from '@core/composable/useThemeConfig'
 import { hexToRgb } from '@layouts/utils'
+import { watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { useTheme } from 'vuetify'
 
 const {
   syncInitialLoaderTheme,

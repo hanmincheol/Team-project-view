@@ -82,6 +82,20 @@
         />
         <!-- @refresh-child-road="createRoadView" -->
         <!-- 지도 검색창 -->
+        <div :style="{'display':'flex','justify-content':'center','margin-top':'10px'}">
+          <VTabs
+            next-icon="mdi-arrow-right"
+            prev-icon="mdi-arrow-left"
+          >
+            <VTab
+              v-for="i in 3"
+              :key="i"
+              @click="whatBtnClick"
+            >
+              {{ tabs[i] }}
+            </VTab>
+          </VTabs>
+        </div>
         <div
           v-show="isSearchShow"
           id="menu-wrap"
