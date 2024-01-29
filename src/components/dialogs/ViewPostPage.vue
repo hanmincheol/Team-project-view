@@ -48,9 +48,8 @@ const avatars = [
           /> 
         -->
 
-      <VCard>
-        <VRow>
-          <VCol cols="6">
+        <VCard>
+          <VRow>
             <VCarousel
               v-if="postToEdit.files && postToEdit.files.length"
               show-arrows-on-hover
@@ -66,86 +65,62 @@ const avatars = [
               v-else
               :src="backgroundimg"
             />
-          </VCol>
-          <VCol cols="6">
-            <VRow>
-              <VCol>
-                <VRow style="margin-top: 1%;">
-                  <VCol cols="1">
-                    <!-- image도 대표사진 받아와서 뿌려야합니다 -->
-                    <VAvatar 
-                      class="text-sm pointer-cursor"
-                      :image="avatar1" 
-                      @click="userProfileModal=true"
-                    />
-                  </VCol>
-                  <VCol cols="">
-                    <VCol cols="12">
-                      <VCardSubtitle
+            <VCol cols="6">
+              <VRow>
+                <VCol>
+                  <VRow style="margin-top: 1%;">
+                    <VCol cols="1">
+                      <!-- image도 대표사진 받아와서 뿌려야합니다 -->
+                      <VAvatar 
                         class="text-sm pointer-cursor"
                         :image="avatar1" 
                         @click="userProfileModal=true"
-                      >
-                        {{ postToEdit.id }}  <!-- 유저 닉네임 뿌려주기 -->
-                      </VCardSubtitle>
+                      />
                     </VCol>
-                  </VCol>
-                  <VSpacer />
-                </VRow>
-              </VCol>
-            </VRow>
-            <!-- 여기는 if문으로 데이터 있는 만큼 가져와야 하는 부분이고요 -->
-            <!-- 많아지면 여기도 무한스크롤을 적용해야 할 겁니다~ 근데 여긴 윈도우 창이 아니라 어떤 -->
-            <!-- 많아지면 여기도 무한스크롤을 적용해야 할 겁니다~ 근데 여긴 윈도우 창이 아니라 어떤 이벤트를 걸어야할지 감도 안오네요 -->
-            <VRow>
-              <VCol cols="1">
-                <VAvatar 
-                  class="text-sm pointer-cursor"
-                  :image="avatar1"
-                  @click="userProfileModal=true"
+                    <VCol cols="">
+                      <VCol cols="12">
+                        <VCardSubtitle
+                          class="text-sm pointer-cursor"
+                          :image="avatar1" 
+                          @click="userProfileModal=true"
+                        >
+                          {{ postToEdit.id }}  <!-- 유저 닉네임 뿌려주기 -->
+                        </VCardSubtitle>
+                      </VCol>
+                    </VCol>
+                    <VSpacer />
+                  </VRow>
+                </VCol>
+              </VRow>
+              <!-- 여기는 if문으로 데이터 있는 만큼 가져와야 하는 부분이고요 -->
+              <!-- 많아지면 여기도 무한스크롤을 적용해야 할 겁니다~ 근데 여긴 윈도우 창이 아니라 어떤 -->
+              <!-- 많아지면 여기도 무한스크롤을 적용해야 할 겁니다~ 근데 여긴 윈도우 창이 아니라 어떤 이벤트를 걸어야할지 감도 안오네요 -->
+              <VRow>
+                <VCol cols="1">
+                  <VAvatar 
+                    class="text-sm pointer-cursor"
+                    :image="avatar1"
+                    @click="userProfileModal=true"
+                  />
+                </VCol>
+                <VCol
+                  cols="10"
+                  style="height: 400px; margin-left: 10px;"
+                >
+                  {{ postToEdit.content }}
+                  <br>{{ postToEdit.hashTag }}
+                </VCol>
+              </VRow>
+              <VCol>
+                <VBtn
+                  icon="mdi-heart-outline"
+                  variant="text"
+                  color="success"
                 />
-              </VCol>
-              <VCol
-                cols="10"
-                style="height: 400px; margin-left: 10px;"
-              >
-                {{ postToEdit.content }}
-                <br>{{ postToEdit.hashTag }}
-              </VCol>
-            </VRow>
-            <VCol>
-              <VBtn
-                icon="mdi-heart-outline"
-                variant="text"
-                color="success"
-              />
-              <VBtn
-                icon="mdi-chat-outline"
-                variant="text"
-                color="success"
-              />
-              <VBtn
-                icon="mdi-send"
-                variant="text"
-                color="success"
-              />
-              <VBtn
-                icon="mdi-bookmark-outline"
-                variant="text"
-                color="success"
-              />
-            </VCol>
-            <VRow>
-              <VCol
-                cols="2"
-                class="v-avatar-group"
-                style="margin-left: 2%;"
-              >
-                <VAvatar
-                  v-for="(avatar, index) in avatars"
-                  :key="index"
-                  :image="avatar"
-                  size="30"
+                <VBtn
+                  icon="mdi-chat-outline"
+                  variant="text"
+                  color="success"
                 />
                 <VBtn
                   icon="mdi-send"
@@ -170,33 +145,57 @@ const avatars = [
                     :image="avatar"
                     size="30"
                   />
-                </VCol>
-                <VCol class="font-weight-medium">
-                  멋쟁이 승녕님 외 18명이 좋아합니다
-                </VCol>
-              </VRow>
-              <VRow style="margin-bottom: 5px;">
-                <VCol cols="1">
                   <VBtn
-                    icon="mdi-emoticon"
+                    icon="mdi-send"
                     variant="text"
-                    size="x-large"
+                    color="success"
+                  />
+                  <VBtn
+                    icon="mdi-bookmark-outline"
+                    variant="text"
+                    color="success"
+                  />
+                </VCol>
+                <VRow>
+                  <VCol
+                    cols="2"
+                    class="v-avatar-group"
                     style="margin-left: 2%;"
-                  />
-                </VCol>
-                <VCol cols="8">
-                  <VTextarea 
-                    label="댓글달기" 
-                    rows="1"
-                    style="height: 20px; border: none;"
-                  />
-                </VCol>
-                <VCol cols="1">
-                  <VBtn size="large">
-                    게시
-                  </VBtn>
-                </VCol>
-              </VRow>
+                  >
+                    <VAvatar
+                      v-for="(avatar, index) in avatars"
+                      :key="index"
+                      :image="avatar"
+                      size="30"
+                    />
+                  </VCol>
+                  <VCol class="font-weight-medium">
+                    멋쟁이 승녕님 외 18명이 좋아합니다
+                  </VCol>
+                </VRow>
+                <VRow style="margin-bottom: 5px;">
+                  <VCol cols="1">
+                    <VBtn
+                      icon="mdi-emoticon"
+                      variant="text"
+                      size="x-large"
+                      style="margin-left: 2%;"
+                    />
+                  </VCol>
+                  <VCol cols="8">
+                    <VTextarea 
+                      label="댓글달기" 
+                      rows="1"
+                      style="height: 20px; border: none;"
+                    />
+                  </VCol>
+                  <VCol cols="1">
+                    <VBtn size="large">
+                      게시
+                    </VBtn>
+                  </VCol>
+                </VRow>
+              </vrow>
             </VCol>
           </VRow>
         </VCard>
