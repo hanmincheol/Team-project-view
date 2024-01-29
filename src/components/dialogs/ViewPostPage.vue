@@ -27,25 +27,26 @@ const avatars = [
 </script>
 
 <template>
-  <VDialog
-    :width="$vuetify.display.smAndDown ? 'auto' : 1100"
-    :model-value="props.isDialogVisible"
-    @update:model-value="dialogVisibleUpdate"
-  >
-    <!-- 닫기 버튼 -->
-    <VBtn
-      icon
-      @click="$emit('update:isDialogVisible', false)"
+  <section>
+    <VDialog
+      :width="$vuetify.display.smAndDown ? 'auto' : 1100"
+      :model-value="props.isDialogVisible"
+      @update:model-value="dialogVisibleUpdate"
     >
-      <VIcon>mdi-close</VIcon>
-    </VBtn>
-    <VCol cols="12">
-      <!--
-        <VImg
-        :src="bg"
-        style=" filter: contrast(200%);opacity: 0.5;"
-        /> 
-      -->
+      <!-- 닫기 버튼 -->
+      <VBtn
+        icon
+        @click="$emit('update:isDialogVisible', false)"
+      >
+        <VIcon>mdi-close</VIcon>
+      </VBtn>
+      <VCol cols="12">
+        <!--
+          <VImg
+          :src="bg"
+          style=" filter: contrast(200%);opacity: 0.5;"
+          /> 
+        -->
 
       <VCard>
         <VRow>
@@ -82,7 +83,7 @@ const avatars = [
                     <VCol cols="12">
                       <VCardSubtitle
                         class="text-sm pointer-cursor"
-                        style="margin-left: -5%;"
+                        :image="avatar1" 
                         @click="userProfileModal=true"
                       >
                         {{ postToEdit.id }}  <!-- 유저 닉네임 뿌려주기 -->
@@ -146,38 +147,62 @@ const avatars = [
                   :image="avatar"
                   size="30"
                 />
-              </VCol>
-              <VCol class="font-weight-medium">
-                멋쟁이 승녕님 외 18명이 좋아합니다
-              </VCol>
-            </VRow>
-            <VRow style="margin-bottom: 5px;">
-              <VCol cols="1">
                 <VBtn
-                  icon="mdi-emoticon"
+                  icon="mdi-send"
                   variant="text"
-                  size="x-large"
+                  color="success"
+                />
+                <VBtn
+                  icon="mdi-bookmark-outline"
+                  variant="text"
+                  color="success"
+                />
+              </VCol>
+              <VRow>
+                <VCol
+                  cols="2"
+                  class="v-avatar-group"
                   style="margin-left: 2%;"
-                />
-              </VCol>
-              <VCol cols="8">
-                <VTextarea 
-                  label="댓글달기" 
-                  rows="1"
-                  style="height: 20px; border: none;"
-                />
-              </VCol>
-              <VCol cols="1">
-                <VBtn size="large">
-                  게시
-                </VBtn>
-              </VCol>
-            </VRow>
-          </VCol>
-        </VRow>
-      </VCard>
-    </VCol>
-  </VDialog>
+                >
+                  <VAvatar
+                    v-for="(avatar, index) in avatars"
+                    :key="index"
+                    :image="avatar"
+                    size="30"
+                  />
+                </VCol>
+                <VCol class="font-weight-medium">
+                  멋쟁이 승녕님 외 18명이 좋아합니다
+                </VCol>
+              </VRow>
+              <VRow style="margin-bottom: 5px;">
+                <VCol cols="1">
+                  <VBtn
+                    icon="mdi-emoticon"
+                    variant="text"
+                    size="x-large"
+                    style="margin-left: 2%;"
+                  />
+                </VCol>
+                <VCol cols="8">
+                  <VTextarea 
+                    label="댓글달기" 
+                    rows="1"
+                    style="height: 20px; border: none;"
+                  />
+                </VCol>
+                <VCol cols="1">
+                  <VBtn size="large">
+                    게시
+                  </VBtn>
+                </VCol>
+              </VRow>
+            </VCol>
+          </VRow>
+        </VCard>
+      </VCol>
+    </VDialog>
+  </section>
 </template>
 
 <style scoped>
