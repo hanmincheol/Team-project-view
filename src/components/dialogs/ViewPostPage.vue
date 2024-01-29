@@ -10,6 +10,10 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  postToEdit: {
+    type: Object,
+    default: () => ({}),
+  },
 })
 
 const emit = defineEmits(['update:isDialogVisible'])
@@ -44,70 +48,104 @@ const avatars = [
           /> 
         -->
 
-        <VCard>
-          <VRow>
-            <VImg :src="backgroundimg" />
-            <VCol cols="6">
-              <VRow>
-                <VCol>
-                  <VRow style="margin-top: 1%;">
-                    <VCol cols="1">
-                      <!-- image도 대표사진 받아와서 뿌려야합니다 -->
-                      <VAvatar 
+      <VCard>
+        <VRow>
+          <VCol cols="6">
+            <VCarousel
+              v-if="postToEdit.files && postToEdit.files.length"
+              show-arrows-on-hover
+            >
+              <VCarouselItem
+                v-for="(img, index) in postToEdit.files"
+                :key="index"
+              >
+                <VImg :src="img" />
+              </VCarouselItem>
+            </VCarousel>
+            <VImg
+              v-else
+              :src="backgroundimg"
+            />
+          </VCol>
+          <VCol cols="6">
+            <VRow>
+              <VCol>
+                <VRow style="margin-top: 1%;">
+                  <VCol cols="1">
+                    <!-- image도 대표사진 받아와서 뿌려야합니다 -->
+                    <VAvatar 
+                      class="text-sm pointer-cursor"
+                      :image="avatar1" 
+                      @click="userProfileModal=true"
+                    />
+                  </VCol>
+                  <VCol cols="">
+                    <VCol cols="12">
+                      <VCardSubtitle
                         class="text-sm pointer-cursor"
                         :image="avatar1" 
                         @click="userProfileModal=true"
-                      />
+                      >
+                        {{ postToEdit.id }}  <!-- 유저 닉네임 뿌려주기 -->
+                      </VCardSubtitle>
                     </VCol>
-                    <VCol cols="">
-                      <VCol cols="12">
-                        <VCardSubtitle
-                          class="text-sm pointer-cursor"
-                          style="margin-left: -5%;"
-                          @click="userProfileModal=true"
-                        >
-                          유저 닉네임 뿌려주기
-                        </VCardSubtitle>
-                      </VCol>
-                    </VCol>
-                    <VSpacer />
-                    <VCol cols="2">
-                      <MoreBtn />
-                    </VCol>
-                  </VRow>
-                </VCol>
-              </VRow>
-              <!-- 여기는 if문으로 데이터 있는 만큼 가져와야 하는 부분이고요 -->
-              <!-- 많아지면 여기도 무한스크롤을 적용해야 할 겁니다~ 근데 여긴 윈도우 창이 아니라 어떤 -->
-              <!-- 많아지면 여기도 무한스크롤을 적용해야 할 겁니다~ 근데 여긴 윈도우 창이 아니라 어떤 이벤트를 걸어야할지 감도 안오네요 -->
-              <VRow>
-                <VCol cols="1">
-                  <VAvatar 
-                    class="text-sm pointer-cursor"
-                    :image="avatar1"
-                    @click="userProfileModal=true"
-                  />
-                </VCol>
-                <VCol
-                  cols="10"
-                  style="height: 500px; margin-left: 10px;"
-                >
-                  여기는 글씨 크기만큼 뿌려주는 공간이 될 거 같음 아아아아아 이렇게 말이죠 엔터나 그런것도 처리해서 
-                  <br> 이렇게 처리를 해야할 거 같네요
-                  <br> 여기도 해시태그 받아와서 뿌려야 줘야! 합니다! 
-                  <br>#해시태그 #뿌려주세요
-                </VCol>
-              </VRow>
-              <VCol>
-                <VBtn
-                  icon="mdi-heart-outline"
-                  variant="text"
-                  color="success"
+                  </VCol>
+                  <VSpacer />
+                </VRow>
+              </VCol>
+            </VRow>
+            <!-- 여기는 if문으로 데이터 있는 만큼 가져와야 하는 부분이고요 -->
+            <!-- 많아지면 여기도 무한스크롤을 적용해야 할 겁니다~ 근데 여긴 윈도우 창이 아니라 어떤 -->
+            <!-- 많아지면 여기도 무한스크롤을 적용해야 할 겁니다~ 근데 여긴 윈도우 창이 아니라 어떤 이벤트를 걸어야할지 감도 안오네요 -->
+            <VRow>
+              <VCol cols="1">
+                <VAvatar 
+                  class="text-sm pointer-cursor"
+                  :image="avatar1"
+                  @click="userProfileModal=true"
                 />
-                <VBtn
-                  icon="mdi-chat-outline"
-                  variant="text"
-                  color="success"
+              </VCol>
+              <VCol
+                cols="10"
+                style="height: 400px; margin-left: 10px;"
+              >
+                {{ postToEdit.content }}
+                <br>{{ postToEdit.hashTag }}
+              </VCol>
+            </VRow>
+            <VCol>
+              <VBtn
+                icon="mdi-heart-outline"
+                variant="text"
+                color="success"
+              />
+              <VBtn
+                icon="mdi-chat-outline"
+                variant="text"
+                color="success"
+              />
+              <VBtn
+                icon="mdi-send"
+                variant="text"
+                color="success"
+              />
+              <VBtn
+                icon="mdi-bookmark-outline"
+                variant="text"
+                color="success"
+              />
+            </VCol>
+            <VRow>
+              <VCol
+                cols="2"
+                class="v-avatar-group"
+                style="margin-left: 2%;"
+              >
+                <VAvatar
+                  v-for="(avatar, index) in avatars"
+                  :key="index"
+                  :image="avatar"
+                  size="30"
                 />
                 <VBtn
                   icon="mdi-send"
