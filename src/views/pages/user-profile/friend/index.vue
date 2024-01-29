@@ -85,28 +85,6 @@ window.addEventListener('click', ()=>{ //beforeunload
 //watch 함수를 사용하여 router 객체를 감시하고, 변경이 있을 때마다 fetchProjectData 함수를 실행합니다. 
 //immediate: true 옵션을 사용하여 초기 로드 시에도 함수를 실행합니다.
 watch(router, fetchProjectData, { immediate: true })
-
-
-//햄버거를 누를 때 버튼 목록을 표시.
-const moreBtnList = [
-  {
-    title: 'Share connection',
-    value: 'Share connection',
-  },
-  {
-    title: 'Block connection',
-    value: 'Block connection',
-  },
-  {
-    type: 'divider',
-    class: 'my-2',
-  },
-  {
-    title: '삭제',
-    value: 'Delete',
-    class: 'text-error',
-  },
-]
 </script>
 
 <template>
@@ -136,13 +114,6 @@ const moreBtnList = [
       cols="12"
     >
       <VCard>
-        <div class="vertical-more">
-          <MoreBtn
-            item-props
-            :menu-list="moreBtnList"
-          />
-        </div>
-
         <VCardItem>
           <VCardTitle class="d-flex flex-column align-center justify-center">
             <VAvatar

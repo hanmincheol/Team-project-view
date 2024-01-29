@@ -1,8 +1,8 @@
 <script setup>
-import DeletSubConfirmModal from '@/pages/community/DeletSubConfirmModal.vue'
-import { isSubscribesscreenchanged } from '@/router/index'
-import axios from '@axios'
-import { useRoute } from 'vue-router'
+import DeletSubConfirmModal from '@/pages/community/DeletSubConfirmModal.vue';
+import { isSubscribesscreenchanged } from '@/router/index';
+import axios from '@axios';
+import { useRoute } from 'vue-router';
 
 const router = useRoute()
 const subscribeTo = ref([])
@@ -71,26 +71,6 @@ window.addEventListener('click', ()=>{ //beforeunload
 //watch 함수를 사용하여 router 객체를 감시하고, 변경이 있을 때마다 fetchProjectData 함수를 실행합니다. 
 //immediate: true 옵션을 사용하여 초기 로드 시에도 함수를 실행합니다.
 watch(router, fetchProjectData, { immediate: true })
-
-const moreBtnList = [
-  {
-    title: 'Share connection',
-    value: 'Share connection',
-  },
-  {
-    title: 'Block connection',
-    value: 'Block connection',
-  },
-  {
-    type: 'divider',
-    class: 'my-2',
-  },
-  {
-    title: '삭제',
-    value: 'Delete',
-    class: 'text-error',
-  },
-]
 
 const username = ref('')
 const mySubModalController = ref(false)
@@ -224,7 +204,7 @@ const subscribe = temp => { //구독 api 요청 (url 감지)
   <VCardText>
     <h5
       class="text-h5"
-      style="font-weight: bold; margin-top: 100px"
+      style=" margin-top: 100px;font-weight: bold;"
     >
       구독받은 목록
     </h5>
@@ -252,13 +232,6 @@ const subscribe = temp => { //구독 api 요청 (url 감지)
       cols="12"
     >
       <VCard>
-        <div class="vertical-more">
-          <MoreBtn
-            item-props
-            :menu-list="moreBtnList"
-          />
-        </div>
-
         <VCardItem>
           <VCardTitle class="d-flex flex-column align-center justify-center">
             <VAvatar

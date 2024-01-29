@@ -55,12 +55,13 @@ const fetchData = async () => {
 }
 
 const updatedata = (colname, newcolval) =>{
-  const formData = new FormData();
-  console.log(searchuser, colname, newcolval);
-  formData.append('colname', colname);
-  formData.append('id', searchuser);
-  formData.append('newcolval', newcolval);
-  console.log(formData);
+  const formData = new FormData()
+
+  console.log(searchuser, colname, newcolval)
+  formData.append('colname', colname)
+  formData.append('id', searchuser)
+  formData.append('newcolval', newcolval)
+  console.log(formData)
   axios
     .put('http://localhost:4000/member_info/Edit.do', formData, {
       headers: {
@@ -204,54 +205,22 @@ onMounted(fetchData)
 
     <VCol>
       <VRow>
-        <VCol
-          cols="12"
-          md="4"
-        >
-          <div style=" margin: -10px 0 0 20px;">
-            <Gender :value="memberdata.gender"/>
-          </div>
-        </VCol>
-        <VCol
-          cols="12"
-          md="4"
-        >
-          <div style=" margin-top: -20px;">
-            <Edit :readonly="editClick3" :placeholder="memberdata.height" v-model="heightval"/>
-          </div>
-        </VCol>
-        <VCol
-          cols="12"
-          md="4"
-        >
-          <div style=" margin-top: -20px;">
-            <Edit :readonly="editClick4" :placeholder="memberdata.weight" v-model="weightval"/>
-          </div>
-        </VCol>
-      </VRow>
-    </VCardText>
-    <VCardText>
-      <VRow>
-        <VCol
-          cols="12"
-          md="6"
-        >
-          <h6 class="text-h6">
-            전화번호
-            <IconBtn>
+        <VCol cols="6">
+          <VChip label>
+            <strong>전화번호</strong>
+            <IconBtn v-if="!edit5">
               <VIcon
                 size="22"
                 icon="mdi-lead-pencil"
                 @click="editClick5=false, edit5=true"
               />
             </IconBtn>
-
-            <Btnsu
-              v-if="edit5"
-              style="width: 60px; margin-left: 10px;"
-              @click="editClick5=true, edit5=false, updatedata('tel', telval)"
-            />
           </VChip>
+          <Btnsu
+            v-if="edit5"
+            style="width: 60px; margin-left: 10px;"
+            @click="editClick5=true, edit5=false, updatedata('tel', telval)"
+          />
           <Edit
             v-model="telval"
             style="margin-top: 10px;"
@@ -312,7 +281,7 @@ onMounted(fetchData)
             <VChip label>
               <strong>성별</strong>
             </VChip>
-            <Gender :placeholder="memberdata.gender" />
+            <Gender :value="memberdata.gender" />
           </VCard>
         </VCol>
       </VRow>

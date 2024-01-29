@@ -24,7 +24,7 @@ const fetchProjectData = () => { //유저 값 가져오기
   if (router.params.tab === 'mate') {
     axios.get('http://127.0.0.1:4000/comm/mate', {
       params: {
-        id: 'HMC',
+        id: 'OSH',
       },
     })
       .then(response => {
@@ -86,28 +86,6 @@ watch(rating, ()=>{ //호감도 관련 기능
   }
 }, { immediate: true })
 
-
-
-const moreBtnList = [
-  {
-    title: 'Share connection',
-    value: 'Share connection',
-  },
-  {
-    title: 'Block connection',
-    value: 'Block connection',
-  },
-  {
-    type: 'divider',
-    class: 'my-2',
-  },
-  {
-    title: '삭제',
-    value: 'Delete',
-    class: 'text-error',
-  },
-]
-
 window.addEventListener('click', ()=>{ //beforeunload
   if(isMatescreenchanged.value) {
     console.log('메이트 url변경감지', isConnected)
@@ -157,13 +135,6 @@ window.addEventListener('click', ()=>{ //beforeunload
       cols="12"
     >
       <VCard>
-        <div class="vertical-more">
-          <MoreBtn
-            item-props
-            :menu-list="moreBtnList"
-          />
-        </div>
-
         <VCardItem>
           <VCardTitle class="d-flex flex-column align-center justify-center">
             <VAvatar
