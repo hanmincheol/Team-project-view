@@ -381,7 +381,28 @@ const loadMore = () => {
                           />
                         </VCarouselItem>
                       </VCarousel>
-
+                      <VCol>
+                        <VBtn
+                          icon="mdi-heart-outline"
+                          variant="text"
+                          color="success"
+                        />
+                        <VBtn
+                          icon="mdi-chat-outline"
+                          variant="text"
+                          color="success"
+                        />
+                        <VBtn
+                          icon="mdi-send"
+                          variant="text"
+                          color="success"
+                        />
+                        <VBtn
+                          icon="mdi-bookmark-outline"
+                          variant="text"
+                          color="success"
+                        />
+                      </VCol>
                       <VCardItem>
                         <VCardTitle
                           class="pointer-cursor"
