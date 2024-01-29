@@ -10,7 +10,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/login',
+      path: '/',
       redirect: to => {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}') //userData 키로 저장된 값이 null이면 빈 객체 {}로 반환
         const userRole = (userData && userData.role) ? userData.role : null

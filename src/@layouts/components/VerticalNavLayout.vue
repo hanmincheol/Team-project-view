@@ -44,6 +44,8 @@ export default defineComponent({
     const shallShowPageLoading = ref(false)
     
     return () => {
+      const iconButton = h('div', { class: 'icon-button' }, slots.iconBtn?.())
+
       const verticalNavAttrs = toRef(props, 'verticalNavAttrs')
       const { wrapper: verticalNavWrapper, wrapperProps: verticalNavWrapperProps, ...additionalVerticalNavAttrs } = verticalNavAttrs.value
 
@@ -99,6 +101,7 @@ export default defineComponent({
           navbar,
           main,
           footer,
+          iconButton,
         ]),
         layoutOverlay,
       ])
@@ -111,6 +114,21 @@ export default defineComponent({
 @use "@configured-variables" as variables;
 @use "@layouts/styles/placeholders";
 @use "@layouts/styles/mixins";
+
+.icon-button {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #f6f6f6;
+  block-size: 80px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 10%);
+  font-size: 30px;
+  inline-size: 80px;
+  inset-block-end: 10%;
+  inset-inline-end: 10%;
+}
 
 .layout-wrapper.layout-nav-type-vertical {
   // TODO(v2): Check why we need height in vertical nav & min-height in horizontal nav

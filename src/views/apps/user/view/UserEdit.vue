@@ -21,292 +21,283 @@ const edit6 = ref(false)
 const editClick7 = ref(true) //주소
 const edit7 = ref(false)
 
-const nameval = ref('');
-const pwdval = ref('');
-const heightval = ref('');
-const weightval = ref('');
-const telval = ref('');
-const b_dayval = ref('');
-const userAddressval = ref('');
+const nameval = ref('')
+const pwdval = ref('')
+const heightval = ref('')
+const weightval = ref('')
+const telval = ref('')
+const b_dayval = ref('')
+const userAddressval = ref('')
 
 // mh는 Member_History 테이블을 뜻하는 약자
-const memberdata = ref([]);
+const memberdata = ref([])
 const searchuser = 'HMC' //접속중인 유저 아이디값 받아넣기
 
 
 const fetchData = async () => {
   axios
-    .get('http://localhost:4000/member_info/View.do',{
+    .get('http://localhost:4000/member_info/View.do', {
       params: {
         id: searchuser,
       },
     })
-    .then((response) => {
+    .then(response => {
       if (response.status === 200) {
-        memberdata.value = response.data;
+        memberdata.value = response.data
         console.log(memberdata.value)
       } else {
-        console.log('데이터 가져오기 실패');
+        console.log('데이터 가져오기 실패')
       }
     })
-    .catch((error) => {
-      console.error(error);
-   });
-};
+    .catch(error => {
+      console.error(error)
+    })
+}
 
 const updatedata = (colname, newcolval) =>{
-  const formData = new FormData();
-  console.log(searchuser, colname, newcolval);
-  formData.append('colname', colname);
-  formData.append('value', newcolval);
-  formData.append('id', searchuser);
-  console.log(formData);
+  const formData = new FormData()
+
+  console.log(searchuser, colname, newcolval)
+  formData.append('colname', colname)
+  formData.append('value', newcolval)
+  formData.append('id', searchuser)
+  console.log(formData)
   axios
-    .put('http://localhost:4000/member_info/Edit.do', formData,{
+    .put('http://localhost:4000/member_info/Edit.do', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     })
     .then(response => {
       // 성공적으로 업데이트되었을 때의 처리
-      console.log('성공');
+      console.log('성공')
     })
     .catch(error => {
       // 업데이트 중 오류가 발생했을 때의 처리
-      console.log('실패');
-    });
+      console.log('실패')
+    })
 }
 
-onMounted(fetchData);
+onMounted(fetchData)
 </script>
 
 <template>
   <VCard class="fill-height">
-    <VCardText>
-      <VRow align="center ml-2">
-        <VCol
-          cols="12"
-          md="6"
-        >
+    <VCol>
+      <VRow>
+        <VCol cols="6">
           <!-- 첫 번째 카드 텍스트 - 이름 -->
-          <h6 class="text-h6">
-            이름
-            <IconBtn>
+          <VChip label>
+            <strong>이름</strong>
+            <IconBtn
+              v-if="!edit1"
+              style=" float: inline-end;"
+            >
               <VIcon
                 size="22"
                 icon="mdi-lead-pencil"
                 @click="editClick1=false, edit1=true" 
-              /> <!--editClick1이 false일때는 입력이 안됨 / editClick이 true일때 입력 가능 -->
+              /> <!-- editClick1이 false일때는 입력이 안됨 / editClick이 true일때 입력 가능 -->
             </IconBtn>
-            <div
+              
+            <Btnsu
               v-if="edit1"
-              style=" margin-top: 5px;float: inline-end;"
-            >
-              <Btnsu @click="editClick1=true, edit1=false, updatedata('name', nameval)" />
-            </div>
-          </h6>
+              style="width: 60px; margin-left: 10px;"
+              @click="editClick1=true, edit1=false, updatedata('name', nameval)"
+            />
+          </VChip>
+          <Edit
+            v-model="nameval"
+            style="margin-top: 10px;"
+            :readonly="editClick1"
+            :placeholder="memberdata.name"
+          />
         </VCol>
-        <VCol
-          cols="12"
-          md="6"
-        >
-          <!-- 두 번째 카드 텍스트 - 비밀번호 -->
-          <h6 class="text-h6">
-            비밀번호
-            <IconBtn>
+        <!-- 비밀번호 -->
+        <VCol cols="6">
+          <VChip label>
+            <strong>비밀번호</strong>
+            <IconBtn v-if="!edit2">
               <VIcon
                 size="22"
                 icon="mdi-lead-pencil"
                 @click="editClick2=false, edit2=true"
               />
             </IconBtn>
-            <div
+            
+            <Btnsu
               v-if="edit2"
-              style=" margin-top: 5px;float: inline-end;"
-            >
-              <Btnsu @click="editClick2=true, edit2=false , updatedata('pwd', pwdval)"/>
-            </div>
-          </h6>
-        </VCol>
-      </VRow>
+              style="width: 60px; margin-left: 10px;"
+              @click="editClick2=true, edit2=false , updatedata('pwd', pwdval)"
+            />
+          </VChip>
 
-      <!-- 첫 번째 카드 텍스트 - 이름 -->
-      <VRow>
-        <VCol
-          cols="12"
-          md="6"
-        >
-          <div style=" margin-top: -20px;">
-            <Edit :readonly="editClick1" :placeholder="memberdata.name" v-model="nameval"/>
-          </div>
-        </VCol>
-        <VCol
-          cols="12"
-          md="6"
-        >
-          <div style=" margin-top: -32px;">
-            <!-- <PW :readonly="editClick2"/> -->
-            <PW :readonly="editClick2" v-model="pwdval"/>
-          </div>
+          <PW
+            v-model="pwdval"
+            style="margin-top: 0;"
+            :readonly="editClick2"
+          />
         </VCol>
       </VRow>
-    </VCardText>
-    <!-- 두번째 줄 -->
-    <VCardText>
-      <VRow align="center ml-2">
-        <VCol
-          cols="12"
-          md="4"
-        >
-          <h6 class="text-h6">
-            성별
-          </h6>
-        </VCol>
-        <VCol
-          cols="12"
-          md="4"
-        >
-          <h6 class="text-h6">
-            키
-            <IconBtn>
+    </VCol>
+    <!-- 이름 비밀번호 수정 끝 -->
+
+
+
+    <!-- 키 / 몸무게  -->
+    <VCol>
+      <VRow>
+        <VCol cols="6">
+          <VChip label>
+            <strong>키</strong>
+            <IconBtn v-if="!edit3">
               <VIcon
                 size="22"
                 icon="mdi-lead-pencil"
                 @click="editClick3=false, edit3=true"
               />
             </IconBtn>
-            <div
+
+            <Btnsu
               v-if="edit3"
-              style=" margin-top: 5px;float: inline-end;"
-            >
-              <Btnsu @click="editClick3=true, edit3=false, updatedata('height', heightval)" />
-            </div>
-          </h6>
+              style="width: 60px; margin-left: 10px;"
+              @click="editClick3=true, edit3=false, updatedata('height', heightval)"
+            />
+          </VChip>
+          <Edit
+            v-model="heightval"
+            style="margin-top: 10px;"
+            :readonly="editClick3"
+            :placeholder="memberdata.height"
+          />
         </VCol>
-        <VCol
-          cols="12"
-          md="4"
-        >
-          <h6 class="text-h6">
-            몸무게
-            <IconBtn>
+
+
+
+
+        <VCol cols="6">
+          <VChip label>
+            <strong>몸무게</strong>
+            <IconBtn v-if="!edit4">
               <VIcon
                 size="22"
                 icon="mdi-lead-pencil"
                 @click="editClick4=false, edit4=true"
               />
             </IconBtn>
-            <div
+          
+            <Btnsu
               v-if="edit4"
-              style=" margin-top: 5px;float: inline-end;"
-            >
-              <Btnsu @click="editClick4=true, edit4=false, updatedata('weight', weightval)" />
-            </div>
-          </h6>
+              style="width: 60px; margin-left: 10px;"
+              @click="editClick4=true, edit4=false, updatedata('weight', weightval)"
+            />
+          </VChip>
+          <Edit
+            v-model="weightval"
+            style="margin-top: 10px;"
+            :readonly="editClick4"
+            :placeholder="memberdata.weight"
+          />
         </VCol>
       </VRow>
-      <!-- 입력 부분 -->
+    </VCol>
+    <!-- 키 / 몸무게 끝 -->
+
+    <VCol>
       <VRow>
-        <VCol
-          cols="12"
-          md="4"
-        >
-          <div style=" margin: -10px 0 0 20px;">
-            <Gender :placeholder="memberdata.gender"/>
-          </div>
-        </VCol>
-        <VCol
-          cols="12"
-          md="4"
-        >
-          <div style=" margin-top: -20px;">
-            <Edit :readonly="editClick3" :placeholder="memberdata.height" v-model="heightval"/>
-          </div>
-        </VCol>
-        <VCol
-          cols="12"
-          md="4"
-        >
-          <div style=" margin-top: -20px;">
-            <Edit :readonly="editClick4" :placeholder="memberdata.weight" v-model="weightval"/>
-          </div>
-        </VCol>
-      </VRow>
-    </VCardText>
-    <VCardText>
-      <VRow>
-        <VCol
-          cols="12"
-          md="6"
-        >
-          <h6 class="text-h6">
-            전화번호
-            <IconBtn>
+        <VCol cols="6">
+          <VChip label>
+            <strong>전화번호</strong>
+            <IconBtn v-if="!edit5">
               <VIcon
                 size="22"
                 icon="mdi-lead-pencil"
                 @click="editClick5=false, edit5=true"
               />
             </IconBtn>
-            <div
+
+            <Btnsu
               v-if="edit5"
-              style=" margin-top: 5px;float: inline-end;"
-            >
-              <Btnsu @click="editClick5=true, edit5=false, updatedata('tel', telval)" />
-            </div>
-          </h6>
+              style="width: 60px; margin-left: 10px;"
+              @click="editClick5=true, edit5=false, updatedata('tel', telval)"
+            />
+          </VChip>
+          <Edit
+            v-model="telval"
+            style="margin-top: 10px;"
+            :readonly="editClick5"
+            :placeholder="memberdata.tel"
+          />
         </VCol>
-        <VCol
-          cols="12"
-          md="6"
-        >
-          <h6 class="text-h6">
-            생년월일
-            <IconBtn>
+
+        <VCol cols="6">
+          <VChip label>
+            <strong>생년월일</strong>
+            <IconBtn v-if="!edit6">
               <VIcon
                 size="22"
                 icon="mdi-lead-pencil"
                 @click="editClick6=false, edit6=true"
               />
             </IconBtn>
-            <div
+
+            <Btnsu
               v-if="edit6"
-              style=" margin-top: 5px;float: inline-end;"
-            >
-              <Btnsu @click="editClick6=true, edit6=false, updatedata('b_day', b_dayval)" />
-            </div>
-          </h6>
+              style="width: 60px; margin-left: 10px;"
+              @click="editClick6=true, edit6=false, updatedata('b_day', b_dayval)"
+            />
+          </VChip>
+          <Edit
+            v-model="b_dayval"
+            style="margin-top: 10px;"
+            :readonly="editClick6"
+            :placeholder="memberdata.b_day"
+          />
         </VCol>
       </VRow>
-      <!-- 입력 부분 -->
+    </VCol>
+
+
+
+    
+
+    <VCol>
       <VRow>
-        <VCol
-          cols="12"
-          md="6"
-        >
-          <div style=" margin-top: -20px;">
-            <Edit :readonly="editClick5" :placeholder="memberdata.tel" v-model="telval"/>
-          </div>
+        <VCol cols="9">
+          <VChip label>
+            <strong>사용 목적</strong>
+          </VChip>
+          <Sub
+            :value="memberdata.goal_No"
+            style="margin-top: 10px;"
+          />
         </VCol>
-        <VCol
-          cols="12"
-          md="6"
-        >
-          <div style=" margin-top: -20px;">
-            <Edit :readonly="editClick6" :placeholder="memberdata.b_day" v-model="b_dayval"/>
-          </div>
+    
+        <!-- 성별 -->
+        <VCol cols="3">
+          <VCard
+            cols="6"
+            style="padding: 10px; margin: 10px;"
+          >
+            <VChip label>
+              <strong>성별</strong>
+            </VChip>
+            <Gender :placeholder="memberdata.gender" />
+          </VCard>
         </VCol>
       </VRow>
-    </VCardText>
-    <VCardText>
-      <VRow align="center ml-2">
+    </VCol>
+    <!-- 성별 끝 -->
+    <!-- 입력 부분 -->
+    <VCol>
+      <VRow>
         <VCol cols="12">
-          <h6
-            class="text-h6"
-            style=" margin-top: -10px;"
+          <VChip
+            label
+            cols="6"
           >
-            주소
-            <IconBtn>
+            <strong>주소</strong>
+            <IconBtn v-if="!edit7">
               <VIcon
                 size="22"
                 icon="mdi-lead-pencil"
@@ -315,34 +306,18 @@ onMounted(fetchData);
             </IconBtn>
             <Btnsu
               v-if="edit7"
-              style=" margin-right: 5px; float: inline-end;"
+              style="width: 60px; margin-left: 10px;"
               @click="editClick7=true, edit7=false, updatedata('userAddress', userAddressval)"
             />
-          </h6>
+          </VChip>
+          <Edit
+            v-model="userAddressval"
+            style="margin-top: 10px;"
+            :readonly="editClick7"
+            :placeholder="memberdata.userAddress"
+          />
         </VCol>
       </VRow>
-      <VRow>
-        <VCol
-          cols="12"
-          md="12"
-        >
-          <div style=" margin-top: -20px;">
-            <Edit :readonly="editClick7" :placeholder="memberdata.userAddress" v-model="userAddressval"/>
-          </div>
-        </VCol>
-      </VRow>
-    </VCardText>
-    <VCol
-      cols="12"
-      md="12"
-    >
-      <h6
-        class="text-h6"
-        style=" margin: -10px 20px 10px;"
-      >
-        사용 목적
-      </h6>
-      <Sub :value="memberdata.goal_No"/>
     </VCol>
   </VCard>
 </template>

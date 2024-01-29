@@ -18,6 +18,7 @@ const writingModal = ref(false)
 const editingModal = ref(false)
 const borderColor = ref('#ccc')
 const viewPostPageModal = ref(false)
+let postToEdit = ref("")
 
 const isInvited = {}
 const isSubscribed = {}
@@ -120,7 +121,41 @@ const getData = async function() {
 
 }
 
+//삭제코드
+const deleteItem = async bno => {
+  try {
+    const response = await axios.get(`http://localhost:4000/bbs/${bno}/Delete.do`)
+    if (response.data === 1) {
+      const bnoInt = parseInt(bno) // bno를 숫자로 변환
 
+      state.items = state.items.filter(item => item.bno !== bnoInt) // items 배열에서 삭제된 항목 제거
+    } else {
+      console.log(response.data, "response.data")
+      alert('삭제에 실패했습니다.')
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+// 글 수정 코드
+const submitEdit = async bno => {
+  try {
+    const response = await axios.get('http://localhost:4000/bbs/ViewOne.do', { params: { bno: bno } })
+
+    if (response.status === 200) {
+      console.log('글 번호 전송 성공')
+      console.log(response.data, "response.data")
+
+      // 서버로부터 받은 데이터를 자식 컴포넌트에게 전달하기 위해 저장
+      postToEdit.value = response.data
+    } else {
+      console.log('글 번호 전송 실패')
+    }
+  } catch (error) {
+    console.error(`글 번호 전송 실패: ${error}`)
+  }
+}
 
 
 const membersList = [
@@ -367,14 +402,56 @@ const subscribe = name => {
                           </VCol>
                           <VCol cols="6" />
                           <VCol cols="1">
-                            <MoreBtn @click="editingModal=true" />
+                            <VCol cols="1">
+                              <VBtn
+                                icon
+                                variant="text"
+                                size="small"
+                                color="medium-emphasis"
+                              >
+                                <VIcon
+                                  size="24"
+                                  icon="mdi-dots-vertical"
+                                />
+
+                                <VMenu activator="parent">
+                                  <VList>
+                                    <VListItem @click="editingModal=true; submitEdit(item.bno)">
+                                      <template #prepend>
+                                        <VIcon icon="mdi-comment-edit-outline" />
+                                      </template>
+                                      <VListItemTitle>수정하기</VListItemTitle>
+                                    </VListItem>
+
+                                    <VListItem @click="deleteItem(item.bno)">
+                                      <template #prepend>
+                                        <VIcon icon="mdi-delete-outline" />
+                                      </template>
+                                      <VListItemTitle>삭제하기</VListItemTitle>
+                                    </VListItem>
+                                    <VListItem @click="editingModal=true">
+                                      <template #prepend>
+                                        <VIcon icon="mdi-account-alert" />
+                                      </template>
+                                      <VListItemTitle>신고하기</VListItemTitle>
+                                    </VListItem>
+                                  </VList>
+                                </VMenu>
+                              </VBtn>
+                            </VCol>
                           </VCol>
                         </VRow>
                       </VCol>
-                      <VCarousel show-arrows-on-hover>
+                      <VCarousel
+                        v-if="item.files && item.files.length"
+                        class="transparent-carousel"
+                        show-arrows-on-hover
+                        color="success"
+                      >
                         <VCarouselItem
                           v-for="(image, i) in item.files" 
                           :key="i"
+                          :class="{'active-slide': i === activeIndex}"
                         >
                           <VImg
                             :src="image"
@@ -383,14 +460,62 @@ const subscribe = name => {
                           />
                         </VCarouselItem>
                       </VCarousel>
-
+                      
                       <VCardItem>
-                        <VCardTitle>{{ item.content }}  </VCardTitle> 
+                        <VCardTitle
+                          class="pointer-cursor"
+                          @click="viewPostPageModal=true; submitEdit(item.bno)"
+                        >
+                          {{ item.content }}
+                        </VCardTitle> 
                       </VCardItem>
 
-                      <VCardText>
-                        여기엔 댓글 넣을거지롱
+                      <VCardText
+                        class="pointer-cursor"
+                        @click="viewPostPageModal=true;"
+                      >
+                        댓글 (여기에 중괄호 태그) 모두 보기
                       </VCardText>
+                      <VCardText>
+                        <VRow>
+                          <VCol cols="10">
+                            <VTextarea 
+                              label="댓글달기" 
+                              rows="1"
+                              style="height: 20px; border: none;"
+                              variant="underlined"
+                              prepend-icon="mdi-emoticon"
+                            />
+                          </VCol>
+                          <VCol cols="1">
+                            <VBtn size="large">
+                              게시
+                            </VBtn>
+                          </VCol>
+                        </VRow>
+                      </VCardText>
+                      <VCol>
+                        <VBtn
+                          icon="mdi-heart-outline"
+                          variant="text"
+                          color="success"
+                        />
+                        <VBtn
+                          icon="mdi-chat-outline"
+                          variant="text"
+                          color="success"
+                        />
+                        <VBtn
+                          icon="mdi-send"
+                          variant="text"
+                          color="success"
+                        />
+                        <VBtn
+                          icon="mdi-bookmark-outline"
+                          variant="text"
+                          color="success"
+                        />
+                      </VCol>
                     </VCard>
                   </VCol> 
                 </VCol>
@@ -486,9 +611,19 @@ const subscribe = name => {
       </VCol>
     </VRow>
     <UserProfileCommunity v-model:isDialogVisible="userProfileModal" />
-    <Writing v-model:isDialogVisible="writingModal" />
-    <Editing v-model:isDialogVisible="editingModal" />
-    <ViewPostPage v-model:isDialogVisible="viewPostPageModal" />
+    <Writing
+      v-model:isDialogVisible="writingModal" 
+      @update-success="getData"
+    />
+    <Editing
+      v-model:isDialogVisible="editingModal"
+      :post-to-edit="postToEdit"
+      @update-success="getData"
+    />
+    <ViewPostPage
+      v-model:isDialogVisible="viewPostPageModal" 
+      :post-to-edit="postToEdit"
+    />
   </section>
 </template>
 
@@ -506,5 +641,13 @@ const subscribe = name => {
   .v-field__outline {
     display: none;
   }
+}
+
+.active-slide {
+  color: success;
+}
+
+.transparent-carousel .v-carousel__controls {
+  background-color: transparent;
 }
 </style>

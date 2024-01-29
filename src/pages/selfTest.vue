@@ -154,91 +154,91 @@ const checkboxContent = [
 const checkboxContent2 = [
   {
     bgImage: ht1,
-    value: '1',
-  },
-  {
-    bgImage: ht2,
-    value: '2',
-  },
-  {
-    bgImage: ht3,
-    value: '3',
-  },
-  {
-    bgImage: ht4,
-    value: '4',
-  },
-  {
-    bgImage: ht5,
-    value: '5',
-  },
-  {
-    bgImage: ht6,
-    value: '6',
-  },
-  {
-    bgImage: ht7,
-    value: '7',
-  },
-  {
-    bgImage: ht8,
-    value: '8',
-  },
-  {
-    bgImage: ht9,
-    value: '9',
-  },
-  {
-    bgImage: ht10,
-    value: '10',
-  },
-  {
-    bgImage: ht11,
-    value: '11',
-  },
-  {
-    bgImage: ht12,
-    value: '12',
-  },
-  {
-    bgImage: ht13,
-    value: '13',
-  },
-  {
-    bgImage: ht14,
-    value: '14',
-  },
-  {
-    bgImage: ht15,
-    value: '15',
-  },  
-  {
-    bgImage: ht16,
-    value: '16',
-  },
-  {
-    bgImage: ht17,
-    value: '17',
-  },
-  {
-    bgImage: ht18,
-    value: '18',
-  },  
-  {
-    bgImage: ht19,
     value: '19',
   },
   {
-    bgImage: ht20,
+    bgImage: ht2,
     value: '20',
   },
   {
-    bgImage: ht21,
+    bgImage: ht3,
     value: '21',
   },
   {
-    bgImage: ht22,
+    bgImage: ht4,
     value: '22',
+  },
+  {
+    bgImage: ht5,
+    value: '23',
+  },
+  {
+    bgImage: ht6,
+    value: '24',
+  },
+  {
+    bgImage: ht7,
+    value: '25',
+  },
+  {
+    bgImage: ht8,
+    value: '26',
+  },
+  {
+    bgImage: ht9,
+    value: '27',
+  },
+  {
+    bgImage: ht10,
+    value: '28',
+  },
+  {
+    bgImage: ht11,
+    value: '29',
+  },
+  {
+    bgImage: ht12,
+    value: '30',
+  },
+  {
+    bgImage: ht13,
+    value: '31',
+  },
+  {
+    bgImage: ht14,
+    value: '32',
+  },
+  {
+    bgImage: ht15,
+    value: '33',
+  },  
+  {
+    bgImage: ht16,
+    value: '34',
+  },
+  {
+    bgImage: ht17,
+    value: '35',
+  },
+  {
+    bgImage: ht18,
+    value: '36',
+  },  
+  {
+    bgImage: ht19,
+    value: '37',
+  },
+  {
+    bgImage: ht20,
+    value: '38',
+  },
+  {
+    bgImage: ht21,
+    value: '39',
+  },
+  {
+    bgImage: ht22,
+    value: '40',
   },
 ]
 
