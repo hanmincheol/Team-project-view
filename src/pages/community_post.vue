@@ -381,6 +381,40 @@ const loadMore = () => {
                           />
                         </VCarouselItem>
                       </VCarousel>
+                      
+                      <VCardItem>
+                        <VCardTitle
+                          class="pointer-cursor"
+                          @click="viewPostPageModal=true; submitEdit(item.bno)"
+                        >
+                          {{ item.content }}
+                        </VCardTitle> 
+                      </VCardItem>
+
+                      <VCardText
+                        class="pointer-cursor"
+                        @click="viewPostPageModal=true;"
+                      >
+                        댓글 (여기에 중괄호 태그) 모두 보기
+                      </VCardText>
+                      <VCardText>
+                        <VRow>
+                          <VCol cols="10">
+                            <VTextarea 
+                              label="댓글달기" 
+                              rows="1"
+                              style="height: 20px; border: none;"
+                              variant="underlined"
+                              prepend-icon="mdi-emoticon"
+                            />
+                          </VCol>
+                          <VCol cols="1">
+                            <VBtn size="large">
+                              게시
+                            </VBtn>
+                          </VCol>
+                        </VRow>
+                      </VCardText>
                       <VCol>
                         <VBtn
                           icon="mdi-heart-outline"
@@ -403,18 +437,6 @@ const loadMore = () => {
                           color="success"
                         />
                       </VCol>
-                      <VCardItem>
-                        <VCardTitle
-                          class="pointer-cursor"
-                          @click="viewPostPageModal=true; submitEdit(item.bno)"
-                        >
-                          {{ item.content }}
-                        </VCardTitle> 
-                      </VCardItem>
-
-                      <VCardText>
-                        여기엔 댓글 넣을거지롱
-                      </VCardText>
                     </VCard>
                   </VCol> 
                 </VCol>

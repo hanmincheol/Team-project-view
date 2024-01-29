@@ -54,7 +54,16 @@ const { width: windowWidth } = useWindowSize()
     <template #footer>
       <Footer />
     </template>
-
+    <template #iconBtn>
+      <div class="icon-button">
+        <VBtn
+          icon="mdi-robot-confused"
+          size="70"
+          class="btn-icon"
+        /> 
+      </div>
+    </template>
+    
     <!-- 👉 Customizer -->
     <TheCustomizer />
   </VerticalNavLayout>

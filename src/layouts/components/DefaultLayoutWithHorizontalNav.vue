@@ -56,5 +56,6 @@ const { appRouteTransition } = useThemeConfig()
 
     <!-- 👉 Customizer -->
     <TheCustomizer />
+    <!-- icon 추가 -->
   </HorizontalNavLayout>
 </template>

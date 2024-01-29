@@ -215,6 +215,7 @@ const submitEdit = async function() {
                   label="댓글달기" 
                   rows="1"
                   style="height: 15px; border: none;"
+                  variant="underlined"
                 />
               </VCol>
               <VCol cols="1">

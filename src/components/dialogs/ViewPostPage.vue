@@ -88,12 +88,10 @@ const avatars = [
                         </VCardSubtitle>
                       </VCol>
                     </VCol>
-                    <VSpacer />
                   </VRow>
                 </VCol>
               </VRow>
               <!-- 여기는 if문으로 데이터 있는 만큼 가져와야 하는 부분이고요 -->
-              <!-- 많아지면 여기도 무한스크롤을 적용해야 할 겁니다~ 근데 여긴 윈도우 창이 아니라 어떤 -->
               <!-- 많아지면 여기도 무한스크롤을 적용해야 할 겁니다~ 근데 여긴 윈도우 창이 아니라 어떤 이벤트를 걸어야할지 감도 안오네요 -->
               <VRow>
                 <VCol cols="1">
@@ -145,57 +143,27 @@ const avatars = [
                     :image="avatar"
                     size="30"
                   />
-                  <VBtn
-                    icon="mdi-send"
-                    variant="text"
-                    color="success"
-                  />
-                  <VBtn
-                    icon="mdi-bookmark-outline"
-                    variant="text"
-                    color="success"
+                </VCol>
+                <VCol class="font-weight-medium">
+                  멋쟁이 승녕님 외 18명이 좋아합니다
+                </VCol>
+              </VRow>
+              <VRow style="margin-bottom: 5px;">
+                <VCol cols="9">
+                  <VTextarea 
+                    label="댓글달기" 
+                    rows="1"
+                    style="height: 20px; border: none;"
+                    variant="underlined"
+                    prepend-icon="mdi-emoticon"
                   />
                 </VCol>
-                <VRow>
-                  <VCol
-                    cols="2"
-                    class="v-avatar-group"
-                    style="margin-left: 2%;"
-                  >
-                    <VAvatar
-                      v-for="(avatar, index) in avatars"
-                      :key="index"
-                      :image="avatar"
-                      size="30"
-                    />
-                  </VCol>
-                  <VCol class="font-weight-medium">
-                    멋쟁이 승녕님 외 18명이 좋아합니다
-                  </VCol>
-                </VRow>
-                <VRow style="margin-bottom: 5px;">
-                  <VCol cols="1">
-                    <VBtn
-                      icon="mdi-emoticon"
-                      variant="text"
-                      size="x-large"
-                      style="margin-left: 2%;"
-                    />
-                  </VCol>
-                  <VCol cols="8">
-                    <VTextarea 
-                      label="댓글달기" 
-                      rows="1"
-                      style="height: 20px; border: none;"
-                    />
-                  </VCol>
-                  <VCol cols="1">
-                    <VBtn size="large">
-                      게시
-                    </VBtn>
-                  </VCol>
-                </VRow>
-              </vrow>
+                <VCol cols="1">
+                  <VBtn size="large">
+                    게시
+                  </VBtn>
+                </VCol>
+              </VRow>
             </VCol>
           </VRow>
         </VCard>
