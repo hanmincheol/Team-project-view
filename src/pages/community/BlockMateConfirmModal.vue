@@ -1,5 +1,5 @@
 <script setup>
-import { defineEmits, defineProps } from "vue"
+import { defineEmits, defineProps, onUpdated } from "vue"
 
 const props = defineProps({
   isDialogVisible: {
@@ -17,9 +17,24 @@ const emit = defineEmits([
   'update:isDialogVisible',
 ])
 
+
+const warningReason = ref('')
+
+onUpdated(()=>{
+  const inputTags = document.querySelectorAll('[name = warningReport]')
+
+  inputTags.forEach(ele => {ele.checked = !ele.checked})
+})
+
+
+const reportController = e => { //axios로 처리
+  console.log(e.target)
+  warningReason.value = e.target.value
+}
+
 const clickEvt = ()=>{
   emit('update:isDialogVisible', false)
-  emit('checkConfirm', true, props.message)
+  emit('checkConfirm', warningReason, props.message)
 }
 </script>
 
@@ -40,11 +55,31 @@ const clickEvt = ()=>{
       <!-- 👉 Title -->
       <VCardItem class="text-center">
         <VCardTitle class="text-h5 mb-3">
-          {{ props.message }}님께<br>친구 요청을 보내시겠습니까?
+          {{ props.message }}님을 위험 메이트로 신고합니다
         </VCardTitle>
-        <VCardSubtitle>
-          상대방이 친구 요청을 수락하면, 1:1 채팅이 가능해집니다!
-        </VCardSubtitle>
+        <VRadioGroup
+          id="warningReport"
+          :style="{'padding-left':'15px'}"
+          color="error"
+          @change="reportController"
+        >
+          <VRadio
+            label="명의 도용"
+            value="illegalName"
+          />
+          <VRadio
+            label="폭력적 위협"
+            value="violence"
+          />
+          <VRadio
+            label="스팸 및 사기"
+            value="spam"
+          />
+          <VRadio
+            label="사생활 침해"
+            value="privacy"
+          />
+        </VRadioGroup>
       </VCardItem>
       <VCol
         cols="12"

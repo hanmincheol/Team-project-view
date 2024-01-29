@@ -21,12 +21,16 @@ const viewPostPageModal = ref(false)
 
 const isInvited = {}
 const isSubscribed = {}
+
 let q = ref('')
+const users = ref([])
+const usersView = ref([])
 
 const state = reactive({
   items: [],
   avatar1: '', // avatar1에 대한 초기값을 설정해주세요.
 })
+
 
 //검색기능
 const filteredItems = computed(() => {
@@ -37,28 +41,87 @@ const filteredItems = computed(() => {
   return items.value
 })
 
+
+
 // axios를 사용하여 데이터를 받는 함수
 const getData = async function() {
-
+  
   try {
     const response = await axios.get('http://localhost:4000/bbs/List.do', {
       headers: {
         'Content-Type': 'application/json',
       },
     })
-
+    
+    
     // 응답 처리
     if (response.status === 200) {
       console.log('데이터 받기 성공')
       state.items = response.data // 데이터 저장
-      console.log(state.items[1].files)
+
+      const tempUserKeys = []
+      for(var i=0; i<state.items.length; i++){
+        tempUserKeys[i] = state.items[i].id
+      }
+
+      const tempUserKeysSet = new Set(tempUserKeys) //중복 아이디 제거
+
+      const temp = [...tempUserKeysSet] //ids
+
+      /*
+      temp의 앞에 현재 서비스를 이용 중인 유저의 아이디가 들어가야 함.
+      뿌려주는 게시글 작성자들의 목록을 불러옴.
+      */
+      temp.unshift('OSH')
+      console.log(temp)
+      axios.post("http://localhost:4000/bbs/userProfile", JSON.stringify({
+        ids: temp,
+      }), { headers: { 'Content-Type': 'application/json' } })
+        .then(resp=>{
+          console.log('요청받은 값:', resp.data)
+          users.value = resp.data
+          console.log(users.value)
+          users.value.forEach(ele=>{
+            if(ele.isFriend != 0 || ele.isSubTo != 0) {
+              console.log(ele)
+              console.log(typeof usersView.value)
+              usersView.value.push(ele)
+            }
+            console.log(usersView.value)
+            
+            console.log(usersView)
+            for(const id in usersView){
+              console.log(usersView[id])
+              if(usersView[id]['isFriend']==0) {
+                isInvited[usersView[id]['id']] = ref(false)
+              }
+              else if(usersView[id]['isFriend']!=0) {
+                isInvited[usersView[id]['id']] = ref(true)
+              }
+              if(usersView[id]['isSubTo']==0) {
+                isSubscribed[usersView[id]['id']] = ref(true)
+              }
+              else if(usersView[id]['isSubTo']!=0) {
+                isSubscribed[usersView[id]['id']] = ref(false)
+              }
+              console.log(isInvited)
+            }
+
+          })
+        })
+        .catch(err=>console.log(err))
+
     } else {
       console.log('데이터 전송 실패')
     }
   } catch (error) {
     console.error(`데이터 전송 실패: ${error}`)
   }
+
 }
+
+
+
 
 const membersList = [
   {
@@ -112,12 +175,6 @@ const membersList = [
   },
 ]
 
-for(const id in membersList){
-  isInvited[membersList[id]['name']] = ref(false) //📌값을 직접 받아야 함
-  isSubscribed[membersList[id]['name']] = ref(false) //📌값을 직접 받아야 함
-}
-console.log('isInvited: ', isInvited)
-
 //스크롤 이벤트 리스터 추가 - 화면 하단에 스크롤 도착 시 loadMore()함수 호출
 const scrollTimeout = ref(null)
 
@@ -125,6 +182,8 @@ const scrollTimeout = ref(null)
 const handleScroll = () => {
   if(scrollTimeout.value !== null) 
     clearTimeout(scrollTimeout.value)  
+
+  
 
   scrollTimeout.value = setTimeout(function() {
     // 스크롤이 페이지 하단에서 100px 이내로 가까워졌을 때 loadMore 함수 호출
@@ -173,8 +232,10 @@ const controllInviteFunc = (ans, id) => {
   console.log(ans, id)
   isInvited[id] = ref(ans)
 }
+
 const username = ref('')
-const requestFriend = (temp) => {
+
+const requestFriend = temp => {
   modalControll.value = !modalControll.value
   console.log(temp)
   username.value = temp
@@ -202,8 +263,8 @@ const subscribe = name => {
               style=" overflow: hidden;max-height: 90px;"
             >
               <VCol
-                v-for="member in membersList"
-                :key="member.name"
+                v-for="user in users"
+                :key="user.id"
                 cols="auto"
                 class="ma-2"
               >
@@ -211,7 +272,7 @@ const subscribe = name => {
                   <VListItemContent class="d-flex flex-column align-center text-center">
                     <VAvatar 
                       class="text-sm pointer-cursor"
-                      :image="member.avatar" 
+                      :image="user.profilePath" 
                       @click="userProfileModal=true"
                     />
 
@@ -220,7 +281,7 @@ const subscribe = name => {
                       @click="userProfileModal=true"
                       @mouseover="size"  
                     >
-                      {{ member.name }}
+                      {{ user.id }}
                     </VListItemTitle>
                   </VListItemContent>
                 </VListItem>
@@ -358,13 +419,13 @@ const subscribe = name => {
         <VCol class="card-list mt-12 mt-sm- pa-0">
           <!-- 친구 리스트 공간 -->
           <VListItem
-            v-for="member in membersList"
-            :key="member.name"
+            v-for="member in usersView"
+            :key="member.id"
           >
             <template #prepend>
               <VAvatar 
                 class="text-sm pointer-cursor"
-                :image="member.avatar" 
+                :image="member.profilePath" 
                 @click="userProfileModal=true"
               />
             </template>
@@ -374,7 +435,7 @@ const subscribe = name => {
               @click="userProfileModal=true"
               @mouseover="size"  
             >
-              {{ member.name }}
+              {{ member.id }}
             </VListItemTitle>
             <!-- 친구 추가 버튼 -->
             <template #append>
@@ -384,15 +445,19 @@ const subscribe = name => {
                 width="40"
                 @click="requestFriend(member.name)"
               >
-              친구요청
+                친구요청
               </VBtn>
-              <InviteFriendConfirmModal @check-confirm="controllInviteFunc" :message='username' v-model:isDialogVisible="modalControll"/>
+              <InviteFriendConfirmModal
+                v-model:isDialogVisible="modalControll"
+                :message="username"
+                @check-confirm="controllInviteFunc"
+              />
               <VBtn
                 v-show="isInvited[member.name].value"
                 width="40"
-                :disabled="true"
+                disabled="true"
               >
-              요청완료
+                신청완료
               </VBtn>
               <!-- 구독 버튼 -->
               <VBtn
@@ -400,7 +465,7 @@ const subscribe = name => {
                 id="myButton"
                 width="40"
                 style="margin-left: 5px;"
-                :variant="'outlined'"
+                variant="outlined"
                 @click="subscribe(member.name)"
               >
                 구독
@@ -409,10 +474,10 @@ const subscribe = name => {
                 v-show="isSubscribed[member.name].value"
                 id="myButton"
                 style="margin-left: 5px;"
-                :variant="'tonal'"
+                variant="tonal"
                 @click="subscribe(member.name)"
               >
-                <VIcon icon="mdi-bell"/>
+                <VIcon icon="mdi-bell" />
                 구독중
               </VBtn>
             </template>

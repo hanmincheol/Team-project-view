@@ -6,10 +6,6 @@ const props = defineProps({
     type: Boolean,
     required: true,
   }, 
-  message: {
-    type: String,
-    required: true,
-  },
 })
 
 const emit = defineEmits([
@@ -19,7 +15,6 @@ const emit = defineEmits([
 
 const clickEvt = ()=>{
   emit('update:isDialogVisible', false)
-  emit('checkConfirm', true, props.message)
 }
 </script>
 
@@ -40,10 +35,10 @@ const clickEvt = ()=>{
       <!-- 👉 Title -->
       <VCardItem class="text-center">
         <VCardTitle class="text-h5 mb-3">
-          {{ props.message }}님께<br>친구 요청을 보내시겠습니까?
+          신고가 완료되었습니다.
         </VCardTitle>
         <VCardSubtitle>
-          상대방이 친구 요청을 수락하면, 1:1 채팅이 가능해집니다!
+          서비스의 안전하고 쾌적한 이용을 위해 신고해주셔서 감사합니다.
         </VCardSubtitle>
       </VCardItem>
       <VCol
@@ -54,14 +49,7 @@ const clickEvt = ()=>{
           type="submit"
           @click="clickEvt"
         >
-          YES
-        </VBtn>
-        <VBtn
-          color="secondary"
-          variant="tonal"
-          @click="$emit('update:isDialogVisible', false)"
-        >
-          NO
+          확인
         </VBtn>
       </VCol>
     </VCard>

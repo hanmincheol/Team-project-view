@@ -3,6 +3,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import routes from '~pages'
 
 export const isfriendscreenchanged = ref(false)
+export const isSubscribesscreenchanged = ref(false)
+export const isMatescreenchanged = ref(false)
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -36,7 +38,12 @@ router.beforeEach((to, from, next) => {
     isfriendscreenchanged.value = true
     console.log('화면 변경됨')
   }
-  
+  if (from.fullPath=='/community/user/subscriber'){
+    isSubscribesscreenchanged.value = true
+  }
+  if (from.fullPath=='/community/user/mate'){
+    isMatescreenchanged.value = true
+  }
   next()
 })
 

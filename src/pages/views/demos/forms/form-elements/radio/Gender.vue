@@ -1,9 +1,10 @@
 <script setup>
 import { defineProps, ref } from 'vue'
+
 const props = defineProps({
-  value : {
-    type : String,
-    required: true
+  value: {
+    type: String,
+    required: true,
   },
 })
 
@@ -23,7 +24,6 @@ watch(() => {
     selectedRadio.value = 'warning'
   }
 })
-
 </script>
 
 <template>

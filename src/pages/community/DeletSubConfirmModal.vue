@@ -17,9 +17,10 @@ const emit = defineEmits([
   'update:isDialogVisible',
 ])
 
+
 const clickEvt = ()=>{
   emit('update:isDialogVisible', false)
-  emit('checkConfirm', true, props.message)
+  emit('checkEvent', props.message)
 }
 </script>
 
@@ -40,10 +41,10 @@ const clickEvt = ()=>{
       <!-- 👉 Title -->
       <VCardItem class="text-center">
         <VCardTitle class="text-h5 mb-3">
-          {{ props.message }}님께<br>친구 요청을 보내시겠습니까?
+          {{ props.message }}님을 회원님의 구독자 목록에서 <br>삭제하시겠습니까?
         </VCardTitle>
         <VCardSubtitle>
-          상대방이 친구 요청을 수락하면, 1:1 채팅이 가능해집니다!
+          상대방은 자신이 삭제된 것을 모릅니다.
         </VCardSubtitle>
       </VCardItem>
       <VCol
