@@ -123,7 +123,6 @@ export default defineComponent({
   border-radius: 50%;
   background-color: #f6f6f6;
   block-size: 80px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 10%);
   font-size: 30px;
   inline-size: 80px;
   inset-block-end: 10%;
