@@ -1,9 +1,11 @@
 <script setup>
+import MyList from '@/pages/myList.vue'
 import { useUserListStore } from '@/views/apps/user/useUserListStore'
 import UserBioPanel from '@/views/apps/user/view/UserBioPanel.vue'
-import UserTabBillingsPlans from '@/views/apps/user/view/UserTabBillingsPlans.vue'
-import UserHistory from '@/views/apps/user/view/UserHistory.vue'
 import UserEdit from '@/views/apps/user/view/UserEdit.vue'
+import UserHistory from '@/views/apps/user/view/UserHistory.vue'
+import UserTabBillingsPlans from '@/views/apps/user/view/UserTabBillingsPlans.vue'
+
 
 const userListStore = useUserListStore()
 const route = useRoute()
@@ -80,7 +82,7 @@ userListStore.fetchUser(Number(route.params.id)).then(response => {
         </VWindowItem>
 
         <VWindowItem>
-          제목에 맞는
+          <MyList id="HMC" />
         </VWindowItem>
 
         <VWindowItem>
