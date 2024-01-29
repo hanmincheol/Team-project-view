@@ -1,4 +1,6 @@
 <script setup>
+import BlockFriendConfirmModal from '@/pages/community/BlockFriendConfirmModal.vue'
+import { isfriendscreenchanged } from '@/router/index'
 import axios from '@axios'
 import { watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -7,18 +9,19 @@ const router = useRoute()
 const connectionData = ref([])
 const isFriendExist = ref(true)
 const isConnected = {}
+const isFriendBlocked = {}
 
 const fetchProjectData = () => {
   if (router.params.tab === 'friend') {
     axios.get("http://127.0.0.1:4000/comm/friend", { params: { id: 'HMC' } })
       .then(response=>{
-        console.log(response.data)
         connectionData.value = response.data
         if(Object.keys(connectionData.value).length == 0) isFriendExist.value = true
         else {
           isFriendExist.value = false
           for(const key in connectionData.value) {
             isConnected[connectionData.value[key]['friend_id']] = ref(true)
+            isFriendBlocked[connectionData.value[key]['friend_id']] = ref(false)
           }
         }
       })
@@ -27,25 +30,62 @@ const fetchProjectData = () => {
 }
 
 const connectionController = temp => {
+  console.log(temp.value)
   temp.value = !temp.value
+  console.log(temp.value)
+  console.log(isConnected)
 }
 
-window.addEventListener('beforeunload', event=>{
-  console.log('확인')
+const modalControll = ref(false)
+const username = ref('')
 
-  //window.removeEventListener('beforeunload')
-  event.preventDefault()
-  
-  return ''
+const blockingController = (temp, id) => {
+  console.log('차단클릭됨')
+  console.log(modalControll.value)
+  modalControll.value = true
+  temp.value = !temp.value
+  username.value = id
+}
+
+const blockFriend = (bool, id) =>{
+  if (bool) {
+    console.log(id, '차단됨')
+  }
+  axios.put("http://127.0.0.1:4000/comm/friend/block", JSON.stringify({
+    id: id,
+  }), { headers: { "Content-Type": `application/json` } })
+    .then(()=>{
+      fetchProjectData()
+    })
+}
+
+//페이지 이동 감시 테스트----------------------------------
+
+window.addEventListener('click', ()=>{ //beforeunload
+  if(isfriendscreenchanged.value) {
+    console.log('url변경감지', isConnected)
+    for(const userid in isConnected) {
+      console.log('url변경감지 및 반복문')
+      console.log(userid, isConnected[userid].value)
+      if (!isConnected[userid].value){
+        console.log('axios delete 안으로 들어옴', userid)
+        axios.delete("http://127.0.0.1:4000/comm/friend/delete", {
+          data: {
+            id: userid,
+          },
+        }, { headers: { "Content-Type": `application/json` } })
+      }
+    }
+
+    isfriendscreenchanged.value = false
+  }
 })
 
-const test = () => {console.log('test')}
-
+//페이지 이동 감시 테스트 end----------------------------------
 //watch 함수를 사용하여 router 객체를 감시하고, 변경이 있을 때마다 fetchProjectData 함수를 실행합니다. 
 //immediate: true 옵션을 사용하여 초기 로드 시에도 함수를 실행합니다.
 watch(router, fetchProjectData, { immediate: true })
 
-watch(router, test, { immediate: true })
 
 //햄버거를 누를 때 버튼 목록을 표시.
 const moreBtnList = [
@@ -145,19 +185,26 @@ const moreBtnList = [
 
           <div class="d-flex justify-center gap-4 mt-6">
             <VBtn
-              :prepend-icon="isConnected[data.friend_id].value ? 'mdi-account-check-outline' : 'mdi-account-plus-outline'"
-              :variant="isConnected[data.friend_id].value ? 'elevated' : 'tonal'"
+              :prepend-icon="isConnected[data.friend_id].value ? 'mdi-account-cancel-outline' : 'mdi-account-check-outline'"
+              :variant="isConnected[data.friend_id].value ? 'tonal' : 'elevated'"
               @click="connectionController(isConnected[data.friend_id])"
             >
-              {{ isConnected[data.friend_id].value ? '친구취소' : '친구신청' }}
+              {{ isConnected[data.friend_id].value ? '친구취소' : '취소 되돌리기' }}
             </VBtn>
 
             <VBtn
-              :prepend-icon="data.isConnected ? 'mdi-account-check-outline' : 'mdi-account-plus-outline'"
-              :variant="data.isConnected ? 'elevated' : 'tonal'"
+              prepend-icon="mdi-block-helper"
+              variant="outlined"
+              color="warning"
+              @click="blockingController(isFriendBlocked[data.friend_id], data.friend_id)"
             >
               차단하기
             </VBtn>
+            <BlockFriendConfirmModal 
+              v-model:isDialogVisible="modalControll"
+              :message="username"
+              @check-event="blockFriend"
+            />
           </div>
         </VCardText>
       </VCard>

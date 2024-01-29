@@ -4,6 +4,7 @@ import {
   kFormatter,
 } from '@core/utils/formatters'
 
+import Btnsu from '@/pages/views/demos/components/button/self-suc.vue'
 import SelfEdit from '@/pages/views/demos/forms/form-elements/textarea/self-edit.vue'
 import Btnsu from '@/pages/views/demos/components/button/self-suc.vue'
 import { faL } from '@fortawesome/free-solid-svg-icons'
@@ -351,6 +352,7 @@ onMounted(async () => {
             </h6>
             <IconBtn>
               <VIcon
+                v-if="!edit"
                 icon="mdi-lead-pencil"
                 size="22"
                 @click="editClick=!editClick, edit=!edit"
