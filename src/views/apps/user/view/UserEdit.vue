@@ -58,8 +58,8 @@ const updatedata = (colname, newcolval) =>{
   const formData = new FormData();
   console.log(searchuser, colname, newcolval);
   formData.append('colname', colname);
-  formData.append('value', newcolval);
   formData.append('id', searchuser);
+  formData.append('newcolval', newcolval);
   console.log(formData);
   axios
     .put('http://localhost:4000/member_info/Edit.do', formData,{
@@ -212,7 +212,7 @@ onMounted(fetchData);
           md="4"
         >
           <div style=" margin: -10px 0 0 20px;">
-            <Gender :placeholder="memberdata.gender"/>
+            <Gender :value="memberdata.gender"/>
           </div>
         </VCol>
         <VCol

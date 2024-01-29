@@ -48,6 +48,7 @@ const getData = async function() {
       console.log('데이터 받기 성공')
       state.items = response.data // 데이터 저장
       console.log(state.items[1].files)
+      console.log('데이터 체크',response.data);
     } else {
       console.log('데이터 전송 실패')
     }
@@ -55,6 +56,72 @@ const getData = async function() {
     console.error(`데이터 전송 실패: ${error}`)
   }
 }
+//////////////////////////////////////
+/* 댓글 */
+let group = ref([]);
+const statecomm = ref({
+  comment:[]
+})
+
+const getComment = async function() {
+
+  try {
+    const response = await axios.get('http://localhost:4000/commentline/View.do', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    // 응답 처리
+    if (response.status === 200) {
+      console.log('댓글 성공')
+      console.log('데이터 체크',response.data);
+
+      // // BBS_NO 값을 기준으로 데이터 묶기
+      // const groupedData = response.data.reduce((acc, curr) => {
+      //   const bbsNo = curr.BBS_NO;
+      //   if (acc[bbsNo]) {
+      //     acc[bbsNo].push(curr);
+      //   } else {
+      //     acc[bbsNo] = [curr];
+      //   }
+      //   return acc;
+      // }, {});
+
+      // BBS_NO 값을 기준으로 데이터 묶기
+      const groupedData = response.data.reduce((acc, curr) => {
+        const bbsNo = curr.BBS_NO;
+        if (acc[bbsNo]) {
+          // parent_comment가 null인 값들 중에서 C_NO가 가장 큰 댓글만 선택
+          if (curr.parent_comment === null) {
+            const existingComment = acc[bbsNo].find(comment => comment.parent_comment === null);
+            if (existingComment) {
+              if (curr.C_NO > existingComment.C_NO) {
+                acc[bbsNo] = [curr];
+              }
+            } else {
+              acc[bbsNo].push(curr);
+            }
+          }
+        } else {
+          acc[bbsNo] = [curr];
+        }
+        return acc;
+      }, {});
+
+      statecomm.comment = toRaw(groupedData);
+      console.log('그룹 체크',statecomm.comment);
+      group.value = toRaw(statecomm.comment);
+      console.log(group.value[45]);
+    } else {
+      console.log('데이터 전송 실패')
+    }
+  } catch (error) {
+    console.error(`데이터 전송 실패: ${error}`)
+  }
+}
+
+//////////////////////////////////////
 
 const membersList = [
   {
@@ -134,7 +201,8 @@ const handleScroll = () => {
 
 //이벤트 리스터 추가 
 onMounted(() => {
-  getData() // 컴포넌트가 마운트될 때 getData 함수 실행
+  getData(), // 컴포넌트가 마운트될 때 getData 함수 실행
+  getComment()
 
   // 그 후 매 5초마다 getData 함수를 반복해서 실행
   //setInterval(getData, 5000)
@@ -142,7 +210,7 @@ onMounted(() => {
   window.addEventListener('scroll', handleScroll)
 })
 
-//이벤트 리스너 제거
+// 이벤트 리스너 제거
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
 })
@@ -160,8 +228,8 @@ const loadMore = () => {
   
   //items 배열에 moreItems 배열 추가해서 화면에 표시되는 게시글 추가
 
-  items.value = items.value.concat(moreItems)
-  console.log("leadMore..")
+  items.value = items.value.concat(moreItems);
+  console.log("leadMore..");
 }
 </script>
 
@@ -305,10 +373,9 @@ const loadMore = () => {
                       <VCardItem>
                         <VCardTitle>{{ item.content }}  </VCardTitle> 
                       </VCardItem>
-
-                      <VCardText>
-                        여기엔 댓글 넣을거지롱
-                      </VCardText>
+                      <VCol v-if="group[item.bno]?.[0]">
+                        <VTextField readonly :value="group[item.bno][0].CCOMMENT" />
+                      </VCol>
                     </VCard>
                   </VCol> 
                 </VCol>

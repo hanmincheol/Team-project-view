@@ -13,6 +13,7 @@ import authV2MaskLight from '@images/pages/auth-v2-mask-light.png'
 import {
   requiredValidatorPw,
 } from '@validators'
+import axios from '@axios'
 
 const router = useRouter()
 const refVForm = ref()
@@ -41,6 +42,33 @@ const loginNext = () => {
       login()
   })
 }
+
+const userchk = () => {
+  const formData = new FormData();
+  formData.append('id', id.value);
+  formData.append('pwd', password.value);
+  axios
+    .post('http://localhost:4000/usercheck', formData,{
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    .then((response) => {
+      if (response.status === 200) {
+        if(response.data === 1){
+          loginNext();
+        }else{
+          alert("존재하지 않는 유저 혹은 비밀번호가 일치하지 않습니다.");
+        }
+      } else {
+        console.log('데이터 가져오기 실패');
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+   });
+};
+
 </script>
 
 <template>
@@ -103,7 +131,7 @@ const loginNext = () => {
                 <!-- 비밀번호 입력란 -->
                 <VCol cols="12">
                   <VTextField
-                    v-model="form.password"
+                    v-model="password"
                     label="비밀번호"
                     :rules="[requiredValidatorPw]"
                     :type="isPasswordVisible ? 'text' : 'password'"
@@ -112,7 +140,7 @@ const loginNext = () => {
                   />
                   <div class="d-flex align-center flex-wrap mt-1 mb-4" style="justify-content:right">
                     <VCol cols="12"/>
-                    <VBtn @click="loginNext()">다음</VBtn>
+                    <VBtn @click="userchk()">다음</VBtn>
                   </div>
                   <VCol cols="12"/>
                 </VCol>
