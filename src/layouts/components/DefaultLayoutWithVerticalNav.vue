@@ -31,7 +31,7 @@ let offset = { x: 0, y: 0 }
 // 드래그 핸들러
 const startDrag = event => {
   dragging = true
-  offset = { x: event.clientX - event.target.offsetLeft, y: event.clientY - event.target.offsetTop }
+  offset = { x: event.clientX - event.target.offsetLeft +30, y: event.clientY - event.target.offsetTop +30 }
 }
 
 const doDrag = event => {
