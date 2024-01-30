@@ -105,7 +105,8 @@ const moreList = [
     value: 'Report',
   },
 ]
-openChatOfContact('1');
+
+openChatOfContact('1')
 </script>
 
 <template>
@@ -139,9 +140,9 @@ openChatOfContact('1');
     
 
     <!-- 👉 Chat content -->
-    <VMain class="chat-content-container " :style="{'height':'500px'}">
+    <VMain class="chat-content-container ">
       <!-- 👉 Right content: Active Chat -->
-      <!--아래의 class 속성의 h-100을 h-50으로 바꿔 길이 조정-->
+      <!-- 아래의 class 속성의 h-100을 h-50으로 바꿔 길이 조정 -->
       <div
         v-if="store.activeChat"
         class="d-flex flex-column h-100"
@@ -268,7 +269,6 @@ openChatOfContact('1');
           >
         </VForm>
       </div>
-
     </VMain>
   </VLayout>
 </template>

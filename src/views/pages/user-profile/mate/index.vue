@@ -1,11 +1,14 @@
 <script setup>
+import BlockMateConfirmFinal from '@/pages/community/BlockMateConfirmFinal.vue'
+import BlockMateConfirmModal from '@/pages/community/BlockMateConfirmModal.vue'
+import { isMatescreenchanged } from '@/router/index'
 import axios from '@axios'
 import { reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const router = useRoute()
 const connectionData = ref([])
-const isMateExist = ref(false)
+const isMateExist = ref(true)
 
 const rating = reactive({}) //호감도 뿌려주기 위한 변수
 const beforeRating = {}
@@ -14,12 +17,14 @@ const ratingColors = [
   'warning',
 ]
 
+const isConnected = {}
+const isWarning = {}
 
 const fetchProjectData = () => { //유저 값 가져오기
   if (router.params.tab === 'mate') {
     axios.get('http://127.0.0.1:4000/comm/mate', {
       params: {
-        id: 'HMC',
+        id: 'OSH',
       },
     })
       .then(response => {
@@ -27,22 +32,44 @@ const fetchProjectData = () => { //유저 값 가져오기
         connectionData.value = response.data
         if (Object.keys(response.data).length == 0) isMateExist.value = true
         else {
+          isMateExist.value = false
+
           //호감도 Vrating에 설정해줄 값
           connectionData.value.forEach(user => {
             rating[user.mate_id] = ref(user.favorable_rating)
+            isConnected[user.mate_id] = ref(true)
+            isWarning[user.mate_id] = ref(false)
           })}
       })
-      .catch(error => { 
-        // 에러 처리
-        console.error(error)
-      })
+      .catch(()=>{console.log('서버가 꺼져있습니다.')})
   }
 }
 
+console.log('mate의 isConnected:', isConnected)
+
+const connectionController = (temp, id) => {
+  temp.value = !temp.value
+  console.log(id)
+}
+
+const modalControll = ref(false)
+const username = ref('')
+
+const blockingController = (temp, id) => {
+  modalControll.value = true
+  username.value = id
+}
+
+const isWarningComplete = ref(false)
+
+const blockMate = (warningReason, id) => {
+  console.log(warningReason.value, id) //axios로 처리
+  isWarningComplete.value = true
+}
 
 watch(router, fetchProjectData, { immediate: true })
 
-watch(rating, ()=>{
+watch(rating, ()=>{ //호감도 관련 기능
   if(beforeRating != {}){
     for(const key in rating){
       if (beforeRating[key] != rating[key]){
@@ -59,27 +86,26 @@ watch(rating, ()=>{
   }
 }, { immediate: true })
 
+window.addEventListener('click', ()=>{ //beforeunload
+  if(isMatescreenchanged.value) {
+    console.log('메이트 url변경감지', isConnected)
+    for(const userid in isConnected) {
+      console.log('메이트 url변경감지 및 반복문')
+      console.log(userid, isConnected[userid].value)
 
+      if (!isConnected[userid].value){
+        console.log('axios delete 안으로 들어옴', userid)
+        axios.delete("http://127.0.0.1:4000/comm/mate/delete", {
+          data: {
+            id: userid,
+          },
+        }, { headers: { "Content-Type": `application/json` } })
+      }
+    }
 
-const moreBtnList = [
-  {
-    title: 'Share connection',
-    value: 'Share connection',
-  },
-  {
-    title: 'Block connection',
-    value: 'Block connection',
-  },
-  {
-    type: 'divider',
-    class: 'my-2',
-  },
-  {
-    title: '삭제',
-    value: 'Delete',
-    class: 'text-error',
-  },
-]
+    isMatescreenchanged.value = false
+  }
+})
 </script>
 
 <template>
@@ -109,13 +135,6 @@ const moreBtnList = [
       cols="12"
     >
       <VCard>
-        <div class="vertical-more">
-          <MoreBtn
-            item-props
-            :menu-list="moreBtnList"
-          />
-        </div>
-
         <VCardItem>
           <VCardTitle class="d-flex flex-column align-center justify-center">
             <VAvatar
@@ -165,11 +184,26 @@ const moreBtnList = [
 
           <div class="d-flex justify-center gap-4 mt-6">
             <VBtn
-              :prepend-icon="data.isConnected ? 'mdi-account-check-outline' : 'mdi-account-plus-outline'"
-              :variant="data.isConnected ? 'elevated' : 'tonal'"
+              :prepend-icon="isConnected[data.mate_id].value ? 'mdi-account-cancel-outline' : 'mdi-account-check-outline'"
+              :variant="isConnected[data.mate_id].value ? 'tonal' : 'elevated'"
+              @click="connectionController(isConnected[data.mate_id], data.mate_id)"
             >
-              {{ data.isConnected ? '메이트취소' : '메이트신청' }}
+              {{ isConnected[data.mate_id].value ? '메이트취소' : '취소 되돌리기' }}
             </VBtn>
+            <VBtn
+              prepend-icon="mdi-alert"
+              variant="outlined"
+              color="error"
+              @click="blockingController(isWarning[data.mate_id], data.mate_id)"
+            >
+              신고하기
+            </VBtn>
+            <BlockMateConfirmModal 
+              v-model:isDialogVisible="modalControll"
+              :message="username"
+              @check-confirm="blockMate"
+            />
+            <BlockMateConfirmFinal v-model:isDialogVisible="isWarningComplete" />
           </div>
         </VCardText>
       </VCard>

@@ -3,12 +3,19 @@ import axios from '@axios'
 
 const profileHeaderData = ref()
 
-//axios로 가짜 데이터 가져오기
+
 const fetchHeaderData = () => {
   axios.get('/pages/profile-header').then(response => {
     profileHeaderData.value = response.data
+    console.log('가짜 프로필:', response.data)
   })
 }
+
+axios.get("http://localhost:4000/comm/profile", { params: { id: 'HMC' } }).then(response=>{
+  console.log('유저 프로필 받아온 값:', response.data)
+  profileHeaderData.value = response.data
+})
+  .catch(()=>console.log('서버가 꺼져있습니다'))
 
 fetchHeaderData()
 </script>
@@ -16,7 +23,7 @@ fetchHeaderData()
 <template>
   <VCard v-if="profileHeaderData">
     <VImg
-      :src="profileHeaderData.coverImg"
+      src="/src/assets/images/pages/user-profile-header-bg.png"
       min-height="125"
       max-height="250"
       cover
@@ -25,67 +32,62 @@ fetchHeaderData()
     <VCardText class="d-flex align-bottom flex-sm-row flex-column justify-center gap-x-4">
       <div class="d-flex h-0">
         <VAvatar
-          rounded
           size="120"
-          :image="profileHeaderData.profileImg"
+          :image="profileHeaderData.profilePath"
           class="user-profile-avatar mx-auto"
         />
       </div>
 
       <div class="user-profile-info w-100 mt-16 pt-6 pt-sm-0 mt-sm-0">
-        <h5 class="text-h5 text-center text-sm-start mb-2">
-          {{ profileHeaderData.fullName }}
-        </h5>
-
+        <div class="d-flex align-center justify-center justify-sm-space-between flex-wrap gap-4">
+          <div class="d-flex flex-wrap align-items-baseline justify-center justify-sm-start flex-grow-1 gap-5">
+            <div :style="{'display':'flex', 'align-items':'baseline'}">
+              <span>
+                <h5 class="text-h5 text-center text-sm-start mb-2">
+                  {{ profileHeaderData.id }}
+                </h5>
+                <span class="d-flex align-center ">
+                  <span
+                    class="d-flex align-center"
+                    :style="{'margin-right':'15px'}"
+                  >
+                    <VIcon
+                      size="24"
+                      icon="mdi-account-badge-outline"
+                      class="me-2"
+                    />
+                    <span class="text-body-1 font-weight-small">
+                      {{ profileHeaderData.name }}
+                    </span>
+              
+                  </span>
+                  <span class="d-flex align-center">
+                    <VIcon
+                      size="24"
+                      icon="mdi-calendar-start"
+                      class="me-2"
+                    />
+                    가입일 &nbsp;
+                    <span class="text-body-1 font-weight-medium">
+                      {{ profileHeaderData.date }}
+                    </span>
+                  </span>
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
         <div class="d-flex align-center justify-center justify-sm-space-between flex-wrap gap-4">
           <div class="d-flex flex-wrap justify-center justify-sm-start flex-grow-1 gap-5">
-            <span class="d-flex align-center">
-              <VIcon
-                size="24"
-                icon="mdi-invert-colors"
-                class="me-2"
-              />
-              <span class="text-body-1 font-weight-medium">
-                {{ profileHeaderData.designation }}
-              </span>
-            </span>
-
-            <span class="d-flex align-center">
-              <VIcon
-                size="24"
-                icon="mdi-map-marker-outline"
-                class="me-2"
-              />
-              <span class="text-body-1 font-weight-medium">
-                {{ profileHeaderData.location }}
-              </span>
-            </span>
-
-            <span class="d-flex align-center">
-              <VIcon
-                size="24"
-                icon="mdi-calendar-blank"
-                class="me-2"
-              />
-              <span class="text-body-1 font-weight-medium">
-                {{ profileHeaderData.joiningDate }}
+            <span class="d-flex align-center ">
+              <span
+                class="text-body-1 font-weight-medium mt-6 self-i"
+                :style="{'max-width':'800px'}"
+              >
+                {{ profileHeaderData.proIntroduction }}
               </span>
             </span>
           </div>
-          <VBtn prepend-icon="mdi-account-plus-outline">
-            친구신청
-          </VBtn>
-          <!--
-            친구 신청하기 및 친구 신청 취소하기 구현부분
-            <div class="d-flex justify-center gap-4 mt-6">
-            <VBtn
-            :prepend-icon="data.isConnected ? 'mdi-account-check-outline' : 'mdi-account-plus-outline'"
-            :variant="data.isConnected ? 'elevated' : 'tonal'"
-            >
-            {{ data.isConnected ? 'connected' : 'connect' }}
-            </VBtn>
-            </div>
-          -->
         </div>
       </div>
     </VCardText>
@@ -101,5 +103,10 @@ fetchHeaderData()
   .v-img__img {
     border-radius: 0.125rem;
   }
+}
+.self_intro {
+  // display: inline-block; // 인라인-블록 요소로 변환
+  height: 100px;
+  min-width: 700px;
 }
 </style>

@@ -64,14 +64,14 @@ const handleMouseLeave = () => {
             <AppDateTimePicker
               v-model="date"
               label=" "
-              style="margin-top: 135px;"
+              style="margin-top: 120px;"
             />
           </VCol>
             
           <VCol cols="10">
             <!-- 텍스트 영역 위 img 뿌려주는 공간 -->
             <Transition name="fade">
-              <VRow style="height: 125px; margin-top: -15px;">
+              <VRow style="height: 125px; margin-top: -13px;">
                 <VImg 
                   v-for="(url, index) in imgUrls" 
                   :key="index"

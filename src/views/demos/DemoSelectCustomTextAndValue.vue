@@ -14,7 +14,15 @@
 
 
 <script setup>
-import { defineEmits, ref } from 'vue'
+import { defineEmits, defineProps, ref } from 'vue'
+
+const props = defineProps({
+  value : {
+    type : Number,
+    required: true
+  },
+})
+
 
 const emit = defineEmits('update:modelValue', goal_No)
 
@@ -28,6 +36,9 @@ const goal_No = ref([
   { state: '다이어트 식단', value: 5 },
 ])
 
+watch(() => props.value, (newValue) => {
+  selectedOption.value = goal_No.value.find((option) => option.value === newValue)
+})
 
 function handleSelect(value) {
   //var gender = document.querySelector('[name=gender]')

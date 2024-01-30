@@ -1,52 +1,100 @@
 <script setup>
-import axios from '@axios'
-import { useRoute } from 'vue-router'
+import DeletSubConfirmModal from '@/pages/community/DeletSubConfirmModal.vue';
+import { isSubscribesscreenchanged } from '@/router/index';
+import axios from '@axios';
+import { useRoute } from 'vue-router';
 
 const router = useRoute()
 const subscribeTo = ref([])
 const subscribers = ref([])
-const isSubToExist = ref(false)
-const isMySubExist = ref(false)
+const isSubToExist = ref(true)
+const isMySubExist = ref(true)
+const isDeleted = {}
+const isSubscribed = {}
 
-const fetchProjectData = () => {
+const fetchProjectData = ()=>{
   if (router.params.tab === 'subscriber') {
     axios.get('http://127.0.0.1:4000/comm/subscribe', { params: { id: 'HMC' } }).then(response => {
       subscribeTo.value = response.data['subTo']
       subscribers.value = response.data['MySub']
       console.log(typeof subscribers.value)
-
-      if(Object.keys(subscribeTo.value).length==0) isSubToExist.value = true
-      if(Object.keys(subscribers.value).length==0) isMySubExist.value = true
+      console.log(subscribeTo.value)
+      if(Object.keys(subscribeTo.value).length==0) {
+        isSubToExist.value = true
+        console.log('값이 존재하지 않음')
+      }
+      else if (Object.keys(subscribeTo.value).length!=0){
+        isSubToExist.value = false
+        for(const key in subscribeTo.value) {
+          isSubscribed[subscribeTo.value[key].subscribe_id] = ref(true)
+        }
+      }
+      if(Object.keys(subscribers.value).length==0) {
+        isMySubExist.value = true
+        console.log('값이 존재하지 않음')
+      }
+      else if (Object.keys(subscribers.value).length!=0) {
+        console.log(typeof subscribers.value)
+        isMySubExist.value = false
+        for(const key in subscribers.value){
+          isDeleted[subscribers.value[key].id] = ref(false)
+        }
+      }
       console.log(isSubToExist)
     })
+      .catch(()=>{console.log('서버가 꺼져있습니다')})
   }
 }
 
+window.addEventListener('click', ()=>{ //beforeunload
+  if(isSubscribesscreenchanged.value) {
+    console.log('url변경감지', isSubscribed)
+    for(const userid in isSubscribed) {
+      console.log('url변경감지 및 반복문')
+      console.log(userid, isSubscribed[userid].value)
+
+      if (!isSubscribed[userid].value){
+        console.log('axios delete 안으로 들어옴', userid)
+        axios.delete("http://127.0.0.1:4000/comm/subscribe/delete", {
+          data: {
+            id: userid,
+          },
+        }, { headers: { "Content-Type": `application/json` } })
+      }
+    }
+
+    isSubscribesscreenchanged.value = false
+  }
+})
 
 
 //watch 함수를 사용하여 router 객체를 감시하고, 변경이 있을 때마다 fetchProjectData 함수를 실행합니다. 
 //immediate: true 옵션을 사용하여 초기 로드 시에도 함수를 실행합니다.
 watch(router, fetchProjectData, { immediate: true })
 
-const moreBtnList = [
-  {
-    title: 'Share connection',
-    value: 'Share connection',
-  },
-  {
-    title: 'Block connection',
-    value: 'Block connection',
-  },
-  {
-    type: 'divider',
-    class: 'my-2',
-  },
-  {
-    title: '삭제',
-    value: 'Delete',
-    class: 'text-error',
-  },
-]
+const username = ref('')
+const mySubModalController = ref(false)
+
+const deleteController = id => {
+  username.value = id
+  mySubModalController.value = true
+}
+
+const deleteMySub = id => { //api 요청
+  console.log(id, '삭제됨')
+  axios.delete("http://127.0.0.1:4000/comm/subscribe/deleteSubscriber", { data: {
+    subId: id,
+    userId: 'HMC',
+  } })
+    .then(()=>{
+      fetchProjectData()
+    })
+}
+
+const subscribe = temp => { //구독 api 요청 (url 감지)
+  console.log(temp)
+  isSubscribed[temp].value = !isSubscribed[temp].value
+}
 </script>
 
 <template>
@@ -97,7 +145,7 @@ const moreBtnList = [
             />
 
             <p class="mt-6 mb-0">
-              {{ data.name }}
+              {{ data.subscribe_id }}
             </p>
             <span class="text-body-1">{{ data.name }}</span>
           </VCardTitle>
@@ -126,18 +174,26 @@ const moreBtnList = [
           </div>
 
           <div class="d-flex justify-center gap-4 mt-6">
+            <!-- 구독 버튼 -->
             <VBtn
-              :prepend-icon="data.isConnected ? 'mdi-account-check-outline' : 'mdi-account-plus-outline'"
-              :variant="data.isConnected ? 'elevated' : 'tonal'"
+              v-show="!isSubscribed[data.subscribe_id].value"
+              id="myButton"
+              width="40"
+              style="margin-left: 5px;"
+              variant="elevated"
+              @click="subscribe(data.subscribe_id)"
             >
-              {{ data.isConnected ? '친구취소' : '친구신청' }}
+              구독
             </VBtn>
-
             <VBtn
-              :prepend-icon="data.isConnected ? 'mdi-account-check-outline' : 'mdi-account-plus-outline'"
-              :variant="data.isConnected ? 'elevated' : 'tonal'"
+              v-show="isSubscribed[data.subscribe_id].value"
+              id="myButton"
+              style="margin-left: 5px;"
+              variant="tonal"
+              @click="subscribe(data.subscribe_id)"
             >
-              {{ data.isConnected ? '메이트취소' : '메이트신청' }}
+              <VIcon icon="mdi-bell" />
+              구독중
             </VBtn>
           </div>
         </VCardText>
@@ -148,7 +204,7 @@ const moreBtnList = [
   <VCardText>
     <h5
       class="text-h5"
-      style="font-weight: bold;"
+      style=" margin-top: 100px;font-weight: bold;"
     >
       구독받은 목록
     </h5>
@@ -176,13 +232,6 @@ const moreBtnList = [
       cols="12"
     >
       <VCard>
-        <div class="vertical-more">
-          <MoreBtn
-            item-props
-            :menu-list="moreBtnList"
-          />
-        </div>
-
         <VCardItem>
           <VCardTitle class="d-flex flex-column align-center justify-center">
             <VAvatar
@@ -222,18 +271,17 @@ const moreBtnList = [
 
           <div class="d-flex justify-center gap-4 mt-6">
             <VBtn
-              :prepend-icon="data.isConnected ? 'mdi-account-check-outline' : 'mdi-account-plus-outline'"
-              :variant="data.isConnected ? 'elevated' : 'tonal'"
+              prepend-icon="mdi-trash-can-outline"
+              variant="outlined"
+              @click="deleteController(data.id)"
             >
-              {{ data.isConnected ? '친구취소' : '친구신청' }}
+              삭제
             </VBtn>
-
-            <VBtn
-              :prepend-icon="data.isConnected ? 'mdi-account-check-outline' : 'mdi-account-plus-outline'"
-              :variant="data.isConnected ? 'elevated' : 'tonal'"
-            >
-              {{ data.isConnected ? '메이트취소' : '메이트신청' }}
-            </VBtn>
+            <DeletSubConfirmModal 
+              v-model:isDialogVisible="mySubModalController"
+              :message="username"
+              @check-event="deleteMySub"
+            />
           </div>
         </VCardText>
       </VCard>

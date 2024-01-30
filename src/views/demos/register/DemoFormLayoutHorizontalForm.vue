@@ -176,6 +176,7 @@ const resetTimer = () => {
 
 const closeDialogAndResetTimer = () => {
   isDialogTwoShow.value = false
+  isDialogVisible.value = false
   resetTimer() // resetTimer 함수는 다른 곳에서 정의되어 있다고 가정합니다.
 }
 
@@ -391,8 +392,9 @@ const sendMessage = async () => {
     // 이미 존재하는 번호라면, 에러 메시지를 보여줍니다.
     if (checkResponse.data.exists) {
       alert('이미 가입된 번호입니다.')
+      isDialogVisible.value = false
       
-      return false
+      return isDialogVisible.value 
     }
 
     // 인증번호를 요청하는 기존 로직
@@ -410,13 +412,15 @@ const sendMessage = async () => {
     if (error.message === 'Validation failed') {
       // 유효성 검사에 실패했을 때는 사용자에게 알립니다.
       alert('회원정보를 올바르게 입력했는지 확인해주세요.')
+      isDialogVisible.value = false
     } else {
       // 그 외의 오류는 로그를 출력하고, 사용자에게 알립니다.
       console.error('An unknown error occurred:', error)
       alert('인증번호 발송에 실패하였습니다. 다시 시도해주세요.')
+      isDialogVisible.value = false
     }
     
-    return false
+    return isDialogVisible.value
   }
 }
 

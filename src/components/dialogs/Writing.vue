@@ -4,7 +4,7 @@ import Sub from '@/views/demos/Subject.vue'
 import axios from '@axios'
 import { size } from '@floating-ui/dom'
 import avatar1 from '@images/avatars/avatar-1.png'
-import logo from '@images/logo.svg'; // 로고 이미지 불러오기
+import logo from '@images/logo.svg' // 로고 이미지 불러오기
 import bg from '@images/pages/writing.jpg'
 import { computed, reactive, ref, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
@@ -16,7 +16,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:isDialogVisible'])
+const emit = defineEmits(['update:isDialogVisible', "update-success"])
 const isprofile = ref(false)
 const router = useRouter()
 const people = ref(false)
@@ -43,7 +43,7 @@ const dialogVisibleUpdate = value => {
 
 
 const isButtonDisabled = computed(() => {
-  return subValue.value === '카테고리' || !textValue.value && !hashtagValue.value === 0 
+  return subValue.value == '카테고리' || !textValue.value && !hashtagValue.value === 0 
 })
 
 const members = [
@@ -66,9 +66,11 @@ const submitData = async function() {
 
 
   // 각 파일을 FormData에 추가
-  images.files.forEach(file => {
-    formData.append('files', file.file)  // 파일의 이름을 'files'로 지정
-  })
+  if (images.files.length > 0) {
+    images.files.forEach(file => {
+      formData.append('files', file.file)  // 파일의 이름을 'files'로 지정
+    })
+  }
 
 
   try {
@@ -81,19 +83,21 @@ const submitData = async function() {
     // 응답 처리
     if (response.status === 200) {
       console.log('데이터 전송 성공')
+      emit('update-success')
       console.log(`response.data: ${response.data}`)
-      if(response.data !== 0){
-        console.log(`response.data:${response.data}`)
-        emit('update:isDialogVisible', false)  // 이벤트 발생
-        router.push({ name: 'community_post' }) // community_post.vue 페이지로 이동
-        //router.replace({ name: 'community_post' })
-      }
     } else {
       console.log('데이터 전송 실패')
     }
   } catch (error) {
     console.error(`데이터 전송 실패: ${error}`)
+  }finally {
+
+
+
+    emit('update:isDialogVisible', false)  // 모달 닫기
+    //router.push({ name: 'community_post' }).then(() => router.go(0)) // community_post.vue 페이지로 이동 후 리로드
   }
+
 }
 
 
