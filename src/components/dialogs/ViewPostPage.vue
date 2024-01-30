@@ -41,30 +41,25 @@ const avatars = [
         <VIcon>mdi-close</VIcon>
       </VBtn>
       <VCol cols="12">
-        <!--
-          <VImg
-          :src="bg"
-          style=" filter: contrast(200%);opacity: 0.5;"
-          /> 
-        -->
-
         <VCard>
           <VRow>
-            <VCarousel
-              v-if="postToEdit.files && postToEdit.files.length"
-              show-arrows-on-hover
-            >
-              <VCarouselItem
-                v-for="(img, index) in postToEdit.files"
-                :key="index"
+            <VCol cols="6">
+              <VCarousel
+                v-if="postToEdit.files && postToEdit.files.length"
+                show-arrows-on-hover
               >
-                <VImg :src="img" />
-              </VCarouselItem>
-            </VCarousel>
-            <VImg
-              v-else
-              :src="backgroundimg"
-            />
+                <VCarouselItem
+                  v-for="(img, index) in postToEdit.files"
+                  :key="index"
+                >
+                  <VImg :src="img" />
+                </VCarouselItem>
+              </VCarousel>
+              <VImg
+                v-else
+                :src="backgroundimg"
+              />
+            </VCol>
             <VCol cols="6">
               <VRow>
                 <VCol>

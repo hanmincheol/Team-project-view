@@ -229,7 +229,6 @@ const loadMore = () => {
                           />
                         </VCarouselItem>
                       </VCarousel>
-
                       <VCardItem>
                         <VCardTitle
                           class="pointer-cursor"
