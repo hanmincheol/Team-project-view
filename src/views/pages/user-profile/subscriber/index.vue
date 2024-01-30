@@ -1,8 +1,8 @@
 <script setup>
-import DeletSubConfirmModal from '@/pages/community/DeletSubConfirmModal.vue';
-import { isSubscribesscreenchanged } from '@/router/index';
-import axios from '@axios';
-import { useRoute } from 'vue-router';
+import DeletSubConfirmModal from '@/pages/community/DeletSubConfirmModal.vue'
+import { isSubscribesscreenchanged } from '@/router/index'
+import axios from '@axios'
+import { useRoute } from 'vue-router'
 
 const router = useRoute()
 const subscribeTo = ref([])
@@ -57,7 +57,8 @@ window.addEventListener('click', ()=>{ //beforeunload
         console.log('axios delete 안으로 들어옴', userid)
         axios.delete("http://127.0.0.1:4000/comm/subscribe/delete", {
           data: {
-            id: userid,
+            userId: 'HMC',
+            subToId: userid,
           },
         }, { headers: { "Content-Type": `application/json` } })
       }

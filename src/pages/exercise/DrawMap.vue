@@ -23,7 +23,7 @@ export default {
   }, //data
   mounted() {
     console.log('DrawMap:', typeof lat)
-    if (window.kakao && window.kakao.maps) { //카카오 api가 로드되었을 때
+    if (window.kakao && window.kakao.maps && this.drawingMap != null) { //카카오 api가 로드되었을 때
       console.log('마운트 if 안에 들어옴')
 
       this.initMap()

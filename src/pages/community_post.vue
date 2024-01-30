@@ -1,4 +1,6 @@
 <script setup>
+import Editing from '@/components/dialogs/Editing.vue'
+import ViewPostPage from '@/components/dialogs/ViewPostPage.vue'
 import InviteFriendConfirmModal from '@/pages/community/InviteFriendConfirmModal.vue'
 import Category from '@/pages/views/demos/forms/form-elements/select/category.vue'
 import axios from '@axios'
@@ -23,10 +25,11 @@ let postToEdit = ref("")
 
 const isInvited = {}
 const isSubscribed = {}
+const userId = ref('OSH') //접속한 유저의 아이디
 
 let q = ref('')
 const users = ref([])
-const usersView = ref([])
+const usersView = ref([]) //게시판의 추천 목록에 뿌려줄 리스트
 
 const state = reactive({
   items: [],
@@ -88,37 +91,32 @@ const getData = async function() {
             console.log('체크',i);
           }
           users.value.forEach(ele=>{
-            if(ele.isFriend != 0 || ele.isSubTo != 0) {
-              console.log(ele)
-              console.log(typeof usersView.value)
+            if((ele.isFriend == 0 || ele.isSubTo == 0) && ele.id != userId.value) {
               usersView.value.push(ele)
             }
             console.log(usersView.value)
             
             console.log(usersView)
-            for(const id in usersView){
-              console.log(usersView[id])
-              if(usersView[id]['isFriend']==0) {
-                isInvited[usersView[id]['id']] = ref(false)
+            for(const id in usersView.value){
+              if(usersView.value[id]['isFriend']==0) { //구독관계인지, 친구관계인지 체크
+                isInvited[usersView.value[id]['id']] = ref(true)
               }
-              else if(usersView[id]['isFriend']!=0) {
-                isInvited[usersView[id]['id']] = ref(true)
+              else if(usersView.value[id]['isFriend']!=0) {
+                isInvited[usersView.value[id]['id']] = ref(false)
               }
-              if(usersView[id]['isSubTo']==0) {
-                isSubscribed[usersView[id]['id']] = ref(true)
+              if(usersView.value[id]['isSubTo']==0) {
+                isSubscribed[usersView.value[id]['id']] = ref(false)
               }
-              else if(usersView[id]['isSubTo']!=0) {
-                isSubscribed[usersView[id]['id']] = ref(false)
+              else if(usersView.value[id]['isSubTo']!=0) {
+                isSubscribed[usersView.value[id]['id']] = ref(true)
               }
-              console.log(isInvited)
             }
-
           })
         })
         .catch(err=>console.log(err))
 
       console.log(state.items[1].files)
-      console.log('데이터 체크',response.data);
+      console.log('데이터 체크', response.data)
     } else {
       console.log('데이터 전송 실패')
     }
@@ -135,9 +133,10 @@ const getUserAvatar = (userId) => {
 
 //////////////////////////////////////
 /* 댓글 */
-let group = ref([]);
+let group = ref([])
+
 const statecomm = ref({
-  comment:[]
+  comment: [],
 })
 
 //삭제코드
@@ -190,6 +189,8 @@ const getComment = async function() {
 
     // 응답 처리
     if (response.status === 200) {
+      console.log('댓글 성공')
+      console.log('데이터 체크', response.data)
 
       // BBS_NO 값을 기준으로 데이터 묶기
       groupedDataAll = response.data.reduce((acc, curr) => {
@@ -208,7 +209,7 @@ const getComment = async function() {
         if (acc[bbsNo]) {
           // parent_comment가 null인 값들 중에서 C_NO가 가장 큰 댓글만 선택
           if (curr.parent_comment === null) {
-            const existingComment = acc[bbsNo].find(comment => comment.parent_comment === null);
+            const existingComment = acc[bbsNo].find(comment => comment.parent_comment === null)
             if (existingComment) {
               // 현재 댓글의 C_NO 값이 existingComment의 C_NO 값보다 큰 경우
               // acc[bbsNo] 배열을 현재 댓글로 업데이트
@@ -216,7 +217,7 @@ const getComment = async function() {
                 acc[bbsNo] = [curr];
               }
             } else {
-              acc[bbsNo].push(curr);
+              acc[bbsNo].push(curr)
             }
           } 
         }else {
@@ -276,57 +277,6 @@ const insertComment = async (bno, comment) => {
 
 //////////////////////////////////////
 
-const membersList = [
-  {
-    avatar: avatar1,
-    name: 'Lester Palmer',
-    email: 'jerrod98@gmail.com',
-    permission: 'Can Edit',
-
-  },
-  {
-    avatar: avatar2,
-    name: 'Mattie Blair',
-    email: 'prudence.boehm@yahoo.com',
-    permission: 'Owner',
-  },
-  {
-    avatar: avatar3,
-    name: 'Marvin Wheeler',
-    email: 'rumet@jujpejah.net',
-    permission: 'Can Comment',
-  },
-  {
-    avatar: avatar4,
-    name: 'Nannie Ford',
-    email: 'negza@nuv.io',
-    permission: 'Can View',
-  },
-  {
-    avatar: avatar5,
-    name: 'Julian Murphy',
-    email: 'lunebame@umdomgu.net',
-    permission: 'Can Edit',
-  },
-  {
-    avatar: avatar6,
-    name: 'Sophie Gilbert',
-    email: 'ha@sugit.gov',
-    permission: 'Can View',
-  },
-  {
-    avatar: avatar7,
-    name: 'Chris Watkins',
-    email: 'zokap@mak.org',
-    permission: 'Can Comment',
-  },
-  {
-    avatar: avatar8,
-    name: 'Adelaide Nichols',
-    email: 'ujinomu@jigo.com',
-    permission: 'Can Edit',
-  },
-]
 
 //스크롤 이벤트 리스터 추가 - 화면 하단에 스크롤 도착 시 loadMore()함수 호출
 const scrollTimeout = ref(null)
@@ -375,29 +325,60 @@ const loadMore = () => {
   
   //items 배열에 moreItems 배열 추가해서 화면에 표시되는 게시글 추가
 
-  items.value = items.value.concat(moreItems);
-  console.log("leadMore..");
+  items.value = items.value.concat(moreItems)
+  console.log("leadMore..")
 }
 
 const modalControll = ref(false)
 
-const controllInviteFunc = (ans, id) => {
+const controllInviteFunc = (ans, id) => { //DB에 접근
   console.log('이벤트 발생')
   console.log(ans, id)
-  isInvited[id] = ref(ans)
+  isInvited[id] = ref(false)
+  axios.post("http://localhost:4000/comm/request", JSON.stringify({
+    userId: 'OSH',
+    reqId: id,
+    type: '1',
+  }), { headers: { 'Content-Type': 'application/json' } })
+    .catch(err => {
+      console.log(err, '값을 받는 데 실패했습니다')
+    })
 }
 
 const username = ref('')
 
-const requestFriend = temp => {
+const requestFriend = temp => { //친구 신청 모달창 안내용
   modalControll.value = !modalControll.value
   console.log(temp)
   username.value = temp
 }
 
-const subscribe = name => {
-  isSubscribed[name].value = !isSubscribed[name].value
+const isSnackbarVisible = ref(false)
+const message = ref("")
 
+//구독 관리
+const subscribe = (name, check) => {
+  console.log('구독관리체크:', name)
+  isSubscribed[name].value = !isSubscribed[name].value
+  isSnackbarVisible.value = true
+  if (check == 1) {
+    message.value = "구독이 추가되었습니다"
+    axios.post("http://localhost:4000/comm/subscribe/subscribing", JSON.stringify({
+      userId: 'OSH',
+      subToId: name,
+    }), { headers: { 'Content-Type': 'application/json' } })
+      .catch(err=>console.log(err))
+  }
+  else {
+    message.value = "구독이 취소되었습니다"
+    axios.delete("http://127.0.0.1:4000/comm/subscribe/delete", {
+      data: {
+        userId: 'OSH',
+        subToId: name,
+      },
+    }, { headers: { "Content-Type": `application/json` } })
+      .catch(err=>console.log(err))
+  }
 }
 
 
@@ -670,9 +651,12 @@ const openUserProfileModal = (val) => {
                           variant="text"
                           color="success"
                         />
-                      </VCol>
-                      <VCol v-if="group[item.bno]?.[0]">
-                        <VTextField readonly :value="group[item.bno][0].CCOMMENT" />
+                        <VCol>
+                          좋아요 수
+                        </VCol>
+                        <VCol v-if="group[item.bno]?.[0]">
+                          <strong>{{ group[item.bno][0].ID }}</strong> {{ group[item.bno][0].CCOMMENT }}
+                        </VCol>
                       </VCol>
                     </VCard>
                   </VCol> 
@@ -723,10 +707,10 @@ const openUserProfileModal = (val) => {
             <!-- 친구 추가 버튼 -->
             <template #append>
               <VBtn
-                v-show="!isInvited[member.name].value"
+                v-show="isInvited[member.id].value"
                 id="myButton"
                 width="40"
-                @click="requestFriend(member.name)"
+                @click="requestFriend(member.id)"
               >
                 친구요청
               </VBtn>
@@ -736,7 +720,7 @@ const openUserProfileModal = (val) => {
                 @check-confirm="controllInviteFunc"
               />
               <VBtn
-                v-show="isInvited[member.name].value"
+                v-show="!isInvited[member.id].value"
                 width="40"
                 disabled="true"
               >
@@ -744,25 +728,31 @@ const openUserProfileModal = (val) => {
               </VBtn>
               <!-- 구독 버튼 -->
               <VBtn
-                v-show="!isSubscribed[member.name].value"
+                v-show="!isSubscribed[member.id].value"
                 id="myButton"
                 width="40"
                 style="margin-left: 5px;"
                 variant="outlined"
-                @click="subscribe(member.name)"
+                @click="subscribe(member.id, 1)"
               >
                 구독
               </VBtn>
               <VBtn
-                v-show="isSubscribed[member.name].value"
+                v-show="isSubscribed[member.id].value"
                 id="myButton"
                 style="margin-left: 5px;"
                 variant="tonal"
-                @click="subscribe(member.name)"
+                @click="subscribe(member.id, 0)"
               >
                 <VIcon icon="mdi-bell" />
                 구독중
               </VBtn>
+              <VSnackbar
+                v-model="isSnackbarVisible"
+                :timeout="800"
+              >
+                {{ message }}
+              </VSnackbar>
             </template>
           </VListItem>
         </VCol>
