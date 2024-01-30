@@ -91,7 +91,8 @@ const stopDrag = () => {
     <template #iconBtn>
       <div
         class="icon-button" 
-        style=" box-shadow: 0 2px 5px rgba(0, 0, 0, 30%);"  
+        style=" background-color: #f6f6f6; box-shadow: 0 2px 5px rgba(0, 0, 0, 30%);"  
+        
         @mousemove="doDrag" 
         @mouseup="stopDrag"
       >
