@@ -211,8 +211,25 @@ const loadMore = () => {
                           </VCol>
                         </VRow>
                       </VCol>
+                      <VCol
+                        v-if="item.files && item.files.length ==1"
+                        class="transparent-carousel"
+                        show-arrows-on-hover
+                      >
+                        <VCol
+                          v-for="(image, i) in item.files" 
+                          :key="i"
+                          :class="{'active-slide': i === activeIndex}"
+                        >
+                          <VImg
+                            :src="image"
+                            class="pointer-cursor"
+                            @click="viewPostPageModal=true;submitEdit(item.bno)"
+                          />
+                        </VCol>
+                      </VCol>
                       <VCarousel
-                        v-if="item.files && item.files.length"
+                        v-if="item.files && item.files.length >=2"
                         class="transparent-carousel"
                         show-arrows-on-hover
                         color="success"
@@ -225,7 +242,7 @@ const loadMore = () => {
                           <VImg
                             :src="image"
                             class="pointer-cursor"
-                            @click="viewPostPageModal=true"
+                            @click="viewPostPageModal=true;submitEdit(item.bno)"
                           />
                         </VCarouselItem>
                       </VCarousel>

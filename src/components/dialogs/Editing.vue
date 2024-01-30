@@ -133,9 +133,32 @@ const submitEdit = async function() {
         </VRow>
         <VRow>
           <VCol cols="6">
-            <VCarousel
-              v-if="postToEdit.files && postToEdit.files.length"
+            <VCol
+              v-if="postToEdit.files && postToEdit.files.length ==1"
+              class="transparent-carousel"
               show-arrows-on-hover
+              color="success"
+            >
+              <VCol
+                v-for="(img, index) in postToEdit.files"
+                :key="index"
+              >
+                <VImg
+                  :src="img"
+                  style="margin-top: 15%;"
+                />
+              </VCol>
+            </VCol>
+            <VImg
+              v-if="postToEdit.files && postToEdit.files.length ==0"
+              :src="backgroundimg"
+            />
+            <VCarousel
+              v-if="postToEdit.files && postToEdit.files.length >=2"
+              class="transparent-carousel"
+              show-arrows-on-hover
+              color="success"
+              style="margin-top: 0%;"
             >
               <VCarouselItem
                 v-for="(img, index) in postToEdit.files"
@@ -144,10 +167,6 @@ const submitEdit = async function() {
                 <VImg :src="img" />
               </VCarouselItem>
             </VCarousel>
-            <VImg
-              v-else
-              :src="backgroundimg"
-            />
           </VCol>
           <VCol cols="6">
             <VRow>

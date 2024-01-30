@@ -224,8 +224,9 @@ onMounted(async () => {
             <!-- 아래 Icon은 교체 아이콘으로... -->
             <VIcon
               v-if="showIcon"
-              size="22"
-              icon="mdi-magnify"
+              size="x-large"
+              color="success"
+              icon="mdi-autorenew"
               class="icon"
               style="opacity: 1;"
               @click="showDialog = true"

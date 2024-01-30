@@ -44,9 +44,32 @@ const avatars = [
         <VCard>
           <VRow>
             <VCol cols="6">
-              <VCarousel
-                v-if="postToEdit.files && postToEdit.files.length"
+              <VCol
+                v-if="postToEdit.files && postToEdit.files.length ==1"
+                class="transparent-carousel"
                 show-arrows-on-hover
+                color="success"
+              >
+                <VCol
+                  v-for="(img, index) in postToEdit.files"
+                  :key="index"
+                >
+                  <VImg
+                    :src="img"
+                    style="margin-top: 15%;"
+                  />
+                </VCol>
+              </VCol>
+              <VImg
+                v-if="postToEdit.files && postToEdit.files.length ==0"
+                :src="backgroundimg"
+              />
+              <VCarousel
+                v-if="postToEdit.files && postToEdit.files.length >=2"
+                class="transparent-carousel"
+                show-arrows-on-hover
+                color="success"
+                style="margin-top: 15%;"
               >
                 <VCarouselItem
                   v-for="(img, index) in postToEdit.files"
@@ -55,10 +78,6 @@ const avatars = [
                   <VImg :src="img" />
                 </VCarouselItem>
               </VCarousel>
-              <VImg
-                v-else
-                :src="backgroundimg"
-              />
             </VCol>
             <VCol cols="6">
               <VRow>
@@ -176,5 +195,13 @@ const avatars = [
 <style>
 .disabled-textarea {
   color: black; /* 텍스트 색상을 검정색으로 설정합니다. */
+}
+
+.active-slide {
+  color: success;
+}
+
+.transparent-carousel .v-carousel__controls {
+  background-color: transparent;
 }
 </style>
