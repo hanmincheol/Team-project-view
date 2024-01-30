@@ -113,7 +113,7 @@ const getData = async function() {
         .catch(err=>console.log(err))
 
       console.log(state.items[1].files)
-      console.log('데이터 체크',response.data);
+      console.log('데이터 체크', response.data)
     } else {
       console.log('데이터 전송 실패')
     }
@@ -122,11 +122,14 @@ const getData = async function() {
   }
 
 }
+
+
 //////////////////////////////////////
 /* 댓글 */
-let group = ref([]);
+let group = ref([])
+
 const statecomm = ref({
-  comment:[]
+  comment: [],
 })
 
 //삭제코드
@@ -178,7 +181,7 @@ const getComment = async function() {
     // 응답 처리
     if (response.status === 200) {
       console.log('댓글 성공')
-      console.log('데이터 체크',response.data);
+      console.log('데이터 체크', response.data)
 
       // // BBS_NO 값을 기준으로 데이터 묶기
       // const groupedData = response.data.reduce((acc, curr) => {
@@ -193,29 +196,30 @@ const getComment = async function() {
 
       // BBS_NO 값을 기준으로 데이터 묶기
       const groupedData = response.data.reduce((acc, curr) => {
-        const bbsNo = curr.BBS_NO;
+        const bbsNo = curr.BBS_NO
         if (acc[bbsNo]) {
           // parent_comment가 null인 값들 중에서 C_NO가 가장 큰 댓글만 선택
           if (curr.parent_comment === null) {
-            const existingComment = acc[bbsNo].find(comment => comment.parent_comment === null);
+            const existingComment = acc[bbsNo].find(comment => comment.parent_comment === null)
             if (existingComment) {
               if (curr.C_NO > existingComment.C_NO) {
-                acc[bbsNo] = [curr];
+                acc[bbsNo] = [curr]
               }
             } else {
-              acc[bbsNo].push(curr);
+              acc[bbsNo].push(curr)
             }
           }
         } else {
-          acc[bbsNo] = [curr];
+          acc[bbsNo] = [curr]
         }
-        return acc;
-      }, {});
+        
+        return acc
+      }, {})
 
-      statecomm.comment = toRaw(groupedData);
-      console.log('그룹 체크',statecomm.comment);
-      group.value = toRaw(statecomm.comment);
-      console.log(group.value[45]);
+      statecomm.value.comment = toRaw(groupedData)
+      console.log('그룹 체크', statecomm.value.comment)
+      group.value = toRaw(statecomm.value.comment)
+      console.log(group.value[45])
     } else {
       console.log('데이터 전송 실패')
     }
@@ -325,8 +329,8 @@ const loadMore = () => {
   
   //items 배열에 moreItems 배열 추가해서 화면에 표시되는 게시글 추가
 
-  items.value = items.value.concat(moreItems);
-  console.log("leadMore..");
+  items.value = items.value.concat(moreItems)
+  console.log("leadMore..")
 }
 
 const modalControll = ref(false)
@@ -584,9 +588,12 @@ const subscribe = name => {
                           variant="text"
                           color="success"
                         />
-                      </VCol>
-                      <VCol v-if="group[item.bno]?.[0]">
-                        <VTextField readonly :value="group[item.bno][0].CCOMMENT" />
+                        <VCol>
+                          좋아요 수
+                        </VCol>
+                        <VCol v-if="group[item.bno]?.[0]">
+                          <strong>{{ group[item.bno][0].ID }}</strong> {{ group[item.bno][0].CCOMMENT }}
+                        </VCol>
                       </VCol>
                     </VCard>
                   </VCol> 
