@@ -87,10 +87,9 @@ const router = useRouter()
         <VCol cols="12">
           <VRow>
             <VCol cols="9">
-              <VTextarea
+              <VTextField
                 prepend-inner-icon="mdi-comment-outline"
                 label="prepend-inner-icon"
-                rows="1"
               />
             </VCol>
             <VCol cols="2">
@@ -113,7 +112,7 @@ const router = useRouter()
   inline-size: 100%;
   margin-block: 0;
   margin-inline: auto;
-  max-inline-size: 600px;
+  max-inline-size: 530px;
 }
 
 .chat-bubble {
