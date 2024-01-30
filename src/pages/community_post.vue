@@ -11,6 +11,7 @@ import avatar5 from '@images/avatars/avatar-5.png'
 import avatar6 from '@images/avatars/avatar-6.png'
 import avatar7 from '@images/avatars/avatar-7.png'
 import avatar8 from '@images/avatars/avatar-8.png'
+import defaultImg from '@images/userProfile/default.png'
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 
 const userProfileModal = ref(false)
@@ -45,6 +46,7 @@ const filteredItems = computed(() => {
 
 
 // axios를 사용하여 데이터를 받는 함수
+const bbsuserprofile = ref();
 const getData = async function() {
   
   try {
@@ -79,9 +81,12 @@ const getData = async function() {
         ids: temp,
       }), { headers: { 'Content-Type': 'application/json' } })
         .then(resp=>{
-          console.log('요청받은 값:', resp.data)
+          console.log('요청받은 값:', resp.data);
           users.value = resp.data
-          console.log(users.value)
+          for (const i of users.value){
+            console.log('유저 아이디:', i.id ,'\n유저 프로필:', i.profilePath);
+            console.log('체크',i);
+          }
           users.value.forEach(ele=>{
             if(ele.isFriend != 0 || ele.isSubTo != 0) {
               console.log(ele)
@@ -122,6 +127,12 @@ const getData = async function() {
   }
 
 }
+
+const getUserAvatar = (userId) => {
+  const user = users.value.find(user => user.id === userId);
+  return user ? user.profilePath : defaultImg;
+}
+
 //////////////////////////////////////
 /* 댓글 */
 let group = ref([]);
@@ -165,7 +176,9 @@ const submitEdit = async bno => {
   }
 }
 
-
+//댓글 목록 가져오기
+let groupedDataAll = ref({})
+let groupedData = ref({})
 const getComment = async function() {
 
   try {
@@ -177,45 +190,47 @@ const getComment = async function() {
 
     // 응답 처리
     if (response.status === 200) {
-      console.log('댓글 성공')
-      console.log('데이터 체크',response.data);
-
-      // // BBS_NO 값을 기준으로 데이터 묶기
-      // const groupedData = response.data.reduce((acc, curr) => {
-      //   const bbsNo = curr.BBS_NO;
-      //   if (acc[bbsNo]) {
-      //     acc[bbsNo].push(curr);
-      //   } else {
-      //     acc[bbsNo] = [curr];
-      //   }
-      //   return acc;
-      // }, {});
 
       // BBS_NO 값을 기준으로 데이터 묶기
-      const groupedData = response.data.reduce((acc, curr) => {
+      groupedDataAll = response.data.reduce((acc, curr) => {
+        const bbsNoAll = curr.BBS_NO;
+        if (acc[bbsNoAll]) {
+          acc[bbsNoAll].push(curr);
+        } else {
+          acc[bbsNoAll] = [curr];
+        }
+        return acc;
+      }, {});
+
+      // BBS_NO 값을 기준으로 데이터 묶기
+      groupedData = response.data.reduce((acc, curr) => {
         const bbsNo = curr.BBS_NO;
         if (acc[bbsNo]) {
           // parent_comment가 null인 값들 중에서 C_NO가 가장 큰 댓글만 선택
           if (curr.parent_comment === null) {
             const existingComment = acc[bbsNo].find(comment => comment.parent_comment === null);
             if (existingComment) {
-              if (curr.C_NO > existingComment.C_NO) {
+              // 현재 댓글의 C_NO 값이 existingComment의 C_NO 값보다 큰 경우
+              // acc[bbsNo] 배열을 현재 댓글로 업데이트
+              if (curr.C_NO < existingComment.C_NO) {
                 acc[bbsNo] = [curr];
               }
             } else {
               acc[bbsNo].push(curr);
             }
-          }
-        } else {
-          acc[bbsNo] = [curr];
+          } 
+        }else {
+            acc[bbsNo] = [curr];
         }
-        return acc;
+        return acc; // 누산기(acc)를 반환하여 다음 순회로 전달
       }, {});
 
       statecomm.comment = toRaw(groupedData);
-      console.log('그룹 체크',statecomm.comment);
       group.value = toRaw(statecomm.comment);
-      console.log(group.value[45]);
+      console.log('전체 데이타',groupedDataAll);
+      console.log('데이터 확인',group.value);
+      
+
     } else {
       console.log('데이터 전송 실패')
     }
@@ -223,6 +238,41 @@ const getComment = async function() {
     console.error(`데이터 전송 실패: ${error}`)
   }
 }
+
+
+
+//댓글 입력
+const searchuser = 'OSH' //현재 접속중인 유저 아이디
+const commentinput = ref('');
+const insertComment = async (bno, comment) => {
+  const formData = new FormData();
+  formData.append('bbs_no', bno);
+  formData.append('id', searchuser);
+  formData.append('ccomment',comment);
+
+  console.log(bno, searchuser, comment)
+
+  await axios.post('http://localhost:4000/commentline/Write.do', formData, { 
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+  .then(response => {
+    // 성공적으로 업데이트되었을 때의 처리
+    console.log('성공')
+    console.log(response.data)
+
+    // 댓글 입력 필드 초기화
+    commentinput.value = '';  
+
+    getComment(); 
+  })
+  .catch(error => {
+    // 업데이트 중 오류가 발생했을 때의 처리
+    console.log('실패')
+  })
+}
+
 
 //////////////////////////////////////
 
@@ -349,6 +399,41 @@ const subscribe = name => {
   isSubscribed[name].value = !isSubscribed[name].value
 
 }
+
+
+const modalData = ref({ userid: '', userproIntroduction: '', userprofilePath: ''});
+const profiledata = ref([])//내 프로필 데이터
+
+const openUserProfileModal = (val) => {
+  console.log(val);
+  axios
+    .get('http://localhost:4000/comm/profile', {
+      params: {
+        id: val.id,
+      },
+    })
+    .then(response => {
+      if (response.status === 200) {
+        console.log('프로필 값:', response.data)
+        profiledata.value = response.data
+        console.log('프로필 Path:', profiledata.value.profilePath)
+        // 모달에 전달할 변수 값 설정
+        modalData.value = {
+          userid: profiledata.value.id,
+          userprofilePath:profiledata.value.profilePath,
+          userproIntroduction: profiledata.value.proIntroduction
+        };
+      } else {
+        console.log('데이터 가져오기 실패')
+      }
+    })
+    .catch(error => {
+      console.error(error)
+    })
+    userProfileModal.value = true;
+};
+
+
 </script>
 
 
@@ -376,13 +461,14 @@ const subscribe = name => {
                   <VListItemContent class="d-flex flex-column align-center text-center">
                     <VAvatar 
                       class="text-sm pointer-cursor"
-                      :image="user.profilePath" 
-                      @click="userProfileModal=true"
+                      :image="user.profilePath"
+                      @click="openUserProfileModal(user)"                      
                     />
+                    <!-- @click="userProfileModal=true" -->
 
                     <VListItemTitle 
                       class="text-sm pointer-cursor"
-                      @click="userProfileModal=true"
+                      @click="openUserProfileModal(user)"
                       @mouseover="size"  
                     >
                       {{ user.id }}
@@ -391,7 +477,6 @@ const subscribe = name => {
                 </VListItem>
               </VCol>
             </VRow>
-
             
             <VCol>
               <!-- 카테고리 추가 -->
@@ -454,8 +539,8 @@ const subscribe = name => {
                           <VCol cols="1">
                             <VAvatar 
                               class="text-sm pointer-cursor"
-                              :image="avatar1"
-                              @click="userProfileModal=true"
+                              :image="getUserAvatar(item.id)"
+                              @click="openUserProfileModal(item)"
                             />
                           </VCol>
                           <VCol cols="4">
@@ -463,7 +548,7 @@ const subscribe = name => {
                               <VCardSubtitle
                                 class="text-sm pointer-cursor"
                                 style="margin-left: -5%;"
-                                @click="userProfileModal=true"
+                                @click="openUserProfileModal(item)"
                               >
                                 {{ item.id }}  <!-- 유저 닉네임 뿌려주기 -->
                               </VCardSubtitle>
@@ -554,10 +639,11 @@ const subscribe = name => {
                               style="height: 20px; border: none;"
                               variant="underlined"
                               prepend-icon="mdi-emoticon"
+                              v-model="item.commentinput"
                             />
                           </VCol>
                           <VCol cols="1">
-                            <VBtn size="large">
+                            <VBtn size="large" @click="insertComment(item.bno, item.commentinput); item.commentinput = ''">
                               게시
                             </VBtn>
                           </VCol>
@@ -623,13 +709,13 @@ const subscribe = name => {
               <VAvatar 
                 class="text-sm pointer-cursor"
                 :image="member.profilePath" 
-                @click="userProfileModal=true"
+                @click="openUserProfileModal(member)"
               />
             </template>
 
             <VListItemTitle 
               class="text-sm pointer-cursor"
-              @click="userProfileModal=true"
+              @click="openUserProfileModal(member)"
               @mouseover="size"  
             >
               {{ member.id }}
@@ -682,7 +768,14 @@ const subscribe = name => {
         </VCol>
       </VCol>
     </VRow>
-    <UserProfileCommunity v-model:isDialogVisible="userProfileModal" />
+    <!-- <UserProfileCommunity v-model:isDialogVisible="userProfileModal"/> -->
+    <UserProfileCommunity
+      v-model:isDialogVisible="userProfileModal"
+      :userid="modalData.userid"
+      :userprofilePath="modalData.userprofilePath"
+      :userproIntroduction="modalData.userproIntroduction"
+    />
+    <!-- :profilePath="modalData.profilePath" -->
     <Writing
       v-model:isDialogVisible="writingModal" 
       @update-success="getData"
