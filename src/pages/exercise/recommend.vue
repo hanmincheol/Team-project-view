@@ -168,6 +168,7 @@
 </template>
 
 <script>
+import AppDateTimePicker from '@/@core/components/app-form-elements/AppDateTimePicker.vue'
 import DrawMap from '@/pages/exercise/DrawMap.vue'
 import * as mapData from '@/pages/exercise/mapData'
 import { isSearchListClicked } from '@/pages/exercise/mapSearch'
@@ -248,6 +249,7 @@ export default {
   name: "KakaoMap",
   components: {
     DrawMap,
+    AppDateTimePicker,
   },
   data() {
     return {
@@ -512,8 +514,10 @@ export default {
 
       //(param)path: 카카오 위도, 경도로 변경한 path값들의 객체 리스트
       var tempPath = []
-      for(var i=0; i<path.length; i++){
-        tempPath.push(new kakao.maps.LatLng(path[i][0], path[i][1]))
+      if(typeof path != "undefined") {
+        for(var i=0; i<path.length; i++){
+          tempPath.push(new kakao.maps.LatLng(path[i][0], path[i][1]))
+        }
       }
       var polyline = new kakao.maps.Polyline({
         map: this.map,
@@ -540,8 +544,10 @@ export default {
           this.totalTime = endMin-startMin
           this.hour = String((this.totalTime/60).toFixed())
           this.minute = String(this.totalTime%60)
-          if(this.hour.length == 1) this.hour = '0'+this.hour
-          if(this.minute.length == 1) this.minute = '0'+this.minute
+          if(typeof this.hour != 'undefined' && typeof this.minute != "undefined"){
+            if(this.hour.length == 1) this.hour = '0'+this.hour
+            if(this.minute.length == 1) this.minute = '0'+this.minute
+          }
         }
       }
     },

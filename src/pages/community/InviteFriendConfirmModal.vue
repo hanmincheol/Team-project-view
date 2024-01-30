@@ -1,4 +1,5 @@
 <script setup>
+import DialogCloseBtn from "@/@core/components/DialogCloseBtn.vue"
 import { defineEmits, defineProps } from "vue"
 
 const props = defineProps({
