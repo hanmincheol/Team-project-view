@@ -116,6 +116,7 @@ export default defineComponent({
 @use "@layouts/styles/mixins";
 
 .icon-button {
+  position: absolute;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -124,8 +125,8 @@ export default defineComponent({
   block-size: 70px;
   font-size: 30px;
   inline-size: 70px;
-  inset-block-end: 20%;
-  inset-inline-end: 20%;
+  inset-block-end: 15%;
+  inset-inline-end: 15%;
 }
 
 .layout-wrapper.layout-nav-type-vertical {

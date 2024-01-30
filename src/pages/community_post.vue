@@ -614,9 +614,8 @@ const openUserProfileModal = (val) => {
                       <VCardText>
                         <VRow>
                           <VCol cols="10">
-                            <VTextarea 
+                            <VTextField 
                               label="댓글달기" 
-                              rows="1"
                               style="height: 20px; border: none;"
                               variant="underlined"
                               prepend-icon="mdi-emoticon"

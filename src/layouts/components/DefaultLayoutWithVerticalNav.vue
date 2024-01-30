@@ -28,16 +28,19 @@ const toggleChatbot = () => {
 let dragging = false
 let offset = { x: 0, y: 0 }
 
+
+
 // 드래그 핸들러
 const startDrag = event => {
   dragging = true
-  offset = { x: event.clientX - event.target.offsetLeft +25, y: event.clientY - event.target.offsetTop +25 }
+  offset = { x: event.clientX - event.currentTarget.offsetLeft + 50, y: event.clientY - event.currentTarget.offsetTop + 50 }
 }
 
 const doDrag = event => {
   if (!dragging) return
   event.currentTarget.style.left = `${event.clientX - offset.x}px`
   event.currentTarget.style.top = `${event.clientY - offset.y}px`
+
 }
 
 const stopDrag = () => {
@@ -88,12 +91,20 @@ const stopDrag = () => {
     <template #iconBtn>
       <div
         class="icon-button" 
-        style="position: absolute; box-shadow: 0 2px 5px rgba(0, 0, 0, 30%);"  
-        @mousedown="startDrag" 
+        style=" box-shadow: 0 2px 5px rgba(0, 0, 0, 30%);"  
         @mousemove="doDrag" 
         @mouseup="stopDrag"
       >
-        <Chatbot />
+        <VBadge
+          style="position: absolute;"
+          icon="mdi-arrow-all"
+          color="success"
+          offset-x="40"
+          offset-y="-5"
+          @mousedown="startDrag"
+        >
+          <Chatbot />
+        </VBadge>
       </div>
     </template>
     
