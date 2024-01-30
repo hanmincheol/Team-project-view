@@ -14,18 +14,7 @@ const tabs = [
     icon: 'mdi-lock-outline',
     title: '원하는',
   },
-  {
-    icon: 'mdi-bookmark-outline',
-    title: '제목',
-  },
-  {
-    icon: 'mdi-bell-outline',
-    title: '정해서',
-  },
-  {
-    icon: 'mdi-link-variant',
-    title: '넣기',
-  },
+
 ]
 
 const iconss = [
@@ -67,6 +56,7 @@ const iconss = [
           <VTab
             v-for="tab in tabs"
             :key="tab.icon"
+            block
           >
             <VIcon
               start
@@ -84,21 +74,8 @@ const iconss = [
           <VWindowItem>
             가져올 페이지나 내용 작성
           </VWindowItem>
-
           <VWindowItem>
             <CrmActivityTimeline />
-          </VWindowItem>
-
-          <VWindowItem>
-            제목에 맞는
-          </VWindowItem>
-
-          <VWindowItem>
-            내용 정해서
-          </VWindowItem>
-
-          <VWindowItem>
-            넣기
           </VWindowItem>
         </VWindow>
         <VCol cols="12" />

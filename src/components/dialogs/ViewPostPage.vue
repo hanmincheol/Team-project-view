@@ -50,23 +50,21 @@ const avatars = [
 
         <VCard>
           <VRow>
-            <VCol cols="6">
-              <VCarousel
-                v-if="postToEdit.files && postToEdit.files.length"
-                show-arrows-on-hover
+            <VCarousel
+              v-if="postToEdit.files && postToEdit.files.length"
+              show-arrows-on-hover
+            >
+              <VCarouselItem
+                v-for="(img, index) in postToEdit.files"
+                :key="index"
               >
-                <VCarouselItem
-                  v-for="(img, index) in postToEdit.files"
-                  :key="index"
-                >
-                  <VImg :src="img" />
-                </VCarouselItem>
-              </VCarousel>
-              <VImg
-                v-else
-                :src="backgroundimg"
-              />
-            </VCol>
+                <VImg :src="img" />
+              </VCarouselItem>
+            </VCarousel>
+            <VImg
+              v-else
+              :src="backgroundimg"
+            />
             <VCol cols="6">
               <VRow>
                 <VCol>

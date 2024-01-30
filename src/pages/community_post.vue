@@ -100,6 +100,9 @@ const getData = async function() {
           })
         })
         .catch(err=>console.log(err))
+
+      console.log(state.items[1].files)
+      console.log('데이터 체크', response.data)
     } else {
       console.log('데이터 전송 실패')
     }
@@ -554,12 +557,12 @@ const subscribe = (name, check) => {
                           variant="text"
                           color="success"
                         />
-                      </VCol>
-                      <VCol v-if="group[item.bno]?.[0]">
-                        <VTextField
-                          readonly
-                          :value="group[item.bno][0].CCOMMENT"
-                        />
+                        <VCol>
+                          좋아요 수
+                        </VCol>
+                        <VCol v-if="group[item.bno]?.[0]">
+                          <strong>{{ group[item.bno][0].ID }}</strong> {{ group[item.bno][0].CCOMMENT }}
+                        </VCol>
                       </VCol>
                     </VCard>
                   </VCol> 

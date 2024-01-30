@@ -16,10 +16,12 @@ const { appRouteTransition, isLessThanOverlayNavBreakpoint } = useThemeConfig()
 const { width: windowWidth } = useWindowSize()
 
 // 챗봇
-let chatbotOpen = false
+let chatbotOpen = ref(false)
 
 const toggleChatbot = () => {
+  console.log('클릭이벤트')
   chatbotOpen = !chatbotOpen
+  console.log(chatbotOpen)
 }
 
 // 드래그 상태
@@ -29,7 +31,7 @@ let offset = { x: 0, y: 0 }
 // 드래그 핸들러
 const startDrag = event => {
   dragging = true
-  offset = { x: event.clientX - event.target.offsetLeft, y: event.clientY - event.target.offsetTop }
+  offset = { x: event.clientX - event.target.offsetLeft +25, y: event.clientY - event.target.offsetTop +25 }
 }
 
 const doDrag = event => {
@@ -86,19 +88,12 @@ const stopDrag = () => {
     <template #iconBtn>
       <div
         class="icon-button" 
-        style="position: absolute; box-shadow: 0 2px 5px rgba(0, 0, 0, 10%);"  
+        style="position: absolute; box-shadow: 0 2px 5px rgba(0, 0, 0, 30%);"  
         @mousedown="startDrag" 
         @mousemove="doDrag" 
         @mouseup="stopDrag"
-        @click="toggleChatbot"
       >
-        <VBtn
-          icon="mdi-robot-confused"
-          size="70"
-          class="btn-icon"
-          style="pointer-events: none;"
-        /> 
-        <Chatbot v-if="chatbotOpen" />
+        <Chatbot />
       </div>
     </template>
     
