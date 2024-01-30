@@ -103,12 +103,14 @@ export default defineConfig({
     ],
   },
 
-  // devServer: {
-  //   proxy: {
-  //     '/user/check': {
-  //       target: 'http://localhost:8080',
-  //       changeOrigin: true,
-  //     },
-  //   },
-  // },
+  devServer: {
+    proxy: {
+      '/send': {
+        target: 'http://localhost:4000',
+      },
+      '/checkPhoneNumber': {
+        target: 'http://localhost:4000',
+      },
+    },
+  },
 })
