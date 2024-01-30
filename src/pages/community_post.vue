@@ -5,14 +5,6 @@ import InviteFriendConfirmModal from '@/pages/community/InviteFriendConfirmModal
 import Category from '@/pages/views/demos/forms/form-elements/select/category.vue'
 import axios from '@axios'
 import { size } from '@floating-ui/dom'
-import avatar1 from '@images/avatars/avatar-1.png'
-import avatar2 from '@images/avatars/avatar-2.png'
-import avatar3 from '@images/avatars/avatar-3.png'
-import avatar4 from '@images/avatars/avatar-4.png'
-import avatar5 from '@images/avatars/avatar-5.png'
-import avatar6 from '@images/avatars/avatar-6.png'
-import avatar7 from '@images/avatars/avatar-7.png'
-import avatar8 from '@images/avatars/avatar-8.png'
 import defaultImg from '@images/userProfile/default.png'
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 
@@ -49,7 +41,8 @@ const filteredItems = computed(() => {
 
 
 // axios를 사용하여 데이터를 받는 함수
-const bbsuserprofile = ref();
+const bbsuserprofile = ref()
+
 const getData = async function() {
   
   try {
@@ -84,11 +77,11 @@ const getData = async function() {
         ids: temp,
       }), { headers: { 'Content-Type': 'application/json' } })
         .then(resp=>{
-          console.log('요청받은 값:', resp.data);
+          console.log('요청받은 값:', resp.data)
           users.value = resp.data
           for (const i of users.value){
-            console.log('유저 아이디:', i.id ,'\n유저 프로필:', i.profilePath);
-            console.log('체크',i);
+            console.log('유저 아이디:', i.id, '\n유저 프로필:', i.profilePath)
+            console.log('체크', i)
           }
           users.value.forEach(ele=>{
             if((ele.isFriend == 0 || ele.isSubTo == 0) && ele.id != userId.value) {
@@ -126,9 +119,10 @@ const getData = async function() {
 
 }
 
-const getUserAvatar = (userId) => {
-  const user = users.value.find(user => user.id === userId);
-  return user ? user.profilePath : defaultImg;
+const getUserAvatar = userId => {
+  const user = users.value.find(user => user.id === userId)
+  
+  return user ? user.profilePath : defaultImg
 }
 
 //////////////////////////////////////
@@ -178,6 +172,7 @@ const submitEdit = async bno => {
 //댓글 목록 가져오기
 let groupedDataAll = ref({})
 let groupedData = ref({})
+
 const getComment = async function() {
 
   try {
@@ -193,19 +188,20 @@ const getComment = async function() {
       console.log('데이터 체크', response.data)
 
       // BBS_NO 값을 기준으로 데이터 묶기
-      groupedDataAll = response.data.reduce((acc, curr) => {
-        const bbsNoAll = curr.BBS_NO;
+      groupedDataAll.value = response.data.reduce((acc, curr) => {
+        const bbsNoAll = curr.BBS_NO
         if (acc[bbsNoAll]) {
-          acc[bbsNoAll].push(curr);
+          acc[bbsNoAll].push(curr)
         } else {
-          acc[bbsNoAll] = [curr];
+          acc[bbsNoAll] = [curr]
         }
-        return acc;
-      }, {});
+        
+        return acc
+      }, {})
 
       // BBS_NO 값을 기준으로 데이터 묶기
-      groupedData = response.data.reduce((acc, curr) => {
-        const bbsNo = curr.BBS_NO;
+      groupedData.value = response.data.reduce((acc, curr) => {
+        const bbsNo = curr.BBS_NO
         if (acc[bbsNo]) {
           // parent_comment가 null인 값들 중에서 C_NO가 가장 큰 댓글만 선택
           if (curr.parent_comment === null) {
@@ -214,22 +210,23 @@ const getComment = async function() {
               // 현재 댓글의 C_NO 값이 existingComment의 C_NO 값보다 큰 경우
               // acc[bbsNo] 배열을 현재 댓글로 업데이트
               if (curr.C_NO < existingComment.C_NO) {
-                acc[bbsNo] = [curr];
+                acc[bbsNo] = [curr]
               }
             } else {
               acc[bbsNo].push(curr)
             }
           } 
         }else {
-            acc[bbsNo] = [curr];
+          acc[bbsNo] = [curr]
         }
-        return acc; // 누산기(acc)를 반환하여 다음 순회로 전달
-      }, {});
+        
+        return acc // 누산기(acc)를 반환하여 다음 순회로 전달
+      }, {})
 
-      statecomm.comment = toRaw(groupedData);
-      group.value = toRaw(statecomm.comment);
-      console.log('전체 데이타',groupedDataAll);
-      console.log('데이터 확인',group.value);
+      statecomm.value.comment = toRaw(groupedData)
+      group.value = toRaw(statecomm.value.comment)
+      console.log('전체 데이타', groupedDataAll)
+      console.log('데이터 확인', group.value)
       
 
     } else {
@@ -244,12 +241,14 @@ const getComment = async function() {
 
 //댓글 입력
 const searchuser = 'OSH' //현재 접속중인 유저 아이디
-const commentinput = ref('');
+const commentinput = ref('')
+
 const insertComment = async (bno, comment) => {
-  const formData = new FormData();
-  formData.append('bbs_no', bno);
-  formData.append('id', searchuser);
-  formData.append('ccomment',comment);
+  const formData = new FormData()
+
+  formData.append('bbs_no', bno)
+  formData.append('id', searchuser)
+  formData.append('ccomment', comment)
 
   console.log(bno, searchuser, comment)
 
@@ -258,20 +257,20 @@ const insertComment = async (bno, comment) => {
       'Content-Type': 'multipart/form-data',
     },
   })
-  .then(response => {
+    .then(response => {
     // 성공적으로 업데이트되었을 때의 처리
-    console.log('성공')
-    console.log(response.data)
+      console.log('성공')
+      console.log(response.data)
 
-    // 댓글 입력 필드 초기화
-    commentinput.value = '';  
+      // 댓글 입력 필드 초기화
+      commentinput.value = ''  
 
-    getComment(); 
-  })
-  .catch(error => {
+      getComment() 
+    })
+    .catch(error => {
     // 업데이트 중 오류가 발생했을 때의 처리
-    console.log('실패')
-  })
+      console.log('실패')
+    })
 }
 
 
@@ -382,11 +381,11 @@ const subscribe = (name, check) => {
 }
 
 
-const modalData = ref({ userid: '', userproIntroduction: '', userprofilePath: ''});
+const modalData = ref({ userid: '', userproIntroduction: '', userprofilePath: '' })
 const profiledata = ref([])//내 프로필 데이터
 
-const openUserProfileModal = (val) => {
-  console.log(val);
+const openUserProfileModal = val => {
+  console.log(val)
   axios
     .get('http://localhost:4000/comm/profile', {
       params: {
@@ -398,12 +397,13 @@ const openUserProfileModal = (val) => {
         console.log('프로필 값:', response.data)
         profiledata.value = response.data
         console.log('프로필 Path:', profiledata.value.profilePath)
+
         // 모달에 전달할 변수 값 설정
         modalData.value = {
           userid: profiledata.value.id,
-          userprofilePath:profiledata.value.profilePath,
-          userproIntroduction: profiledata.value.proIntroduction
-        };
+          userprofilePath: profiledata.value.profilePath,
+          userproIntroduction: profiledata.value.proIntroduction,
+        }
       } else {
         console.log('데이터 가져오기 실패')
       }
@@ -411,10 +411,8 @@ const openUserProfileModal = (val) => {
     .catch(error => {
       console.error(error)
     })
-    userProfileModal.value = true;
-};
-
-
+  userProfileModal.value = true
+}
 </script>
 
 
@@ -577,8 +575,26 @@ const openUserProfileModal = (val) => {
                           </VCol>
                         </VRow>
                       </VCol>
+                      <!-- 사진 부분 -->
+                      <VCol
+                        v-if="item.files && item.files.length ==1"
+                        class="transparent-carousel"
+                        show-arrows-on-hover
+                      >
+                        <VCol
+                          v-for="(image, i) in item.files" 
+                          :key="i"
+                          :class="{'active-slide': i === activeIndex}"
+                        >
+                          <VImg
+                            :src="image"
+                            class="pointer-cursor"
+                            @click="viewPostPageModal=true;submitEdit(item.bno)"
+                          />
+                        </VCol>
+                      </VCol>
                       <VCarousel
-                        v-if="item.files && item.files.length"
+                        v-if="item.files && item.files.length >=2"
                         class="transparent-carousel"
                         show-arrows-on-hover
                         color="success"
@@ -591,11 +607,11 @@ const openUserProfileModal = (val) => {
                           <VImg
                             :src="image"
                             class="pointer-cursor"
-                            @click="viewPostPageModal=true"
+                            @click="viewPostPageModal=true;submitEdit(item.bno)"
                           />
                         </VCarouselItem>
                       </VCarousel>
-                      
+                      <!-- 사진 끝 -->
                       <VCardItem>
                         <VCardTitle
                           class="pointer-cursor"
@@ -607,7 +623,7 @@ const openUserProfileModal = (val) => {
 
                       <VCardText
                         class="pointer-cursor"
-                        @click="viewPostPageModal=true;"
+                        @click="viewPostPageModal=true; submitEdit(item.bno)"
                       >
                         댓글 (여기에 중괄호 태그) 모두 보기
                       </VCardText>
@@ -615,15 +631,18 @@ const openUserProfileModal = (val) => {
                         <VRow>
                           <VCol cols="10">
                             <VTextField 
-                              label="댓글달기" 
+                              v-model="item.commentinput" 
+                              label="댓글달기"
                               style="height: 20px; border: none;"
                               variant="underlined"
                               prepend-icon="mdi-emoticon"
-                              v-model="item.commentinput"
                             />
                           </VCol>
                           <VCol cols="1">
-                            <VBtn size="large" @click="insertComment(item.bno, item.commentinput); item.commentinput = ''">
+                            <VBtn
+                              size="large"
+                              @click="insertComment(item.bno, item.commentinput); item.commentinput = ''"
+                            >
                               게시
                             </VBtn>
                           </VCol>
@@ -761,8 +780,8 @@ const openUserProfileModal = (val) => {
     <UserProfileCommunity
       v-model:isDialogVisible="userProfileModal"
       :userid="modalData.userid"
-      :userprofilePath="modalData.userprofilePath"
-      :userproIntroduction="modalData.userproIntroduction"
+      :userprofile-path="modalData.userprofilePath"
+      :userpro-introduction="modalData.userproIntroduction"
     />
     <!-- :profilePath="modalData.profilePath" -->
     <Writing
