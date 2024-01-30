@@ -4,6 +4,7 @@ import avatar2 from '@images/avatars/avatar-2.png'
 import avatar3 from '@images/avatars/avatar-3.png'
 import avatar4 from '@images/avatars/avatar-4.png'
 import pages7 from '@images/pages/7.jpg'
+import defaultImg from '@images/userProfile/default.png'
 import { ref, defineProps } from 'vue';
 import axios from '@axios'
 const props = defineProps({
@@ -64,7 +65,7 @@ const dialogVisibleUpdate = value => {
         <!-- 대표사진이 없을 경우 뿌려주는 img -->
         <VImg 
           v-if="false"
-          :src="pages2"
+          :src="defaultImg"
         />
         <VCardText class="position-relative">
           <!-- 유저 프로필 사진 -->
