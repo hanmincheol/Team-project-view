@@ -23,7 +23,7 @@ const warningReason = ref('')
 onUpdated(()=>{
   const inputTags = document.querySelectorAll('[name = warningReport]')
 
-  inputTags.forEach(ele => {ele.checked = !ele.checked})
+  // inputTags.forEach(ele => {ele.checked = !ele.checked})
 })
 
 
@@ -40,7 +40,7 @@ const clickEvt = ()=>{
 
 <template>
   <VDialog
-    :width="$vuetify.display.smAndDown ? 'auto' : 600"
+    :width="$vuetify.display.smAndDown ? 'auto' : 450"
     :model-value="props.isDialogVisible"
     @update:model-value="val => $emit('update:isDialogVisible', val)"
   >
@@ -55,12 +55,15 @@ const clickEvt = ()=>{
       <!-- 👉 Title -->
       <VCardItem class="text-center">
         <VCardTitle class="text-h5 mb-3">
-          {{ props.message }}님을 위험 메이트로 신고합니다
+          {{ props.message }}님을<br>위험 메이트로 신고합니다
         </VCardTitle>
+        <VCardText>⚠️ 신고 이유를 선택해주세요</VCardText>
+        <VDivider />
         <VRadioGroup
           id="warningReport"
-          :style="{'padding-left':'15px'}"
+          :style="{'padding-left':'15px', 'display':'flex', 'justify-content':'center'}"
           color="error"
+          scrollable
           @change="reportController"
         >
           <VRadio
@@ -76,16 +79,19 @@ const clickEvt = ()=>{
             value="spam"
           />
           <VRadio
-            label="사생활 침해"
+            label="사생활 침해 및 스토킹"
             value="privacy"
           />
         </VRadioGroup>
+        <VDivider />
       </VCardItem>
       <VCol
         cols="12"
         class="d-flex flex-wrap justify-center gap-4"
       >
         <VBtn
+          variant="text"
+          color="error"
           type="submit"
           @click="clickEvt"
         >
@@ -93,7 +99,7 @@ const clickEvt = ()=>{
         </VBtn>
         <VBtn
           color="secondary"
-          variant="tonal"
+          variant="text"
           @click="$emit('update:isDialogVisible', false)"
         >
           NO
