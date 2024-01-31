@@ -6,7 +6,7 @@ import Category from '@/pages/views/demos/forms/form-elements/select/category.vu
 import axios from '@axios'
 import { size } from '@floating-ui/dom'
 import defaultImg from '@images/userProfile/default.png'
-import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref, toRaw } from 'vue'
 
 const userProfileModal = ref(false)
 const writingModal = ref(false)
@@ -129,7 +129,7 @@ const getUserAvatar = userId => {
 //////////////////////////////////////
 /* 댓글 */
 let group = ref([])
-
+let Allgroupbbs = ref([])
 const statecomm = ref({
   comment: [],
 })
@@ -159,7 +159,7 @@ const submitEdit = async bno => {
     if (response.status === 200) {
       console.log('글 번호 전송 성공')
       console.log(response.data, "response.data")
-
+      console.log('제발',groupedDataAll._rawValue[bno])
       // 서버로부터 받은 데이터를 자식 컴포넌트에게 전달하기 위해 저장
       postToEdit.value = response.data
     } else {
@@ -219,6 +219,8 @@ const getComment = async function() {
       })
 
       console.log('전체 데이타', groupedDataAll)
+      console.log('특정 게시물 데이타', groupedDataAll._rawValue[17])
+      // Allgroupbbs.value = groupedDataAll._rawValue[17]
       statecomm.value.comment = toRaw(groupedData)
       group.value = toRaw(statecomm.value.comment)
       console.log('그룹 데이터 확인', group.value)      
@@ -407,6 +409,20 @@ const openUserProfileModal = val => {
     })
   userProfileModal.value = true
 }
+
+const postmodalData = ref({comments:{}})
+const postbbsno = ref(0)
+const openViewPostMoadl = async val =>{
+  console.log('가져온 글번호',val)
+  postbbsno.value = val
+  viewPostPageModal.value=true
+  console.log('글번호에 대한 댓글',groupedDataAll._rawValue[postbbsno.value])
+  postmodalData.value = {
+    comments : groupedDataAll._rawValue[postbbsno.value]
+  }
+  console.log(postmodalData.value)
+}
+
 
 ///좋아요!!
 const toggleLike = async bno => {
@@ -607,7 +623,7 @@ const toggleLike = async bno => {
                           <VImg
                             :src="image"
                             class="pointer-cursor"
-                            @click="viewPostPageModal=true;submitEdit(item.bno)"
+                            @click="openViewPostMoadl(item.bno);submitEdit(item.bno)"
                           />
                         </VCol>
                       </VCol>
@@ -625,15 +641,17 @@ const toggleLike = async bno => {
                           <VImg
                             :src="image"
                             class="pointer-cursor"
-                            @click="viewPostPageModal=true;submitEdit(item.bno)"
+                            @click="openViewPostMoadl(item.bno);submitEdit(item.bno)"
+                            openViewPostMoadl
                           />
+                          <!-- @click="viewPostPageModal=true;submitEdit(item.bno)" -->
                         </VCarouselItem>
                       </VCarousel>
                       <!-- 사진 끝 -->
                       <VCardItem>
                         <VCardTitle
                           class="pointer-cursor"
-                          @click="viewPostPageModal=true; submitEdit(item.bno)"
+                          @click="openViewPostMoadl(item.bno);submitEdit(item.bno)"
                         >
                           {{ item.content }}
                         </VCardTitle> 
@@ -641,10 +659,11 @@ const toggleLike = async bno => {
 
                       <VCardText
                         class="pointer-cursor"
-                        @click="viewPostPageModal=true; submitEdit(item.bno)"
+                        @click="openViewPostMoadl(item.bno);submitEdit(item.bno)"
                       >
                         댓글 {{ }} 모두 보기
-                      </VCardText>
+                      </VCardText> 
+                      <!-- {{ Object.keys(groupedDataAll._rawValue[item.bno]).length }} 활용할 수 있을 것 같은데..-->
                       <VCardText>
                         <VRow>
                           <VCol cols="10">
@@ -692,8 +711,8 @@ const toggleLike = async bno => {
                           좋아요 수
                         </VCol>
                         <VCol v-if="group[item.bno]">
-                          <strong>{{ group[item.bno].ID }}</strong> {{ group[item.bno].CCOMMENT }}
-                        </VCol>
+                          <strong>{{group[item.bno].C_NO}}번 {{ group[item.bno].ID }}</strong> {{ group[item.bno].CCOMMENT }}
+                        </VCol>                        
                       </VCol>
                     </VCard>
                   </VCol> 
@@ -815,6 +834,7 @@ const toggleLike = async bno => {
     <ViewPostPage
       v-model:isDialogVisible="viewPostPageModal" 
       :post-to-edit="postToEdit"
+      :comments="postmodalData.comments"
     />
   </section>
 </template>
