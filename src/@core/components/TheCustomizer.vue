@@ -2,14 +2,14 @@
 import { staticPrimaryColor } from '@/plugins/vuetify/theme'
 import { useThemeConfig } from '@core/composable/useThemeConfig'
 import {
-RouteTransitions,
-Skins,
+  RouteTransitions,
+  Skins,
 } from '@core/enums'
 import {
-AppContentLayoutNav,
-ContentWidth,
-FooterType,
-NavbarType,
+  AppContentLayoutNav,
+  ContentWidth,
+  FooterType,
+  NavbarType,
 } from '@layouts/enums'
 import { themeConfig } from '@themeConfig'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
@@ -46,7 +46,8 @@ const { width: windowWidth } = useWindowSize()
 
 const headerValues = computed(() => {
   const entries = Object.entries(NavbarType)
-  console.log(entries);
+
+  console.log(entries)
   if (appContentLayoutNav.value === AppContentLayoutNav.Horizontal)
     return entries.filter(([_, val]) => val !== NavbarType.Hidden)
   

@@ -3,9 +3,11 @@ import Editing from '@/components/dialogs/Editing.vue'
 import ViewPostPage from '@/components/dialogs/ViewPostPage.vue'
 import InviteFriendConfirmModal from '@/pages/community/InviteFriendConfirmModal.vue'
 import Category from '@/pages/views/demos/forms/form-elements/select/category.vue'
+import Writing from '@/views/demos/register/Write.vue'
 import axios from '@axios'
 import { size } from '@floating-ui/dom'
 import defaultImg from '@images/userProfile/default.png'
+
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 
 const userProfileModal = ref(false)
@@ -71,7 +73,7 @@ const getData = async function() {
       temp의 앞에 현재 서비스를 이용 중인 유저의 아이디가 들어가야 함.
       뿌려주는 게시글 작성자들의 목록을 불러옴.
       */
-      temp.unshift('LSY')
+      temp.unshift(userId.value)
       console.log(temp)
       axios.post("http://localhost:4000/bbs/userProfile", JSON.stringify({
         ids: temp,

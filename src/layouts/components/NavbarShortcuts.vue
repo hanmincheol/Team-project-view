@@ -1,4 +1,6 @@
 <script setup>
+import Shortcuts from '@/@core/components/Shortcuts.vue'
+
 const shortcuts = [
   {
     icon: 'mdi-calendar',

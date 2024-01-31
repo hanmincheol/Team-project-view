@@ -3,6 +3,8 @@ import navItems from '@/navigation/vertical'
 import { useThemeConfig } from '@core/composable/useThemeConfig'
 
 // Components
+import Chatbot from '@/@core/components/Chatbot.vue'
+import TheCustomizer from '@/@core/components/TheCustomizer.vue'
 import Footer from '@/layouts/components/Footer.vue'
 import NavBarNotifications from '@/layouts/components/NavBarNotifications.vue'
 import NavbarShortcuts from '@/layouts/components/NavbarShortcuts.vue'
