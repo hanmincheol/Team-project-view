@@ -367,6 +367,7 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
             <VCol>
               <VCol cols="12">
                 <VTextarea 
+                  id="diaryContent"
                   label="Content" 
                   rows="30"
                   style="height: 800px;"
