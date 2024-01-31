@@ -416,11 +416,11 @@ const toggleLike = async bno => {
     const response = await axios.post('http://localhost:4000/bbs/likes.do', {
       id: "HMC",
       bno: bno,
-      cno: "0",
+      cno: "",
       isLiked: isLiked.value,
     })
 
-    console.log("id:", id, "bno:", bno)
+    console.log("id:", "HMC", "bno:", bno)
 
     if (response.status !== 200) {
       console.log('좋아요 상태 변경 실패')
