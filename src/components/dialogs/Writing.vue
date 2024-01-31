@@ -91,10 +91,16 @@ const submitData = async function() {
   } catch (error) {
     console.error(`데이터 전송 실패: ${error}`)
   }finally {
-
-
-
     emit('update:isDialogVisible', false)  // 모달 닫기
+
+    // 값 초기화
+    textValue.value = ''
+    hashtags.value = []
+    hashtagValue.value = ''
+    subValue.value='카테고리'
+    images.files=[]
+    ciu.value = []
+
     //router.push({ name: 'community_post' }).then(() => router.go(0)) // community_post.vue 페이지로 이동 후 리로드
   }
 
