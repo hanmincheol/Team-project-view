@@ -224,6 +224,7 @@ const loadMore = () => {
                           <VImg
                             :src="image"
                             class="pointer-cursor"
+                            style="width: auto; height: auto;"
                             @click="viewPostPageModal=true;submitEdit(item.bno)"
                           />
                         </VCol>
@@ -233,6 +234,7 @@ const loadMore = () => {
                         class="transparent-carousel"
                         show-arrows-on-hover
                         color="success"
+                        style="width: auto; height: auto;"
                       >
                         <VCarouselItem
                           v-for="(image, i) in item.files" 
@@ -242,6 +244,7 @@ const loadMore = () => {
                           <VImg
                             :src="image"
                             class="pointer-cursor"
+                            
                             @click="viewPostPageModal=true;submitEdit(item.bno)"
                           />
                         </VCarouselItem>

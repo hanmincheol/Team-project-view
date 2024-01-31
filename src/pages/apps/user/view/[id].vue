@@ -46,11 +46,7 @@ userListStore.fetchUser(Number(route.params.id)).then(response => {
 
 <template>
   <VRow v-if="userData">
-    <VCol
-      cols="12"
-      md="5"
-      lg="4"
-    >
+    <VCol cols="4">
       <UserBioPanel :user-data="userData" />
     </VCol>
     <VCol
@@ -69,7 +65,7 @@ userListStore.fetchUser(Number(route.params.id)).then(response => {
             start
             :icon="tab.icon"
           />
-          <span>{{ tab.title }}</span>
+          {{ tab.title }}
         </VTab>
       </VTabs>  
       <VWindow
