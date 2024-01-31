@@ -642,7 +642,7 @@ const openUserProfileModal = val => {
                         class="pointer-cursor"
                         @click="viewPostPageModal=true; submitEdit(item.bno)"
                       >
-                        댓글 (여기에 중괄호 태그) 모두 보기
+                        댓글 {{ }} 모두 보기
                       </VCardText>
                       <VCardText>
                         <VRow>

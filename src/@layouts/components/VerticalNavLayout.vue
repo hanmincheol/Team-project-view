@@ -121,7 +121,6 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background-color: #f6f6f6;
   block-size: 70px;
   font-size: 30px;
   inline-size: 70px;

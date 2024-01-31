@@ -84,6 +84,12 @@ const submitEdit = async function() {
 
       // 모달창 닫기
       emit('update:isDialogVisible', false)
+
+      // 값 초기화
+      content.value = ''
+      hashtags.value = []
+      hashtagValue.value = ''
+      
     } else {
       console.log('데이터 수정 실패')
     }
