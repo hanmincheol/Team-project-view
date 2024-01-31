@@ -6,7 +6,7 @@ import Category from '@/pages/views/demos/forms/form-elements/select/category.vu
 import axios from '@axios'
 import { size } from '@floating-ui/dom'
 import defaultImg from '@images/userProfile/default.png'
-import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref, toRaw } from 'vue'
 
 const userProfileModal = ref(false)
 const writingModal = ref(false)
@@ -128,7 +128,7 @@ const getUserAvatar = userId => {
 //////////////////////////////////////
 /* 댓글 */
 let group = ref([])
-
+let Allgroupbbs = ref([])
 const statecomm = ref({
   comment: [],
 })
@@ -158,7 +158,7 @@ const submitEdit = async bno => {
     if (response.status === 200) {
       console.log('글 번호 전송 성공')
       console.log(response.data, "response.data")
-
+      console.log('제발',groupedDataAll._rawValue[bno])
       // 서버로부터 받은 데이터를 자식 컴포넌트에게 전달하기 위해 저장
       postToEdit.value = response.data
     } else {
@@ -198,31 +198,6 @@ const getComment = async function() {
         return acc
       }, {})
 
-      // BBS_NO 값을 기준으로 데이터 묶기
-      // groupedData.value = response.data.reduce((acc, curr) => {
-      //   const bbsNo = curr.BBS_NO
-      //   if (acc[bbsNo]) {
-      //     // parent_comment가 null인 값들 중에서 C_NO가 가장 큰 댓글만 선택
-      //     if (curr.parent_comment === null) {
-      //       const existingComment = acc[bbsNo].find(comment => comment.parent_comment === null)
-      //       if (existingComment) {
-      //         // 현재 댓글의 C_NO 값이 existingComment의 C_NO 값보다 큰 경우
-      //         // acc[bbsNo] 배열을 현재 댓글로 업데이트
-      //         if (curr.C_NO < existingComment.C_NO) {
-      //           acc[bbsNo] = [curr]
-      //         }
-      //       } else {
-      //         acc[bbsNo].push(curr)
-      //       }
-      //     }
-      //   }else {
-      //     acc[bbsNo] = [curr]
-      //   }
-        
-      //   return acc // 누산기(acc)를 반환하여 다음 순회로 전달
-      // }, {})
-
-      // 아래는 원하는 값을 가져오지만 댓글이 안나오고 있음
       groupedData.value = {}
       response.data.forEach((comment) => {
         const bbsNo = comment.BBS_NO
@@ -242,6 +217,8 @@ const getComment = async function() {
       })
 
       console.log('전체 데이타', groupedDataAll)
+      console.log('특정 게시물 데이타', groupedDataAll._rawValue[17])
+      // Allgroupbbs.value = groupedDataAll._rawValue[17]
       statecomm.value.comment = toRaw(groupedData)
       group.value = toRaw(statecomm.value.comment)
       console.log('그룹 데이터 확인', group.value)      
@@ -430,6 +407,20 @@ const openUserProfileModal = val => {
     })
   userProfileModal.value = true
 }
+
+const postmodalData = ref({comments:{}})
+const postbbsno = ref(0)
+const openViewPostMoadl = async val =>{
+  console.log('가져온 글번호',val)
+  postbbsno.value = val
+  viewPostPageModal.value=true
+  console.log('글번호에 대한 댓글',groupedDataAll._rawValue[postbbsno.value])
+  postmodalData.value = {
+    comments : groupedDataAll._rawValue[postbbsno.value]
+  }
+  console.log(postmodalData.value)
+}
+
 </script>
 
 
@@ -606,7 +597,7 @@ const openUserProfileModal = val => {
                           <VImg
                             :src="image"
                             class="pointer-cursor"
-                            @click="viewPostPageModal=true;submitEdit(item.bno)"
+                            @click="openViewPostMoadl(item.bno);submitEdit(item.bno)"
                           />
                         </VCol>
                       </VCol>
@@ -624,15 +615,17 @@ const openUserProfileModal = val => {
                           <VImg
                             :src="image"
                             class="pointer-cursor"
-                            @click="viewPostPageModal=true;submitEdit(item.bno)"
+                            @click="openViewPostMoadl(item.bno);submitEdit(item.bno)"
+                            openViewPostMoadl
                           />
+                          <!-- @click="viewPostPageModal=true;submitEdit(item.bno)" -->
                         </VCarouselItem>
                       </VCarousel>
                       <!-- 사진 끝 -->
                       <VCardItem>
                         <VCardTitle
                           class="pointer-cursor"
-                          @click="viewPostPageModal=true; submitEdit(item.bno)"
+                          @click="openViewPostMoadl(item.bno);submitEdit(item.bno)"
                         >
                           {{ item.content }}
                         </VCardTitle> 
@@ -640,10 +633,11 @@ const openUserProfileModal = val => {
 
                       <VCardText
                         class="pointer-cursor"
-                        @click="viewPostPageModal=true; submitEdit(item.bno)"
+                        @click="openViewPostMoadl(item.bno);submitEdit(item.bno)"
                       >
                         댓글 {{ }} 모두 보기
-                      </VCardText>
+                      </VCardText> 
+                      <!-- {{ Object.keys(groupedDataAll._rawValue[item.bno]).length }} 활용할 수 있을 것 같은데..-->
                       <VCardText>
                         <VRow>
                           <VCol cols="10">
@@ -690,8 +684,8 @@ const openUserProfileModal = val => {
                           좋아요 수
                         </VCol>
                         <VCol v-if="group[item.bno]">
-                          <strong>{{ group[item.bno].ID }}</strong> {{ group[item.bno].CCOMMENT }}
-                        </VCol>
+                          <strong>{{group[item.bno].C_NO}}번 {{ group[item.bno].ID }}</strong> {{ group[item.bno].CCOMMENT }}
+                        </VCol>                        
                       </VCol>
                     </VCard>
                   </VCol> 
@@ -813,6 +807,7 @@ const openUserProfileModal = val => {
     <ViewPostPage
       v-model:isDialogVisible="viewPostPageModal" 
       :post-to-edit="postToEdit"
+      :comments="postmodalData.comments"
     />
   </section>
 </template>

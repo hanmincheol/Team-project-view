@@ -14,6 +14,10 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  comments: {
+    type: Array,
+    required: true
+  }
 })
 
 const emit = defineEmits(['update:isDialogVisible'])
@@ -98,7 +102,7 @@ const avatars = [
                           :image="avatar1" 
                           @click="userProfileModal=true"
                         >
-                          {{ postToEdit.id }}  <!-- 유저 닉네임 뿌려주기 -->
+                          {{ postToEdit.id }} <!-- 유저 닉네임 뿌려주기 -->
                         </VCardSubtitle>
                       </VCol>
                     </VCol>
@@ -121,6 +125,24 @@ const avatars = [
                 >
                   {{ postToEdit.content }}
                   <br>{{ postToEdit.hashTag }}
+                  <br>
+                  <VDivider />
+                  <br>
+                  <div>
+                    <div v-if="comments">
+                      <!-- 댓글이 있는 경우에 대한 표시 로직 -->
+                      <div v-for="comment in comments" :key="comment.C_NO">
+                        {{ comment.C_NO }} {{ comment.ID }} {{ comment.CCOMMENT }}
+                      </div>
+                    </div>
+                    <div v-else>
+                      <!-- 댓글이 없는 경우에 대한 예외 처리 로직 -->
+                      작성된 댓글이 없습니다.
+                    </div>
+                  </div>
+                  <!-- <li>
+                    {{comments[0].C_NO}} {{comments[0].ID}} {{comments[0].CCOMMENT}}
+                  </li> -->
                 </VCol>
               </VRow>
               <VCol>
