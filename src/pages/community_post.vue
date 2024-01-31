@@ -13,6 +13,7 @@ const writingModal = ref(false)
 const editingModal = ref(false)
 const borderColor = ref('#ccc')
 const viewPostPageModal = ref(false)
+const isLiked = ref(false)  // 좋아요 버튼의 상태를 저장
 let postToEdit = ref("")
 
 const isInvited = {}
@@ -198,33 +199,9 @@ const getComment = async function() {
         return acc
       }, {})
 
-      // BBS_NO 값을 기준으로 데이터 묶기
-      // groupedData.value = response.data.reduce((acc, curr) => {
-      //   const bbsNo = curr.BBS_NO
-      //   if (acc[bbsNo]) {
-      //     // parent_comment가 null인 값들 중에서 C_NO가 가장 큰 댓글만 선택
-      //     if (curr.parent_comment === null) {
-      //       const existingComment = acc[bbsNo].find(comment => comment.parent_comment === null)
-      //       if (existingComment) {
-      //         // 현재 댓글의 C_NO 값이 existingComment의 C_NO 값보다 큰 경우
-      //         // acc[bbsNo] 배열을 현재 댓글로 업데이트
-      //         if (curr.C_NO < existingComment.C_NO) {
-      //           acc[bbsNo] = [curr]
-      //         }
-      //       } else {
-      //         acc[bbsNo].push(curr)
-      //       }
-      //     }
-      //   }else {
-      //     acc[bbsNo] = [curr]
-      //   }
-        
-      //   return acc // 누산기(acc)를 반환하여 다음 순회로 전달
-      // }, {})
-
       // 아래는 원하는 값을 가져오지만 댓글이 안나오고 있음
       groupedData.value = {}
-      response.data.forEach((comment) => {
+      response.data.forEach(comment => {
         const bbsNo = comment.BBS_NO
 
         // 해당 BBS_NO에 대한 댓글이 이미 있는 경우
@@ -429,6 +406,30 @@ const openUserProfileModal = val => {
       console.error(error)
     })
   userProfileModal.value = true
+}
+
+///좋아요!!
+const toggleLike = async bno => {
+  isLiked.value = !isLiked.value  // 좋아요 버튼의 상태를 토글
+
+  try {
+    const response = await axios.post('http://localhost:4000/bbs/likes.do', {
+      id: "HMC",
+      bno: bno,
+      cno: "0",
+      isLiked: isLiked.value,
+    })
+
+    console.log("id:", id, "bno:", bno)
+
+    if (response.status !== 200) {
+      console.log('좋아요 상태 변경 실패')
+      isLiked.value = !isLiked.value  // 실패했을 경우 상태를 원래대로 되돌림
+    }
+  } catch (error) {
+    console.error(`좋아요 상태 변경 실패: ${error}`)
+    isLiked.value = !isLiked.value  // 실패했을 경우 상태를 원래대로 되돌림
+  }
 }
 </script>
 
@@ -667,9 +668,10 @@ const openUserProfileModal = val => {
                       </VCardText>
                       <VCol>
                         <VBtn
-                          icon="mdi-heart-outline"
+                          :icon="isLiked.value ? 'mdi-heart' : 'mdi-heart-outline'"
                           variant="text"
                           color="success"
+                          @click="toggleLike(item.bno)"
                         />
                         <VBtn
                           icon="mdi-chat-outline"

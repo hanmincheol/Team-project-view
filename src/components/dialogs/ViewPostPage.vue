@@ -170,6 +170,7 @@ const avatars = [
                     style="height: 20px; border: none;"
                     variant="underlined"
                     prepend-icon="mdi-emoticon"
+                    no-resize
                   />
                 </VCol>
                 <VCol cols="1">
