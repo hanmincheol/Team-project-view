@@ -184,8 +184,7 @@ const getComment = async function() {
 
     // 응답 처리
     if (response.status === 200) {
-      console.log('댓글 성공')
-      console.log('데이터 체크', response.data)
+      console.log('가져온 댓글 데이터 체크', response.data)
 
       // BBS_NO 값을 기준으로 데이터 묶기
       groupedDataAll.value = response.data.reduce((acc, curr) => {
@@ -200,34 +199,52 @@ const getComment = async function() {
       }, {})
 
       // BBS_NO 값을 기준으로 데이터 묶기
-      groupedData.value = response.data.reduce((acc, curr) => {
-        const bbsNo = curr.BBS_NO
-        if (acc[bbsNo]) {
-          // parent_comment가 null인 값들 중에서 C_NO가 가장 큰 댓글만 선택
-          if (curr.parent_comment === null) {
-            const existingComment = acc[bbsNo].find(comment => comment.parent_comment === null)
-            if (existingComment) {
-              // 현재 댓글의 C_NO 값이 existingComment의 C_NO 값보다 큰 경우
-              // acc[bbsNo] 배열을 현재 댓글로 업데이트
-              if (curr.C_NO < existingComment.C_NO) {
-                acc[bbsNo] = [curr]
-              }
-            } else {
-              acc[bbsNo].push(curr)
-            }
-          } 
-        }else {
-          acc[bbsNo] = [curr]
-        }
+      // groupedData.value = response.data.reduce((acc, curr) => {
+      //   const bbsNo = curr.BBS_NO
+      //   if (acc[bbsNo]) {
+      //     // parent_comment가 null인 값들 중에서 C_NO가 가장 큰 댓글만 선택
+      //     if (curr.parent_comment === null) {
+      //       const existingComment = acc[bbsNo].find(comment => comment.parent_comment === null)
+      //       if (existingComment) {
+      //         // 현재 댓글의 C_NO 값이 existingComment의 C_NO 값보다 큰 경우
+      //         // acc[bbsNo] 배열을 현재 댓글로 업데이트
+      //         if (curr.C_NO < existingComment.C_NO) {
+      //           acc[bbsNo] = [curr]
+      //         }
+      //       } else {
+      //         acc[bbsNo].push(curr)
+      //       }
+      //     }
+      //   }else {
+      //     acc[bbsNo] = [curr]
+      //   }
         
-        return acc // 누산기(acc)를 반환하여 다음 순회로 전달
-      }, {})
+      //   return acc // 누산기(acc)를 반환하여 다음 순회로 전달
+      // }, {})
 
+      // 아래는 원하는 값을 가져오지만 댓글이 안나오고 있음
+      groupedData.value = {}
+      response.data.forEach((comment) => {
+        const bbsNo = comment.BBS_NO
+
+        // 해당 BBS_NO에 대한 댓글이 이미 있는 경우
+        if (groupedData.value[bbsNo]) {
+          const existingComment = groupedData.value[bbsNo]
+
+          // C_NO가 가장 큰 댓글인지 확인
+          if (comment.C_NO > existingComment.C_NO) {
+            groupedData.value[bbsNo] = comment
+          }
+        } else {
+          // 해당 BBS_NO에 대한 댓글이 없는 경우
+          groupedData.value[bbsNo] = comment
+        }
+      })
+
+      console.log('전체 데이타', groupedDataAll)
       statecomm.value.comment = toRaw(groupedData)
       group.value = toRaw(statecomm.value.comment)
-      console.log('전체 데이타', groupedDataAll)
-      console.log('데이터 확인', group.value)
-      
+      console.log('그룹 데이터 확인', group.value)      
 
     } else {
       console.log('데이터 전송 실패')
@@ -672,8 +689,8 @@ const openUserProfileModal = val => {
                         <VCol>
                           좋아요 수
                         </VCol>
-                        <VCol v-if="group[item.bno]?.[0]">
-                          <strong>{{ group[item.bno][0].ID }}</strong> {{ group[item.bno][0].CCOMMENT }}
+                        <VCol v-if="group[item.bno]">
+                          <strong>{{ group[item.bno].ID }}</strong> {{ group[item.bno].CCOMMENT }}
                         </VCol>
                       </VCol>
                     </VCard>
