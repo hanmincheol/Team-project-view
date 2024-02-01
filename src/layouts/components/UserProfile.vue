@@ -1,5 +1,34 @@
 <script setup>
 import avatar1 from '@images/avatars/avatar-1.png'
+import { computed } from 'vue'
+import { useStore } from 'vuex'
+
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const login =()=> {
+  router.push('/login')
+}
+
+const store = useStore()
+
+const isLoggedIn = computed(() => store.state.loginStore.isLogin)
+
+const username = computed(() => store.state.loginStore.userInfo.name)
+const userId = computed(() => store.state.loginStore.userInfo.id)
+
+const logout = async () => {
+  try {
+    
+    console.log("이게 실행 안되는거지?")
+    localStorage.removeItem('User-Token')
+    await store.dispatch('logout')
+  } catch (error) {
+    console.log('')
+    console.error(error)
+  }
+}
 </script>
 
 <template>
@@ -47,9 +76,9 @@ import avatar1 from '@images/avatars/avatar-1.png'
             </template>
 
             <VListItemTitle class="font-weight-medium">
-              John Doe
+              {{ username }}
             </VListItemTitle>
-            <VListItemSubtitle>Admin</VListItemSubtitle>
+            <VListItemSubtitle>{{ userId }}</VListItemSubtitle>
           </VListItem>
           <VDivider class="my-2" />
 
@@ -109,7 +138,10 @@ import avatar1 from '@images/avatars/avatar-1.png'
           <VDivider class="my-2" />
 
           <!-- 👉 Logout -->
-          <VListItem to="/login">
+          <VListItem
+            v-if="isLoggedIn"
+            @click.prevent="logout"
+          >
             <template #prepend>
               <VIcon
                 class="me-2"
@@ -118,7 +150,23 @@ import avatar1 from '@images/avatars/avatar-1.png'
               />
             </template>
 
-            <VListItemTitle>Logout</VListItemTitle>
+            <VListItemTitle>로그아웃</VListItemTitle>
+          </VListItem>
+
+          <!-- 👉 Login -->
+          <VListItem
+            v-else
+            @click.prevent="login"
+          >
+            <template #prepend>
+              <VIcon
+                class="me-2"
+                icon="mdi-login"
+                size="22"
+              />
+            </template>
+
+            <VListItemTitle>로그인</VListItemTitle>
           </VListItem>
         </VList>
       </VMenu>

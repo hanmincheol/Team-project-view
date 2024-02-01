@@ -11,7 +11,6 @@ import { themeConfig } from '@themeConfig'
 import {
   requiredValidatorPw,
 } from '@validators'
-import axios from "axios"
 import { useStore } from 'vuex'
 
 const store = useStore()
@@ -26,10 +25,6 @@ const id = ref(route.query.userid)
 const pwd = ref('')
 
 
-// Axios 인스턴스 생성
-const instance = axios.create({
-  baseURL: 'http://localhost:4000/',
-})
 
 
 
@@ -49,35 +44,9 @@ const login = () => {
   const saveData = { id: id.value, pwd: pwd.value }
 
   store.dispatch('login', saveData)
-
+  console.log("id", id.value)
+  console.log("pwd", pwd.value)
 }
-
-const userchk = () => {
-  const formData = new FormData();
-  formData.append('id', id.value);
-  formData.append('pwd', password.value);
-  axios
-    .post('http://localhost:4000/usercheck', formData,{
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-    .then((response) => {
-      if (response.status === 200) {
-        if(response.data === 1){
-          loginNext();
-        }else{
-          alert("존재하지 않는 유저 혹은 비밀번호가 일치하지 않습니다.");
-        }
-      } else {
-        console.log('데이터 가져오기 실패');
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-   });
-};
-
 </script>
 
 <template>
@@ -159,7 +128,7 @@ const userchk = () => {
                     style="justify-content: right;"
                   >
                     <VCol cols="12" />
-                    <VBtn @click="login">
+                    <VBtn @click.prevent="login">
                       다음
                     </VBtn>
                   </div>

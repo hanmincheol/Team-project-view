@@ -8,10 +8,6 @@ export default createStore({
   getters: {
   },
   mutations: {
-
-    setToken: function (state, token) {
-      state.token = token
-    },
   },
   actions: {
   },

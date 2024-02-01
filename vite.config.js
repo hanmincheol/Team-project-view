@@ -111,6 +111,9 @@ export default defineConfig({
       '/checkPhoneNumber': {
         target: 'http://localhost:4000',
       },
+      '/': {
+        target: 'http://localhost:4000',
+      },
     },
   },
 })
