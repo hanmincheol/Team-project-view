@@ -10,10 +10,11 @@ const connectionData = ref([])
 const isFriendExist = ref(true)
 const isConnected = {}
 const isFriendBlocked = {}
+const userId = ref('HMC') //접속한 유저 아이디
 
 const fetchProjectData = () => {
-  if (router.params.tab === 'friend') {
-    axios.get("http://127.0.0.1:4000/comm/friend", { params: { id: 'HMC' } })
+  if (router.params.tab === 'friend') { //조회용
+    axios.get("http://127.0.0.1:4000/comm/friend", { params: { id: userId.value } })
       .then(response=>{
         connectionData.value = response.data
         if(Object.keys(connectionData.value).length == 0) isFriendExist.value = true
@@ -51,7 +52,8 @@ const blockFriend = (bool, id) =>{
   if (bool) {
     console.log(id, '차단됨')
   }
-  axios.put("http://127.0.0.1:4000/comm/friend/block", JSON.stringify({
+  axios.put("http://127.0.0.1:4000/comm/friend/block", JSON.stringify({ //차단용
+    userId: userId.value,
     id: id,
   }), { headers: { "Content-Type": `application/json` } })
     .then(()=>{
@@ -71,6 +73,7 @@ window.addEventListener('click', ()=>{ //beforeunload
         console.log('axios delete 안으로 들어옴', userid)
         axios.delete("http://127.0.0.1:4000/comm/friend/delete", {
           data: {
+            userId: userId.value,
             id: userid,
           },
         }, { headers: { "Content-Type": `application/json` } })

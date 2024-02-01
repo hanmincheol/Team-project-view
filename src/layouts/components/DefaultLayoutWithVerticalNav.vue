@@ -1,6 +1,7 @@
 <script setup>
 import navItems from '@/navigation/vertical'
 import { useThemeConfig } from '@core/composable/useThemeConfig'
+import { ref } from 'vue'
 
 // Components
 import Footer from '@/layouts/components/Footer.vue'
@@ -20,28 +21,47 @@ let chatbotOpen = ref(false)
 
 const toggleChatbot = () => {
   console.log('클릭이벤트')
-  chatbotOpen = !chatbotOpen
+  chatbotOpen.value = !chatbotOpen.value
   console.log(chatbotOpen)
 }
 
 // 드래그 상태
 let dragging = false
 let offset = { x: 0, y: 0 }
+let dragEventCount = ref(0)
+let pexelX = 0
+let pexelY = 0
+
 
 // 드래그 핸들러
 const startDrag = event => {
   dragging = true
-  offset = { x: event.clientX - event.target.offsetLeft, y: event.clientY - event.target.offsetTop }
+  if(dragEventCount.value==0){
+    offset = { x: event.clientX - event.currentTarget.offsetLeft + 50, y: event.clientY - event.currentTarget.offsetTop + 50 }
+  }
+  if(dragEventCount.value==1){
+    offset = { x: event.clientX - pexelX, y: event.clientY - pexelY }
+  }
 }
 
 const doDrag = event => {
   if (!dragging) return
-  event.currentTarget.style.left = `${event.clientX - offset.x}px`
-  event.currentTarget.style.top = `${event.clientY - offset.y}px`
+  if(dragEventCount.value==0){
+    event.currentTarget.style.left = `${event.clientX - offset.x }px`
+    event.currentTarget.style.top = `${event.clientY - offset.y}px`
+  }
+  if(dragEventCount.value==1){
+    event.currentTarget.style.left = `${ event.clientX - offset.x -25}px`
+    event.currentTarget.style.top = `${ event.clientY - offset.y -25}px`
+  }
+  
 }
 
-const stopDrag = () => {
+const stopDrag = event => {
   dragging = false
+  pexelX = event.clientX - offset.x
+  pexelY = event.clientY - offset.y
+  dragEventCount.value= 1
 }
 </script>
 
@@ -88,12 +108,20 @@ const stopDrag = () => {
     <template #iconBtn>
       <div
         class="icon-button" 
-        style="position: absolute; box-shadow: 0 2px 5px rgba(0, 0, 0, 30%);"  
-        @mousedown="startDrag" 
+        style=" background-color: #f6f6f6; box-shadow: 0 2px 5px rgba(0, 0, 0, 30%);"  
         @mousemove="doDrag" 
         @mouseup="stopDrag"
       >
-        <Chatbot />
+        <VBadge
+          style="position: absolute;"
+          icon="mdi-arrow-all"
+          color="success"
+          offset-x="40"
+          offset-y="-5"
+          @mousedown="startDrag"
+        >
+          <Chatbot />
+        </VBadge>
       </div>
     </template>
     
@@ -101,3 +129,18 @@ const stopDrag = () => {
     <TheCustomizer />
   </VerticalNavLayout>
 </template>
+
+<style lang="scss">
+.icon-button {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  block-size: 70px;
+  font-size: 30px;
+  inline-size: 70px;
+  inset-block-end: 15%;
+  inset-inline-end: 15%;
+}
+</style>

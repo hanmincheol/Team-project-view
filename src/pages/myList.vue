@@ -130,6 +130,7 @@ const loadMore = () => {
   items.value = items.value.concat(moreItems)
   console.log("leadMore..")
 }
+
 </script>
 
 
@@ -211,11 +212,30 @@ const loadMore = () => {
                           </VCol>
                         </VRow>
                       </VCol>
+                      <VCol
+                        v-if="item.files && item.files.length ==1"
+                        class="transparent-carousel"
+                        show-arrows-on-hover
+                      >
+                        <VCol
+                          v-for="(image, i) in item.files" 
+                          :key="i"
+                          :class="{'active-slide': i === activeIndex}"
+                        >
+                          <VImg
+                            :src="image"
+                            class="pointer-cursor"
+                            style="width: auto; height: auto;"
+                            @click="viewPostPageModal=true;submitEdit(item.bno)"
+                          />
+                        </VCol>
+                      </VCol>
                       <VCarousel
-                        v-if="item.files && item.files.length"
+                        v-if="item.files && item.files.length >=2"
                         class="transparent-carousel"
                         show-arrows-on-hover
                         color="success"
+                        style="width: auto; height: auto;"
                       >
                         <VCarouselItem
                           v-for="(image, i) in item.files" 
@@ -225,11 +245,11 @@ const loadMore = () => {
                           <VImg
                             :src="image"
                             class="pointer-cursor"
-                            @click="viewPostPageModal=true"
+                            
+                            @click="viewPostPageModal=true;submitEdit(item.bno)"
                           />
                         </VCarouselItem>
                       </VCarousel>
-
                       <VCardItem>
                         <VCardTitle
                           class="pointer-cursor"

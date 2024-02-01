@@ -115,6 +115,8 @@ const fetchProfile = async () => { //Profile 데이터 가져오기
         console.log('프로필 값:', response.data)
         profiledata.value = response.data
         console.log('프로필 Path:', profiledata.value.profilePath)
+        // 이미지 URL 업데이트
+        imageUrl.value = response.data.profilePath
       } else {
         console.log('데이터 가져오기 실패')
       }
@@ -123,7 +125,7 @@ const fetchProfile = async () => { //Profile 데이터 가져오기
       console.error(error)
     })
 }
-
+//////////////////////////////////////////////////////////////////////
 // 이미지
 const showDialog = ref(false) //프로필 사진 교체를 위한 Dialog 호출 변수
 const imageUrl = ref('') // 이미지 URL을 담을 변수 -- 사진 1개
@@ -138,7 +140,7 @@ const showIcon = ref(false) // 프로필 사진에 마우스 올리면 아이콘
 const imagechange = () => {
   const requestData = {
     id: searchuser,
-    profilePath: inputfilename.value,
+    profilePath: 'http://localhost:4000/images/'+inputfilename.value,
   }
 
   console.log('정상작동')
@@ -146,12 +148,13 @@ const imagechange = () => {
     .put('http://localhost:4000/comm/profile/update', requestData)
     .then(response => {
       // 성공적으로 업데이트되었을 때의 처리
-      console.log('성공')
+      console.log('프로필 이미지 업데이트 성공')
+      fetchProfile()
     })
     .catch(error => {
       // 업데이트 중 오류가 발생했을 때의 처리
-      console.log(inputfilename.value)
-      console.log('실패')
+      console.log('프로필 이미지 업데이트 실패')
+      console.error(error)
     })
 }
 
@@ -171,9 +174,13 @@ const uploadImg = e => {
     fileName = fileList[0].name
     inputfilename.value = fileName // 변경 전: `/src/assets/images/userProfile/${fileName}`
     uploadFile(fileList[0])
+    // .then(() => {
+    //   // 이미지 업로드가 완료된 후에 프로필 이미지 업데이트
+    //   imagechange()
+    // })
   } else {
     // Handle the case where no file is selected
-    console.error('No file selected')
+    console.error('선택된 파일이 없습니다.')
   }
 }
 
@@ -197,7 +204,6 @@ const uploadFile = file => {
 }
 
 
-
 // onMounted(fetchData, fetchProfile);
 onMounted(async () => {
   await Promise.all([fetchData(), fetchProfile()])
@@ -214,7 +220,7 @@ onMounted(async () => {
           <div class="avatar-container">
             <VAvatar
               rounded="sm"
-              size="120"
+              size="150"
               :image="profiledata.profilePath"
               class="mt-3"
               @click="showDialog = true"
@@ -224,8 +230,9 @@ onMounted(async () => {
             <!-- 아래 Icon은 교체 아이콘으로... -->
             <VIcon
               v-if="showIcon"
-              size="22"
-              icon="mdi-magnify"
+              size="x-large"
+              color="success"
+              icon="mdi-autorenew"
               class="icon"
               style="opacity: 1;"
               @click="showDialog = true"
@@ -260,7 +267,6 @@ onMounted(async () => {
                   prepend-icon="mdi-camera-outline"
                   @change="uploadImg"
                 />
-                <!-- @change="uploadImg" -->
               </VCol>
               <VCol>
                 <VBtn
@@ -269,7 +275,6 @@ onMounted(async () => {
                 >
                   확인
                 </VBtn>
-                <!-- <VBtn block @click="showDialog = false, imagechange()">확인</VBtn> -->
               </VCol>
             </VCard>
           </VDialog>  

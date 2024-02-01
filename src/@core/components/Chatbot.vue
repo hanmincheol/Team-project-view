@@ -1,4 +1,5 @@
 <script setup>
+import axios from '@axios'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 
 const props = defineProps({
@@ -10,6 +11,42 @@ const props = defineProps({
 })
 
 const router = useRouter()
+
+const messages = ref([]) 
+const isLoading = ref(false)  // 로딩 상태를 저장
+const userInput = ref('') // 사용자의 입력을 저장할 ref를 선언
+
+//챗봇 서버로 메세지 넘기고 받기
+async function sendMessage() {
+  messages.value.push({
+    type: 'send',
+    content: userInput.value,
+  })
+
+  isLoading.value = true  // 로딩 상태를 시작
+
+  const response = await axios.post('http://localhost:5000/ChatAI', {
+    message: userInput.value,
+  })
+
+  userInput.value = '' 
+
+  isLoading.value = false  // 로딩 상태를 종료
+
+  console.log(response.data.answer)
+
+  // 서버로부터 받은 메시지를 채팅창에 추가합니다.
+  messages.value.push({
+    type: 'receive',
+    content: response.data.answer,
+  })
+  
+}
+
+// 아이콘을 누르면 채팅창이 초기화되는 함수를 선언합니다.
+//function resetChat() {
+//  messages.value = []
+//}
 </script>
 
 <template>
@@ -46,39 +83,18 @@ const router = useRouter()
         <PerfectScrollbar :options="{ wheelPropagation: false }">
           <VRow class="ma-0 mt-n1">
             <div class="chat-container">
-              <div class="send">
-                <p class="chat-bubble">
-                  Hey there! What's up
-                </p>
-              </div>
               <div class="receive">
                 <p class="chat-bubble">
-                  Checking out iOS7 you know..
+                  안녕하세요! 어떤 도움이 필요하신가요?
                 </p>
               </div>
-              <div class="send">
+              <div
+                v-for="(message, index) in messages"
+                :key="index"
+                :class="message.type"
+              >
                 <p class="chat-bubble">
-                  Check out this bubble!
-                </p>
-              </div>
-              <div class="receive">
-                <p class="chat-bubble">
-                  It's pretty cool…
-                </p>
-              </div>
-              <div class="receive">
-                <p class="chat-bubble">
-                  Not gonna lie!
-                </p>
-              </div>
-              <div class="send">
-                <p class="chat-bubble">
-                  Yeah it's pure CSS &amp; HTML
-                </p>
-              </div>
-              <div class="receive">
-                <p class="chat-bubble">
-                  Wow that's impressive. But what's even more impressive is that this bubble is really high.
+                  {{ message.content }}
                 </p>
               </div>
             </div>
@@ -87,15 +103,25 @@ const router = useRouter()
         <VCol cols="12">
           <VRow>
             <VCol cols="9">
-              <VTextarea
+              <VTextField
+                v-model="userInput"
                 prepend-inner-icon="mdi-comment-outline"
-                label="prepend-inner-icon"
-                rows="1"
+                label="메시지 입력"
               />
             </VCol>
             <VCol cols="2">
-              <VBtn size="x-large">
+              <VBtn
+                size="x-large"
+                @click="sendMessage"
+              >
                 전송
+                <VProgressCircular
+                  v-if="isLoading"
+                  indeterminate
+                  color="#8B4513"
+                  width="3" 
+                  size="20"
+                />
               </VBtn>
             </VCol>
           </VRow>
@@ -113,7 +139,7 @@ const router = useRouter()
   inline-size: 100%;
   margin-block: 0;
   margin-inline: auto;
-  max-inline-size: 600px;
+  max-inline-size: 530px;
 }
 
 .chat-bubble {

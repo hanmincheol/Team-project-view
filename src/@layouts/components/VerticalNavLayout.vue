@@ -115,19 +115,6 @@ export default defineComponent({
 @use "@layouts/styles/placeholders";
 @use "@layouts/styles/mixins";
 
-.icon-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background-color: #f6f6f6;
-  block-size: 60px;
-  font-size: 30px;
-  inline-size: 60px;
-  inset-block-end: 20%;
-  inset-inline-end: 20%;
-}
-
 .layout-wrapper.layout-nav-type-vertical {
   // TODO(v2): Check why we need height in vertical nav & min-height in horizontal nav
   block-size: 100%;

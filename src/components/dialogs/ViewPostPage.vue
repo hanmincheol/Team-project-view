@@ -14,6 +14,10 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  comments: {
+    type: Array,
+    required: true
+  }
 })
 
 const emit = defineEmits(['update:isDialogVisible'])
@@ -41,30 +45,44 @@ const avatars = [
         <VIcon>mdi-close</VIcon>
       </VBtn>
       <VCol cols="12">
-        <!--
-          <VImg
-          :src="bg"
-          style=" filter: contrast(200%);opacity: 0.5;"
-          /> 
-        -->
-
         <VCard>
           <VRow>
-            <VCarousel
-              v-if="postToEdit.files && postToEdit.files.length"
-              show-arrows-on-hover
-            >
-              <VCarouselItem
-                v-for="(img, index) in postToEdit.files"
-                :key="index"
+            <VCol cols="6">
+              <VCol
+                v-if="postToEdit.files && postToEdit.files.length ==1"
+                class="transparent-carousel"
+                show-arrows-on-hover
+                color="success"
               >
-                <VImg :src="img" />
-              </VCarouselItem>
-            </VCarousel>
-            <VImg
-              v-else
-              :src="backgroundimg"
-            />
+                <VCol
+                  v-for="(img, index) in postToEdit.files"
+                  :key="index"
+                >
+                  <VImg
+                    :src="img"
+                    style="margin-top: 15%;"
+                  />
+                </VCol>
+              </VCol>
+              <VImg
+                v-if="postToEdit.files && postToEdit.files.length ==0"
+                :src="backgroundimg"
+              />
+              <VCarousel
+                v-if="postToEdit.files && postToEdit.files.length >=2"
+                class="transparent-carousel"
+                show-arrows-on-hover
+                color="success"
+                style="margin-top: 15%;"
+              >
+                <VCarouselItem
+                  v-for="(img, index) in postToEdit.files"
+                  :key="index"
+                >
+                  <VImg :src="img" />
+                </VCarouselItem>
+              </VCarousel>
+            </VCol>
             <VCol cols="6">
               <VRow>
                 <VCol>
@@ -84,7 +102,7 @@ const avatars = [
                           :image="avatar1" 
                           @click="userProfileModal=true"
                         >
-                          {{ postToEdit.id }}  <!-- 유저 닉네임 뿌려주기 -->
+                          {{ postToEdit.id }} <!-- 유저 닉네임 뿌려주기 -->
                         </VCardSubtitle>
                       </VCol>
                     </VCol>
@@ -107,6 +125,24 @@ const avatars = [
                 >
                   {{ postToEdit.content }}
                   <br>{{ postToEdit.hashTag }}
+                  <br>
+                  <VDivider />
+                  <br>
+                  <div>
+                    <div v-if="comments">
+                      <!-- 댓글이 있는 경우에 대한 표시 로직 -->
+                      <div v-for="comment in comments" :key="comment.C_NO">
+                        {{ comment.C_NO }} {{ comment.ID }} {{ comment.CCOMMENT }}
+                      </div>
+                    </div>
+                    <div v-else>
+                      <!-- 댓글이 없는 경우에 대한 예외 처리 로직 -->
+                      작성된 댓글이 없습니다.
+                    </div>
+                  </div>
+                  <!-- <li>
+                    {{comments[0].C_NO}} {{comments[0].ID}} {{comments[0].CCOMMENT}}
+                  </li> -->
                 </VCol>
               </VRow>
               <VCol>
@@ -156,6 +192,7 @@ const avatars = [
                     style="height: 20px; border: none;"
                     variant="underlined"
                     prepend-icon="mdi-emoticon"
+                    no-resize
                   />
                 </VCol>
                 <VCol cols="1">
@@ -181,5 +218,13 @@ const avatars = [
 <style>
 .disabled-textarea {
   color: black; /* 텍스트 색상을 검정색으로 설정합니다. */
+}
+
+.active-slide {
+  color: success;
+}
+
+.transparent-carousel .v-carousel__controls {
+  background-color: transparent;
 }
 </style>
