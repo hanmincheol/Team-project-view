@@ -164,10 +164,12 @@ const submitEdit = async bno => {
     if (response.status === 200) {
       console.log('글 번호 전송 성공')
       console.log(response.data, "response.data")
+      console.log('제발11',groupedDataAll._rawValue[bno])
       console.log('제발', groupedDataAll.value._rawValue[bno])
 
       // 서버로부터 받은 데이터를 자식 컴포넌트에게 전달하기 위해 저장
       postToEdit.value = response.data
+      console.log('설마?',postToEdit.value)
     } else {
       console.log('글 번호 전송 실패')
     }
@@ -275,9 +277,6 @@ const insertComment = async (bno, comment) => {
       console.log('실패')
     })
 }
-
-
-//////////////////////////////////////
 
 
 //스크롤 이벤트 리스터 추가 - 화면 하단에 스크롤 도착 시 loadMore()함수 호출
@@ -840,6 +839,7 @@ const toggleLike = async bno => {
       v-model:isDialogVisible="viewPostPageModal" 
       :post-to-edit="postToEdit"
       :comments="postmodalData.comments"
+      :bno ="postToEdit.bno"
     />
   </section>
 </template>

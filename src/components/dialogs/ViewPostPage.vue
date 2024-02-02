@@ -4,6 +4,9 @@ import avatar2 from '@images/avatars/avatar-2.png'
 import avatar3 from '@images/avatars/avatar-3.png'
 import avatar4 from '@images/avatars/avatar-4.png'
 import backgroundimg from '@images/pages/writing.jpg'
+import { onMounted } from 'vue'
+import axios from '@axios'
+
 
 const props = defineProps({
   isDialogVisible: {
@@ -17,6 +20,10 @@ const props = defineProps({
   comments: {
     type: Array,
     required: true
+  },
+  bno:{
+    type:Number,
+    required:true
   }
 })
 
@@ -28,6 +35,37 @@ const avatars = [
   avatar3,
   avatar4,
 ]
+
+//특정 게시물 
+// const getprofile = async bno => {
+//   const formData = new FormData()
+
+//   formData.append('bbs_no', bno)
+//   console.log('번호 확인',bno)
+//   try {
+//     const response = await axios.post('http://localhost:4000/commentline/GetProfile.do', formData, { 
+//       headers: {
+//         'Content-Type': 'multipart/form-data',
+//       },
+//     })
+
+//     if (response.status === 200) {
+//       console.log(response.data, "response.data")
+//     } else {
+//       console.log('chkchk')
+//     }
+//   } catch (error) {
+//     console.error(`chkckh2: ${error}`)
+//   }
+// }
+
+// onMounted(() => {
+//   if(props.isDialogVisible == true){
+//     console.log('실행한다?')
+//     getprofile(props.bno)
+//   }
+// })
+////////////////////////////////////
 </script>
 
 <template>
@@ -102,7 +140,8 @@ const avatars = [
                           :image="avatar1" 
                           @click="userProfileModal=true"
                         >
-                          {{ postToEdit.id }} <!-- 유저 닉네임 뿌려주기 -->
+                          {{ postToEdit.id }} <!-- 유저 닉네임 뿌려주기 --> 
+                          <!-- {{bno}} -->
                         </VCardSubtitle>
                       </VCol>
                     </VCol>
@@ -128,15 +167,33 @@ const avatars = [
                   <br>
                   <VDivider />
                   <br>
-                  <div>
+                  <div style="font-size:14px">
                     <div v-if="comments">
-                      <!-- 댓글이 있는 경우에 대한 표시 로직 -->
                       <div v-for="comment in comments" :key="comment.C_NO">
-                        {{ comment.C_NO }} {{ comment.ID }} {{ comment.CCOMMENT }}
+                        <div v-if="comment.LEVEL == 1"  style="border-bottom:dotted 1px gray; display: flex; justify-content: space-between; align-items: center;background-color: rgba(0, 255, 100, 0.2);border-radius: 10px;">
+                          <div>
+                            <VAvatar 
+                              :image="avatar2"
+                              style="border:solid 1px gray;margin-left:5px;margin-right:3px;"
+                            />
+                              <span style="font-size:12px;margin-right:10px">{{ comment.ID }}</span> <strong>{{ comment.CCOMMENT }}</strong>  
+                          </div>
+                          <VBtn icon="mdi-heart-outline" variant="text" color="success"/>
+                        </div>
+                        <div v-else :style="{ marginLeft: (comment.LEVEL - 1) * 15 + 'px', 'border-bottom': 'dotted 1px gray', display: 'flex', 'justify-content': 'space-between', 'align-items': 'center', 'background-color': 'rgba(255, 50, 0, 0.3)','border-radius': '10px'}">                                                    
+                          <div>
+                            <VIcon end icon="mdi-arrow-right-bottom" class="flip-in-rtl"/>
+                            <VAvatar 
+                                :image="avatar2"
+                                style="border:solid 1px gray;margin-left:5px;margin-right:3px;"
+                              />
+                          <span style="font-size:12px;margin-right:10px">{{ comment.ID }}</span><strong>{{ comment.CCOMMENT }}</strong>
+                          </div>
+                          <VBtn icon="mdi-heart-outline" variant="text" color="success"/>
+                        </div>
                       </div>
                     </div>
                     <div v-else>
-                      <!-- 댓글이 없는 경우에 대한 예외 처리 로직 -->
                       작성된 댓글이 없습니다.
                     </div>
                   </div>
