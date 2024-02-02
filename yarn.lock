@@ -6037,7 +6037,7 @@ vue-shepherd@3.0.0:
   dependencies:
     shepherd.js "^11.1.0"
 
-"vue@^2.6.12 || ^3.2.4", "vue@^2.6.14 || ^3.2.0", "vue@^2.7.0 || ^3.2.25", vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", "vue@^3.0.0-0 || ^2.7.0", vue@^3.0.11, vue@^3.2.0, vue@^3.2.25, vue@^3.2.41, vue@^3.2.45, vue@^3.3.2, "vue@> 3.0.0", "vue@>= 3.0.0 < 4", vue@>=3, vue@>=3.0.0, "vue@2 || 3", vue@3.4.5, vue@3.x:
+"vue@^2.6.12 || ^3.2.4", "vue@^2.6.14 || ^3.2.0", "vue@^2.7.0 || ^3.2.25", vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", "vue@^3.0.0-0 || ^2.7.0", vue@^3.0.11, vue@^3.0.2, vue@^3.2.0, vue@^3.2.25, vue@^3.2.45, vue@^3.3.2, "vue@> 3.0.0", "vue@>= 3.0.0 < 4", vue@>=3, vue@>=3.0.0, "vue@2 || 3", vue@3.4.5, vue@3.x:
   version "3.4.5"
   resolved "https://registry.npmjs.org/vue/-/vue-3.4.5.tgz"
   integrity sha512-VH6nHFhLPjgu2oh5vEBXoNZxsGHuZNr3qf4PHClwJWw6IDqw6B3x+4J+ABdoZ0aJuT8Zi0zf3GpGlLQCrGWHrw==
