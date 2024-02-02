@@ -1,6 +1,8 @@
 <script setup>
+import AppDateTimePicker from '@/@core/components/app-form-elements/AppDateTimePicker.vue'
+import axios from '@axios'
 import DiaryView from '@images/cards/DiaryView.png'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const props = defineProps({
   imgUrls: {
@@ -8,6 +10,8 @@ const props = defineProps({
     required: true,
   },
 })
+
+
 
 const biggeImgFile = ref(false)
 const imageSize = ref(null) //이미지 마우스 올릴 때 이벤트를 위한 변수
@@ -44,6 +48,30 @@ const handleMouseOver = index => {
 const handleMouseLeave = () => {
   imageSize.value = null // Reset the index to null when mouse leaves
 }
+
+const userId = ref('HMC')
+const dateVal = ref(todayLabel.value)
+const diaryContent = ref('')
+
+//날짜에 맞는 데이터를 가져오기 위한 코드
+
+onMounted(()=>{
+  const dateTag = document.getElementById("date").children[0]
+
+  var dateVal = dateTag.value.replace(/-/g, '')+'-'+userId.value
+
+  console.log(dateVal)
+  console.log(todayLabel.value)
+  dateTag.addEventListener('change', ()=>{
+    dateVal = dateTag.value.replace(/-/g, '')+'-'+userId.value
+    axios("http://127.0.0.1:4000/manage/diary", { params: { userNDate: dateVal } })
+      .then(resp => {
+        console.log('axios 다이어리 : ', resp.data.diary_content)
+        diaryContent.value = resp.data.diary_content
+      })
+      .catch(err=>console.error(err))
+  })
+})
 </script>
 
 <template>
@@ -62,9 +90,10 @@ const handleMouseLeave = () => {
             style="margin-left: -20%;"
           >
             <AppDateTimePicker
+              id="date"
               v-model="date"
-              label=" "
               style="margin-top: 120px;"
+              :style="{'color':'white'}"
             />
           </VCol>
             
@@ -94,14 +123,21 @@ const handleMouseLeave = () => {
               cols="12"
               style="height: 1000px;"
             >
-              <VTextarea 
+              <!--
+                <VTextarea 
                 label="Content" 
                 placeholder="오늘의 일기 내용"
                 disabled=""
                 rows="27"
                 style=" width: 72%; padding: 10px; margin-top: -15px;"
                 class="disabled-textarea"
-              />
+                />
+              -->
+              <VCard style="display:flex; width: 75%; height: 72%; margin-top: -15px; background-color: rgba( 255, 255, 255, 0.7 );">
+                <VCardText>
+                  {{ diaryContent }}
+                </VCardText>
+              </VCard>
             </VCol>
           </VCol>
         </VCard>

@@ -17,6 +17,7 @@ import { createPinia } from 'pinia'
 
 loadFonts()
 
+
 // Create vue app
 const app = createApp(App)
 
@@ -29,6 +30,5 @@ app.use(router)
 app.use(layoutsPlugin)
 
 //app.use(xroute)
-
 // Mount vue app
 app.mount('#app')

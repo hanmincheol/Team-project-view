@@ -1,12 +1,26 @@
 <script setup>
+import TextEmotionDetectionModal from '@/pages/components/diaryModal/TextEmotionDetectionModal.vue'
 import DiaryView from '@/pages/diaryView.vue'
+import axios from '@axios'
 import DiaryPage from '@images/cards/DiaryPage.png'
+import { Quill, QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.bubble.css'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
+import * as Emoji from "quill-emoji"
+import { createApp, ref } from 'vue'
+import SubmitConfirmModal from './components/diaryModal/SubmitConfirmModal.vue'
+
+
+const app = createApp()
+
+Quill.register("modules/emoji", Emoji)
+
+app.component('QuillEditor', QuillEditor)
 
 import timelineCardHeader from '@images/cards/timeline-card-header.png'
 import {
   requiredValidatorDiaryPassword,
 } from '@validators'
-import { ref } from 'vue'
 
 
 const biggeImgFile = ref(false)
@@ -24,9 +38,31 @@ const refVForm = ref()
 const inputDiaryPhoto = ref(false)
 const clickedImageUrl = ref('')
 
-const diaryWriteComplet = () => {
-  writeDiaryContent.value = false
-  submitBtn.value = false
+const isSubmitConfirmModalVisible = ref(false) //등록 확인 모달창
+const isEmotionDetectDialogVisible = ref(false)
+
+//사용자가 작성한 글을 html요소와 함께 저장 (view 용)
+const diaryContent = ref('')
+
+//사용자가 작성한 글에서 감정 분석 (텍스트 감정 분석 용)
+const diaryText = ref('')
+
+const diaryWriteComplet = isSubmit => {
+  if (isSubmit) {
+    if(diaryText.value.trim().length == 0){
+      alert('글을 입력해주세요')
+      submitBtn.value = false
+    }
+    else {
+      writeDiaryContent.value = true
+      isSubmitConfirmModalVisible.value = true
+
+    }
+  }
+  else {
+    writeDiaryContent.value = false
+    submitBtn.value = false
+  }
 }
 
 
@@ -146,6 +182,56 @@ const deleteImage = index =>{
 
 //input file에 사이즈에 대한 룰 설정
 const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1000000 || 'Avatar size should be less than 1 MB!']
+
+
+
+//[📌워드 에디터]Quill 객체 초기화
+
+var temp = [
+  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+  //['emoji'],
+  ['blockquote', 'code-block'],
+  
+  [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+  [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+  [{ 'script': 'sub' }, { 'script': 'super' }],      // superscript/subscript
+  [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
+  [{ 'direction': 'rtl' }],                         // text direction
+
+  [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+  [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+  [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+  [{ 'font': [] }],
+  [{ 'align': [] }],
+
+  ['clean'],                                         // remove formatting button
+]
+
+const toolbarOptions = {
+  container: temp,
+  handlers: {
+    'emoji': function () {},
+  },
+}
+
+//사용자가 입력한 값 가져오기
+window.addEventListener('click', ()=>{
+  var diaryTag = document.querySelector('.ql-editor')
+  if (diaryTag != null){
+    diaryContent.value = diaryTag.innerHTML
+    diaryText.value = diaryTag.innerText
+  }
+})
+
+//감정 분석 모달창 띄우기 용
+const openModal = () => {
+  isEmotionDetectDialogVisible.value = true
+  axios.get("http://localhost:5000/diary", { params: {
+    diary: diaryText.value,
+  } })
+    .then(resp => console.log(resp.data))
+}
 </script>
 
 <template>
@@ -366,17 +452,18 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
             </VCol>
             <VCol>
               <VCol cols="12">
-                <VTextarea 
-                  id="diaryContent"
-                  label="Content" 
-                  rows="30"
+                <QuillEditor
+                  id="quill-editor"
+                  :toolbar="toolbarOptions"
                   style="height: 800px;"
+                  rows="30"
+                  @change="test"
                 />
               </VCol>
               <VCol cols="12">
                 <VRow>
                   <VCol cols="2">
-                    <VBtn @click="submitBtn = true">
+                    <VBtn @click="diaryWriteComplet(true)">
                       등록
                     </VBtn>
                   </VCol>
@@ -384,7 +471,7 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
                   <VCol cols="1">
                     <VBtn 
                       width="50"  
-                      @click="diaryWriteComplet"
+                      @click="diaryWriteComplet(false)"
                     >
                       뒤로가기
                     </VBtn>
@@ -442,28 +529,11 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
                     </VDialog>
                   </VCol>
                 </VRow>  
-                <VDialog
-                  v-model="submitBtn"
-                  width="500"
-                >
-                  <!-- Dialog Content -->
-                  <VCard title="등록하시겠습니까?">
-                    <DialogCloseBtn
-                      variant="text"
-                      size="small"
-                      @click="submitBtn = false"
-                    />
-                    <VCardText>
-                      <VBtn 
-                        block
-                        type="submit"
-                        @click="diaryWriteComplet"
-                      >
-                        등록
-                      </VBtn>  
-                    </VCardText>
-                  </VCard>
-                </VDialog>
+                <SubmitConfirmModal
+                  v-model="isSubmitConfirmModalVisible" 
+                  @open-modal="openModal"
+                />
+                <TextEmotionDetectionModal v-model="isEmotionDetectDialogVisible" />
                 <!-- 멀티 이미지 클릭 시 열리는 모달 -->
                 <VDialog
                   v-model="biggeImgFile"
@@ -493,6 +563,17 @@ const rules = [fileList => !fileList || !fileList.length || fileList[0].size < 1
 
 
 <style lang="scss">
+@font-face {
+    font-family: 'seolleimcool-SemiBold';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2312-1@1.1/seolleimcool-SemiBold.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.ql-font-seolleimcool-SemiBold {
+    font-family: seolleimcool-SemiBold;
+}
+
 .fade-enter,
 .fade-enter-active {
   opacity: 0;
