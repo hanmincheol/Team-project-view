@@ -1,5 +1,5 @@
-import axios from 'axios'
 import router from '@/router'
+import axios from 'axios'
 
 const axiosIns = axios.create({
 // You can add your headers here
@@ -45,7 +45,8 @@ axiosIns.interceptors.response.use(response => {
     localStorage.removeItem('userAbilities')
 
     // If 401 response returned from api
-    router.push('/login')
+    alert("로그인 후 이용가능합니다")
+    router.push('/main')
   }
   else {
     return Promise.reject(error)

@@ -1,9 +1,9 @@
 <script setup>
-import { VDataTableServer } from 'vuetify/labs/VDataTable'
 import { paginationMeta } from '@/@fake-db/utils'
 import AddNewUserDrawer from '@/views/apps/user/list/AddNewUserDrawer.vue'
 import { useUserListStore } from '@/views/apps/user/useUserListStore'
 import { avatarText } from '@core/utils/formatters'
+import { VDataTableServer } from 'vuetify/labs/VDataTable'
 
 const userListStore = useUserListStore()
 const searchQuery = ref('')
@@ -145,7 +145,7 @@ const addNewUser = userData => {
   userListStore.addUser(userData)
 
   // refetch User
-  fetchUsers()
+  //fetchUsers()
 }
 </script>
 

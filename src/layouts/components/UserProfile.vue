@@ -1,9 +1,9 @@
 <script setup>
-import avatar1 from '@images/avatars/avatar-1.png'
-import { computed } from 'vue'
-import { useStore } from 'vuex'
+import avatar1 from '@images/avatars/avatar-1.png';
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
 
 const router = useRouter()
 
@@ -15,8 +15,8 @@ const store = useStore()
 
 const isLoggedIn = computed(() => store.state.loginStore.isLogin)
 
-const username = computed(() => store.state.loginStore.userInfo.name)
-const userId = computed(() => store.state.loginStore.userInfo.id)
+const username = computed(() => store.state.loginStore.userInfo ? store.state.loginStore.userInfo.name : "로그인 필요")
+const userId = computed(() => store.state.loginStore.userInfo ? store.state.loginStore.userInfo.id : "로그인 필요")
 
 const logout = async () => {
   try {

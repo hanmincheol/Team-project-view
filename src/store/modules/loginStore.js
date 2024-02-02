@@ -19,6 +19,7 @@ const loginStore = {
       state.userInfo = payload
       state.isLogin = true
       window.location.href="/main"
+
     },
     logoutTest: function (state) {
       state.userInfo = null
@@ -32,7 +33,7 @@ const loginStore = {
   actions: {
     login(context, loginObj) {
       const formdata = new FormData()
-    
+      
       formdata.append("id", loginObj['id'])
       formdata.append("pwd", loginObj['pwd'])
     
@@ -41,15 +42,19 @@ const loginStore = {
           'Content-Type': 'multipart/form-data',
         },
         withCredentials: true,
-      }) // 로그인 URL로 ID, PW를 보냄
+      }) 
         .then(res => {
           console.log(res)
-          
-          return context.dispatch('getToken')
+        
+          if(res.status === 200) { // 로그인 요청이 성공했을 때만 토큰을 가져오는 요청을 실행
+            return context.dispatch('getToken')
+          } else {
+            throw new Error('Login failed')
+          }
         })
         .then(getTokenResponse => {
           const token = getTokenResponse.data
-
+    
           console.log(token)
           context.dispatch('saveToken', token)
         })

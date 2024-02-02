@@ -5,6 +5,17 @@ import Edit from '@/pages/views/demos/forms/form-elements/textarea/Edit.vue'
 import PW from '@/pages/views/demos/forms/form-elements/textfield/PasswordEdit.vue'
 import Sub from '@/views/demos/DemoSelectCustomTextAndValue.vue'
 import axios from '@axios'
+import { onMounted, ref, watchEffect } from 'vue'
+import { useStore } from 'vuex'
+
+import store from '@/store'
+
+
+watchEffect(() => {
+  if(store.state.userInfo){
+    fetchuserData()
+  }
+})
 
 const editClick1 = ref(true) //이름
 const edit1 = ref(false)
@@ -31,54 +42,65 @@ const userAddressval = ref('')
 
 // mh는 Member_History 테이블을 뜻하는 약자
 const memberdata = ref([])
-const searchuser = 'HMC' //접속중인 유저 아이디값 받아넣기
+const searchuser = '' //접속중인 유저 아이디값 받아넣기
 
 
-const fetchData = async () => {
-  axios
-    .get('http://localhost:4000/member_info/View.do', {
+
+
+const fetchuserData = async () => {
+  const store = useStore()
+  if (!store.state.loginStore.userInfo) {
+    console.log('사용자 정보가 없습니다.')
+    
+    return
+  }
+  const searchuser = store.state.loginStore.userInfo.id
+
+  try {
+    console.log('searchuser:', searchuser)
+
+    const response = await axios.get('http://localhost:4000/user/View', {
       params: {
         id: searchuser,
       },
+      withCredentials: true,
     })
-    .then(response => {
-      if (response.status === 200) {
-        memberdata.value = response.data
-        console.log(memberdata.value)
-      } else {
-        console.log('데이터 가져오기 실패')
-      }
-    })
-    .catch(error => {
-      console.error(error)
-    })
+
+    console.log('응답데이터 :', response.data)
+
+    if (response.status === 200) {
+      memberdata.value = response.data
+      console.log(memberdata.value)
+    } else {
+      console.log('데이터 가져오기 실패')
+    }
+  } catch (error) {
+    console.error(error)
+  }
 }
 
-const updatedata = (colname, newcolval) =>{
+onMounted(fetchuserData)
+
+const updateuserdata = (colname, newcolval) => {
   const formData = new FormData()
 
-  console.log(searchuser, colname, newcolval)
   formData.append('colname', colname)
   formData.append('id', searchuser)
   formData.append('newcolval', newcolval)
-  console.log(formData)
-  axios
-    .put('http://localhost:4000/member_info/Edit.do', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
+
+  axios.put('http://localhost:4000/user/Edit', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    withCredentials: true,
+  })
     .then(response => {
-      // 성공적으로 업데이트되었을 때의 처리
       console.log('성공')
     })
     .catch(error => {
-      // 업데이트 중 오류가 발생했을 때의 처리
       console.log('실패')
     })
 }
-
-onMounted(fetchData)
 </script>
 
 <template>
@@ -103,7 +125,7 @@ onMounted(fetchData)
             <Btnsu
               v-if="edit1"
               style="width: 60px; margin-left: 10px;"
-              @click="editClick1=true, edit1=false, updatedata('name', nameval)"
+              @click="editClick1=true, edit1=false, updateuserdata('name', nameval)"
             />
           </VChip>
           <Edit
@@ -128,7 +150,7 @@ onMounted(fetchData)
             <Btnsu
               v-if="edit2"
               style="width: 60px; margin-left: 10px;"
-              @click="editClick2=true, edit2=false , updatedata('pwd', pwdval)"
+              @click="editClick2=true, edit2=false , updateuserdata('pwd', pwdval)"
             />
           </VChip>
 
@@ -161,7 +183,7 @@ onMounted(fetchData)
             <Btnsu
               v-if="edit3"
               style="width: 60px; margin-left: 10px;"
-              @click="editClick3=true, edit3=false, updatedata('height', heightval)"
+              @click="editClick3=true, edit3=false, updateuserdata('height', heightval)"
             />
           </VChip>
           <Edit
@@ -189,7 +211,7 @@ onMounted(fetchData)
             <Btnsu
               v-if="edit4"
               style="width: 60px; margin-left: 10px;"
-              @click="editClick4=true, edit4=false, updatedata('weight', weightval)"
+              @click="editClick4=true, edit4=false, updateuserdata('weight', weightval)"
             />
           </VChip>
           <Edit
@@ -219,7 +241,7 @@ onMounted(fetchData)
           <Btnsu
             v-if="edit5"
             style="width: 60px; margin-left: 10px;"
-            @click="editClick5=true, edit5=false, updatedata('tel', telval)"
+            @click="editClick5=true, edit5=false, updateuserdata('tel', telval)"
           />
           <Edit
             v-model="telval"
@@ -243,7 +265,7 @@ onMounted(fetchData)
             <Btnsu
               v-if="edit6"
               style="width: 60px; margin-left: 10px;"
-              @click="editClick6=true, edit6=false, updatedata('b_day', b_dayval)"
+              @click="editClick6=true, edit6=false, updateuserdata('b_day', b_dayval)"
             />
           </VChip>
           <Edit
