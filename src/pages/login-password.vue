@@ -1,28 +1,33 @@
 <script setup>
-import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
-import tree from '@images/pages/tree.png'
-import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
-import { themeConfig } from '@themeConfig'
 import authV2LoginIllustrationBorderedDark from '@images/pages/auth-v2-login-illustration-bordered-dark.png'
 import authV2LoginIllustrationBorderedLight from '@images/pages/auth-v2-login-illustration-bordered-light.png'
 import authV2LoginIllustrationDark from '@images/pages/auth-v2-login-illustration-dark.png'
 import authV2LoginIllustrationLight from '@images/pages/auth-v2-login-illustration-light.png'
 import authV2MaskDark from '@images/pages/auth-v2-mask-dark.png'
 import authV2MaskLight from '@images/pages/auth-v2-mask-light.png'
+import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
+import { themeConfig } from '@themeConfig'
 import {
   requiredValidatorPw,
 } from '@validators'
-import axios from '@axios'
+import { useStore } from 'vuex'
 
+const store = useStore()
 const router = useRouter()
 const refVForm = ref()
+
 //const idValue = $router.params.userid;
 //const id = ref('test');
-const route = useRoute();
-const id = ref(route.query.userid);
+const route = useRoute()
 
-const password = ref('')
+const id = ref(route.query.userid)
+const pwd = ref('')
+
+
+
+
+
 const form = ref({
   email: '',
   password: '',
@@ -32,49 +37,29 @@ const form = ref({
 const isPasswordVisible = ref(false)
 const authThemeImg = useGenerateImageVariant(authV2LoginIllustrationLight, authV2LoginIllustrationDark, authV2LoginIllustrationBorderedLight, authV2LoginIllustrationBorderedDark, true)
 const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
+
+
+
 const login = () => {
-  router.push({path:"/"});
+  const saveData = { id: id.value, pwd: pwd.value }
+
+  store.dispatch('login', saveData)
+  console.log("id", id.value)
+  console.log("pwd", pwd.value)
 }
-
-const loginNext = () => {
-  refVForm.value?.validate().then(({ valid: isValid }) => {
-    if (isValid)
-      login()
-  })
-}
-
-const userchk = () => {
-  const formData = new FormData();
-  formData.append('id', id.value);
-  formData.append('pwd', password.value);
-  axios
-    .post('http://localhost:4000/usercheck', formData,{
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-    .then((response) => {
-      if (response.status === 200) {
-        if(response.data === 1){
-          loginNext();
-        }else{
-          alert("존재하지 않는 유저 혹은 비밀번호가 일치하지 않습니다.");
-        }
-      } else {
-        console.log('데이터 가져오기 실패');
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-   });
-};
-
 </script>
 
 <template>
   <div>
-    <video autoplay loop muted>
-      <source src="@/assets/video/sample.mp4" type="video/mp4">
+    <video
+      autoplay
+      loop
+      muted
+    >
+      <source
+        src="@/assets/video/sample.mp4"
+        type="video/mp4"
+      >
     </video>
     <!-- Title and Logo -->
     <div class="auth-logo d-flex align-start gap-x-3">
@@ -89,8 +74,7 @@ const userchk = () => {
       no-gutters
       class="auth-wrapper"
     >
-      <VCol class="d-none d-md-flex align-center justify-center position-relative">
-      </VCol>
+      <VCol class="d-none d-md-flex align-center justify-center position-relative" />
 
       <VCol
         cols="12"
@@ -100,7 +84,7 @@ const userchk = () => {
           flat
           :max-width="500"
           class="mt-12 mt-sm-0 pa-4"
-          style="border:solid 2px gray;width:500px;height:500px;opacity: 0.8;"
+          style="width: 500px;height: 500px;border: solid 2px gray;opacity: 0.8;"
         >
           <VCol
             class="text-center" 
@@ -119,30 +103,36 @@ const userchk = () => {
             </RouterLink>
             <VCardText style="padding-left: 5px;">              
               <h5 class="text-h5 mb-1">
-                &#128100;{{id}}
+                &#128100;{{ id }}
               </h5>
             </VCardText>
           </VCol>
           <VCardText>
             <VForm 
               ref="refVForm"
-              @submit.prevent="router.push('/')">
+              @submit.prevent="router.push('/')"
+            >
               <VRow>
                 <!-- 비밀번호 입력란 -->
                 <VCol cols="12">
                   <VTextField
-                    v-model="password"
+                    v-model="pwd"
                     label="비밀번호"
                     :rules="[requiredValidatorPw]"
                     :type="isPasswordVisible ? 'text' : 'password'"
                     :append-inner-icon="isPasswordVisible ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
                     @click:append-inner="isPasswordVisible = !isPasswordVisible"
                   />
-                  <div class="d-flex align-center flex-wrap mt-1 mb-4" style="justify-content:right">
-                    <VCol cols="12"/>
-                    <VBtn @click="userchk()">다음</VBtn>
+                  <div
+                    class="d-flex align-center flex-wrap mt-1 mb-4"
+                    style="justify-content: right;"
+                  >
+                    <VCol cols="12" />
+                    <VBtn @click.prevent="login">
+                      다음
+                    </VBtn>
                   </div>
-                  <VCol cols="12"/>
+                  <VCol cols="12" />
                 </VCol>
 
                  
@@ -150,7 +140,7 @@ const userchk = () => {
                 <VCol
                   cols="12"
                   class="text-center"
-                  style="margin-top:-30px"
+                  style="margin-top: -30px;"
                 >
                   <RouterLink
                     class="text-primary ms-2 mb-1"
@@ -170,12 +160,13 @@ const userchk = () => {
 
 <style lang="scss">
 @use "@core/scss/template/pages/page-auth.scss";
+
 video {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  block-size: 100%;
+  inline-size: 100%;
+  inset-block-start: 0;
+  inset-inline-start: 0;
   object-fit: cover;
 }
 </style>

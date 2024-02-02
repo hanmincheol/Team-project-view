@@ -37,6 +37,21 @@ const instance = axios.create({
   baseURL: 'http://localhost:4000/',
 })
 
+
+// 요청 인터셉터 설정
+instance.interceptors.request.use(
+  config => {
+    // config.headers.authorization = 'token'
+    config.headers['Access-Control-Allow-Origin'] = '*'  // CORS 설정(모든 리소스 허용)
+    
+    return config
+  },
+  error => {
+    // 요청을 보내는 데 실패했을 때의 처리
+    return Promise.reject(error)
+  },
+)
+
 // 응답 인터셉터 설정
 instance.interceptors.response.use(
   response => {
@@ -372,7 +387,7 @@ const sendMessage = async () => {
     const data = await handleCertification()
 
     // 해당 번호가 이미 존재하는지 확인하는 API를 호출합니다.
-    const checkResponse = await axios.post('http://localhost:4000/user/checkPhoneNumber', { phone: data.tel })
+    const checkResponse = await instance.post('http://localhost:4000/checkPhoneNumber', { phone: data.tel })
 
     // 이미 존재하는 번호라면, 에러 메시지를 보여줍니다.
     if (checkResponse.data.exists) {
@@ -383,7 +398,7 @@ const sendMessage = async () => {
     }
 
     // 인증번호를 요청하는 기존 로직
-    const response = await axios.post('http://localhost:4000/user/send', { phone: data.tel })
+    const response = await instance.post('/send', { phone: data.tel })
 
     console.log(response)
     alert('인증번호가 발송되었습니다.')
@@ -400,7 +415,7 @@ const sendMessage = async () => {
       isDialogVisible.value = false
     } else {
       // 그 외의 오류는 로그를 출력하고, 사용자에게 알립니다.
-      console.error(error)
+      console.error('An unknown error occurred:', error)
       alert('인증번호 발송에 실패하였습니다. 다시 시도해주세요.')
       isDialogVisible.value = false
     }
@@ -412,7 +427,7 @@ const sendMessage = async () => {
 // 인증을 검증하는 함수
 const verifyCertification = async() => {
   try {
-    const response = await instance.post('/user/verify', {
+    const response = await instance.post('http://localhost:4000/verify', {
       phone: tel.value,
       authCode: certifiedPN.value,
     })
@@ -439,7 +454,7 @@ const verifyCertification = async() => {
 const resendVerificationCode = async () => {
   try {
     // 인증번호를 만료하고 새로운 인증번호를 발급합니다.
-    const response = await axios.post('http://localhost:4000/user/resendVerificationCode', {
+    const response = await axios.post('http://localhost:4000/resendVerificationCode', {
       phone: tel.value,
     })
 
@@ -504,18 +519,6 @@ clearValidationErrors() // 유효성 검사 에러 메시지를 초기화합니�
 //handleCertification() // 인증 및 데이터 전송을 위한 함수를 호출합니다.
 
 
-// const AxiosInst = axios.create({
-//   baseURL: 'http://localhost:9999',
-// })
-
-// AxiosInst.interceptors.request.use(
-//   config => {
-//     config.headers['Access-Control-Allow-Origin'] = '*'  // CORS 설정(모든 리소스 허용)
-//     config.headers['Content-type'] = 'application/json'
-    
-//     return config
-//   },
-// )
 
 /* axios 설치 
 npm install axios

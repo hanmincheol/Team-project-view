@@ -7,14 +7,14 @@ import Writing from '@/views/demos/register/Write.vue'
 import axios from '@axios'
 import { size } from '@floating-ui/dom'
 import defaultImg from '@images/userProfile/default.png'
-
-import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref, toRaw } from 'vue'
 
 const userProfileModal = ref(false)
 const writingModal = ref(false)
 const editingModal = ref(false)
 const borderColor = ref('#ccc')
 const viewPostPageModal = ref(false)
+const likesStatus = reactive({})  // 좋아요 버튼의 상태를 저장
 let postToEdit = ref("")
 
 const isInvited = {}
@@ -59,6 +59,10 @@ const getData = async function() {
     if (response.status === 200) {
       console.log('데이터 받기 성공')
       state.items = response.data // 데이터 저장
+
+      state.items.forEach(item => {
+        likesStatus[item.bno] = ref({ value: item.likes !== null })
+      })
 
       const tempUserKeys = []
       for(var i=0; i<state.items.length; i++){
@@ -130,6 +134,7 @@ const getUserAvatar = userId => {
 //////////////////////////////////////
 /* 댓글 */
 let group = ref([])
+let Allgroupbbs = ref([])
 
 const statecomm = ref({
   comment: [],
@@ -160,9 +165,12 @@ const submitEdit = async bno => {
     if (response.status === 200) {
       console.log('글 번호 전송 성공')
       console.log(response.data, "response.data")
+      console.log('제발11',groupedDataAll._rawValue[bno])
+      console.log('제발', groupedDataAll.value._rawValue[bno])
 
       // 서버로부터 받은 데이터를 자식 컴포넌트에게 전달하기 위해 저장
       postToEdit.value = response.data
+      console.log('설마?',postToEdit.value)
     } else {
       console.log('글 번호 전송 실패')
     }
@@ -200,33 +208,9 @@ const getComment = async function() {
         return acc
       }, {})
 
-      // BBS_NO 값을 기준으로 데이터 묶기
-      // groupedData.value = response.data.reduce((acc, curr) => {
-      //   const bbsNo = curr.BBS_NO
-      //   if (acc[bbsNo]) {
-      //     // parent_comment가 null인 값들 중에서 C_NO가 가장 큰 댓글만 선택
-      //     if (curr.parent_comment === null) {
-      //       const existingComment = acc[bbsNo].find(comment => comment.parent_comment === null)
-      //       if (existingComment) {
-      //         // 현재 댓글의 C_NO 값이 existingComment의 C_NO 값보다 큰 경우
-      //         // acc[bbsNo] 배열을 현재 댓글로 업데이트
-      //         if (curr.C_NO < existingComment.C_NO) {
-      //           acc[bbsNo] = [curr]
-      //         }
-      //       } else {
-      //         acc[bbsNo].push(curr)
-      //       }
-      //     }
-      //   }else {
-      //     acc[bbsNo] = [curr]
-      //   }
-        
-      //   return acc // 누산기(acc)를 반환하여 다음 순회로 전달
-      // }, {})
-
       // 아래는 원하는 값을 가져오지만 댓글이 안나오고 있음
       groupedData.value = {}
-      response.data.forEach((comment) => {
+      response.data.forEach(comment => {
         const bbsNo = comment.BBS_NO
 
         // 해당 BBS_NO에 대한 댓글이 이미 있는 경우
@@ -244,6 +228,9 @@ const getComment = async function() {
       })
 
       console.log('전체 데이타', groupedDataAll)
+      console.log('특정 게시물 데이타', groupedDataAll.value._rawValue[17])
+
+      // Allgroupbbs.value = groupedDataAll._rawValue[17]
       statecomm.value.comment = toRaw(groupedData)
       group.value = toRaw(statecomm.value.comment)
       console.log('그룹 데이터 확인', group.value)      
@@ -291,9 +278,6 @@ const insertComment = async (bno, comment) => {
       console.log('실패')
     })
 }
-
-
-//////////////////////////////////////
 
 
 //스크롤 이벤트 리스터 추가 - 화면 하단에 스크롤 도착 시 loadMore()함수 호출
@@ -431,6 +415,42 @@ const openUserProfileModal = val => {
       console.error(error)
     })
   userProfileModal.value = true
+}
+
+const postmodalData = ref({ comments: {} })
+const postbbsno = ref(0)
+
+const openViewPostMoadl = async val =>{
+  console.log('가져온 글번호', val)
+  postbbsno.value = val
+  viewPostPageModal.value=true
+  console.log('글번호에 대한 댓글', groupedDataAll.value._rawValue[postbbsno.value])
+  postmodalData.value = {
+    comments: groupedDataAll.value._rawValue[postbbsno.value],
+  }
+  console.log(postmodalData.value)
+}
+
+
+///좋아요!!
+const toggleLike = async bno => {
+  try {
+    const response = await axios.post('http://localhost:4000/bbs/likes.do', {
+      id: "HMC",
+      bno: bno,
+      cno: "",
+      isLiked: !likesStatus[bno].value,
+    })
+
+    if (response.status === 200) {
+      likesStatus[bno].value = response.data.likesId !== null
+      await getData() // 좋아요 상태 변경 후 데이터를 다시 가져오기
+    } else {
+      console.log('좋아요 상태 변경 실패')
+    }
+  } catch (error) {
+    console.error(`좋아요 상태 변경 실패: ${error}`)
+  }
 }
 </script>
 
@@ -608,7 +628,7 @@ const openUserProfileModal = val => {
                           <VImg
                             :src="image"
                             class="pointer-cursor"
-                            @click="viewPostPageModal=true;submitEdit(item.bno)"
+                            @click="openViewPostMoadl(item.bno);submitEdit(item.bno)"
                           />
                         </VCol>
                       </VCol>
@@ -626,15 +646,17 @@ const openUserProfileModal = val => {
                           <VImg
                             :src="image"
                             class="pointer-cursor"
-                            @click="viewPostPageModal=true;submitEdit(item.bno)"
+                            open-view-post-moadl
+                            @click="openViewPostMoadl(item.bno);submitEdit(item.bno)"
                           />
+                          <!-- @click="viewPostPageModal=true;submitEdit(item.bno)" -->
                         </VCarouselItem>
                       </VCarousel>
                       <!-- 사진 끝 -->
                       <VCardItem>
                         <VCardTitle
                           class="pointer-cursor"
-                          @click="viewPostPageModal=true; submitEdit(item.bno)"
+                          @click="openViewPostMoadl(item.bno);submitEdit(item.bno)"
                         >
                           {{ item.content }}
                         </VCardTitle> 
@@ -642,10 +664,11 @@ const openUserProfileModal = val => {
 
                       <VCardText
                         class="pointer-cursor"
-                        @click="viewPostPageModal=true; submitEdit(item.bno)"
+                        @click="openViewPostMoadl(item.bno);submitEdit(item.bno)"
                       >
                         댓글 {{ }} 모두 보기
-                      </VCardText>
+                      </VCardText> 
+                      <!-- {{ Object.keys(groupedDataAll._rawValue[item.bno]).length }} 활용할 수 있을 것 같은데.. -->
                       <VCardText>
                         <VRow>
                           <VCol cols="10">
@@ -669,9 +692,10 @@ const openUserProfileModal = val => {
                       </VCardText>
                       <VCol>
                         <VBtn
-                          icon="mdi-heart-outline"
+                          :icon="likesStatus[item.bno].value ? 'mdi-heart' : 'mdi-heart-outline'"
                           variant="text"
                           color="success"
+                          @click="toggleLike(item.bno)"
                         />
                         <VBtn
                           icon="mdi-chat-outline"
@@ -689,11 +713,11 @@ const openUserProfileModal = val => {
                           color="success"
                         />
                         <VCol>
-                          좋아요 수
+                          좋아요 {{ item.likesnum }}개
                         </VCol>
                         <VCol v-if="group[item.bno]">
-                          <strong>{{ group[item.bno].ID }}</strong> {{ group[item.bno].CCOMMENT }}
-                        </VCol>
+                          <strong>{{ group[item.bno].C_NO }}번 {{ group[item.bno].ID }}</strong> {{ group[item.bno].CCOMMENT }}
+                        </VCol>                        
                       </VCol>
                     </VCard>
                   </VCol> 
@@ -815,6 +839,8 @@ const openUserProfileModal = val => {
     <ViewPostPage
       v-model:isDialogVisible="viewPostPageModal" 
       :post-to-edit="postToEdit"
+      :comments="postmodalData.comments"
+      :bno ="postToEdit.bno"
     />
   </section>
 </template>
