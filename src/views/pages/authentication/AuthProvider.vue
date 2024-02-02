@@ -6,14 +6,14 @@ const { global } = useTheme()
 const authProviders = [
   {
     icon: 'mdi-facebook',
-    color: '#4267b2',
-    colorInDark: '#4267b2',
-    url:'https://www.facebook.com/',
+    color: '#4267B2',
+    colorInDark: '#4267B2',
+    url: 'https://www.facebook.com/',
   },
   {
     icon: 'mdi-twitter',
-    color: '#1da1f2',
-    colorInDark: '#1da1f2',
+    color: '#1DA1F2',
+    colorInDark: '#1DA1F2',
     url: 'https://twitter.com/',
   },
   {
@@ -24,9 +24,9 @@ const authProviders = [
   },
   {
     icon: 'mdi-google',
-    color: '#db4437',
-    colorInDark: '#db4437',
-    url: 'https://www.google.com/',
+    color: '#DB4437',
+    colorInDark: '#DB4437',
+    url: 'http://localhost:4000/oauth2/authorization/google',
   },
 ]
 </script>
