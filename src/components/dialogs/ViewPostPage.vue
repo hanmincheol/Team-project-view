@@ -81,7 +81,11 @@ const avatars = [
         <VIcon>mdi-close</VIcon>
       </VBtn>
       <VCol cols="12">
-        <VCard>
+        <VCard
+          width="90rem"
+          height="150%"
+          style="margin: auto;"
+        >
           <VRow>
             <VCol
               cols="6"
