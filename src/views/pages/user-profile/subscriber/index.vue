@@ -61,6 +61,9 @@ window.addEventListener('click', ()=>{ //beforeunload
             subToId: userid,
           },
         }, { headers: { "Content-Type": `application/json` } })
+          .then(()=>{
+            fetchProjectData()
+          })
       }
     }
 

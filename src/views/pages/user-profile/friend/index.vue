@@ -63,7 +63,7 @@ const blockFriend = (bool, id) =>{
 
 //페이지 이동 감시 테스트----------------------------------
 
-window.addEventListener('click', ()=>{ //beforeunload
+window.addEventListener('click', ()=>{ //친구 끊기용
   if(isfriendscreenchanged.value) {
     console.log('url변경감지', isConnected)
     for(const userid in isConnected) {
@@ -77,6 +77,9 @@ window.addEventListener('click', ()=>{ //beforeunload
             id: userid,
           },
         }, { headers: { "Content-Type": `application/json` } })
+          .then(()=>{
+            fetchProjectData()
+          })
       }
     }
 

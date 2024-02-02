@@ -65,9 +65,19 @@ const blockingController = (temp, id) => {
 
 const isWarningComplete = ref(false)
 
+//메이트 신고용
 const blockMate = (warningReason, id) => {
   console.log(warningReason.value, id) //axios로 처리
   isWarningComplete.value = true
+  axios.post("http://127.0.0.1:4000/comm/mate/reportwarning", JSON.stringify({
+    userId: userId.value,
+    id: id,
+    warningReason: warningReason.value,
+  }), { headers: { 'Content-Type': 'application/json' } })
+    .then(()=>{
+      fetchProjectData()
+    })
+    .catch(err=>console.log(err))
 }
 
 watch(router, fetchProjectData, { immediate: true })
@@ -76,7 +86,7 @@ watch(rating, ()=>{ //호감도 관련 기능
   if(beforeRating != {}){
     for(const key in rating){
       if (beforeRating[key] != rating[key]){
-        axios.put('http://127.0.0.1:4000/comm/mate/changeFavorable', JSON.stringify({
+        axios.put('http://127.0.0.1:4000/comm/mate/changefavorable', JSON.stringify({
           mate_id: key,
           favorable_rating: rating[key],
         }), { headers: { "Content-Type": `application/json` } })
@@ -104,6 +114,9 @@ window.addEventListener('click', ()=>{ //beforeunload
             id: userid,
           },
         }, { headers: { "Content-Type": `application/json` } })
+          .then(()=>{
+            fetchProjectData()
+          })
       }
     }
 
