@@ -4,8 +4,6 @@ import avatar2 from '@images/avatars/avatar-2.png'
 import avatar3 from '@images/avatars/avatar-3.png'
 import avatar4 from '@images/avatars/avatar-4.png'
 import backgroundimg from '@images/pages/writing.jpg'
-import { onMounted } from 'vue'
-import axios from '@axios'
 
 
 const props = defineProps({
@@ -19,12 +17,12 @@ const props = defineProps({
   },
   comments: {
     type: Array,
-    required: true
+    required: true,
   },
-  bno:{
-    type:Number,
-    required:true
-  }
+  bno: {
+    type: Number,
+    required: true,
+  },
 })
 
 const emit = defineEmits(['update:isDialogVisible'])
@@ -85,7 +83,10 @@ const avatars = [
       <VCol cols="12">
         <VCard>
           <VRow>
-            <VCol cols="6">
+            <VCol
+              cols="6"
+              style="margin: auto;"
+            >
               <VCol
                 v-if="postToEdit.files && postToEdit.files.length ==1"
                 class="transparent-carousel"
@@ -167,29 +168,50 @@ const avatars = [
                   <br>
                   <VDivider />
                   <br>
-                  <div style="font-size:14px">
+                  <div style="font-size: 14px;">
                     <div v-if="comments">
-                      <div v-for="comment in comments" :key="comment.C_NO">
-                        <div v-if="comment.LEVEL == 1"  style="border-bottom:dotted 1px gray; display: flex; justify-content: space-between; align-items: center;background-color: rgba(0, 255, 100, 0.2);border-radius: 10px;">
+                      <div
+                        v-for="comment in comments"
+                        :key="comment.C_NO"
+                      >
+                        <div
+                          v-if="comment.LEVEL == 1"
+                          style=" display: flex; align-items: center; justify-content: space-between;border-radius: 10px;border-bottom: dotted 1px gray;background-color: rgba(0, 255, 100, 20%);"
+                        >
                           <div>
                             <VAvatar 
                               :image="avatar2"
-                              style="border:solid 1px gray;margin-left:5px;margin-right:3px;"
+                              style="border: solid 1px gray;margin-right: 3px;margin-left: 5px;"
                             />
-                              <span style="font-size:12px;margin-right:10px">{{ comment.ID }}</span> <strong>{{ comment.CCOMMENT }}</strong>  
+                            <span style="margin-right: 10px;font-size: 12px;">{{ comment.ID }}</span> <strong>{{ comment.CCOMMENT }}</strong>  
                           </div>
-                          <VBtn icon="mdi-heart-outline" variant="text" color="success"/>
+                          <VBtn
+                            icon="mdi-heart-outline"
+                            variant="text"
+                            color="success"
+                          />
                         </div>
-                        <div v-else :style="{ marginLeft: (comment.LEVEL - 1) * 15 + 'px', 'border-bottom': 'dotted 1px gray', display: 'flex', 'justify-content': 'space-between', 'align-items': 'center', 'background-color': 'rgba(255, 50, 0, 0.3)','border-radius': '10px'}">                                                    
+                        <div
+                          v-else
+                          :style="{ marginLeft: (comment.LEVEL - 1) * 15 + 'px', 'border-bottom': 'dotted 1px gray', display: 'flex', 'justify-content': 'space-between', 'align-items': 'center', 'background-color': 'rgba(255, 50, 0, 0.3)','border-radius': '10px'}"
+                        >                                                    
                           <div>
-                            <VIcon end icon="mdi-arrow-right-bottom" class="flip-in-rtl"/>
+                            <VIcon
+                              end
+                              icon="mdi-arrow-right-bottom"
+                              class="flip-in-rtl"
+                            />
                             <VAvatar 
-                                :image="avatar2"
-                                style="border:solid 1px gray;margin-left:5px;margin-right:3px;"
-                              />
-                          <span style="font-size:12px;margin-right:10px">{{ comment.ID }}</span><strong>{{ comment.CCOMMENT }}</strong>
+                              :image="avatar2"
+                              style="border: solid 1px gray;margin-right: 3px;margin-left: 5px;"
+                            />
+                            <span style="margin-right: 10px;font-size: 12px;">{{ comment.ID }}</span><strong>{{ comment.CCOMMENT }}</strong>
                           </div>
-                          <VBtn icon="mdi-heart-outline" variant="text" color="success"/>
+                          <VBtn
+                            icon="mdi-heart-outline"
+                            variant="text"
+                            color="success"
+                          />
                         </div>
                       </div>
                     </div>
@@ -197,9 +219,11 @@ const avatars = [
                       작성된 댓글이 없습니다.
                     </div>
                   </div>
-                  <!-- <li>
+                  <!--
+                    <li>
                     {{comments[0].C_NO}} {{comments[0].ID}} {{comments[0].CCOMMENT}}
-                  </li> -->
+                    </li> 
+                  -->
                 </VCol>
               </VRow>
               <VCol>
