@@ -166,7 +166,7 @@ const submitEdit = async bno => {
       console.log('글 번호 전송 성공')
       console.log(response.data, "response.data")
       console.log('제발11',groupedDataAll._rawValue[bno])
-      console.log('제발', groupedDataAll.value._rawValue[bno])
+      // console.log('제발', groupedDataAll.value._rawValue[bno])
 
       // 서버로부터 받은 데이터를 자식 컴포넌트에게 전달하기 위해 저장
       postToEdit.value = response.data
@@ -208,9 +208,8 @@ const getComment = async function() {
         return acc
       }, {})
 
-      // 아래는 원하는 값을 가져오지만 댓글이 안나오고 있음
       groupedData.value = {}
-      response.data.forEach(comment => {
+      response.data.forEach((comment) => {
         const bbsNo = comment.BBS_NO
 
         // 해당 BBS_NO에 대한 댓글이 이미 있는 경우
@@ -228,7 +227,7 @@ const getComment = async function() {
       })
 
       console.log('전체 데이타', groupedDataAll)
-      console.log('특정 게시물 데이타', groupedDataAll.value._rawValue[17])
+      console.log('특정 게시물 데이타', groupedDataAll.value)
 
       // Allgroupbbs.value = groupedDataAll._rawValue[17]
       statecomm.value.comment = toRaw(groupedData)
@@ -424,9 +423,9 @@ const openViewPostMoadl = async val =>{
   console.log('가져온 글번호', val)
   postbbsno.value = val
   viewPostPageModal.value=true
-  console.log('글번호에 대한 댓글', groupedDataAll.value._rawValue[postbbsno.value])
+  // console.log('글번호에 대한 댓글', groupedDataAll.value._rawValue[postbbsno.value])
   postmodalData.value = {
-    comments: groupedDataAll.value._rawValue[postbbsno.value],
+    comments: groupedDataAll.value[postbbsno.value],
   }
   console.log(postmodalData.value)
 }
