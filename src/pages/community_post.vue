@@ -448,7 +448,7 @@ const openViewPostMoadl = async val =>{
 
   // console.log('글번호에 대한 댓글', groupedDataAll.value._rawValue[postbbsno.value])
   postmodalData.value = {
-    comments: groupedDataAll.value[postbbsno.value],
+    comments: groupedDataAll.value[postbbsno.value],    
   }
   console.log(postmodalData.value)
 }
@@ -888,7 +888,8 @@ const getMyList = async id => {
       v-model:isDialogVisible="viewPostPageModal" 
       :post-to-edit="postToEdit"
       :comments="postmodalData.comments"
-      :bno="postToEdit.bno"
+      :bno ="postToEdit.bno"
+      :openUserProfileModal="openUserProfileModal"
     />
   </section>
 </template>
