@@ -4,7 +4,8 @@ import avatar2 from '@images/avatars/avatar-2.png'
 import avatar3 from '@images/avatars/avatar-3.png'
 import avatar4 from '@images/avatars/avatar-4.png'
 import backgroundimg from '@images/pages/writing.jpg'
-
+import { ref } from 'vue';
+import axios from '@axios'
 
 const props = defineProps({
   isDialogVisible: {
@@ -23,6 +24,10 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  openUserProfileModal: {
+    type: Function,
+    required: true
+  }
 })
 
 const emit = defineEmits(['update:isDialogVisible'])
@@ -34,36 +39,6 @@ const avatars = [
   avatar4,
 ]
 
-//특정 게시물 
-// const getprofile = async bno => {
-//   const formData = new FormData()
-
-//   formData.append('bbs_no', bno)
-//   console.log('번호 확인',bno)
-//   try {
-//     const response = await axios.post('http://localhost:4000/commentline/GetProfile.do', formData, { 
-//       headers: {
-//         'Content-Type': 'multipart/form-data',
-//       },
-//     })
-
-//     if (response.status === 200) {
-//       console.log(response.data, "response.data")
-//     } else {
-//       console.log('chkchk')
-//     }
-//   } catch (error) {
-//     console.error(`chkckh2: ${error}`)
-//   }
-// }
-
-// onMounted(() => {
-//   if(props.isDialogVisible == true){
-//     console.log('실행한다?')
-//     getprofile(props.bno)
-//   }
-// })
-////////////////////////////////////
 </script>
 
 <template>
@@ -134,8 +109,8 @@ const avatars = [
                       <!-- image도 대표사진 받아와서 뿌려야합니다 -->
                       <VAvatar 
                         class="text-sm pointer-cursor"
-                        :image="avatar1" 
-                        @click="userProfileModal=true"
+                        :image="postToEdit.profilepath" 
+                        @click="userProfileModal(postToEdit.id)"
                       />
                     </VCol>
                     <VCol cols="6">
@@ -145,7 +120,7 @@ const avatars = [
                           :image="avatar1" 
                           @click="userProfileModal=true"
                         >
-                          {{ postToEdit.id }} <!-- 유저 닉네임 뿌려주기 --> 
+                          {{ postToEdit.id }} <!-- 유저 닉네임 뿌려주기 -->
                           <!-- {{bno}} -->
                         </VCardSubtitle>
                       </VCol>
@@ -157,11 +132,11 @@ const avatars = [
               <!-- 많아지면 여기도 무한스크롤을 적용해야 할 겁니다~ 근데 여긴 윈도우 창이 아니라 어떤 이벤트를 걸어야할지 감도 안오네요 -->
               <VRow>
                 <VCol cols="1">
-                  <VAvatar 
+                  <!-- <VAvatar 
                     class="text-sm pointer-cursor"
                     :image="avatar1"
                     @click="userProfileModal=true"
-                  />
+                  /> -->
                 </VCol>
                 <VCol
                   cols="10"
@@ -172,7 +147,7 @@ const avatars = [
                   <br>
                   <VDivider />
                   <br>
-                  <div style="font-size: 14px;">
+                  <div style="font-size: 14px;width:100%;height:310px;overflow: auto;">
                     <div v-if="comments">
                       <div
                         v-for="comment in comments"
@@ -180,12 +155,12 @@ const avatars = [
                       >
                         <div
                           v-if="comment.LEVEL == 1"
-                          style=" display: flex; align-items: center; justify-content: space-between;border-radius: 10px;border-bottom: dotted 1px gray;background-color: rgba(0, 255, 100, 20%);"
-                        >
+                          style=" display: flex; align-items: center; justify-content: space-between;border-bottom: dotted 1px gray;"
+                        > 
                           <div>
                             <VAvatar 
-                              :image="avatar2"
-                              style="border: solid 1px gray;margin-right: 3px;margin-left: 5px;"
+                              :image="comment.PRO_FILEPATH"
+                              style="margin: 2px;"
                             />
                             <span style="margin-right: 10px;font-size: 12px;">{{ comment.ID }}</span> <strong>{{ comment.CCOMMENT }}</strong>  
                           </div>
@@ -197,8 +172,8 @@ const avatars = [
                         </div>
                         <div
                           v-else
-                          :style="{ marginLeft: (comment.LEVEL - 1) * 15 + 'px', 'border-bottom': 'dotted 1px gray', display: 'flex', 'justify-content': 'space-between', 'align-items': 'center', 'background-color': 'rgba(255, 50, 0, 0.3)','border-radius': '10px'}"
-                        >                                                    
+                          :style="{ marginLeft: (comment.LEVEL - 1) * 20 + 'px', 'border-bottom': 'dotted 1px gray', display: 'flex', 'justify-content': 'space-between', 'align-items': 'center'}"
+                        > <!-- 'background-color': 'rgba(255, 50, 0, 0.3)' -->                                                   
                           <div>
                             <VIcon
                               end
@@ -206,8 +181,8 @@ const avatars = [
                               class="flip-in-rtl"
                             />
                             <VAvatar 
-                              :image="avatar2"
-                              style="border: solid 1px gray;margin-right: 3px;margin-left: 5px;"
+                              :image="comment.PRO_FILEPATH"
+                              style="margin: 2px  ;"
                             />
                             <span style="margin-right: 10px;font-size: 12px;">{{ comment.ID }}</span><strong>{{ comment.CCOMMENT }}</strong>
                           </div>

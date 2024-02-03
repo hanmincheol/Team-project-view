@@ -425,7 +425,7 @@ const openViewPostMoadl = async val =>{
   viewPostPageModal.value=true
   // console.log('글번호에 대한 댓글', groupedDataAll.value._rawValue[postbbsno.value])
   postmodalData.value = {
-    comments: groupedDataAll.value[postbbsno.value],
+    comments: groupedDataAll.value[postbbsno.value],    
   }
   console.log(postmodalData.value)
 }
@@ -840,6 +840,7 @@ const toggleLike = async bno => {
       :post-to-edit="postToEdit"
       :comments="postmodalData.comments"
       :bno ="postToEdit.bno"
+      :openUserProfileModal="openUserProfileModal"
     />
   </section>
 </template>
