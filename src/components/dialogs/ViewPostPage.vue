@@ -110,7 +110,7 @@ const avatars = [
                       <VAvatar 
                         class="text-sm pointer-cursor"
                         :image="postToEdit.profilepath" 
-                        @click="openUserProfileModal(postToEdit.id)"
+                        @click="openUserProfileModal(postToEdit)"
                       />
                     </VCol>
                     <VCol cols="6">
