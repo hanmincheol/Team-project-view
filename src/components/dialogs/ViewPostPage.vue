@@ -147,7 +147,7 @@ const avatars = [
                   <br>
                   <VDivider />
                   <br>
-                  <div style="font-size: 14px;width:100%;height:310px;overflow: auto;">
+                  <div style="font-size: 14px;width:100%;height:350px;overflow: auto;" class="scrollbar">
                     <div v-if="comments">
                       <div
                         v-for="comment in comments"
@@ -155,7 +155,7 @@ const avatars = [
                       >
                         <div
                           v-if="comment.LEVEL == 1"
-                          style=" display: flex; align-items: center; justify-content: space-between;border-bottom: dotted 1px gray;"
+                          style=" display: flex; align-items: center; justify-content: space-between;border-bottom: dotted 1px gray;background-color:rgba(0,255,0,0.05)"
                         > 
                           <div>
                             <VAvatar 
@@ -173,7 +173,7 @@ const avatars = [
                         </div>
                         <div
                           v-else
-                          :style="{ marginLeft: (comment.LEVEL - 1) * 20 + 'px', 'border-bottom': 'dotted 1px gray', display: 'flex', 'justify-content': 'space-between', 'align-items': 'center'}"
+                          :style="{ marginLeft: (comment.LEVEL - 1) * 20 + 'px', 'border-bottom': 'dotted 1px gray', display: 'flex', 'justify-content': 'space-between', 'align-items': 'center', 'background-color': 'rgba(255, 50, 0, 0.05)'}"
                         > <!-- 'background-color': 'rgba(255, 50, 0, 0.3)' -->                                                   
                           <div>
                             <VIcon
@@ -206,34 +206,12 @@ const avatars = [
                     </li> 
                   -->
                 </VCol>
-              </VRow>
-              <VCol>
-                <VBtn
-                  icon="mdi-heart-outline"
-                  variant="text"
-                  color="success"
-                />
-                <VBtn
-                  icon="mdi-chat-outline"
-                  variant="text"
-                  color="success"
-                />
-                <VBtn
-                  icon="mdi-send"
-                  variant="text"
-                  color="success"
-                />
-                <VBtn
-                  icon="mdi-bookmark-outline"
-                  variant="text"
-                  color="success"
-                />
-              </VCol>
-              <VRow>
+               </VRow>
+              <VRow style="margin-top: 100px;">
                 <VCol
                   cols="2"
                   class="v-avatar-group"
-                  style="margin-left: 2%;"
+                  style="margin-left: 2%;"                  
                 >
                   <VAvatar
                     v-for="(avatar, index) in avatars"
@@ -288,5 +266,25 @@ const avatars = [
 
 .transparent-carousel .v-carousel__controls {
   background-color: transparent;
+}
+
+.scrollbar { 
+  width: 250px;
+  height: 250px;
+  overflow-y: scroll; /*  */
+}
+
+/* 스크롤바의 폭 너비 */
+.scrollbar::-webkit-scrollbar {
+    width: 10px;  
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(0, 220, 60); /* 스크롤바 색상 */
+    border-radius: 10px; /* 스크롤바 둥근 테두리 */
+}
+
+.scrollbar::-webkit-scrollbar-track {
+    background: rgba(220, 20, 60, .1);  /*스크롤바 뒷 배경 색상*/
 }
 </style>

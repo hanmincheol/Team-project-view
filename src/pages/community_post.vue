@@ -44,6 +44,7 @@ const handleSelected = async value => {
 
     if (response.status === 200) {
       console.log('데이터 전송 성공')
+      state.items = response.data // 데이터 저장
     } else {
       console.log('데이터 전송 실패')
     }
@@ -69,7 +70,7 @@ const bbsuserprofile = ref()
 const getData = async function() {
   
   try {
-    const response = await axios.get('http://localhost:4000/bbs/List.do', {
+    const response = await axios.post('http://localhost:4000/bbs/List.do', {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -186,7 +187,7 @@ const submitEdit = async bno => {
     if (response.status === 200) {
       console.log('글 번호 전송 성공')
       console.log(response.data, "response.data")
-      console.log('제발11', groupedDataAll.value._rawValue[bno])
+      console.log('제발11', groupedDataAll.value[bno])
 
       // console.log('제발', groupedDataAll.value._rawValue[bno])
 
