@@ -387,7 +387,7 @@ const modalData = ref({ userid: '', userproIntroduction: '', userprofilePath: ''
 const profiledata = ref([])//내 프로필 데이터
 
 const openUserProfileModal = val => {
-  console.log(val)
+  console.log('오픈할 유저 프로필:',val)
   axios
     .get('http://localhost:4000/comm/profile', {
       params: {

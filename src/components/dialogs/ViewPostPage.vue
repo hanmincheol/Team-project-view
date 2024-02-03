@@ -27,7 +27,7 @@ const props = defineProps({
   openUserProfileModal: {
     type: Function,
     required: true
-  }
+  },
 })
 
 const emit = defineEmits(['update:isDialogVisible'])
@@ -110,7 +110,7 @@ const avatars = [
                       <VAvatar 
                         class="text-sm pointer-cursor"
                         :image="postToEdit.profilepath" 
-                        @click="userProfileModal(postToEdit.id)"
+                        @click="openUserProfileModal(postToEdit.id)"
                       />
                     </VCol>
                     <VCol cols="6">
@@ -118,7 +118,7 @@ const avatars = [
                         <VCardSubtitle
                           class="text-sm pointer-cursor"
                           :image="avatar1" 
-                          @click="userProfileModal=true"
+                          @click="openUserProfileModal(postToEdit.id)"
                         >
                           {{ postToEdit.id }} <!-- 유저 닉네임 뿌려주기 -->
                           <!-- {{bno}} -->
@@ -161,6 +161,7 @@ const avatars = [
                             <VAvatar 
                               :image="comment.PRO_FILEPATH"
                               style="margin: 2px;"
+                              @click="openUserProfileModal(comment.ID)"
                             />
                             <span style="margin-right: 10px;font-size: 12px;">{{ comment.ID }}</span> <strong>{{ comment.CCOMMENT }}</strong>  
                           </div>
@@ -182,7 +183,8 @@ const avatars = [
                             />
                             <VAvatar 
                               :image="comment.PRO_FILEPATH"
-                              style="margin: 2px  ;"
+                              style="margin: 2px;"
+                              @click="openUserProfileModal(comment.ID)"
                             />
                             <span style="margin-right: 10px;font-size: 12px;">{{ comment.ID }}</span><strong>{{ comment.CCOMMENT }}</strong>
                           </div>
