@@ -23,11 +23,10 @@ const userId = ref('OSH') //접속한 유저의 아이디
 
 let q = ref('')
 const users = ref([])
-const usersView = ref([]) //게시판의 추천 목록에 뿌려줄 리스트
+const usersView = ref([]) //게시판의 추천 목록에o 뿌려줄 리스트
 
 const state = reactive({
   items: [],
-  avatar1: '', // avatar1에 대한 초기값을 설정해주세요.
 })
 
 const selected = ref([])
@@ -54,12 +53,12 @@ const handleSelected = async value => {
 }
 
 //검색기능
-const filteredItems = computed(() => {
+const searchItems = computed(() => {
   if (q.value) {
-    return items.value.filter(item => item.title.includes(q.value))
+    return state.items.filter(item => item.content.includes(q.value))
   }
   
-  return items.value
+  return state.items
 })
 
 
@@ -410,7 +409,7 @@ const modalData = ref({ userid: '', userproIntroduction: '', userprofilePath: ''
 const profiledata = ref([])//내 프로필 데이터
 
 const openUserProfileModal = val => {
-  console.log('오픈할 유저 프로필:',val)
+  console.log('오픈할 유저 프로필:', val)
   axios
     .get('http://localhost:4000/comm/profile', {
       params: {
@@ -565,18 +564,7 @@ const getMyList = async id => {
                     :style="{ border: `1px solid ${borderColor}`, borderRadius: '5px' }"  
                     @focus="borderColor = '#28a745'"  
                     @blur="borderColor = '#ccc'" 
-                  >
-                    <!-- 아이콘에 클릭 이벤트 추가 -->
-                    <template #append>
-                      <VBtn
-                        icon
-                        style="margin-top: -8px;"
-                        @click="searchItems"
-                      >
-                        <VIcon>mdi-magnify</VIcon>
-                      </VBtn>
-                    </template>
-                  </VTextField>
+                  />
                 </VCol>
                 <VCol cols="2">
                   <VBtn 
@@ -595,7 +583,7 @@ const getMyList = async id => {
                 <VCol v-if="state.items.length > 0">
                   <!-- 게시물이 있을 때의 템플릿 -->
                   <VCol
-                    v-for="(item, index) in state.items"
+                    v-for="(item, index) in searchItems"
                     :key="index"
                     cols="12"
                   >
@@ -889,8 +877,8 @@ const getMyList = async id => {
       v-model:isDialogVisible="viewPostPageModal" 
       :post-to-edit="postToEdit"
       :comments="postmodalData.comments"
-      :bno ="postToEdit.bno"
-      :openUserProfileModal="openUserProfileModal"
+      :bno="postToEdit.bno"
+      :open-user-profile-modal="openUserProfileModal"
     />
   </section>
 </template>
