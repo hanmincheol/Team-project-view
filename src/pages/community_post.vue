@@ -1,9 +1,10 @@
 <script setup>
 import Editing from '@/components/dialogs/Editing.vue'
+import UserProfileCommunity from '@/components/dialogs/UserProfileCommunity.vue'
 import ViewPostPage from '@/components/dialogs/ViewPostPage.vue'
+import Writing from '@/components/dialogs/Writing.vue'
 import InviteFriendConfirmModal from '@/pages/community/InviteFriendConfirmModal.vue'
 import Category from '@/pages/views/demos/forms/form-elements/select/category.vue'
-import Writing from '@/components/dialogs/Writing.vue'
 import axios from '@axios'
 import { size } from '@floating-ui/dom'
 import defaultImg from '@images/userProfile/default.png'
@@ -165,12 +166,13 @@ const submitEdit = async bno => {
     if (response.status === 200) {
       console.log('글 번호 전송 성공')
       console.log(response.data, "response.data")
-      console.log('제발11',groupedDataAll._rawValue[bno])
+      console.log('제발11', groupedDataAll.value._rawValue[bno])
+
       // console.log('제발', groupedDataAll.value._rawValue[bno])
 
       // 서버로부터 받은 데이터를 자식 컴포넌트에게 전달하기 위해 저장
       postToEdit.value = response.data
-      console.log('설마?',postToEdit.value)
+      console.log('설마?', postToEdit.value)
     } else {
       console.log('글 번호 전송 실패')
     }
@@ -209,7 +211,7 @@ const getComment = async function() {
       }, {})
 
       groupedData.value = {}
-      response.data.forEach((comment) => {
+      response.data.forEach(comment => {
         const bbsNo = comment.BBS_NO
 
         // 해당 BBS_NO에 대한 댓글이 이미 있는 경우
@@ -423,6 +425,7 @@ const openViewPostMoadl = async val =>{
   console.log('가져온 글번호', val)
   postbbsno.value = val
   viewPostPageModal.value=true
+
   // console.log('글번호에 대한 댓글', groupedDataAll.value._rawValue[postbbsno.value])
   postmodalData.value = {
     comments: groupedDataAll.value[postbbsno.value],
@@ -839,7 +842,7 @@ const toggleLike = async bno => {
       v-model:isDialogVisible="viewPostPageModal" 
       :post-to-edit="postToEdit"
       :comments="postmodalData.comments"
-      :bno ="postToEdit.bno"
+      :bno="postToEdit.bno"
     />
   </section>
 </template>
