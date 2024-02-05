@@ -84,6 +84,8 @@ declare module '@vue/runtime-core' {
     TheCustomizer: typeof import('./src/@core/components/TheCustomizer.vue')['default']
     ThemeSwitcher: typeof import('./src/@core/components/ThemeSwitcher.vue')['default']
     TwoFactorAuthDialog: typeof import('./src/components/dialogs/TwoFactorAuthDialog.vue')['default']
+    UpdateExcercise: typeof import('./src/components/dialogs/UpdateExcercise.vue')['default']
+    UpdateExercise: typeof import('./src/components/dialogs/UpdateExercise.vue')['default']
     UserCategory: typeof import('./src/components/dialogs/UserCategory.vue')['default']
     'UserCheckedRecipe copy': typeof import('./src/components/dialogs/UserCheckedRecipe copy.vue')['default']
     UserFindRestaurant: typeof import('./src/components/dialogs/UserFindRestaurant.vue')['default']
