@@ -246,6 +246,9 @@ const getComment = async function() {
 
       console.log('전체 데이타', groupedDataAll)
       console.log('특정 게시물 데이타', groupedDataAll.value)
+      postmodalData.value = {
+        comments: groupedDataAll.value[postbbsno.value],    
+      }
 
       // Allgroupbbs.value = groupedDataAll._rawValue[17]
       statecomm.value.comment = toRaw(groupedData)
@@ -266,14 +269,19 @@ const getComment = async function() {
 const searchuser = 'OSH' //현재 접속중인 유저 아이디
 const commentinput = ref('')
 
-const insertComment = async (bno, comment) => {
+const insertComment = async (bno, comment, type, parent_comment) => {
   const formData = new FormData()
 
   formData.append('bbs_no', bno)
   formData.append('id', searchuser)
-  formData.append('ccomment', comment)
-
-  console.log(bno, searchuser, comment)
+  formData.append('ccomment', comment)  
+  if(type == 2 && parent_comment !== 0){
+    formData.append('parent_comment', parent_comment)
+    formData.append('type', 2)
+  }else{
+    formData.append('type', 1)
+  }
+  console.log(bno, searchuser, comment, parent_comment)
 
   await axios.post('http://localhost:4000/commentline/Write.do', formData, { 
     headers: {
@@ -650,7 +658,7 @@ const getMyList = async id => {
                                     </VListItem>
                                   </VList>
                                 </VMenu>
-                              </VBtn>
+                              </VBtn>                              
                             </VCol>
                           </VCol>
                         </VRow>
@@ -724,7 +732,7 @@ const getMyList = async id => {
                           <VCol cols="1">
                             <VBtn
                               size="large"
-                              @click="insertComment(item.bno, item.commentinput); item.commentinput = ''"
+                              @click="insertComment(item.bno, item.commentinput, 1, 0); item.commentinput = ''"
                             >
                               게시
                             </VBtn>
@@ -884,6 +892,8 @@ const getMyList = async id => {
       :bno="postToEdit.bno"
       :open-user-profile-modal="openUserProfileModal"
       :insertComment="insertComment"
+      :searchuser="searchuser"
+      :getComment="getComment"
     />
   </section>
 </template>
