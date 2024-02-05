@@ -47,33 +47,34 @@ watch(router, fetchProjectData, { immediate: true })
         class="dll"
       >
         <!-- 전체 화면의 왼쪽 -->
-        <VCard>
+        <VCard 
+          class="custom-scrollbar"
+          style="height: 925px; overflow-y: auto;"
+        >
           <!-- 참가비 시작 -->
           <VCol>
             <VCard
-              v-for="data in 15"
+              v-for="data in 20"
               :key="data.index"
               cols="12"
               style="margin: 10px;"
             >
-              <PerfectScrollbar>
-                <VCol>
-                  <VRow>
-                    <VCol
-                      cols="2"
-                      style="height: 50px;"
-                    >
-                      작성자
-                    </VCol>
-                    <VCol cols="8">
-                      <a class="my-custom-button">지식인 내용  </a>    
-                    </VCol>
-                    <VCol cols="2">
-                      지식인 날자
-                    </VCol>
-                  </VRow>
-                </VCol>
-              </PerfectScrollbar>
+              <VCol>
+                <VRow>
+                  <VCol
+                    cols="2"
+                    style="height: 50px;"
+                  >
+                    작성자
+                  </VCol>
+                  <VCol cols="8">
+                    <a class="my-custom-button">지식인 내용  </a>    
+                  </VCol>
+                  <VCol cols="2">
+                    지식인 날자
+                  </VCol>
+                </VRow>
+              </VCol>
             </VCard>
           </VCol>
         </VCard>
@@ -93,12 +94,45 @@ watch(router, fetchProjectData, { immediate: true })
         <VCard
           flat
           :max-width="auto"
-          class="mt-1 mt-sm- pa-0"
+          class="mt-1 mt-sm- pa-0 custom-scrollbar"
+          style="height: 600px; overflow-y: auto;"
         >
           <VCol
             v-if="true"
             class="d-flex justify-center align-center"
-            style="height: 600px;"
+            style="height: 300px;"
+          >
+            <!-- 게시물이 없을 때의 템플릿 -->
+            <VCol
+              class="d-flex flex-column align-center justify-center"
+              style="height: 100%;"
+            >
+              <VCardTitle class="headline font-weight-bold">
+                등록된 게시물이 없습니다
+              </VCardTitle>
+              <VCardText>새로운 게시물을 작성해보세요!</VCardText>
+            </VCol>
+          </VCol>
+          <VCol
+            v-if="true"
+            class="d-flex justify-center align-center"
+            style="height: 300px;"
+          >
+            <!-- 게시물이 없을 때의 템플릿 -->
+            <VCol
+              class="d-flex flex-column align-center justify-center"
+              style="height: 100%;"
+            >
+              <VCardTitle class="headline font-weight-bold">
+                등록된 게시물이 없습니다
+              </VCardTitle>
+              <VCardText>새로운 게시물을 작성해보세요!</VCardText>
+            </VCol>
+          </VCol>
+          <VCol
+            v-if="true"
+            class="d-flex justify-center align-center"
+            style="height: 300px;"
           >
             <!-- 게시물이 없을 때의 템플릿 -->
             <VCol
@@ -126,5 +160,18 @@ watch(router, fetchProjectData, { immediate: true })
 </template>
 
 <style lang="scss">
-  @use "@core/scss/template/libs/apex-chart.scss";
+@use "@core/scss/template/libs/apex-chart.scss";
+
+.custom-scrollbar::-webkit-scrollbar {
+  background-color: #f5f5f5;
+  inline-size: 0;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #888;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
 </style>
