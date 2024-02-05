@@ -1,5 +1,6 @@
 <script setup>
 import Editing from '@/components/dialogs/Editing.vue'
+import UserProfileCommunity from '@/components/dialogs/UserProfileCommunity.vue'
 import ViewPostPage from '@/components/dialogs/ViewPostPage.vue'
 import Writing from '@/components/dialogs/Writing.vue'
 import InviteFriendConfirmModal from '@/pages/community/InviteFriendConfirmModal.vue'
@@ -60,11 +61,6 @@ const searchItems = computed(() => {
   
   return state.items
 })
-
-
-
-// axios를 사용하여 데이터를 받는 함수
-const bbsuserprofile = ref()
 
 const getData = async function() {
   
@@ -465,7 +461,8 @@ const toggleLike = async bno => {
     })
 
     if (response.status === 200) {
-      likesStatus[bno].value = response.data.likesId !== null
+      console.log(response.data.likesId)
+      likesStatus[bno].value = response.data.likesId !== "OSH" //아이디 비교
       await getData() // 좋아요 상태 변경 후 데이터를 다시 가져오기
     } else {
       console.log('좋아요 상태 변경 실패')
