@@ -125,6 +125,24 @@ const fetchProfile = async () => { //Profile 데이터 가져오기
       console.error(error)
     })
 }
+
+const updateprofile = (newcolval) =>{
+  const formData = new FormData()
+  formData.append('id', searchuser)
+  formData.append('proIntroduction', newcolval)
+  axios.put('http://localhost:4000/comm/intro/update',formData,{
+    headers: {
+        'Content-Type': 'application/json',
+      },
+  }
+  )
+  .then(response => {
+      console.log('성공')
+  })
+  .catch(error => {
+    console.log('실패')
+  })
+}
 //////////////////////////////////////////////////////////////////////
 // 이미지
 const showDialog = ref(false) //프로필 사진 교체를 위한 Dialog 호출 변수
@@ -369,13 +387,14 @@ onMounted(async () => {
           >
             <SelfEdit
               :readonly="editClick"
-              :value="profiledata.proIntroduction"
+              :value="profiledata.proIntroduction"              
+              v-model="profiledata.proIntroduction"
             />
             <div
               v-if="edit"
               style=" margin-top: 10px;float: inline-end;"
             >
-              <Btnsu @click="editClick=true, edit=false" />
+              <Btnsu @click="editClick=true, edit=false, updateprofile(profiledata.proIntroduction)" />
             </div>
           </VCol>
         </VCardText>
