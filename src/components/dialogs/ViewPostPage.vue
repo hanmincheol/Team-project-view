@@ -104,10 +104,11 @@ const actionType = async (typeNo, C_NO, val) => {
 
   }
   console.log(action, C_NO, val)
+  console.log('체크',params)
   await axiosMethod(`http://localhost:4000/commentline/${action}.do`, {
     params: params,
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'multipart/form-data',
     }
   }).then(response => {
     // 성공적으로 업데이트되었을 때의 처리
@@ -220,81 +221,81 @@ const actionType = async (typeNo, C_NO, val) => {
                   <VDivider />
                   <br>
                   <!-- 댓글 시작 -->
-                  <div
-                    style="overflow: auto;width: 100%;height: 350px;font-size: 14px;"
-                    class="scrollbar"
-                  >
-                    <div v-if="comments">
-                      <div
-                        v-for="comment in comments"
-                        :key="comment.C_NO"
-                      >
-                        <!-- 최상위 댓글 -->
-                        <div v-if="comment.LEVEL == 1"> 
-                          <VAlert                            
-                            border="start"
-                            color="success"
-                            variant="tonal"
-                            style="height: 50px; opacity: 0.8;"
-                            @click="editMode ? null : (parent_comment(comment.C_NO), toggleComment(comment,comments))"
-                            :class="{'blink': comment.clicked && !editMode}"
-                          >
-                            <div style="display: flex; justify-content: space-between;">
-                              <div>
-                                <VAvatar 
-                                  :image="comment.PRO_FILEPATH"
-                                  style="padding: 5px;margin: 2px;"
-                                  @click="openUserProfileModal(comment.ID)"
-                                />
-                                <span style="margin-right: 10px;font-size: 12px;">{{ comment.ID }}</span> 
-                                <strong v-if="!editMode">{{ comment.CCOMMENT }}</strong> <!-- 수정 모드가 아닐 때 -->
-                                <input v-else type="text" v-model="comment.CCOMMENT" @keydown.enter="actionType(1,comment.C_NO, comment.CCOMMENT), editMode=!editMode" /> <!-- 수정 모드일 때 -->
-                              </div>
-                              <VBtn
-                                v-if="searchuser === comment.ID"
-                                icon
-                                variant="text"
-                                size="small"
-                                color="medium-emphasis"
-                                
-                              >
-                                <VIcon
-                                  size="24"
-                                  icon="mdi-dots-vertical"
-                                />
+                    <div
+                      style="overflow: auto;width: 100%;height: 350px;font-size: 14px;"
+                      class="scrollbar"
+                    >
+                      <div v-if="comments">
+                        <div
+                          v-for="comment in comments"
+                          :key="comment.C_NO"
+                        >
+                          <!-- 최상위 댓글 -->
+                          <div v-if="comment.LEVEL == 1"> 
+                            <VAlert                            
+                              border="start"
+                              color="success"
+                              variant="tonal"
+                              style="height: 50px; opacity: 0.8;"
+                              @click="editMode ? null : (parent_comment(comment.C_NO), toggleComment(comment,comments))"
+                              :class="{'blink': comment.clicked && !editMode}"
+                            >
+                              <div style="display: flex; justify-content: space-between;">
+                                <div>
+                                  <VAvatar 
+                                    :image="comment.PRO_FILEPATH"
+                                    style="padding: 5px;margin: 2px;"
+                                    @click="openUserProfileModal(comment.ID)"
+                                  />
+                                  <span style="margin-right: 10px;font-size: 12px;">{{ comment.ID }}</span> 
+                                  <strong v-if="!comment.editMode">{{ comment.CCOMMENT }}</strong> <!-- 수정 모드가 아닐 때 -->
+                                  <input v-else type="text" v-model="comment.CCOMMENT" @keydown.enter="actionType(1,comment.C_NO, comment.CCOMMENT), comment.editMode=!comment.editMode" /> <!-- 수정 모드일 때 -->
+                                </div>
+                                <VBtn
+                                  v-if="searchuser === comment.ID"
+                                  icon
+                                  variant="text"
+                                  size="small"
+                                  color="medium-emphasis"
+                                  
+                                >
+                                  <VIcon
+                                    size="24"
+                                    icon="mdi-dots-vertical"
+                                  />
 
-                                <VMenu activator="parent">
-                                  <VList v-if="!editMode">
-                                    <VListItem @click="editMode=!editMode">
-                                      <template #prepend>
-                                        <VIcon icon="mdi-comment-edit-outline" />
-                                      </template>
-                                      <VListItemTitle>수정하기</VListItemTitle>
-                                    </VListItem>
+                                  <VMenu activator="parent">
+                                    <VList v-if="!comment.editMode">
+                                      <VListItem @click="comment.editMode=!comment.editMode">
+                                        <template #prepend>
+                                          <VIcon icon="mdi-comment-edit-outline" />
+                                        </template>
+                                        <VListItemTitle>수정하기</VListItemTitle>
+                                      </VListItem>
 
-                                    <VListItem @click="actionType(2,comment.C_NO, 0)">
-                                      <template #prepend>
-                                        <VIcon icon="mdi-delete-outline" />
-                                      </template>
-                                      <VListItemTitle>삭제하기</VListItemTitle>
-                                    </VListItem>                                  
-                                  </VList>
-                                  <VList v-else>
-                                    <VListItem @click=" editMode=!editMode">
-                                      <template #prepend>
-                                        <VIcon icon="mdi-comment-edit-outline" />
-                                      </template>
-                                      <VListItemTitle>수정 취소</VListItemTitle>
-                                    </VListItem>
-                                  </VList>
-                                </VMenu>
-                              </VBtn>
-                              <VBtn 
-                                v-if="searchuser !== comment.ID"
-                                @click="actionType(3,comment.C_NO, 0)"
-                                icon="mdi-account-alert" />
-                            </div> 
-                          </VAlert>
+                                      <VListItem @click="actionType(2,comment.C_NO, 0)">
+                                        <template #prepend>
+                                          <VIcon icon="mdi-delete-outline" />
+                                        </template>
+                                        <VListItemTitle>삭제하기</VListItemTitle>
+                                      </VListItem>                                  
+                                    </VList>
+                                    <VList v-else>
+                                      <VListItem @click=" comment.editMode=!comment.editMode">
+                                        <template #prepend>
+                                          <VIcon icon="mdi-comment-edit-outline" />
+                                        </template>
+                                        <VListItemTitle>수정 취소</VListItemTitle>
+                                      </VListItem>
+                                    </VList>
+                                  </VMenu>
+                                </VBtn>
+                                <VBtn 
+                                  v-if="searchuser !== comment.ID"
+                                  @click="actionType(3,comment.C_NO, 0)"
+                                  icon="mdi-account-alert" />
+                              </div> 
+                            </VAlert>
 
                           <!-- 최상위 댓글에 댓글 달기 -->
                           <VAlert       
@@ -328,8 +329,8 @@ const actionType = async (typeNo, C_NO, val) => {
                             color="info"
                             variant="tonal"
                             style="height: 50px; opacity: 0.8;"
-                            @click="editMode ? null : (parent_comment(comment.C_NO), toggleComment(comment,comments))"
-                            :class="{'blink': comment.clicked && !editMode, 'white-background': editMode}"
+                            @click="comment.editMode ? null : (parent_comment(comment.C_NO), toggleComment(comment,comments))"
+                            :class="{'blink': comment.clicked && !comment.editMode, 'white-background': comment.editMode}"
                           >
                             <div style="display: flex; justify-content: space-between;">
                               <div>
@@ -339,8 +340,8 @@ const actionType = async (typeNo, C_NO, val) => {
                                   @click="openUserProfileModal(comment.ID)"
                                 />
                                 <span style="margin-right: 10px;font-size: 12px;">{{ comment.ID }}</span>
-                                <strong v-if="!editMode">{{ comment.CCOMMENT }}</strong> <!-- 수정 모드가 아닐 때 -->
-                                <input v-else type="text" v-model="comment.CCOMMENT" @keydown.enter="actionType(1,comment.C_NO, comment.CCOMMENT), editMode=!editMode" /> <!-- 수정 모드일 때 -->
+                                <strong v-if="!comment.editMode">{{ comment.CCOMMENT }}</strong> <!-- 수정 모드가 아닐 때 -->
+                                <input v-else type="text" v-model="comment.CCOMMENT" @keydown.enter="actionType(1,comment.C_NO, comment.CCOMMENT), comment.editMode=!comment.editMode" /> <!-- 수정 모드일 때 -->
                               </div>
                               <VBtn
                                 v-if="searchuser === comment.ID"
@@ -355,8 +356,8 @@ const actionType = async (typeNo, C_NO, val) => {
                                 />
 
                                 <VMenu activator="parent">
-                                  <VList v-if="!editMode">
-                                    <VListItem @click="editMode=!editMode">
+                                  <VList v-if="!comment.editMode">
+                                    <VListItem @click="comment.editMode=!comment.editMode">
                                       <template #prepend>
                                         <VIcon icon="mdi-comment-edit-outline" />
                                       </template>
@@ -371,7 +372,7 @@ const actionType = async (typeNo, C_NO, val) => {
                                     </VListItem>                                    
                                   </VList>
                                   <VList v-else>
-                                    <VListItem @click=" editMode=!editMode">
+                                    <VListItem @click=" comment.editMode=!comment.editMode">
                                       <template #prepend>
                                         <VIcon icon="mdi-comment-edit-outline" />
                                       </template>
