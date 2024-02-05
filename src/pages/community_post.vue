@@ -24,32 +24,48 @@ const userId = ref('OSH') //접속한 유저의 아이디
 
 let q = ref('')
 const users = ref([])
-const usersView = ref([]) //게시판의 추천 목록에 뿌려줄 리스트
+const usersView = ref([]) //게시판의 추천 목록에o 뿌려줄 리스트
 
 const state = reactive({
   items: [],
-  avatar1: '', // avatar1에 대한 초기값을 설정해주세요.
 })
 
+const selected = ref([])
+
+// 자식 컴포넌트에서 발생한 이벤트를 처리하는 함수
+const handleSelected = async value => {
+  selected.value = value
+  console.log("selected.value:", selected.value)
+
+  try {
+    const response = await axios.post('http://localhost:4000/bbs/List.do', {
+      selectedItems: selected.value,
+    })
+
+    if (response.status === 200) {
+      console.log('데이터 전송 성공')
+      state.items = response.data // 데이터 저장
+    } else {
+      console.log('데이터 전송 실패')
+    }
+  } catch (error) {
+    console.error(`데이터 전송 실패: ${error}`)
+  }
+}
 
 //검색기능
-const filteredItems = computed(() => {
+const searchItems = computed(() => {
   if (q.value) {
-    return items.value.filter(item => item.title.includes(q.value))
+    return state.items.filter(item => item.content.includes(q.value))
   }
   
-  return items.value
+  return state.items
 })
-
-
-
-// axios를 사용하여 데이터를 받는 함수
-const bbsuserprofile = ref()
 
 const getData = async function() {
   
   try {
-    const response = await axios.get('http://localhost:4000/bbs/List.do', {
+    const response = await axios.post('http://localhost:4000/bbs/List.do', {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -166,7 +182,7 @@ const submitEdit = async bno => {
     if (response.status === 200) {
       console.log('글 번호 전송 성공')
       console.log(response.data, "response.data")
-      console.log('제발11', groupedDataAll.value._rawValue[bno])
+      console.log('제발11', groupedDataAll.value[bno])
 
       // console.log('제발', groupedDataAll.value._rawValue[bno])
 
@@ -389,7 +405,7 @@ const modalData = ref({ userid: '', userproIntroduction: '', userprofilePath: ''
 const profiledata = ref([])//내 프로필 데이터
 
 const openUserProfileModal = val => {
-  console.log(val)
+  console.log('오픈할 유저 프로필:', val)
   axios
     .get('http://localhost:4000/comm/profile', {
       params: {
@@ -428,7 +444,7 @@ const openViewPostMoadl = async val =>{
 
   // console.log('글번호에 대한 댓글', groupedDataAll.value._rawValue[postbbsno.value])
   postmodalData.value = {
-    comments: groupedDataAll.value[postbbsno.value],
+    comments: groupedDataAll.value[postbbsno.value],    
   }
   console.log(postmodalData.value)
 }
@@ -445,13 +461,42 @@ const toggleLike = async bno => {
     })
 
     if (response.status === 200) {
-      likesStatus[bno].value = response.data.likesId !== null
+      console.log(response.data.likesId)
+      likesStatus[bno].value = response.data.likesId !== "OSH" //아이디 비교
       await getData() // 좋아요 상태 변경 후 데이터를 다시 가져오기
     } else {
       console.log('좋아요 상태 변경 실패')
     }
   } catch (error) {
     console.error(`좋아요 상태 변경 실패: ${error}`)
+  }
+}
+
+//프로필 누르면 게시물 가져오기
+const getMyList = async id => {
+  try {
+    console.log("id", id)
+
+    const response = await axios.get(`http://localhost:4000/bbs/ViewMy.do?id=${id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    // 응답 처리
+    if (response.status === 200) {
+      console.log('데이터 받기 성공')
+      state.items = response.data // 데이터 저장
+      console.log(state.items[1])
+      getComment()
+      state.items.forEach(item => {
+        likesStatus[item.bno] = ref({ value: item.likes !== null })
+      })
+    } else {
+      console.log('데이터 전송 실패')
+    }
+  } catch (error) {
+    console.error(`데이터 전송 실패: ${error}`)
   }
 }
 </script>
@@ -482,13 +527,11 @@ const toggleLike = async bno => {
                     <VAvatar 
                       class="text-sm pointer-cursor"
                       :image="user.profilePath"
-                      @click="openUserProfileModal(user)"                      
+                      @click="getMyList(user.id)"                      
                     />
-                    <!-- @click="userProfileModal=true" -->
-
                     <VListItemTitle 
                       class="text-sm pointer-cursor"
-                      @click="openUserProfileModal(user)"
+                      @click="getMyList(user.id)"   
                       @mouseover="size"  
                     >
                       {{ user.id }}
@@ -505,7 +548,7 @@ const toggleLike = async bno => {
                   cols="5"
                   style="margin-top: -15px;"
                 >
-                  <Category />
+                  <Category @update:selected="handleSelected" />
                 </VCol>
                 <VCol
                   cols="5"
@@ -518,18 +561,7 @@ const toggleLike = async bno => {
                     :style="{ border: `1px solid ${borderColor}`, borderRadius: '5px' }"  
                     @focus="borderColor = '#28a745'"  
                     @blur="borderColor = '#ccc'" 
-                  >
-                    <!-- 아이콘에 클릭 이벤트 추가 -->
-                    <template #append>
-                      <VBtn
-                        icon
-                        style="margin-top: -8px;"
-                        @click="searchItems"
-                      >
-                        <VIcon>mdi-magnify</VIcon>
-                      </VBtn>
-                    </template>
-                  </VTextField>
+                  />
                 </VCol>
                 <VCol cols="2">
                   <VBtn 
@@ -548,7 +580,7 @@ const toggleLike = async bno => {
                 <VCol v-if="state.items.length > 0">
                   <!-- 게시물이 있을 때의 템플릿 -->
                   <VCol
-                    v-for="(item, index) in state.items"
+                    v-for="(item, index) in searchItems"
                     :key="index"
                     cols="12"
                   >
@@ -843,6 +875,7 @@ const toggleLike = async bno => {
       :post-to-edit="postToEdit"
       :comments="postmodalData.comments"
       :bno="postToEdit.bno"
+      :open-user-profile-modal="openUserProfileModal"
     />
   </section>
 </template>
