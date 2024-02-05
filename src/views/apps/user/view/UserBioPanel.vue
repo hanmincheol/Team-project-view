@@ -6,8 +6,9 @@ import {
 import Btnsu from '@/pages/views/demos/components/button/self-suc.vue'
 import SelfEdit from '@/pages/views/demos/forms/form-elements/textarea/self-edit.vue'
 import axios from '@axios'
-import { ref } from 'vue'
-
+import { computed, onUpdated, ref, watch, watchEffect } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 const props = defineProps({
   userData: {
@@ -15,6 +16,72 @@ const props = defineProps({
     required: true,
   },
 })
+
+const router = useRouter()
+
+
+
+let profilePathWithTime = computed(() => {
+  return `${profiledata.value.profilePath}?t=${Date.now()}`
+})
+
+onUpdated(() => {
+  profilePathWithTime.value = `${profiledata.value.profilePath}?t=${Date.now()}`
+})
+
+
+const store = useStore()
+
+// 로그인 스토어와 사용자 스토어의 상태를 가져옵니다.
+const userInfo = computed(() => store.state.loginStore.userInfo)
+const name = computed(() => store.state.userStore.userInfo ? store.state.userStore.userInfo.name : null)
+
+watch(name, fetchProfile, { immediate: true })
+
+
+// userInfo가 업데이트될 때마다 searchuser를 업데이트합니다.
+watch(userInfo, async () => {
+  await Promise.all([fetchData(), fetchProfile()])
+}, { immediate: true })
+
+// 사용자 스토어의 액션을 호출합니다.
+
+
+const userName = computed(() => {
+  if (!store.state.userStore.userInfo) {
+    return null
+  }
+  
+  return store.state.userStore.userInfo.id
+})
+
+
+watchEffect(() => {
+  // userInfo.value가 null인 경우 함수를 종료
+  if (!userInfo.value) {
+    return
+  }
+
+  fetchData()
+})
+
+// userName이 변경될 때마다 콜백 함수를 실행합니다.
+watch(userName, async (newName, oldName) => {
+  console.log(`Name changed from ${oldName} to ${newName}`)
+
+  // userInfo.value가 null인 경우 함수를 종료
+  if (!userInfo.value) {
+    console.log('userInfo.value is null')
+    
+    return
+  }
+
+  // 여기에서 필요한 업데이트 로직을 추가하면 됩니다.
+  // 예: fetchData와 fetchProfile을 호출
+  await Promise.all([fetchData(), fetchProfile()])
+})
+
+
 
 const standardPlan = {
   plan: 'Standard',
@@ -78,53 +145,72 @@ const resolveUserRoleVariant = role => {
 // mh는 Member_History 테이블을 뜻하는 약자
 const subdate = ref([]) //구독자 관련 데이터
 const profiledata = ref([])//내 프로필 데이터
-const searchuser = 'HMC' //접속중인 유저 아이디값 받아넣기
 const length = ref(0) //구독자 초기값
 
 
-const fetchData = async () => { //내 구독자 목록 가져와서 수치 뿌려주기 위한 axios
-  axios
-    .get('http://localhost:4000/comm/subscribe', {
+async function fetchData() {
+  if (!userInfo.value || !userInfo.value || !userInfo.value.id) {
+    console.log('비회원으로 데이터를 가져올 수 없습니다.')
+    
+    return
+  }
+
+  try {
+    const response = await axios.get('http://localhost:4000/user/subscribe', {
       params: {
-        id: searchuser,
+        id: userInfo.value.id,
       },
+      withCredentials: true,
     })
-    .then(response => {
-      if (response.status === 200) {
-        subdate.value = response.data
-        console.log('MySub 배열(구독자) 값:', response.data.MySub)
-        length.value = subdate.value.MySub.length
-      } else {
-        console.log('데이터 가져오기 실패')
-      }
-    })
-    .catch(error => {
-      console.error(error)
-    })
+
+    if (response.status === 200) {
+      subdate.value = response.data
+      console.log('MySub 배열(구독자) 값:', response.data.MySub)
+      length.value = subdate.value.MySub.length
+    } else {
+      console.log('데이터 가져오기 실패')
+    }
+  } catch (error) {
+    console.error(error)
+    alert(error.response.data.message)
+  }
 }
 
-const fetchProfile = async () => { //Profile 데이터 가져오기
-  axios
-    .get('http://localhost:4000/comm/profile', {
+async function fetchProfile() {
+  if (!userInfo.value || !userInfo.value || !userInfo.value.id) {
+    console.log('비회원으로 데이터를 가져올 수 없습니다.')
+    
+    return
+  }
+  try {
+    const response = await axios.get('http://localhost:4000/user/profile', {
+      
       params: {
-        id: searchuser,
+        id: userInfo.value.id,
       },
+      
+      withCredentials: true,
     })
-    .then(response => {
-      if (response.status === 200) {
-        console.log('프로필 값:', response.data)
-        profiledata.value = response.data
-        console.log('프로필 Path:', profiledata.value.profilePath)
-        // 이미지 URL 업데이트
-        imageUrl.value = response.data.profilePath
-      } else {
-        console.log('데이터 가져오기 실패')
-      }
-    })
-    .catch(error => {
-      console.error(error)
-    })
+
+    const newProfileData = response.data
+
+    profiledata.value = newProfileData
+
+    if (response.status === 200) {
+      console.log('프로필 값:', response.data)
+      profiledata.value = response.data
+      console.log('프로필 Path:', profiledata.value.profilePath)
+      imageUrl.value = response.data.profilePath
+    } else {
+      console.log('데이터 가져오기 실패')
+    }
+  } catch (error) {
+    console.error(error)
+  }
 }
+
+
+
 //////////////////////////////////////////////////////////////////////
 // 이미지
 const showDialog = ref(false) //프로필 사진 교체를 위한 Dialog 호출 변수
@@ -138,22 +224,28 @@ const showIcon = ref(false) // 프로필 사진에 마우스 올리면 아이콘
 
 //Profile 사진 교체를 위한 axios
 const imagechange = () => {
+  if (!userInfo.value || !userInfo.value || !userInfo.value.id) {
+    console.log('비회원으로 데이터를 가져올 수 없습니다.')
+    
+    return
+  }
+
   const requestData = {
-    id: searchuser,
+    id: userInfo.value ? userInfo.value.id : null,
     profilePath: 'http://localhost:4000/images/'+inputfilename.value,
   }
 
   console.log('정상작동')
   axios
-    .put('http://localhost:4000/comm/profile/update', requestData)
+    .put('http://localhost:4000/user/profile/update', requestData, {  params: {
+      id: userInfo.value.id,
+    }, withCredentials: true })
     .then(response => {
-      // 성공적으로 업데이트되었을 때의 처리
       console.log('프로필 이미지 업데이트 성공')
       fetchProfile()
     })
     .catch(error => {
-      // 업데이트 중 오류가 발생했을 때의 처리
-      console.log('프로필 이미지 업데이트 실패')
+      console.error('프로필 이미지 업데이트 실패')
       console.error(error)
     })
 }
@@ -173,40 +265,42 @@ const uploadImg = e => {
     // 파일명 설정
     fileName = fileList[0].name
     inputfilename.value = fileName // 변경 전: `/src/assets/images/userProfile/${fileName}`
-    uploadFile(fileList[0])
-    // .then(() => {
-    //   // 이미지 업로드가 완료된 후에 프로필 이미지 업데이트
-    //   imagechange()
-    // })
+    uploadFile(fileList[0]).then(() => {
+      // 이미지 업로드가 완료된 후에 프로필 이미지 업데이트
+      imagechange()
+    }).catch(error => {
+      console.error('File upload failed')
+      console.error('Error:', error)
+    })
   } else {
-    // Handle the case where no file is selected
     console.error('선택된 파일이 없습니다.')
   }
 }
 
 // 파일을 전송하고 서버로 업로드하는 함수
 const uploadFile = file => {
+  if (!userInfo.value.id) {
+    console.log('비회원으로 데이터를 가져올 수 없습니다.')
+    
+    return
+  }
   const formData = new FormData()
 
   formData.append('file', file)
 
-  return axios.post('http://localhost:4000/comm/upload', formData)
-    .then(response => {
-      // 파일 업로드 성공 시 실행할 코드 작성
-      console.log('File uploaded successfully')
-      console.log('Response:', response)
-    })
-    .catch(error => {
-      // 파일 업로드 실패 시 실행할 코드 작성
-      console.error('File upload failed')
-      console.error('Error:', error)
-    })
+  // axios.post가 Promise를 반환하므로 return 문을 사용하여 Promise를 반환하도록 합니다.
+  return axios.post('http://localhost:4000/user/upload', formData, {  params: {
+    id: userInfo.value ? userInfo.value.id : null,
+  }, withCredentials: true })
 }
 
 
-// onMounted(fetchData, fetchProfile);
 onMounted(async () => {
-  await Promise.all([fetchData(), fetchProfile()])
+  try {
+    await Promise.all([fetchData(), fetchProfile()])
+  } catch (error) {
+    console.error('Error in fetchData or fetchProfile:', error)
+  }
 })
 </script>
 
@@ -221,7 +315,7 @@ onMounted(async () => {
             <VAvatar
               rounded="sm"
               size="150"
-              :image="profiledata.profilePath"
+              :image="profilePathWithTime"
               class="mt-3"
               @click="showDialog = true"
               @mouseover="showIcon = true"

@@ -1,6 +1,7 @@
 import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import loginStore from './modules/loginStore'
+import userStore from './modules/userStore'
 
 export default createStore({
   state: {
@@ -13,10 +14,11 @@ export default createStore({
   },
   modules: {
     loginStore, 
+    userStore,  
   },
   plugins: [
     createPersistedState({
-      path: ['loginStore'], 
+      path: ['loginStore', 'userStore' ], 
     }),
   ],
 })

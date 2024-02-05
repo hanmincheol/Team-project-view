@@ -3,7 +3,6 @@ import Editing from '@/components/dialogs/Editing.vue'
 import ViewPostPage from '@/components/dialogs/ViewPostPage.vue'
 import InviteFriendConfirmModal from '@/pages/community/InviteFriendConfirmModal.vue'
 import Category from '@/pages/views/demos/forms/form-elements/select/category.vue'
-import Writing from '@/views/demos/register/Write.vue'
 import axios from '@axios'
 import { size } from '@floating-ui/dom'
 import defaultImg from '@images/userProfile/default.png'
@@ -14,7 +13,7 @@ const writingModal = ref(false)
 const editingModal = ref(false)
 const borderColor = ref('#ccc')
 const viewPostPageModal = ref(false)
-const likesStatus = reactive({})  // 좋아요 버튼의 상태를 저장
+const isLiked = ref(false)  // 좋아요 버튼의 상태를 저장
 let postToEdit = ref("")
 
 const isInvited = {}
@@ -60,10 +59,6 @@ const getData = async function() {
       console.log('데이터 받기 성공')
       state.items = response.data // 데이터 저장
 
-      state.items.forEach(item => {
-        likesStatus[item.bno] = ref({ value: item.likes !== null })
-      })
-
       const tempUserKeys = []
       for(var i=0; i<state.items.length; i++){
         tempUserKeys[i] = state.items[i].id
@@ -77,7 +72,7 @@ const getData = async function() {
       temp의 앞에 현재 서비스를 이용 중인 유저의 아이디가 들어가야 함.
       뿌려주는 게시글 작성자들의 목록을 불러옴.
       */
-      temp.unshift(userId.value)
+      temp.unshift('LSY')
       console.log(temp)
       axios.post("http://localhost:4000/bbs/userProfile", JSON.stringify({
         ids: temp,
@@ -165,12 +160,10 @@ const submitEdit = async bno => {
     if (response.status === 200) {
       console.log('글 번호 전송 성공')
       console.log(response.data, "response.data")
-      console.log('제발11',groupedDataAll._rawValue[bno])
       console.log('제발', groupedDataAll.value._rawValue[bno])
 
       // 서버로부터 받은 데이터를 자식 컴포넌트에게 전달하기 위해 저장
       postToEdit.value = response.data
-      console.log('설마?',postToEdit.value)
     } else {
       console.log('글 번호 전송 실패')
     }
@@ -278,6 +271,9 @@ const insertComment = async (bno, comment) => {
       console.log('실패')
     })
 }
+
+
+//////////////////////////////////////
 
 
 //스크롤 이벤트 리스터 추가 - 화면 하단에 스크롤 도착 시 loadMore()함수 호출
@@ -434,22 +430,25 @@ const openViewPostMoadl = async val =>{
 
 ///좋아요!!
 const toggleLike = async bno => {
+  isLiked.value = !isLiked.value  // 좋아요 버튼의 상태를 토글
+
   try {
     const response = await axios.post('http://localhost:4000/bbs/likes.do', {
       id: "HMC",
       bno: bno,
       cno: "",
-      isLiked: !likesStatus[bno].value,
+      isLiked: isLiked.value,
     })
 
-    if (response.status === 200) {
-      likesStatus[bno].value = response.data.likesId !== null
-      await getData() // 좋아요 상태 변경 후 데이터를 다시 가져오기
-    } else {
+    console.log("id:", "HMC", "bno:", bno)
+
+    if (response.status !== 200) {
       console.log('좋아요 상태 변경 실패')
+      isLiked.value = !isLiked.value  // 실패했을 경우 상태를 원래대로 되돌림
     }
   } catch (error) {
     console.error(`좋아요 상태 변경 실패: ${error}`)
+    isLiked.value = !isLiked.value  // 실패했을 경우 상태를 원래대로 되돌림
   }
 }
 </script>
@@ -692,7 +691,7 @@ const toggleLike = async bno => {
                       </VCardText>
                       <VCol>
                         <VBtn
-                          :icon="likesStatus[item.bno].value ? 'mdi-heart' : 'mdi-heart-outline'"
+                          :icon="isLiked.value ? 'mdi-heart' : 'mdi-heart-outline'"
                           variant="text"
                           color="success"
                           @click="toggleLike(item.bno)"
@@ -713,7 +712,7 @@ const toggleLike = async bno => {
                           color="success"
                         />
                         <VCol>
-                          좋아요 {{ item.likesnum }}개
+                          좋아요 수
                         </VCol>
                         <VCol v-if="group[item.bno]">
                           <strong>{{ group[item.bno].C_NO }}번 {{ group[item.bno].ID }}</strong> {{ group[item.bno].CCOMMENT }}
@@ -840,7 +839,6 @@ const toggleLike = async bno => {
       v-model:isDialogVisible="viewPostPageModal" 
       :post-to-edit="postToEdit"
       :comments="postmodalData.comments"
-      :bno ="postToEdit.bno"
     />
   </section>
 </template>

@@ -1,5 +1,6 @@
 import management from "./management"
 
+
 export default [
   {
     title: '마이페이지',

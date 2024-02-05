@@ -1,5 +1,3 @@
-
-
 // store/modules/loginStore.js
 //import router from '@/router'
 
@@ -24,11 +22,13 @@ const loginStore = {
     logoutTest: function (state) {
       state.userInfo = null
       state.isLogin = false
-      localStorage.removeItem('User-Token')
+      localStorage.removeItem('access_token')
       localStorage.removeItem('vuex')
 
       window.location.href="http://localhost:4000/logout"
     },
+
+
   },
   actions: {
     login(context, loginObj) {
@@ -39,6 +39,7 @@ const loginStore = {
     
       axios.post('http://localhost:4000/login', formdata, {
         headers: {
+          'X-SKIP-INTERCEPTOR': true,
           'Content-Type': 'multipart/form-data',
         },
         withCredentials: true,
@@ -61,6 +62,7 @@ const loginStore = {
         .catch(error => {
           console.log(error)
           alert('로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.')
+          
         })
     },
     saveToken(context, token){
@@ -76,7 +78,7 @@ const loginStore = {
       })
       
     },
-    getMemberInfo( { commit } ){
+    getMemberInfo( { commit, dispatch } ){
       axios.get('http://localhost:4000/user/getMemberInfo', { withCredentials: true })
         .then( res => {
           console.log("이게 실행돼?")
@@ -88,26 +90,29 @@ const loginStore = {
 
           commit('loginSuccess', userInfo)
 
+
+          dispatch('updateUserInfo', userInfo, { root: true })
         })
     },
-    logout({ commit }) {
-      return new Promise((resolve, reject) => {
-        axiosIns.post('http://localhost:4000/logout', null, { withCredentials: true })
-          .then(res => {
-            commit('logoutTest') // 로그아웃 상태를 Vuex에 반영
-            localStorage.removeItem('access_token') // 로컬 스토리지에서 토큰 제거
+    logout({ commit, dispatch }) {  // dispatch를 인자로 추가
+      return new Promise(async (resolve, reject) => {  // async를 추가
+        try {
+          const res = await axiosIns.post('http://localhost:4000/logout', null, { withCredentials: true })  // await를 추가
+
+          await commit('logoutTest')  // await를 추가
+          await dispatch('updateUserInfo', null, { root: true })  // await를 추가
     
-            // 서버에서 받은 redirectUrl을 이용해 페이지를 리다이렉트
-            window.location.href = res.data.redirectUrl
+          // 서버에서 받은 redirectUrl을 이용해 페이지를 리다이렉트
+          window.location.href = res.data.redirectUrl
     
-            resolve()
-          })
-          .catch(error => {
-            console.log('로그아웃 요청 중 에러가 발생했습니다:', error)
-            reject(error)
-          })
+          resolve()
+        } catch (error) {
+          console.log('로그아웃 요청 중 에러가 발생했습니다:', error)
+          reject(error)
+        }
       })
     },
+
 
   },
 
