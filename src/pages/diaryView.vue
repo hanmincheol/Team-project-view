@@ -2,15 +2,16 @@
 import AppDateTimePicker from '@/@core/components/app-form-elements/AppDateTimePicker.vue'
 import axios from '@axios'
 import DiaryView from '@images/cards/DiaryView.png'
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 
-const props = defineProps({
-  imgUrls: {
-    type: Array,
-    required: true,
-  },
-})
+// const props = defineProps({
+//   imgUrls: {
+//     type: Array,
+//     required: true,
+//   },
+// })
 
+const imgUrls = ref([]) //이미지 가져오는 변수
 
 
 const biggeImgFile = ref(false)
@@ -49,28 +50,45 @@ const handleMouseLeave = () => {
   imageSize.value = null // Reset the index to null when mouse leaves
 }
 
-const userId = ref('HMC')
-const dateVal = ref(todayLabel.value)
-const diaryContent = ref('')
+//다이어리에 뿌려줄
+
+const showDiary = diaryId => { //다이어리 내용 불러오는 함수
+  const diaryShowTag = document.getElementById("diary")
+
+  axios("http://127.0.0.1:4000/manage/diary", { params: { userNDate: diaryId } })
+    .then(resp => {
+      diaryShowTag.innerHTML = resp.data.diary_content //다이어리 텍스트 뿌려주기
+      imgUrls.value = resp.data.imgUrls //다이어리 이미지 뿌려주기
+
+    })
+    .catch(err=>console.error(err))
+}
+
+
+
 
 //날짜에 맞는 데이터를 가져오기 위한 코드
 
-onMounted(()=>{
+const userId = ref('HMC')
+
+const dateVal = todayLabel.value.replace(/-/g, '')+'-'+userId.value
+
+showDiary(dateVal)
+
+onMounted(()=>{ //처음 다이어리 상세보기 페이지 들어갔을 때 실행되는 코드
   const dateTag = document.getElementById("date").children[0]
-
-  var dateVal = dateTag.value.replace(/-/g, '')+'-'+userId.value
-
-  console.log(dateVal)
-  console.log(todayLabel.value)
-  dateTag.addEventListener('change', ()=>{
+  var dateVal = todayLabel.value.replace(/-/g, '')+'-'+userId.value
+  console.log("dateTag", dateTag)
+  console.log('오늘날짜 dateVal:', dateVal)
+  showDiary(dateVal)
+  dateTag.addEventListener('change', ()=>{ //클릭 이벤트 발생 시 실행되는 코드
+    const dateTag = document.getElementById("date").children[0]
+    
     dateVal = dateTag.value.replace(/-/g, '')+'-'+userId.value
-    axios("http://127.0.0.1:4000/manage/diary", { params: { userNDate: dateVal } })
-      .then(resp => {
-        console.log('axios 다이어리 : ', resp.data.diary_content)
-        diaryContent.value = resp.data.diary_content
-      })
-      .catch(err=>console.error(err))
+    console.log('날짜 변경 dateVal:', dateVal)
+    showDiary(dateVal)
   })
+  
 })
 </script>
 
@@ -123,20 +141,11 @@ onMounted(()=>{
               cols="12"
               style="height: 1000px;"
             >
-              <!--
-                <VTextarea 
-                label="Content" 
-                placeholder="오늘의 일기 내용"
-                disabled=""
-                rows="27"
-                style=" width: 72%; padding: 10px; margin-top: -15px;"
-                class="disabled-textarea"
+              <VCard style="display:flex; width: 75%; height: 72%; margin-top: -15px; background-color: rgba( 255, 255, 255, 0.88 );">
+                <VCardText
+                  id="diary"
+                  style="text-align: left;"
                 />
-              -->
-              <VCard style="display:flex; width: 75%; height: 72%; margin-top: -15px; background-color: rgba( 255, 255, 255, 0.7 );">
-                <VCardText>
-                  {{ diaryContent }}
-                </VCardText>
               </VCard>
             </VCol>
           </VCol>

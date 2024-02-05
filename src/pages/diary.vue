@@ -1,5 +1,6 @@
 <script setup>
 import TextEmotionDetectionModal from '@/pages/components/diaryModal/TextEmotionDetectionModal.vue'
+import TextEmotionResultModal from '@/pages/components/diaryModal/TextEmotionResultModal.vue'
 import DiaryView from '@/pages/diaryView.vue'
 import axios from '@axios'
 import DiaryPage from '@images/cards/DiaryPage.png'
@@ -39,7 +40,12 @@ const inputDiaryPhoto = ref(false)
 const clickedImageUrl = ref('')
 
 const isSubmitConfirmModalVisible = ref(false) //등록 확인 모달창
-const isEmotionDetectDialogVisible = ref(false)
+const isEmotionDetectDialogVisible = ref(false) //감정분석 api 요청 중일 때 로딩창
+const isResultDialogVisible = ref(false) //감정 분석 결과 보여주는 창
+const result = ref({}) //텍스트 감정 분석 결과값
+const diary = ref('') //다이어리 콘텐츠 저장용
+const userId = ref('HMC')
+var files = [] //파일 리스트
 
 //사용자가 작성한 글을 html요소와 함께 저장 (view 용)
 const diaryContent = ref('')
@@ -49,6 +55,11 @@ const diaryText = ref('')
 
 const diaryWriteComplet = isSubmit => {
   if (isSubmit) {
+    var diaryTag = document.querySelector('.ql-editor')
+    if (diaryTag != null){
+      diaryContent.value = diaryTag.innerHTML
+      diaryText.value = diaryTag.innerText
+    }
     if(diaryText.value.trim().length == 0){
       alert('글을 입력해주세요')
       submitBtn.value = false
@@ -62,57 +73,6 @@ const diaryWriteComplet = isSubmit => {
   else {
     writeDiaryContent.value = false
     submitBtn.value = false
-  }
-}
-
-
-const btnIcons = [
-  {
-    icon: 'mdi-emoticon-angry',
-    value: 0,
-  },
-  {
-    icon: 'mdi-emoticon-sad',
-    value: 1,
-  },
-  {
-    icon: 'mdi-emoticon-neutral',
-    value: 2,
-  },
-  {
-    icon: 'mdi-emoticon-excited',
-    value: 3,
-  },
-  {
-    icon: 'mdi-emoticon-cool',
-    value: 4,
-  },
-]
-
-const selectButton = value => {
-  previousBtn.value = selectedBtn.value
-  selectedBtn.value = value
-}
-
-const getButtonColor = value => {
-  if (selectedBtn.value === value) {
-    switch (value) {
-    case 0:
-      return '#FF4500' // Angry - 오렌지레드
-    case 1:
-      return '#FF8C00' // Sad - 다크오렌지
-    case 2:
-      return '#FFD700' // Neutral - 노란색
-    case 3:
-      return '#7CFC00' // Excited - 초록색
-    case 4:
-      return '#00BFFF' // Cool - 딥스카이블루
-    default:
-      return '#E6E6FA' // 기본 대기중 색상
-    }
-  }
-  else {
-    return '#E6E6FA'
   }
 }
 
@@ -157,6 +117,8 @@ const handleMouseLeave = () => {
 const uploadImgMultiple = e => {
   const fileList = e.target.files
 
+  files = e.target.files
+  console.log('함수 안의 파일명:', files)
   if (fileList.length > 0) {
     // 여러 이미지를 저장할 배열
     const imageUrls = []
@@ -230,7 +192,44 @@ const openModal = () => {
   axios.get("http://localhost:5000/diary", { params: {
     diary: diaryText.value,
   } })
-    .then(resp => console.log(resp.data))
+    .then(resp => {
+      console.log(resp.data)
+      diary.value = diaryContent.value
+      result.value = resp.data
+      isEmotionDetectDialogVisible.value = false
+      isResultDialogVisible.value = true
+    })
+}
+
+const postDiary = score => {
+  console.log('값 잘 들어옴?:', score)
+
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+  
+  const diaryId = `${year}${month}${day}-${userId.value}` //다이어리 아이디 설정
+
+  const formData = new FormData()
+
+  console.log('함수 안의 파일명:', files)
+  formData.append('id', userId.value)
+  formData.append("diaryId", diaryId)
+  formData.append('diary_content', diaryContent.value)
+
+  //formData.append('imgUrls', files)
+  formData.append('emotion', score.toFixed(2))
+
+  if (files.length > 0) {
+    for(var i=0;i<files.length;i++){
+      console.log(files[i])
+      formData.append('files', files[i])
+    }
+  }
+
+  axios.post("http://localhost:4000/manage/diary/upload", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+    .catch(err=>console.error(err))
 }
 </script>
 
@@ -254,79 +253,10 @@ const openModal = () => {
           v-if="!readDiaryContent"
           cols="12"
         >
-          <VCol cols="2" />
-          <VRow cols="8">
-            <!-- 기분 표시하는 아이콘 -->
-            <VCol 
-              v-for="(icon, index) in btnIcons" 
-              :key="index"
-              cols="2" 
-            >
-              <VBtn
-                :icon="icon.icon"
-                :size="btnSize"
-                :color="getButtonColor(icon.value)"
-                @click="selectButton(icon.value)"
-              />
-            </VCol>
-            <!-- 아이콘 영역 끝 -->
-            <!-- 사진을 통한 스트레스 분석에 필요한 버튼 -->
-            <VCol cols="2">
-              <VDialog
-                v-model="isDialogVisible"
-                width="600"
-              >
-                <!-- Activator -->
-                <template #activator="{ props }">
-                  <VBtn 
-                    v-bind="props"
-                    size="x-large"
-                  >
-                    오늘의 기분
-                  </VBtn>
-                </template>
-                <!-- Dialog Content -->
-                <VCard title="당신의 오늘의 기분을 알려주세요!!">
-                  <DialogCloseBtn
-                    variant="text"
-                    size="small"
-                    @click="isDialogVisible = false"
-                  />
-                  <VCardText>
-                    당신의 표정을 찍어서 오늘의 스트레스 지수를 확인해보세요!! <br>
-                    AI가 당신의 표정을 읽어 스트레스 지수를 알려줘요  
-                  </VCardText>
-                  <VImg
-                    id="diaryImages"
-                    :src="imageUrl"
-                    style="width: 400px; height: 400px; align-self: center;"
-                  />
-                  <VCol cols="12">
-                    <VFileInput
-                      :rules="rules"
-                      label="Face IMG"
-                      type="file"
-                      accept="image/png, image/jpeg, image/bmp"
-                      placeholder="Pick an avatar"
-                      prepend-icon="mdi-camera-outline"
-                      @change="uploadImg"
-                    />
-                  </VCol>
-                  <VCol>
-                    <VBtn 
-                      block
-                      @click="isDialogVisible=false"
-                    >
-                      확인
-                    </VBtn>
-                  </VCol>
-                </VCard>
-              </VDialog>
-            </VCol>
-            <!-- 버튼 눌렀을 때 나타나는 모달 끝 -->
-          </VRow>
+          <!-- <VCol cols="2" /> -->
+          
           <!-- 아이콘 / 오늘의 기분 버튼 줄 -->
-          <VCol cols="2" />
+          <!-- <VCol cols="2" /> -->
         </VRow>
         <VCol />
         <!-- 여기가 content부분 -->
@@ -534,6 +464,13 @@ const openModal = () => {
                   @open-modal="openModal"
                 />
                 <TextEmotionDetectionModal v-model="isEmotionDetectDialogVisible" />
+                <TextEmotionResultModal
+                  v-model="isResultDialogVisible"
+                  :result="result"
+                  :diary="diary"
+                  :urls="imgUrls"
+                  @update:submitEvent="postDiary"
+                />
                 <!-- 멀티 이미지 클릭 시 열리는 모달 -->
                 <VDialog
                   v-model="biggeImgFile"
