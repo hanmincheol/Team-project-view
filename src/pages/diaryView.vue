@@ -2,7 +2,7 @@
 import AppDateTimePicker from '@/@core/components/app-form-elements/AppDateTimePicker.vue'
 import axios from '@axios'
 import DiaryView from '@images/cards/DiaryView.png'
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 
 // const props = defineProps({
 //   imgUrls: {
@@ -77,17 +77,18 @@ showDiary(dateVal)
 
 onMounted(()=>{ //처음 다이어리 상세보기 페이지 들어갔을 때 실행되는 코드
   const dateTag = document.getElementById("date").children[0]
-  const dateVal = todayLabel.value.replace(/-/g, '')+'-'+userId.value
-
-  console.log(dateVal) //dateVal은 diaryId
+  var dateVal = todayLabel.value.replace(/-/g, '')+'-'+userId.value
+  console.log("dateTag", dateTag)
+  console.log('오늘날짜 dateVal:', dateVal)
+  showDiary(dateVal)
   dateTag.addEventListener('change', ()=>{ //클릭 이벤트 발생 시 실행되는 코드
     const dateTag = document.getElementById("date").children[0]
     
     dateVal = dateTag.value.replace(/-/g, '')+'-'+userId.value
-  
-    console.log('dateVal:', dateVal)
+    console.log('날짜 변경 dateVal:', dateVal)
+    showDiary(dateVal)
   })
-  showDiary(dateVal)
+  
 })
 </script>
 
