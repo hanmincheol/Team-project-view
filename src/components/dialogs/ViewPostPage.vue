@@ -86,38 +86,38 @@ const toggleComment = (comment, comments) => {
 const editMode = ref(false);
 const actionType = async (typeNo, C_NO, val) => {
   const params = {
-    c_no: C_NO
+    c_no: C_NO,
   };
-
-  let action = ''
-  let axiosMethod = null
   if(typeNo == 1){
-    action = 'Edit'
     params.ccomment = val;
-    axiosMethod = axios.put
+    axiosType  = await axios.put(`http://localhost:4000/commentline/Edit.do`, params, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    }).then(response => {
+      // 성공적으로 업데이트되었을 때의 처리
+      console.log('성공')
+      props.getComment();
+    }).catch(error => {
+      // 업데이트 중 오류가 발생했을 때의 처리
+      console.log('실패', error)
+    })  
   }
   else if(typeNo == 2){
-    action = 'Delete'
-    axiosMethod = axios.delete
+    axiosType  = await axios.delete(`http://localhost:4000/commentline/Delete.do`,{
+      params:params,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    }).then(response => {
+      // 성공적으로 업데이트되었을 때의 처리
+      console.log('성공')
+      props.getComment();
+    }).catch(error => {
+      // 업데이트 중 오류가 발생했을 때의 처리
+      console.log('실패', error)
+    })  
   }
-  else{
-
-  }
-  console.log(action, C_NO, val)
-  console.log('체크',params)
-  await axiosMethod(`http://localhost:4000/commentline/${action}.do`, {
-    params: params,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    }
-  }).then(response => {
-    // 성공적으로 업데이트되었을 때의 처리
-    console.log('성공')
-    props.getComment();
-  }).catch(error => {
-    // 업데이트 중 오류가 발생했을 때의 처리
-    console.log('실패', error)
-  })  
 }
 </script>
 
@@ -312,7 +312,7 @@ const actionType = async (typeNo, C_NO, val) => {
                               rows="1"
                               style="height: 55px; border: none;"
                               variant="plain"
-                              no-resize
+                              no-resize                                                            
                               v-model="commentval"
                               @keydown.enter="insertComment(bno, commentval, 2, parentcomm); commentval = ''; parentcomm=0;"
                             />
@@ -452,10 +452,6 @@ const actionType = async (typeNo, C_NO, val) => {
                     @click="insertComment(bno, newcomment, 1, 0); newcomment = '';">
                     게시
                   </VBtn>
-                  <!-- <VBtn size="large"
-                    @click="insertComment(bno, newcomment, 2, parentcomm); newcomment = '';parentcomm=0;">
-                    게시
-                  </VBtn> -->
                 </VCol>
               </VRow>
             </VCol>
@@ -520,6 +516,15 @@ const actionType = async (typeNo, C_NO, val) => {
   100% {
     background-color: #fff;
   }
+  /* 0%{
+    opacity: 1;
+  }
+  50%{
+    opacity: 0.3;
+  }
+  100%{
+    opacity: 1;
+  } */
 }
 
 .blink {
