@@ -4,8 +4,6 @@ import avatar2 from '@images/avatars/avatar-2.png'
 import avatar3 from '@images/avatars/avatar-3.png'
 import avatar4 from '@images/avatars/avatar-4.png'
 import backgroundimg from '@images/pages/writing.jpg'
-import { ref } from 'vue';
-import axios from '@axios'
 
 const props = defineProps({
   isDialogVisible: {
@@ -26,11 +24,15 @@ const props = defineProps({
   },
   openUserProfileModal: {
     type: Function,
-    required: true
+    required: true,
   },
 })
 
-const emit = defineEmits(['update:isDialogVisible'])
+let commentAddevent = ref(false)
+
+const commentAdd = event => {
+  commentAddevent = true
+}
 
 const avatars = [
   avatar1,
@@ -38,7 +40,6 @@ const avatars = [
   avatar3,
   avatar4,
 ]
-
 </script>
 
 <template>
@@ -132,11 +133,13 @@ const avatars = [
               <!-- 많아지면 여기도 무한스크롤을 적용해야 할 겁니다~ 근데 여긴 윈도우 창이 아니라 어떤 이벤트를 걸어야할지 감도 안오네요 -->
               <VRow>
                 <VCol cols="1">
-                  <!-- <VAvatar 
+                  <!--
+                    <VAvatar 
                     class="text-sm pointer-cursor"
                     :image="avatar1"
                     @click="userProfileModal=true"
-                  /> -->
+                    /> 
+                  -->
                 </VCol>
                 <VCol
                   cols="10"
@@ -144,54 +147,79 @@ const avatars = [
                 >
                   {{ postToEdit.content }}
                   <br>{{ postToEdit.hashTag }}
-                  <br>
                   <VDivider />
                   <br>
-                  <div style="font-size: 14px;width:100%;height:350px;overflow: auto;" class="scrollbar">
+                  <div
+                    style="overflow: auto;width: 100%;height: 350px;font-size: 14px;"
+                    class="scrollbar"
+                  >
                     <div v-if="comments">
                       <div
                         v-for="comment in comments"
                         :key="comment.C_NO"
                       >
-                        <div
-                          v-if="comment.LEVEL == 1"
-                          style=" display: flex; align-items: center; justify-content: space-between;border-bottom: dotted 1px gray;background-color:rgba(0,255,0,0.05)"
-                        > 
-                          <div>
+                        <div v-if="comment.LEVEL == 1"> 
+                          <VAlert
+                            border="start"
+                            color="success"
+                            variant="tonal"
+                            style="height: 50px; opacity: 0.8;"
+                          >
                             <VAvatar 
                               :image="comment.PRO_FILEPATH"
-                              style="margin: 2px;"
+                              style="padding: 5px;margin: 2px;"
                               @click="openUserProfileModal(comment.ID)"
                             />
                             <span style="margin-right: 10px;font-size: 12px;">{{ comment.ID }}</span> <strong>{{ comment.CCOMMENT }}</strong>  
-                          </div>
-                          <VBtn
-                            icon="mdi-heart-outline"
-                            variant="text"
+                            <VBtn
+                              icon="mdi-heart-outline"
+                              variant="text"
+                              color="success"
+                              style="float: inline-end;"
+                            />
+                          </VAlert>
+                          <VTextarea 
+                            v-if="commentAddevent" 
+                            label="댓글달기"
                             color="success"
+                            rows="1"
+                            style="height: 55px; border: none;"
+                            variant="plain"
+                            no-resize
                           />
                         </div>
                         <div
                           v-else
-                          :style="{ marginLeft: (comment.LEVEL - 1) * 20 + 'px', 'border-bottom': 'dotted 1px gray', display: 'flex', 'justify-content': 'space-between', 'align-items': 'center', 'background-color': 'rgba(255, 50, 0, 0.05)'}"
-                        > <!-- 'background-color': 'rgba(255, 50, 0, 0.3)' -->                                                   
-                          <div>
-                            <VIcon
-                              end
-                              icon="mdi-arrow-right-bottom"
-                              class="flip-in-rtl"
-                            />
+                          :style="{ marginLeft: (comment.LEVEL - 1) * 20 + 'px'}"
+                        >
+                          <!-- 'background-color': 'rgba(255, 50, 0, 0.3)' -->                                                   
+                          <VAlert
+                            border="start"
+                            color="info"
+                            variant="tonal"
+                            style="height: 50px; opacity: 0.8;"
+                          >
                             <VAvatar 
                               :image="comment.PRO_FILEPATH"
-                              style="margin: 2px;"
+                              style="padding: 5px;margin: 2px;"
                               @click="openUserProfileModal(comment.ID)"
                             />
                             <span style="margin-right: 10px;font-size: 12px;">{{ comment.ID }}</span><strong>{{ comment.CCOMMENT }}</strong>
-                          </div>
-                          <VBtn
-                            icon="mdi-heart-outline"
-                            variant="text"
-                            color="success"
+                            <VBtn
+                              icon="mdi-heart-outline"
+                              variant="text"
+                              color="success"
+                              style="float: inline-end;"
+                            />
+                          </VAlert>
+                          <VTextarea 
+                            v-if="commentAddevent"
+                            label="답글달기" 
+                            color="info"
+                            rows="1"
+                            style="height: 55px; border: none;"
+                            variant="plain"
+                            no-resize
                           />
                         </div>
                       </div>
@@ -206,7 +234,7 @@ const avatars = [
                     </li> 
                   -->
                 </VCol>
-               </VRow>
+              </VRow>
               <VRow style="margin-top: 100px;">
                 <VCol
                   cols="2"
@@ -268,23 +296,23 @@ const avatars = [
   background-color: transparent;
 }
 
-.scrollbar { 
-  width: 250px;
-  height: 250px;
-  overflow-y: scroll; /*  */
+.scrollbar {
+  block-size: 250px;
+  inline-size: 250px;
+  overflow-y: scroll;
 }
 
 /* 스크롤바의 폭 너비 */
 .scrollbar::-webkit-scrollbar {
-    width: 10px;  
+  inline-size: 10px;
 }
 
 .scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(0, 220, 60); /* 스크롤바 색상 */
-    border-radius: 10px; /* 스크롤바 둥근 테두리 */
+  border-radius: 10px; /* 스크롤바 둥근 테두리 */
+  background: rgba(0, 220, 60); /* 스크롤바 색상 */
 }
 
 .scrollbar::-webkit-scrollbar-track {
-    background: rgba(220, 20, 60, .1);  /*스크롤바 뒷 배경 색상*/
+  background: rgba(220, 20, 60, 10%);  /* 스크롤바 뒷 배경 색상 */
 }
 </style>
