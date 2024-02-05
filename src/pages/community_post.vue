@@ -406,10 +406,17 @@ const profiledata = ref([])//내 프로필 데이터
 
 const openUserProfileModal = val => {
   console.log('오픈할 유저 프로필:', val)
+  let id;
+  
+  if (typeof val === 'object' && val.id) {
+    id = val.id; // val이 객체이고 id 속성이 존재하는 경우
+  } else {
+    id = val; // 그 외의 경우 val 그대로 사용
+  }
   axios
     .get('http://localhost:4000/comm/profile', {
       params: {
-        id: val.id,
+        id: id,
       },
     })
     .then(response => {
@@ -876,6 +883,7 @@ const getMyList = async id => {
       :comments="postmodalData.comments"
       :bno="postToEdit.bno"
       :open-user-profile-modal="openUserProfileModal"
+      :insertComment="insertComment"
     />
   </section>
 </template>

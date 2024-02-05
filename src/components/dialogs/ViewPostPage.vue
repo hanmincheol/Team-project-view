@@ -26,6 +26,10 @@ const props = defineProps({
     type: Function,
     required: true,
   },
+  insertComment:{
+    type: Function,
+    required: true,
+  },
 })
 
 let commentAddevent = ref(false)
@@ -33,6 +37,7 @@ let commentAddevent = ref(false)
 const commentAdd = event => {
   commentAddevent = true
 }
+const newcomment = ref()
 
 const avatars = [
   avatar1,
@@ -40,6 +45,10 @@ const avatars = [
   avatar3,
   avatar4,
 ]
+
+const parent_comment = (val) => {
+  console.log('클릭한 댓글:',val)
+}
 </script>
 
 <template>
@@ -228,11 +237,6 @@ const avatars = [
                       작성된 댓글이 없습니다.
                     </div>
                   </div>
-                  <!--
-                    <li>
-                    {{comments[0].C_NO}} {{comments[0].ID}} {{comments[0].CCOMMENT}}
-                    </li> 
-                  -->
                 </VCol>
               </VRow>
               <VRow style="margin-top: 100px;">
@@ -261,10 +265,12 @@ const avatars = [
                     variant="underlined"
                     prepend-icon="mdi-emoticon"
                     no-resize
+                    v-model="newcomment"
                   />
                 </VCol>
                 <VCol cols="1">
-                  <VBtn size="large">
+                  <VBtn size="large"
+                    @click="insertComment(bno, newcomment); newcomment = ''">
                     게시
                   </VBtn>
                 </VCol>
