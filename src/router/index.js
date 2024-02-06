@@ -12,13 +12,13 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/login',
+      path: '/',
       component: () => import('@/pages/login.vue'),
       redirect: () => ({ name: 'login', params: { tab: 'profile' } }),
       meta: { requiresAuth: false }, // 이 라우트는 로그인이 필요함을 나타냅니다.
     },
     {
-      path: '/',
+      path: '/main',
       redirect: () => ({ name: 'main', params: { tab: 'profile' } }),
       component: 'main',
       meta: { requiresAuth: false },

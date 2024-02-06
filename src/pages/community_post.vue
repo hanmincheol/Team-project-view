@@ -9,6 +9,14 @@ import axios from '@axios'
 import { size } from '@floating-ui/dom'
 import defaultImg from '@images/userProfile/default.png'
 import { computed, onMounted, onUnmounted, reactive, ref, toRaw } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
+
+// 로그인 스토어와 사용자 스토어의 상태를 가져옵니다.
+const userInfo = computed(() => store.state.userStore.userInfo)
+const name = computed(() => store.state.userStore.userInfo ? store.state.userStore.userInfo.name : null)
+
 
 const userProfileModal = ref(false)
 const writingModal = ref(false)
@@ -20,7 +28,7 @@ let postToEdit = ref("")
 
 const isInvited = {}
 const isSubscribed = {}
-const userId = ref('OSH') //접속한 유저의 아이디
+const userId = ref(userInfo.value.id) //접속한 유저의 아이디
 
 let q = ref('')
 const users = ref([])
@@ -66,9 +74,12 @@ const getData = async function() {
   
   try {
     const response = await axios.post('http://localhost:4000/bbs/List.do', {
+      selectedItems: selected.value,
+    }, {
       headers: {
         'Content-Type': 'application/json',
       },
+      withCredentials: true,
     })
     
     
@@ -90,11 +101,14 @@ const getData = async function() {
       temp의 앞에 현재 서비스를 이용 중인 유저의 아이디가 들어가야 함.
       뿌려주는 게시글 작성자들의 목록을 불러옴.
       */
-      temp.unshift('LSY')
+      temp.unshift('HMC')
       console.log(temp)
-      axios.post("http://localhost:4000/bbs/userProfile", JSON.stringify({
+      axios.post("http://localhost:4000/bbs/userProfile", JSON.stringify, ({
         ids: temp,
-      }), { headers: { 'Content-Type': 'application/json' } })
+        id: userInfo.value.id,
+      }), { headers: { 'Content-Type': 'application/json' },
+        withCredentials: true, 
+      })
         .then(resp=>{
           console.log('요청받은 값:', resp.data)
           users.value = resp.data
@@ -262,7 +276,10 @@ const getComment = async function() {
 
 
 //댓글 입력
-const searchuser = 'OSH' //현재 접속중인 유저 아이디
+const searchuser = userInfo.value.id //현재 접속중인 유저 아이디
+
+console.log("userInfo.value.id", userInfo.value.id)
+
 const commentinput = ref('')
 
 const insertComment = async (bno, comment, type, parent_comment) => {
@@ -413,12 +430,12 @@ const profiledata = ref([])//내 프로필 데이터
 
 const openUserProfileModal = val => {
   console.log('오픈할 유저 프로필:', val)
-  let id;
+  let id
   
   if (typeof val === 'object' && val.id) {
-    id = val.id; // val이 객체이고 id 속성이 존재하는 경우
+    id = val.id // val이 객체이고 id 속성이 존재하는 경우
   } else {
-    id = val; // 그 외의 경우 val 그대로 사용
+    id = val // 그 외의 경우 val 그대로 사용
   }
   axios
     .get('http://localhost:4000/comm/profile', {
@@ -894,9 +911,9 @@ const getMyList = async id => {
       :comments="postmodalData.comments"
       :bno="postToEdit.bno"
       :open-user-profile-modal="openUserProfileModal"
-      :insertComment="insertComment"
+      :insert-comment="insertComment"
       :searchuser="searchuser"
-      :getComment="getComment"
+      :get-comment="getComment"
     />
   </section>
 </template>

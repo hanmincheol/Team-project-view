@@ -209,23 +209,27 @@ async function fetchProfile() {
   }
 }
 
-const updateprofile = (newcolval) =>{
-  const formData = new FormData()
-  formData.append('id', searchuser)
-  formData.append('proIntroduction', newcolval)
-  axios.put('http://localhost:4000/comm/intro/update',formData,{
-    headers: {
-        'Content-Type': 'application/json',
-      },
+const updateprofile = newcolval => {
+  const data = {
+    id: userInfo.value.id,
+    proIntroduction: newcolval,
   }
-  )
-  .then(response => {
+
+  axios.put('http://localhost:4000/user/intro/update', data, { withCredentials: true }, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(response => {
       console.log('성공')
-  })
-  .catch(error => {
-    console.log('실패')
-  })
+    })
+    .catch(error => {
+      console.log('실패')
+    })
 }
+
+
+
 //////////////////////////////////////////////////////////////////////
 // 이미지
 const showDialog = ref(false) //프로필 사진 교체를 위한 Dialog 호출 변수
@@ -477,9 +481,9 @@ onMounted(async () => {
             style="height: 380px;"
           >
             <SelfEdit
-              :readonly="editClick"
-              :value="profiledata.proIntroduction"              
               v-model="profiledata.proIntroduction"
+              :readonly="editClick"              
+              :value="profiledata.proIntroduction"
             />
             <div
               v-if="edit"
