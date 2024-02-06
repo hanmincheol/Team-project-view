@@ -144,6 +144,7 @@ const actionType = async (typeNo, C_NO, val) => {
           <VRow>
             <VCol
               cols="6"
+              sm="12"
               style="margin: auto;"
             >
               <VCol
@@ -181,7 +182,10 @@ const actionType = async (typeNo, C_NO, val) => {
                 </VCarouselItem>
               </VCarousel>
             </VCol>
-            <VCol cols="6">
+            <VCol
+              cols="6"
+              sm="12"
+            >
               <VRow>
                 <VCol>
                   <VRow style="margin-top: 1%;">

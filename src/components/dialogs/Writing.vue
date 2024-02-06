@@ -8,6 +8,7 @@ import logo from '@images/logo.svg' // 로고 이미지 불러오기
 import bg from '@images/pages/writing.jpg'
 import { computed, reactive, ref, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 const props = defineProps({
   isDialogVisible: {
@@ -17,6 +18,14 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:isDialogVisible', "update-success"])
+
+
+
+const store = useStore()
+
+const userInfo = computed(() => store.state.userStore.userInfo)
+const name = computed(() => store.state.userStore.userInfo ? store.state.userStore.userInfo.name : null)
+
 const isprofile = ref(false)
 const router = useRouter()
 const people = ref(false)
@@ -244,7 +253,7 @@ const zoomOut = e => {
           <VRow>
             <VCol cols="6">
               <VRow style=" margin-top: 20px;">
-                <VCol cols="6">
+                <VCol cols="8">
                   <VListItem 
                     v-for="(member, index) in members" 
                     :key="index"

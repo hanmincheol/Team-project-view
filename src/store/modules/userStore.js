@@ -2,18 +2,22 @@
 const userStore = {
   state: {
     userInfo: null, // 사용자 정보를 저장하는 상태
-    searchuser: null, // searchuser를 저장하는 상태
+    searchuser: { userInfo: null }, // searchuser를 저장하는 상태
+    
   },
   mutations: {
     // 사용자 정보를 업데이트하는 뮤테이션
     UPDATE_USER_INFO(state, newUserInfo) {
       state.userInfo = newUserInfo
+
     },
 
     // searchuser를 업데이트하는 뮤테이션
     UPDATE_SEARCH_USER(state, newSearchUser) {
       state.searchuser = newSearchUser
+      
     },
+    
   },
   actions: {
     // 사용자 정보를 업데이트하는 액션
@@ -21,11 +25,13 @@ const userStore = {
       commit('UPDATE_USER_INFO', newUserInfo)
       console.log("newUserInfo", newUserInfo)
       console.log("userInfo", state.userInfo)  // 'userInfo'를 'state.userInfo'로 수정
+      
+
     },
 
     // searchuser를 업데이트하는 액션
-    updateSearchUser({ commit, state }, newSearchUser) {
-      commit('UPDATE_SEARCH_USER', newSearchUser)
+    UPDATE_SEARCH_USER(state, newSearchUser) {
+      state.searchuser.userInfo = newSearchUser.userInfo
       console.log("newSearchUser", newSearchUser)
       console.log("searchuser", state.searchuser)
     },
@@ -42,5 +48,7 @@ const userStore = {
     },
   },
 }
+
+
 
 export default userStore
