@@ -156,7 +156,7 @@ async function fetchData() {
   }
 
   try {
-    const response = await axios.get('http://localhost:4000/user/subscribe', {
+    const response = await axios.get('http://localhost:4000/comm/subscribe', {
       params: {
         id: userInfo.value.id,
       },
@@ -183,7 +183,7 @@ async function fetchProfile() {
     return
   }
   try {
-    const response = await axios.get('http://localhost:4000/user/profile', {
+    const response = await axios.get('http://localhost:4000/comm/profile', {
       
       params: {
         id: userInfo.value.id,
@@ -215,7 +215,7 @@ const updateprofile = newcolval => {
     proIntroduction: newcolval,
   }
 
-  axios.put('http://localhost:4000/user/intro/update', data, { withCredentials: true }, {
+  axios.put('http://localhost:4000/comm/intro/update', data, { withCredentials: true }, {
     headers: {
       'Content-Type': 'application/json',
     },
@@ -256,7 +256,7 @@ const imagechange = () => {
 
   console.log('정상작동')
   axios
-    .put('http://localhost:4000/user/profile/update', requestData, {  params: {
+    .put('http://localhost:4000/comm/profile/update', requestData, {  params: {
       id: userInfo.value.id,
     }, withCredentials: true })
     .then(response => {
@@ -308,7 +308,7 @@ const uploadFile = file => {
   formData.append('file', file)
 
   // axios.post가 Promise를 반환하므로 return 문을 사용하여 Promise를 반환하도록 합니다.
-  return axios.post('http://localhost:4000/user/upload', formData, {  params: {
+  return axios.post('http://localhost:4000/comm/upload', formData, {  params: {
     id: userInfo.value ? userInfo.value.id : null,
   }, withCredentials: true })
 }
