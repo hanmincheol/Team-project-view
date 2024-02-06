@@ -8,7 +8,7 @@ const filteredPaylist = computed(() => {
   if (selected.value.length === 0) {
     // 선택된 카테고리가 없는 경우 전체 paylist 반환
     return paylist.value;
-  } else if (selected.value.includes('지출') && selected.value.includes('수입')) {
+  } else if (selected.value.includes('지출') && selected.value.includes('수입') && selected.value.includes('충전')) {
     // '지출'과 '수입'이 모두 선택된 경우 전체 paylist 반환
     return paylist.value;
   } else if (selected.value.includes('지출')) {
@@ -17,6 +17,9 @@ const filteredPaylist = computed(() => {
   } else if (selected.value.includes('수입')) {
     // '수입'이 선택된 경우 data.payType이 2인 paylist만 반환
     return paylist.value.filter(data => data.payType === 2);
+  } else if (selected.value.includes('충전')) {
+    // '수입'이 선택된 경우 data.payType이 2인 paylist만 반환
+    return paylist.value.filter(data => data.payType === 0);
   } else {
     // 그 외의 경우 빈 배열 반환
     return [];
@@ -52,6 +55,7 @@ const fetchData = async () => {
 const items = [
   '지출',
   '수입',
+  '충전'
 ]
 
 const selected = ref([])
@@ -101,15 +105,6 @@ onMounted(fetchData);
                       @focus="borderColor = '#28a745'"  
                       @blur="borderColor = '#ccc'" 
                     />
-                  </VCol>
-                  <VCol cols="2">
-                    <VBtn 
-                      style=" margin-top: -15px;float: inline-end;"
-                      size="x-large"
-                      @click="writingModal=true"
-                    >
-                      글 등록
-                    </VBtn>
                   </VCol>
                 </VRow>
               </VCol>

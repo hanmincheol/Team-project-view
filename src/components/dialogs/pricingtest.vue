@@ -1,6 +1,7 @@
 <script setup>
 import { Bootpay } from '@bootpay/client-js'
 import { defineProps } from 'vue';
+import axios from '@axios'
 
 const props = defineProps({
     pay: {
@@ -72,7 +73,6 @@ const payHandler = async () => {    //await과 함께 사용하는 함수
         //     // 가상계좌 번호가 체번(발급) 되었을 때 호출되는 함수입니다.
         //     console.log(data);        
         });
-        alert('결제가 완료되었습니다.');
         paycheck(response);
     } catch (error) {
         console.log(error.message); // 오류 처리
@@ -90,39 +90,33 @@ function paycheck(response){
     if (status_locale === '결제완료') {
         // 결제가 성공적으로 완료된 경우
         alert('결제가 완료되었습니다.');
-        payListInsert('OSH',pay_date, 1, pay_name, pay_price, pay_method);
+        payListInsert('OSH', 1, pay_name, pay_price, pay_method);
     } else {
         // 결제가 실패한 경우
         alert('결제에 실패하였습니다.');
     }
 }
 
-const payListInsert = async (id, pay_date, pay_type, pay_name, pay_price, pay_method) =>{
+const payListInsert = async (id, pay_type, pay_name, pay_price, pay_method) =>{
     let formData = new FormData()
     formData.append('id', id)
-    formData.append('pay_date', pay_date)
     formData.append('pay_type', pay_type)
     formData.append('pay_name', pay_name)
     formData.append('pay_price', pay_price)
     formData.append('pay_method', pay_method)
 
-    // await axios.post('http://localhost:4000/Payment/Write.do', formData, { 
-    //     headers: {
-    //         'Content-Type': 'multipart/form-data',
-    //     },
-    // }).then(response => {
-    //     // 성공적으로 업데이트되었을 때의 처리
-    //     console.log('성공')
-    //     console.log(response.data)
-
-    //     // 댓글 입력 필드 초기화
-    //     commentinput.value = ''  
-
-    //     getComment() 
-    // }).catch(error => {
-    //     // 업데이트 중 오류가 발생했을 때의 처리
-    //     console.log('실패')
-    // })    
+    await axios.post('http://localhost:4000/Payment/Write.do', formData, { 
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    }).then(response => {
+        // 성공적으로 업데이트되었을 때의 처리
+        console.log('성공')
+        console.log(response.data)        
+    }).catch(error => {
+        // 업데이트 중 오류가 발생했을 때의 처리
+        console.log('실패')
+    })    
 }
 
 </script>
