@@ -65,6 +65,7 @@ const avatars = [
           <VRow>
             <VCol
               cols="6"
+              sm="12"
               style="margin: auto;"
             >
               <VCol
@@ -102,7 +103,10 @@ const avatars = [
                 </VCarouselItem>
               </VCarousel>
             </VCol>
-            <VCol cols="6">
+            <VCol
+              cols="6"
+              sm="12"
+            >
               <VRow>
                 <VCol>
                   <VRow style="margin-top: 1%;">

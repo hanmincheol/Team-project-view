@@ -505,7 +505,11 @@ const getMyList = async id => {
 <template>
   <section>
     <VRow style="margin-top: -50px;">
-      <VCol cols="8">
+      <VCol
+        cols="12"
+        md="8"
+        sm="12"
+      >
         <VCard
           flat
           :max-width="auto"
@@ -545,13 +549,17 @@ const getMyList = async id => {
               <!-- 카테고리 추가 -->
               <VRow>
                 <VCol
-                  cols="5"
+                  cols="12"
+                  md="5"
+                  sm="4"
                   style="margin-top: -15px;"
                 >
                   <Category @update:selected="handleSelected" />
                 </VCol>
                 <VCol
-                  cols="5"
+                  cols="12"
+                  md="5"
+                  sm="4"
                   style="margin-top: -15px;"
                 >
                   <VTextField
@@ -563,7 +571,11 @@ const getMyList = async id => {
                     @blur="borderColor = '#ccc'" 
                   />
                 </VCol>
-                <VCol cols="2">
+                <VCol
+                  cols="12"
+                  md="2"
+                  sm="4"
+                >
                   <VBtn 
                     style=" margin-top: -15px;float: inline-end;"
                     size="x-large"
