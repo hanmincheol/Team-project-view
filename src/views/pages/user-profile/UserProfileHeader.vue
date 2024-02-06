@@ -1,20 +1,29 @@
 <script setup>
 import axios from '@axios'
+import {useStore} from 'vuex'
+
+const store = useStore()
+const userInfo = computed(() => store.state.userStore.userInfo)
+
 
 const profileHeaderData = ref()
-
-
 const fetchHeaderData = () => {
-  axios.get('/pages/profile-header').then(response => {
+   axios.get('/pages/profile-header').then(response => {
     profileHeaderData.value = response.data
     console.log('가짜 프로필:', response.data)
+    console.log('유저 스토어 정보',userInfo.value.id )
   })
 }
 
-axios.get("http://localhost:4000/comm/profile", { params: { id: 'HMC' } }).then(response=>{
+axios.get("http://localhost:4000/comm/profile", { params: { id: userInfo.value.id }}
+)
+.then(response=>{
+
   console.log('유저 프로필 받아온 값:', response.data)
   profileHeaderData.value = response.data
-})
+}
+
+)
   .catch(()=>console.log('서버가 꺼져있습니다'))
 
 fetchHeaderData()

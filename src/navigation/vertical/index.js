@@ -1,5 +1,6 @@
 import management from "./management"
 
+
 export default [
   {
     title: '마이페이지',
@@ -19,11 +20,16 @@ export default [
       { title: '챌린지목록', to: { name: 'apps-challengeList' }, icon: { icon: 'mdi-charity-search'  } },
     ],
   },
-
+  
   {
     title: '자가진단',
     to: { name: 'selfTest' },
     icon: { icon: 'mdi-account-check-outline' },
+  },
+  {
+    title: '운동추천',
+    to: { name: 'exerciseRecommendation' },
+    icon: { icon: 'mdi-dumbbell' },
   },
 
   ...management,

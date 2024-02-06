@@ -1,5 +1,6 @@
 <script setup>
 import Editing from '@/components/dialogs/Editing.vue'
+import UserProfileCommunity from '@/components/dialogs/UserProfileCommunity.vue'
 import ViewPostPage from '@/components/dialogs/ViewPostPage.vue'
 import Writing from '@/components/dialogs/Writing.vue'
 import InviteFriendConfirmModal from '@/pages/community/InviteFriendConfirmModal.vue'
@@ -22,7 +23,7 @@ const writingModal = ref(false)
 const editingModal = ref(false)
 const borderColor = ref('#ccc')
 const viewPostPageModal = ref(false)
-const likesStatus = reactive({})  // 좋아요 버튼의 상태를 저장
+const isLiked = ref(false)  // 좋아요 버튼의 상태를 저장
 let postToEdit = ref("")
 
 const isInvited = {}
@@ -73,9 +74,12 @@ const getData = async function() {
   
   try {
     const response = await axios.post('http://localhost:4000/bbs/List.do', {
+      selectedItems: selected.value,
+    }, {
       headers: {
         'Content-Type': 'application/json',
       },
+      withCredentials: true,
     })
     
     
@@ -83,10 +87,6 @@ const getData = async function() {
     if (response.status === 200) {
       console.log('데이터 받기 성공')
       state.items = response.data // 데이터 저장
-
-      state.items.forEach(item => {
-        likesStatus[item.bno] = ref({ value: item.likes !== null })
-      })
 
       const tempUserKeys = []
       for(var i=0; i<state.items.length; i++){
@@ -101,11 +101,14 @@ const getData = async function() {
       temp의 앞에 현재 서비스를 이용 중인 유저의 아이디가 들어가야 함.
       뿌려주는 게시글 작성자들의 목록을 불러옴.
       */
-      temp.unshift(userId.value)
+      temp.unshift('HMC')
       console.log(temp)
-      axios.post("http://localhost:4000/bbs/userProfile", JSON.stringify({
+      axios.post("http://localhost:4000/bbs/userProfile", JSON.stringify, ({
         ids: temp,
-      }), { headers: { 'Content-Type': 'application/json' } })
+        id: userInfo.value.id,
+      }), { headers: { 'Content-Type': 'application/json' },
+        withCredentials: true, 
+      })
         .then(resp=>{
           console.log('요청받은 값:', resp.data)
           users.value = resp.data
@@ -253,6 +256,9 @@ const getComment = async function() {
 
       console.log('전체 데이타', groupedDataAll)
       console.log('특정 게시물 데이타', groupedDataAll.value)
+      postmodalData.value = {
+        comments: groupedDataAll.value[postbbsno.value],    
+      }
 
       // Allgroupbbs.value = groupedDataAll._rawValue[17]
       statecomm.value.comment = toRaw(groupedData)
@@ -273,14 +279,19 @@ const getComment = async function() {
 const searchuser = connetId //현재 접속중인 유저 아이디
 const commentinput = ref('')
 
-const insertComment = async (bno, comment) => {
+const insertComment = async (bno, comment, type, parent_comment) => {
   const formData = new FormData()
 
   formData.append('bbs_no', bno)
   formData.append('id', searchuser)
-  formData.append('ccomment', comment)
-
-  console.log(bno, searchuser, comment)
+  formData.append('ccomment', comment)  
+  if(type == 2 && parent_comment !== 0){
+    formData.append('parent_comment', parent_comment)
+    formData.append('type', 2)
+  }else{
+    formData.append('type', 1)
+  }
+  console.log(bno, searchuser, comment, parent_comment)
 
   await axios.post('http://localhost:4000/commentline/Write.do', formData, { 
     headers: {
@@ -302,6 +313,9 @@ const insertComment = async (bno, comment) => {
       console.log('실패')
     })
 }
+
+
+//////////////////////////////////////
 
 
 //스크롤 이벤트 리스터 추가 - 화면 하단에 스크롤 도착 시 loadMore()함수 호출
@@ -413,10 +427,17 @@ const profiledata = ref([])//내 프로필 데이터
 
 const openUserProfileModal = val => {
   console.log('오픈할 유저 프로필:', val)
+  let id
+  
+  if (typeof val === 'object' && val.id) {
+    id = val.id // val이 객체이고 id 속성이 존재하는 경우
+  } else {
+    id = val // 그 외의 경우 val 그대로 사용
+  }
   axios
     .get('http://localhost:4000/comm/profile', {
       params: {
-        id: val.id,
+        id: id,
       },
     })
     .then(response => {
@@ -459,12 +480,14 @@ const openViewPostMoadl = async val =>{
 
 ///좋아요!!
 const toggleLike = async bno => {
+  isLiked.value = !isLiked.value  // 좋아요 버튼의 상태를 토글
+
   try {
     const response = await axios.post('http://localhost:4000/bbs/likes.do', {
       id: connetId,
       bno: bno,
       cno: "",
-      isLiked: !likesStatus[bno].value,
+      isLiked: isLiked.value,
     })
 
     if (response.status === 200) {
@@ -473,9 +496,11 @@ const toggleLike = async bno => {
       await getData() // 좋아요 상태 변경 후 데이터를 다시 가져오기
     } else {
       console.log('좋아요 상태 변경 실패')
+      isLiked.value = !isLiked.value  // 실패했을 경우 상태를 원래대로 되돌림
     }
   } catch (error) {
     console.error(`좋아요 상태 변경 실패: ${error}`)
+    isLiked.value = !isLiked.value  // 실패했을 경우 상태를 원래대로 되돌림
   }
 }
 
@@ -512,7 +537,11 @@ const getMyList = async id => {
 <template>
   <section>
     <VRow style="margin-top: -50px;">
-      <VCol cols="8">
+      <VCol
+        cols="12"
+        md="8"
+        sm="12"
+      >
         <VCard
           flat
           :max-width="auto"
@@ -552,13 +581,17 @@ const getMyList = async id => {
               <!-- 카테고리 추가 -->
               <VRow>
                 <VCol
-                  cols="5"
+                  cols="12"
+                  md="5"
+                  sm="4"
                   style="margin-top: -15px;"
                 >
                   <Category @update:selected="handleSelected" />
                 </VCol>
                 <VCol
-                  cols="5"
+                  cols="12"
+                  md="5"
+                  sm="4"
                   style="margin-top: -15px;"
                 >
                   <VTextField
@@ -570,7 +603,11 @@ const getMyList = async id => {
                     @blur="borderColor = '#ccc'" 
                   />
                 </VCol>
-                <VCol cols="2">
+                <VCol
+                  cols="12"
+                  md="2"
+                  sm="4"
+                >
                   <VBtn 
                     style=" margin-top: -15px;float: inline-end;"
                     size="x-large"
@@ -650,7 +687,7 @@ const getMyList = async id => {
                                     </VListItem>
                                   </VList>
                                 </VMenu>
-                              </VBtn>
+                              </VBtn>                              
                             </VCol>
                           </VCol>
                         </VRow>
@@ -724,7 +761,7 @@ const getMyList = async id => {
                           <VCol cols="1">
                             <VBtn
                               size="large"
-                              @click="insertComment(item.bno, item.commentinput); item.commentinput = ''"
+                              @click="insertComment(item.bno, item.commentinput, 1, 0); item.commentinput = ''"
                             >
                               게시
                             </VBtn>
@@ -733,7 +770,7 @@ const getMyList = async id => {
                       </VCardText>
                       <VCol>
                         <VBtn
-                          :icon="likesStatus[item.bno].value ? 'mdi-heart' : 'mdi-heart-outline'"
+                          :icon="isLiked.value ? 'mdi-heart' : 'mdi-heart-outline'"
                           variant="text"
                           color="success"
                           @click="toggleLike(item.bno)"
@@ -754,7 +791,7 @@ const getMyList = async id => {
                           color="success"
                         />
                         <VCol>
-                          좋아요 {{ item.likesnum }}개
+                          좋아요 수
                         </VCol>
                         <VCol v-if="group[item.bno]">
                           <strong>{{ group[item.bno].C_NO }}번 {{ group[item.bno].ID }}</strong> {{ group[item.bno].CCOMMENT }}
@@ -883,6 +920,9 @@ const getMyList = async id => {
       :comments="postmodalData.comments"
       :bno="postToEdit.bno"
       :open-user-profile-modal="openUserProfileModal"
+      :insert-comment="insertComment"
+      :searchuser="searchuser"
+      :get-comment="getComment"
     />
   </section>
 </template>
