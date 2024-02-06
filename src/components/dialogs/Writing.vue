@@ -253,7 +253,7 @@ const zoomOut = e => {
           <VRow>
             <VCol cols="6">
               <VRow style=" margin-top: 20px;">
-                <VCol cols="6">
+                <VCol cols="8">
                   <VListItem 
                     v-for="(member, index) in members" 
                     :key="index"
