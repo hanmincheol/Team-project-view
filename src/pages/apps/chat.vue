@@ -7,6 +7,7 @@ import { useChat } from '@/views/apps/chat/useChat'
 import { useChatStore } from '@/views/apps/chat/useChatStore'
 import { useResponsiveLeftSidebar } from '@core/composable/useResponsiveSidebar'
 import { avatarText } from '@core/utils/formatters'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import { useDisplay } from 'vuetify'
 
@@ -32,26 +33,62 @@ const scrollToBottomInChatLog = () => {
   scrollEl.scrollTop = scrollEl.scrollHeight
 }
 
+
 //검색 쿼리에 따라 채팅 및 연락처 목록이 동적으로 업데이트
 //채팅 로그가 업데이트되면 맨 아래로 스크롤하여 사용자에게 가장 최근의 채팅 내용을 보여주는 기능
-const q = ref('')
+
+const q = ref("") // 로그인 유저
 
 watch(q, val => store.fetchChatsAndContacts(val), { immediate: true })
 
-// Open Sidebar in smAndDown when "start conversation" is clicked
+// 채팅방 시작
 const startConversation = () => {
   if (vuetifyDisplays.mdAndUp.value)
     return
   isLeftSidebarOpen.value = true
 }
 
-// Chat message
+
+// 메세지 부분
 const msg = ref('')
 
+// 웹소켓 연결 설정
+let socket = null
+
+onMounted(() => {
+  socket = new WebSocket('ws://localhost:4000/chat')
+
+  socket.onopen = () => {
+    console.log('웹소켓 시작')
+  }
+
+  socket.onmessage = event => {
+    const message = JSON.parse(event.data)
+
+
+    // 웹소켓으로 받은 메세지를 store에 추가
+    store.addMessage(message)
+  }
+
+  socket.onclose = () => {
+    console.log('웹소켓 끝')
+  }
+
+  socket.onerror = error => {
+    console.error('웹소켓 에러: ', error)
+  }
+})
+
+// 메세지 전송
 const sendMessage = async () => {
   if (!msg.value)
     return
-  await store.sendMsg(msg.value)
+
+  const message = { text: msg.value }
+
+
+  // 메세지를 웹소켓을 통해 전송
+  socket.send(JSON.stringify(message))
 
   // Reset message input
   msg.value = ''
@@ -61,6 +98,14 @@ const sendMessage = async () => {
     scrollToBottomInChatLog()
   })
 }
+
+// 컴포넌트가 unmount될 때 웹소켓 연결 종료
+onUnmounted(() => {
+  if (socket) {
+    socket.close()
+  }
+})
+
 
 const openChatOfContact = async userId => {
   await store.getChat(userId)

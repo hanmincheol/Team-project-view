@@ -8,6 +8,14 @@ import axios from '@axios'
 import { size } from '@floating-ui/dom'
 import defaultImg from '@images/userProfile/default.png'
 import { computed, onMounted, onUnmounted, reactive, ref, toRaw } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
+
+// 로그인 스토어와 사용자 스토어의 상태를 가져옵니다.
+const userInfo = computed(() => store.state.userStore.userInfo)
+const connetId=userInfo.value.id
+const name = computed(() => store.state.userStore.userInfo ? store.state.userStore.userInfo.name : null)
 
 const userProfileModal = ref(false)
 const writingModal = ref(false)
@@ -19,7 +27,7 @@ let postToEdit = ref("")
 
 const isInvited = {}
 const isSubscribed = {}
-const userId = ref('OSH') //접속한 유저의 아이디
+const userId = ref(connetId) //접속한 유저의 아이디
 
 let q = ref('')
 const users = ref([])
@@ -262,7 +270,7 @@ const getComment = async function() {
 
 
 //댓글 입력
-const searchuser = 'OSH' //현재 접속중인 유저 아이디
+const searchuser = connetId //현재 접속중인 유저 아이디
 const commentinput = ref('')
 
 const insertComment = async (bno, comment) => {
@@ -354,7 +362,7 @@ const controllInviteFunc = (ans, id) => { //DB에 접근
   console.log(ans, id)
   isInvited[id] = ref(false)
   axios.post("http://localhost:4000/comm/request", JSON.stringify({
-    userId: 'OSH',
+    userId: connetId,
     reqId: id,
     type: '1',
   }), { headers: { 'Content-Type': 'application/json' } })
@@ -382,7 +390,7 @@ const subscribe = (name, check) => {
   if (check == 1) {
     message.value = "구독이 추가되었습니다"
     axios.post("http://localhost:4000/comm/subscribe/subscribing", JSON.stringify({
-      userId: 'OSH',
+      userId: connetId,
       subToId: name,
     }), { headers: { 'Content-Type': 'application/json' } })
       .catch(err=>console.log(err))
@@ -391,7 +399,7 @@ const subscribe = (name, check) => {
     message.value = "구독이 취소되었습니다"
     axios.delete("http://127.0.0.1:4000/comm/subscribe/delete", {
       data: {
-        userId: 'OSH',
+        userId: connetId,
         subToId: name,
       },
     }, { headers: { "Content-Type": `application/json` } })
@@ -453,7 +461,7 @@ const openViewPostMoadl = async val =>{
 const toggleLike = async bno => {
   try {
     const response = await axios.post('http://localhost:4000/bbs/likes.do', {
-      id: "HMC",
+      id: connetId,
       bno: bno,
       cno: "",
       isLiked: !likesStatus[bno].value,
@@ -461,7 +469,7 @@ const toggleLike = async bno => {
 
     if (response.status === 200) {
       console.log(response.data.likesId)
-      likesStatus[bno].value = response.data.likesId !== "OSH" //아이디 비교
+      likesStatus[bno].value = response.data.likesId !== connetId //아이디 비교
       await getData() // 좋아요 상태 변경 후 데이터를 다시 가져오기
     } else {
       console.log('좋아요 상태 변경 실패')

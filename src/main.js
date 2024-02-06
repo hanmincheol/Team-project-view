@@ -11,6 +11,7 @@ import '@core/scss/template/index.scss'
 import '@styles/styles.scss'
 import 'bootstrap'
 import { createApp } from 'vue'
+
 import store from './store'
 
 // import 'bootstrap/dist/css/bootstrap.min.css'
@@ -29,7 +30,7 @@ app.use(vuetify)
 app.use(createPinia())
 app.use(router)
 app.use(layoutsPlugin)
-app.use(store) 
+app.use(store)
 
 //app.use(xroute)
 // Mount vue app

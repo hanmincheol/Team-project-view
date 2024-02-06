@@ -21,6 +21,10 @@ const props = defineProps({
 const store = useChatStore()
 const { resolveAvatarBadgeVariant } = useChat()
 
+// isChatContactActive는 computed property로,
+// 현재 활성화된 채팅의 연락처 ID가 props.user.id와 동일한지에 따라 결정됩니다.
+// props.isChatContact이 아니라면, store.activeChat이 채팅이 아니고 isActive가 참일 경우를 반환합니다.
+// 그렇지 않으면 isActive를 반환합니다.
 const isChatContactActive = computed(() => {
   const isActive = store.activeChat?.contact.id === props.user.id
   if (!props.isChatContact)
@@ -29,6 +33,7 @@ const isChatContactActive = computed(() => {
   return isActive
 })
 </script>
+
 
 <template>
   <li
