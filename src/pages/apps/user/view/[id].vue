@@ -5,6 +5,7 @@ import UserBioPanel from '@/views/apps/user/view/UserBioPanel.vue'
 import UserEdit from '@/views/apps/user/view/UserEdit.vue'
 import UserHistory from '@/views/apps/user/view/UserHistory.vue'
 import UserTabBillingsPlans from '@/views/apps/user/view/UserTabBillingsPlans.vue'
+import UserPaymentList from '@/views/apps/user/view/UserPaymentList.vue'
 
 
 const userListStore = useUserListStore()
@@ -36,6 +37,10 @@ const tabs = [
   {
     icon: 'mdi-credit-card-plus',
     title: '결제등록',
+  },
+  {
+    icon: 'mdi-credit-card-plus',
+    title: '결제내역',
   },
 ]
 
@@ -95,6 +100,10 @@ userListStore.fetchUser(Number(route.params.id)).then(response => {
 
         <VWindowItem>
           <UserTabBillingsPlans />
+        </VWindowItem>
+
+        <VWindowItem>
+          <UserPaymentList />
         </VWindowItem>
       </VWindow>
     </VCol>
