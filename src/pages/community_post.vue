@@ -635,6 +635,7 @@ const getMyList = async id => {
                           <VCol cols="1">
                             <VAvatar 
                               class="text-sm pointer-cursor"
+                              style="margin: 3px 10px;"
                               :image="getUserAvatar(item.id)"
                               @click="openUserProfileModal(item)"
                             />
@@ -643,7 +644,7 @@ const getMyList = async id => {
                             <VCol cols="12">
                               <VCardSubtitle
                                 class="text-sm pointer-cursor"
-                                style="margin-left: -5%;"
+                                style="margin-left: -10%;"
                                 @click="openUserProfileModal(item)"
                               >
                                 {{ item.id }}  <!-- 유저 닉네임 뿌려주기 -->

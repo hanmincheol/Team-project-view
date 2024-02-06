@@ -10,6 +10,9 @@ import { computed, reactive, ref, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
+
+
+
 const props = defineProps({
   isDialogVisible: {
     type: Boolean,
@@ -24,6 +27,7 @@ const emit = defineEmits(['update:isDialogVisible', "update-success"])
 const store = useStore()
 
 const userInfo = computed(() => store.state.userStore.userInfo)
+const connetId=userInfo.value.id
 const name = computed(() => store.state.userStore.userInfo ? store.state.userStore.userInfo.name : null)
 
 const isprofile = ref(false)
@@ -58,14 +62,14 @@ const isButtonDisabled = computed(() => {
 const members = [
   {
     avatar: avatar1,
-    name: '멋쟁이 승영이',
+    name: connetId,
   },
 ]
 
 // axios를 사용하여 데이터를 서버로 보내는 함수
 const submitData = async function() {
   let formData = new FormData()
-  formData.append('id', 'HMC')
+  formData.append('id', connetId)
   formData.append('content', textValue.value)
   formData.append('hashTag', hashtagValue.value)
   formData.append('type', subValue.value.value )
@@ -275,10 +279,7 @@ const zoomOut = e => {
                     </VListItemTitle>
                   </VListItem>
                 </VCol>
-                <VCol
-                  cols="4"
-                  style=" margin-left: 85px;"
-                >
+                <VCol cols="4">
                   <Sub v-model="subValue" />
                 </VCol>
               </VRow>

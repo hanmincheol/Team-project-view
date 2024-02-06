@@ -1,12 +1,13 @@
 <script setup>
 import avatar1 from '@images/avatars/avatar-1.png'
-import avatar2 from '@images/avatars/avatar-2.png'
-import avatar3 from '@images/avatars/avatar-3.png'
-import avatar4 from '@images/avatars/avatar-4.png'
+
 
 import axios from '@axios'
 import backgroundimg from '@images/pages/writing.jpg'
 import { ref } from 'vue'
+import { useStore } from 'vuex'
+
+
 
 const props = defineProps({
   isDialogVisible: {
@@ -22,6 +23,13 @@ const props = defineProps({
 
 const emit = defineEmits(['update:isDialogVisible', 'update-success'])
 
+const store = useStore()
+
+// 로그인 스토어와 사용자 스토어의 상태를 가져옵니다.
+const userInfo = computed(() => store.state.userStore.userInfo)
+const connetId=userInfo.value.id
+const name = computed(() => store.state.userStore.userInfo ? store.state.userStore.userInfo.name : null)
+
 // switch2의 초기값은 postToEdit.disclosureYN의 값에 따라 결정됩니다.
 const switch2 = ref(props.postToEdit.disclosureYN === 'Y')
 
@@ -36,13 +44,6 @@ const disclosureValue = computed(() => switch2.value ? 'Y' : 'N')
 const hashtags = ref([])
 const hashtagValue = ref('')
 const content = ref('') // 콘텐츠를 저장할 ref를 추가
-
-const avatars = [
-  avatar1,
-  avatar2,
-  avatar3,
-  avatar4,
-]
 
 // hashtagValue를 감시하도록 watch 함수를 설정
 watch(hashtagValue, () => {
