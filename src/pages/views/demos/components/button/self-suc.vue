@@ -1,6 +1,6 @@
 <template>
   <VBtn
-    style="width: 150px;"
+    style="width: 100px;"
     color="success"
     variant="tonal"
   >

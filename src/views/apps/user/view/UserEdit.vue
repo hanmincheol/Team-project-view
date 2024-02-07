@@ -33,6 +33,8 @@ const editClick6 = ref(true) //생년월일
 const edit6 = ref(false)
 const editClick7 = ref(true) //주소
 const edit7 = ref(false)
+const editClick8 = ref(true) //주소
+const edit8 = ref(false)
 
 const nameval = ref('')
 const pwdval = ref('')
@@ -356,14 +358,53 @@ const updateuserdata = async (colname, newcolval, id) => {
               @click="editClick7=true, edit7=false, updatedata('userAddress', userAddressval, searchuser)"
             />
           </VChip>
-          <Edit
+          <VTextField
             v-model="userAddressval"
+            prepend-inner-icon="mdi-home"
             style="margin-top: 10px;"
             :readonly="editClick7"
             :placeholder="memberdata.userAddress"
           />
         </VCol>
       </VRow>
+    </VCol>
+    <VCol cols="12">
+      <VChip label>
+        <strong v-if="!edit8">이메일 인증하기</strong>
+        <strong v-if="edit8">이메일 완료</strong>
+        <strong v-if="!edit8 && edit8">이메일 진행 중</strong>
+        <IconBtn v-if="!edit8">
+          <VIcon
+            size="22"
+            icon="mdi-email-alert-outline"
+            @click="editClick8=false, edit8=true"
+          />
+        </IconBtn>
+        <IconBtn v-if="edit8">
+          <VIcon
+            size="22"
+            icon="mdi-email-check-outline"
+            color="success"
+            @click="editClick8=false, edit8=true"
+          />
+        </IconBtn>
+        <IconBtn v-if="!edit8 && edit8">
+          <VIcon
+            size="22"
+            icon="mdi-email-sync-outline"
+            color="success"
+            @click="editClick8=false, edit8=true"
+          />
+        </IconBtn>
+      </VChip>
+      <VTextField
+        v-model="email"
+        style="margin-top: 10px;"
+        prepend-inner-icon="mdi-email-outline"
+        type="email"
+        :readonly="editClick8"
+        placeholder="Email"
+      />
     </VCol>
   </VCard>
 </template>
