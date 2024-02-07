@@ -5,6 +5,8 @@ import axios from '@axios'
 import { onMounted, ref } from 'vue'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import { useChat } from './useChat'
+import { useStore } from 'vuex'
+
 
 const props = defineProps({
   search: {
@@ -23,6 +25,12 @@ const emit = defineEmits([
   'close',
   'update:search',
 ])
+
+//const store = useStore()
+
+// 로그인 스토어와 사용자 스토어의 상태를 가져옵니다.
+//const userInfo = computed(() => store.state.userStore.userInfo)
+//const connetId=userInfo.value.id
 
 onMounted(async () => {
   //실제 사용자 ID 넣기!!!

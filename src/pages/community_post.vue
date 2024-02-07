@@ -71,7 +71,6 @@ const searchItems = computed(() => {
 })
 
 const getData = async function() {
-  
   try {
     const response = await axios.post('http://localhost:4000/bbs/List.do', {
       selectedItems: selected.value,
@@ -81,8 +80,8 @@ const getData = async function() {
       },
       withCredentials: true,
     })
-    
-    
+
+
     // 응답 처리
     if (response.status === 200) {
       console.log('데이터 받기 성공')
@@ -92,9 +91,7 @@ const getData = async function() {
       for(var i=0; i<state.items.length; i++){
         tempUserKeys[i] = state.items[i].id
       }
-
       const tempUserKeysSet = new Set(tempUserKeys) //중복 아이디 제거
-
       const temp = [...tempUserKeysSet] //ids
 
       /*
@@ -103,11 +100,10 @@ const getData = async function() {
       */
       temp.unshift('HMC')
       console.log(temp)
-      axios.post("http://localhost:4000/bbs/userProfile", JSON.stringify, ({
+      axios.post("http://localhost:4000/bbs/userProfile", JSON.stringify ({
         ids: temp,
-        id: userInfo.value.id,
       }), { headers: { 'Content-Type': 'application/json' },
-        withCredentials: true, 
+        withCredentials: true,
       })
         .then(resp=>{
           console.log('요청받은 값:', resp.data)
@@ -121,7 +117,6 @@ const getData = async function() {
               usersView.value.push(ele)
             }
             console.log(usersView.value)
-            
             console.log(usersView)
             for(const id in usersView.value){
               if(usersView.value[id]['isFriend']==0) { //구독관계인지, 친구관계인지 체크
@@ -140,7 +135,6 @@ const getData = async function() {
           })
         })
         .catch(err=>console.log(err))
-
       console.log(state.items[1].files)
       console.log('데이터 체크', response.data)
     } else {
@@ -149,7 +143,6 @@ const getData = async function() {
   } catch (error) {
     console.error(`데이터 전송 실패: ${error}`)
   }
-
 }
 
 const getUserAvatar = userId => {
