@@ -331,15 +331,26 @@ export default {
         "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=ca9eb44c2889273e11b9860d99308508&libraries=services,clusterer,drawing"
       document.head.appendChild(script)
     }
+
   }, //mounted
   updated() {
+    
+    var places = new kakao.maps.services.Places()
+
+    var callback = function(result, status) {
+      if (status === kakao.maps.services.Status.OK) {
+        console.log('검색 결과:', result)
+      }
+    }//callback
+
     console.log('업데이트됨')
     this.recommendPath.forEach(ele=>{
       var path=''
       ele.forEach(i=>{
-        path += 'i' + ' - '
+        path += i + ' - '
+        places.keywordSearch(i,callback)
       })
-      this.recommendPathView.values.push(path)
+      this.recommendPathView.push(path)
       console.log('recommendPathView', this.recommendPathView)
     })
   },
@@ -362,7 +373,6 @@ export default {
 
     //로드 뷰 관련 함수---------------------------------------------------------
     createRoadView(lat, lng, map){ //로드뷰 보여주기
-      console.log('drawmap확인용:', lat)
 
       // 로드뷰 도로를 지도위에 올린다. (근데 올리면 정신없음)
       // map.addOverlayMapTypeId(kakao.maps.MapTypeId.ROADVIEW)
@@ -381,13 +391,10 @@ export default {
       //map walker 생성-----------------------------------------------
       // 로드뷰의 초기화 되었을때 map walker를 생성한다.
       kakao.maps.event.addListener(roadview, 'init', function() {
-        console.log('로드뷰 동동이 디버깅용')
 
         // map walker를 생성한다. 생성시 지도의 중심좌표를 넘긴다.
         this.mapWalker = new MapWalker(position)
         this.mapWalker.setMap(map) // map walker를 지도에 설정한다.
-        console.log('동동이지도:', map)
-        console.log('동동이:', this.mapWalker)
 
         // 로드뷰가 초기화 된 후, 추가 이벤트를 등록한다.
         // 로드뷰를 상,하,좌,우,줌인,줌아웃을 할 경우 발생한다.
@@ -397,7 +404,6 @@ export default {
           // 이벤트가 발생할 때마다 로드뷰의 viewpoint값을 읽어, map walker에 반영
           var viewpoint = roadview.getViewpoint()
           this.mapWalker.setAngle(viewpoint.pan)
-          console.log('viewpoint디버깅:', viewpoint)
         })
 
         // 로드뷰내의 화살표나 점프를 하였을 경우 발생한다.
@@ -406,7 +412,6 @@ export default {
 
           // 이벤트가 발생할 때마다 로드뷰의 position값을 읽어, map walker에 반영 
           var position = roadview.getPosition()
-          console.log('position디버깅:', position)
           this.mapWalker.setPosition(position)
           map.setCenter(position)
 
@@ -446,7 +451,8 @@ export default {
           this.createRoadView(lat.value, lng.value, this.map)
           
         })
-
+        
+        //카카오 위도 경도 검색 api 테스트
         var places = new kakao.maps.services.Places()
 
         var callback = function(result, status) {
