@@ -18,21 +18,22 @@ const router = createRouter({
       meta: { requiresAuth: false }, // 이 라우트는 로그인이 필요함을 나타냅니다.
     },
     {
-      path: '/main',
-      redirect: () => ({ name: 'main', params: { tab: 'profile' } }),
-      component: 'main',
-      meta: { requiresAuth: false },
-
       beforeEnter: (to, from, next) => {
         if (store.state.loginStore.isLogin) {
           console.log('로그인 된 상태')
           next()
         } else {
           console.log('로그인 안 된 상태')
-          next({ name: 'login' }) // 로그인 페이지로 리다이렉트
+          store.dispatch('isSocialLogin') // 쿠키에서 토큰을 가져옴
+            .then(() => {
+              if (store.state.loginStore.isLogin) {
+                next() // 토큰이 유효하면 메인 페이지로 진행
+              } else {
+                next({ name: 'login' }) // 토큰이 유효하지 않으면 로그인 페이지로 리다이렉트
+              }
+            })
         }
       },
-
     },
 
     

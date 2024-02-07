@@ -222,6 +222,10 @@ const updateprofile = newcolval => {
   })
     .then(response => {
       console.log('성공')
+
+      const store = useStore() // 이 줄을 추가합니다.
+
+      store.dispatch('userStore/updateUserInfo', { pro_filepath: newcolval }) // 이 줄을 추가합니다.
     })
     .catch(error => {
       console.log('실패')
