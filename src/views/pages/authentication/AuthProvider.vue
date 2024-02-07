@@ -1,7 +1,12 @@
 <script setup>
-import { useTheme } from 'vuetify'
+import { useTheme } from 'vuetify';
+import { useStore } from 'vuex';
 
 const { global } = useTheme()
+
+const store = useStore()
+
+
 
 const authProviders = [
   {
@@ -29,6 +34,11 @@ const authProviders = [
     url: 'http://localhost:4000/oauth2/authorization/google',
   },
 ]
+
+
+const socialLogin = url => {
+  store.dispatch('socialLogin', url)
+}
 </script>
 
 <template>
@@ -39,5 +49,9 @@ const authProviders = [
     :href="link.url"
     variant="text"
     :color="global.name.value === 'dark' ? link.colorInDark : link.color"
+    @click.prevent="socialLogin(link.url)"
   />
 </template>
+
+
+

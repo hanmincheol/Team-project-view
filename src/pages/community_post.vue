@@ -103,9 +103,9 @@ const getData = async function() {
       */
       temp.unshift('HMC')
       console.log(temp)
-      axios.post("http://localhost:4000/bbs/userProfile", JSON.stringify, ({
+      axios.post("http://localhost:4000/bbs/userProfile", JSON.stringify ({
         ids: temp,
-        id: userInfo.value.id,
+  
       }), { headers: { 'Content-Type': 'application/json' },
         withCredentials: true, 
       })

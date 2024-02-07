@@ -1,8 +1,11 @@
 // store/modules/loginStore.js
-//import router from '@/router'
+
 
 import axiosIns from '@/plugins/axios'
+import router from '@/router'
 import axios from '@axios'
+
+
 
 const loginStore = {
   state: {
@@ -16,7 +19,8 @@ const loginStore = {
     loginSuccess: function (state, payload) {
       state.userInfo = payload
       state.isLogin = true
-      window.location.href="/main"
+      
+      router.push('/main')
 
     },
     logoutTest: function (state) {
@@ -65,6 +69,28 @@ const loginStore = {
           
         })
     },
+    socialLogin(context, url) {
+      window.location.href = url // 백엔드 서버로 리다이렉트
+      console.log("여기는 되는거지?")
+    },
+    
+    isSocialLogin(context) {
+      axios.get('http://localhost:4000/user/isSocialLogin', {
+        withCredentials: true,
+      })
+        .then(res => {
+          const token = res.data
+
+          console.log("이거 실행되니?")
+          context.dispatch('saveToken', token) // 토큰을 저장함
+        })
+        .catch(error => {
+          console.log(error)
+          alert('소셜 로그인에 실패했습니다. 다시 시도해주세요.')
+        })
+    },
+
+
     saveToken(context, token){
       console.log('여기 와지니??')
       localStorage.setItem('access_token', token) // 토큰을 저장함
@@ -86,8 +112,11 @@ const loginStore = {
           const userInfo = {
             name: res.data.name,
             id: res.data.id,
+            pro_filepath: res.data.pro_filepath,
           }
 
+          console.log(res.data.pro_filepath)
+          
           commit('loginSuccess', userInfo)
 
 
