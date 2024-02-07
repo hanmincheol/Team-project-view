@@ -1,22 +1,31 @@
 <script setup>
+import ViewPostPage from '@/components/dialogs/ViewPostPage.vue'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import { avatarText } from '@core/utils/formatters'
+import axios from '@axios'
+import { useStore } from 'vuex'
+
+const store = useStore()
+
+// 로그인 스토어와 사용자 스토어의 상태를 가져옵니다.
+const userInfo = computed(() => store.state.userStore.userInfo)
+const connetId=userInfo.value.id
+const name = computed(() => store.state.userStore.userInfo ? store.state.userStore.userInfo.name : null)
 
 const props = defineProps({
-  notifications: {
-    type: Array,
-    required: true,
-  },
-  badgeProps: {
-    type: null,
-    required: false,
-    default: undefined,
-  },
   location: {
     type: null,
     required: false,
     default: 'bottom end',
   },
+  noticlists:{
+    type:Array,
+    required:true,
+  },
+  noticflag:{
+    type:Boolean,
+    required:true,
+  }
 })
 
 const emit = defineEmits([
@@ -26,23 +35,31 @@ const emit = defineEmits([
   'click:notification',
 ])
 
-const isAllMarkRead = computed(() => props.notifications.some(item => item.isSeen === false))
+function getTimeDiffString(triggerDate) {
+  const triggerDateObj = new Date(triggerDate);
+  const currentDate = new Date();
+  const timeDiff = currentDate - triggerDateObj;
+  const minutes = Math.floor(timeDiff / (1000 * 60));
 
-const markAllReadOrUnread = () => {
-  const allNotificationsIds = props.notifications.map(item => item.id)
-  if (!isAllMarkRead.value)
-    emit('unread', allNotificationsIds)
-  else
-    emit('read', allNotificationsIds)
+  if (minutes < 60) {
+    return `${minutes}분 전`;
+  } else if (minutes < 24 * 60) {
+    const hours = Math.floor(minutes / 60);
+    return `${hours}시간 전`;
+  } else {
+    const days = Math.floor(minutes / (24 * 60));
+    return `${days}일 전`;
+  }
 }
+
+
 </script>
 
 <template>
   <IconBtn id="notification-btn">
     <VBadge
+      v-show="noticflag"
       dot
-      v-bind="props.badgeProps"
-      :model-value="props.notifications.some(n => !n.isSeen)"
       color="error"
       bordered
       offset-x="1"
@@ -50,7 +67,10 @@ const markAllReadOrUnread = () => {
     >
       <VIcon icon="mdi-bell-outline" />
     </VBadge>
-
+    <VIcon
+      v-show="!noticflag"
+      icon="mdi-bell-outline"
+    />
     <VMenu
       activator="parent"
       width="380px"
@@ -62,12 +82,12 @@ const markAllReadOrUnread = () => {
         <!-- 👉 Header -->
         <VCardItem class="notification-section">
           <VCardTitle class="text-lg">
-            Notifications
+            '{{connetId}}'님 알림 현황
           </VCardTitle>
 
           <template #append>
             <IconBtn
-              v-show="props.notifications.length"
+              v-show="props.noticlists.length"
               @click="markAllReadOrUnread"
             >
               <VIcon :icon="!isAllMarkRead ? 'mdi-email-outline' : 'mdi-email-open-outline' " />
@@ -91,8 +111,8 @@ const markAllReadOrUnread = () => {
         >
           <VList class="py-0">
             <template
-              v-for="(notification, index) in props.notifications"
-              :key="notification.title"
+              v-for="(notification, index) in noticlists"
+              :key="index"
             >
               <VDivider v-if="index > 0" />
               <VListItem
@@ -100,7 +120,6 @@ const markAllReadOrUnread = () => {
                 lines="one"
                 min-height="66px"
                 class="list-item-hover-class"
-                @click="$emit('click:notification', notification)"
               >
                 <!-- Slot: Prepend -->
                 <!-- Handles Avatar: Image, Icon, Text -->
@@ -108,35 +127,33 @@ const markAllReadOrUnread = () => {
                   <VListItemAction start>
                     <VAvatar
                       size="40"
-                      :color="notification.color && notification.icon ? notification.color : undefined"
-                      :image="notification.img || undefined"
-                      :icon="notification.icon || undefined"
-                      :variant="notification.img ? undefined : 'tonal' "
-                    >
-                      <span v-if="notification.text">{{ avatarText(notification.text) }}</span>
-                    </VAvatar>
+                      :image="notification.pro_filepath"
+                    />
                   </VListItemAction>
                 </template>
 
-                <VListItemTitle>{{ notification.title }}</VListItemTitle>
-                <VListItemSubtitle>{{ notification.subtitle }}</VListItemSubtitle>
-                <span class="text-xs text-disabled">{{ notification.time }}</span>
+                <VListItemTitle><v-chip color="error">{{notification.notic_trigger_user}}</v-chip> 
+                <small>{{ notification.notic_type===1? '님께서 댓글을 달았습니다.': '님께서 좋아요를 눌렀습니다.'}}</small>                  
+                </VListItemTitle>
+                
+                <!-- <VListItemSubtitle>{{ notification.ccomment }}</VListItemSubtitle> -->
+                <span class="text-xs text-disabled">{{getTimeDiffString(notification.notic_trigger_date)}}</span>
 
                 <!-- Slot: Append -->
                 <template #append>
                   <div class="d-flex flex-column align-center gap-4">
                     <VBadge
                       dot
-                      :color="!notification.isSeen ? 'primary' : '#a8aaae'"
-                      :class="`${notification.isSeen ? 'visible-in-hover' : ''} ms-1`"
-                      @click.stop="$emit(notification.isSeen ? 'unread' : 'read', [notification.id])"
+                      :color="notification.checked_time == null ? 'primary' : '#a8aaae'"
+                      :class="`${notification.checked_time !== null ? 'visible-in-hover' : ''} ms-1`"
+                      @click.stop="updatenotic(connetId)"
                     />
 
                     <div style="block-size: 28px; inline-size: 28px;">
                       <IconBtn
                         size="x-small"
                         class="visible-in-hover"
-                        @click="$emit('remove', notification.id)"
+                        @click="removenotic(notification.notic_receive_user, notification.notic_trigger_date)"
                       >
                         <VIcon
                           size="20"
@@ -150,7 +167,7 @@ const markAllReadOrUnread = () => {
             </template>
 
             <VListItem
-              v-show="!props.notifications.length"
+              v-show="!props.noticlists.length"
               class="text-center text-medium-emphasis"
               style="block-size: 56px;"
             >
@@ -163,8 +180,8 @@ const markAllReadOrUnread = () => {
 
         <!-- 👉 Footer -->
         <VCardText
-          v-show="props.notifications.length"
-          class="notification-footer"
+          v-show="props.noticlists.length"
+          class="notification-footer"          
         >
           <VBtn block>
             VIEW ALL NOTIFICATIONS
@@ -174,6 +191,7 @@ const markAllReadOrUnread = () => {
     </VMenu>
   </IconBtn>
 </template>
+
 
 <style lang="scss">
 .notification-section {

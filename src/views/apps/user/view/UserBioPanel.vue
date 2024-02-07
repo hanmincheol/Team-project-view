@@ -222,6 +222,10 @@ const updateprofile = newcolval => {
   })
     .then(response => {
       console.log('성공')
+
+      const store = useStore() // 이 줄을 추가합니다.
+
+      store.dispatch('userStore/updateUserInfo', { pro_filepath: newcolval }) // 이 줄을 추가합니다.
     })
     .catch(error => {
       console.log('실패')
@@ -285,8 +289,7 @@ const uploadImg = e => {
     fileName = fileList[0].name
     inputfilename.value = fileName // 변경 전: `/src/assets/images/userProfile/${fileName}`
     uploadFile(fileList[0]).then(() => {
-      // 이미지 업로드가 완료된 후에 프로필 이미지 업데이트
-      imagechange()
+      console.log('파일 업로드 진행..')
     }).catch(error => {
       console.error('File upload failed')
       console.error('Error:', error)

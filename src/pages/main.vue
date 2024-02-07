@@ -1,7 +1,28 @@
 <script setup>
-import Calendar from '@/pages/apps/calendar.vue';
-import Timeline from '@/pages/components/timeline.vue';
-import CrmActivityTimeline from '@/views/dashboards/crm/CrmActivityTimeline.vue';
+import Calendar from '@/pages/apps/calendar.vue'
+import Timeline from '@/pages/components/timeline.vue'
+import CrmActivityTimeline from '@/views/dashboards/crm/CrmActivityTimeline.vue'
+import { onMounted } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
+
+onMounted(() => {
+  const urlParams = new URLSearchParams(window.location.search)
+  const token = urlParams.get('token')
+
+  if (token) {
+    store.dispatch('saveToken', token)
+
+    
+    // 로컬 스토리지에 저장된 토큰을 이용해 사용자 정보를 가져옴
+    
+
+    
+  }
+})
+
+
 
 const userTab = ref(null)
 

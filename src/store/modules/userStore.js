@@ -8,7 +8,7 @@ const userStore = {
   mutations: {
     // 사용자 정보를 업데이트하는 뮤테이션
     UPDATE_USER_INFO(state, newUserInfo) {
-      state.userInfo = newUserInfo
+      state.userInfo = { ...state.userInfo, ...newUserInfo }
 
     },
 
@@ -25,8 +25,8 @@ const userStore = {
       commit('UPDATE_USER_INFO', newUserInfo)
       console.log("newUserInfo", newUserInfo)
       console.log("userInfo", state.userInfo)  // 'userInfo'를 'state.userInfo'로 수정
-      
 
+      
     },
 
     // searchuser를 업데이트하는 액션
