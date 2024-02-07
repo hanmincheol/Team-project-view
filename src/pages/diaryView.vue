@@ -3,6 +3,7 @@ import AppDateTimePicker from '@/@core/components/app-form-elements/AppDateTimeP
 import axios from '@axios'
 import DiaryView from '@images/cards/DiaryView.png'
 import { ref } from 'vue'
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 
 // const props = defineProps({
 //   imgUrls: {
@@ -59,7 +60,9 @@ const showDiary = diaryId => { //다이어리 내용 불러오는 함수
     .then(resp => {
       diaryShowTag.innerHTML = resp.data.diary_content //다이어리 텍스트 뿌려주기
       imgUrls.value = resp.data.imgUrls //다이어리 이미지 뿌려주기
-
+      if (resp.data.diary_content == 'undefined'){
+        diaryShowTag.innerHTML = '<VBtn>글 작성하기</VBtn>'
+      }
     })
     .catch(err=>console.error(err))
 }
@@ -142,10 +145,12 @@ onMounted(()=>{ //처음 다이어리 상세보기 페이지 들어갔을 때 �
               style="height: 1000px;"
             >
               <VCard style="display:flex; width: 75%; height: 72%; margin-top: -15px; background-color: rgba( 255, 255, 255, 0.88 );">
-                <VCardText
-                  id="diary"
-                  style="text-align: left;"
-                />
+                <PerfectScrollbar :options="{ wheelPropagation: false }">
+                  <VCardText
+                    id="diary"
+                    style="text-align: left; line-height:35px;"
+                  />
+                </PerfectScrollbar>
               </VCard>
             </VCol>
           </VCol>

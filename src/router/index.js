@@ -3,6 +3,7 @@ import { setupLayouts } from 'virtual:generated-layouts'
 import { createRouter, createWebHistory } from 'vue-router'
 import routes from '~pages'
 
+
 export const isfriendscreenchanged = ref(false)
 export const isSubscribesscreenchanged = ref(false)
 export const isMatescreenchanged = ref(false)
@@ -42,6 +43,7 @@ const router = createRouter({
       redirect: () => ({ name: 'pages-user-profile-tab', params: { tab: 'profile' } }),
       meta: { requiresAuth: true },
     },
+
     ...setupLayouts(routes),
   ],
 })
