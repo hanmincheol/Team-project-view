@@ -84,7 +84,7 @@ function paycheck(response){
     const status_locale = response.data.status_locale;
     const pay_name = response.data.order_name;
     const pay_price = response.data.price;
-    const pay_date = response.data.purchased_at
+    const pay_date = response.data.purchased_at;
     const pay_method = response.data.pg;
     // 결제 완료 후의 동작 추가
     if (status_locale === '결제완료') {

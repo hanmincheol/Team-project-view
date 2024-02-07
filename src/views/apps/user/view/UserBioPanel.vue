@@ -285,8 +285,7 @@ const uploadImg = e => {
     fileName = fileList[0].name
     inputfilename.value = fileName // 변경 전: `/src/assets/images/userProfile/${fileName}`
     uploadFile(fileList[0]).then(() => {
-      // 이미지 업로드가 완료된 후에 프로필 이미지 업데이트
-      imagechange()
+      console.log('파일 업로드 진행..')
     }).catch(error => {
       console.error('File upload failed')
       console.error('Error:', error)

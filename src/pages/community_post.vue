@@ -18,6 +18,7 @@ const userInfo = computed(() => store.state.userStore.userInfo)
 const connetId=userInfo.value.id
 const name = computed(() => store.state.userStore.userInfo ? store.state.userStore.userInfo.name : null)
 
+
 const userProfileModal = ref(false)
 const writingModal = ref(false)
 const editingModal = ref(false)
@@ -28,7 +29,7 @@ let postToEdit = ref("")
 
 const isInvited = {}
 const isSubscribed = {}
-const userId = ref(connetId) //접속한 유저의 아이디
+const userId = ref(userInfo.value.id) //접속한 유저의 아이디
 
 let q = ref('')
 const users = ref([])
@@ -80,20 +81,16 @@ const getData = async function() {
       },
       withCredentials: true,
     })
-
-
     // 응답 처리
     if (response.status === 200) {
       console.log('데이터 받기 성공')
       state.items = response.data // 데이터 저장
-
       const tempUserKeys = []
       for(var i=0; i<state.items.length; i++){
         tempUserKeys[i] = state.items[i].id
       }
       const tempUserKeysSet = new Set(tempUserKeys) //중복 아이디 제거
       const temp = [...tempUserKeysSet] //ids
-
       /*
       temp의 앞에 현재 서비스를 이용 중인 유저의 아이디가 들어가야 함.
       뿌려주는 게시글 작성자들의 목록을 불러옴.
@@ -269,7 +266,10 @@ const getComment = async function() {
 
 
 //댓글 입력
-const searchuser = connetId //현재 접속중인 유저 아이디
+const searchuser = userInfo.value.id //현재 접속중인 유저 아이디
+
+console.log("userInfo.value.id", userInfo.value.id)
+
 const commentinput = ref('')
 
 const insertComment = async (bno, comment, type, parent_comment) => {
@@ -369,7 +369,7 @@ const controllInviteFunc = (ans, id) => { //DB에 접근
   console.log(ans, id)
   isInvited[id] = ref(false)
   axios.post("http://localhost:4000/comm/request", JSON.stringify({
-    userId: connetId,
+    userId: 'OSH',
     reqId: id,
     type: '1',
   }), { headers: { 'Content-Type': 'application/json' } })
@@ -397,7 +397,7 @@ const subscribe = (name, check) => {
   if (check == 1) {
     message.value = "구독이 추가되었습니다"
     axios.post("http://localhost:4000/comm/subscribe/subscribing", JSON.stringify({
-      userId: connetId,
+      userId: 'OSH',
       subToId: name,
     }), { headers: { 'Content-Type': 'application/json' } })
       .catch(err=>console.log(err))
@@ -406,7 +406,7 @@ const subscribe = (name, check) => {
     message.value = "구독이 취소되었습니다"
     axios.delete("http://127.0.0.1:4000/comm/subscribe/delete", {
       data: {
-        userId: connetId,
+        userId: 'OSH',
         subToId: name,
       },
     }, { headers: { "Content-Type": `application/json` } })
@@ -477,7 +477,7 @@ const toggleLike = async bno => {
 
   try {
     const response = await axios.post('http://localhost:4000/bbs/likes.do', {
-      id: connetId,
+      id: "HMC",
       bno: bno,
       cno: "",
       isLiked: isLiked.value,
@@ -485,7 +485,7 @@ const toggleLike = async bno => {
 
     if (response.status === 200) {
       console.log(response.data.likesId)
-      likesStatus[bno].value = response.data.likesId !== connetId //아이디 비교
+      likesStatus[bno].value = response.data.likesId !== "OSH" //아이디 비교
       await getData() // 좋아요 상태 변경 후 데이터를 다시 가져오기
     } else {
       console.log('좋아요 상태 변경 실패')
@@ -628,7 +628,6 @@ const getMyList = async id => {
                           <VCol cols="1">
                             <VAvatar 
                               class="text-sm pointer-cursor"
-                              style="margin: 3px 10px;"
                               :image="getUserAvatar(item.id)"
                               @click="openUserProfileModal(item)"
                             />
@@ -637,7 +636,7 @@ const getMyList = async id => {
                             <VCol cols="12">
                               <VCardSubtitle
                                 class="text-sm pointer-cursor"
-                                style="margin-left: -10%;"
+                                style="margin-left: -5%;"
                                 @click="openUserProfileModal(item)"
                               >
                                 {{ item.id }}  <!-- 유저 닉네임 뿌려주기 -->
@@ -916,7 +915,7 @@ const getMyList = async id => {
       :open-user-profile-modal="openUserProfileModal"
       :insert-comment="insertComment"
       :searchuser="searchuser"
-      :get-comment="getComment"
+      :getComment="getComment"
     />
   </section>
 </template>
