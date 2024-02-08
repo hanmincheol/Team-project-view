@@ -1,54 +1,34 @@
-
 const userStore = {
   state: {
-    userInfo: null, // 사용자 정보를 저장하는 상태
-    searchuser: { userInfo: null }, // searchuser를 저장하는 상태
-    
+    userInfo: null,
+    searchuser: { userInfo: null },
   },
   mutations: {
-    // 사용자 정보를 업데이트하는 뮤테이션
     UPDATE_USER_INFO(state, newUserInfo) {
       state.userInfo = { ...state.userInfo, ...newUserInfo }
-
     },
-
-    // searchuser를 업데이트하는 뮤테이션
     UPDATE_SEARCH_USER(state, newSearchUser) {
       state.searchuser = newSearchUser
-      
     },
-    
+    RESET_USER_INFO(state) { // 추가된 뮤테이션
+      state.userInfo = null
+    },
   },
   actions: {
-    // 사용자 정보를 업데이트하는 액션
-    updateUserInfo({ commit, state }, newUserInfo) {  // state를 인자로 추가
+    updateUserInfo({ commit }, newUserInfo) {
       commit('UPDATE_USER_INFO', newUserInfo)
-      console.log("newUserInfo", newUserInfo)
-      console.log("userInfo", state.userInfo)  // 'userInfo'를 'state.userInfo'로 수정
-
-      
     },
-
-    // searchuser를 업데이트하는 액션
-    UPDATE_SEARCH_USER(state, newSearchUser) {
-      state.searchuser.userInfo = newSearchUser.userInfo
-      console.log("newSearchUser", newSearchUser)
-      console.log("searchuser", state.searchuser)
+    updateSearchUser({ commit }, newSearchUser) { // 수정된 액션
+      commit('UPDATE_SEARCH_USER', newSearchUser)
+    },
+    userlogout({ commit }) { // 추가된 액션
+      commit('RESET_USER_INFO')
     },
   },
   getters: {
-    // 사용자 정보를 가져오는 게터
-    userInfo: (state, getters, rootState) => {
-      return rootState.loginStore.userInfo
-    },
-  
-    // searchuser를 가져오는 게터
-    searchuser: state => {
-      return state.searchuser
-    },
+    userInfo: state => state.userInfo, // 수정된 게터
+    searchuser: state => state.searchuser,
   },
 }
-
-
 
 export default userStore

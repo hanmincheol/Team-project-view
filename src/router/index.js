@@ -3,6 +3,7 @@ import { setupLayouts } from 'virtual:generated-layouts'
 import { createRouter, createWebHistory } from 'vue-router'
 import routes from '~pages'
 
+
 export const isfriendscreenchanged = ref(false)
 export const isSubscribesscreenchanged = ref(false)
 export const isMatescreenchanged = ref(false)
@@ -24,7 +25,7 @@ const router = createRouter({
           next()
         } else {
           console.log('로그인 안 된 상태')
-          store.dispatch('isSocialLogin') // 쿠키에서 토큰을 가져옴
+ 
             .then(() => {
               if (store.state.loginStore.isLogin) {
                 next() // 토큰이 유효하면 메인 페이지로 진행
@@ -36,19 +37,33 @@ const router = createRouter({
       },
     },
 
-    
-
     {
       path: '/pages/user-profile',
       redirect: () => ({ name: 'pages-user-profile-tab', params: { tab: 'profile' } }),
       meta: { requiresAuth: true },
     },
+
     ...setupLayouts(routes),
   ],
 })
 
 
+// 이동 감지와 변경된 화면 체크
+router.beforeEach((to, from, next) => {
+  console.log(`화면 이동 감지: ${from.fullPath}에서 ${to.fullPath}로 이동`)
 
+  if (from.fullPath=='/community/user/friend') {
+    isfriendscreenchanged.value = true
+    console.log('화면 변경됨')
+  }
+  if (from.fullPath=='/community/user/subscriber'){
+    isSubscribesscreenchanged.value = true
+  }
+  if (from.fullPath=='/community/user/mate'){
+    isMatescreenchanged.value = true
+  }
+  next()
+})
 
 
 // const publicPages = ['/login', '/main']  // 로그인이 필요하지 않은 페이지의 경로를 배열로 정의
@@ -71,22 +86,6 @@ const router = createRouter({
 //   }
 // })
 
-// 이동 감지와 변경된 화면 체크
-router.beforeEach((to, from, next) => {
-  console.log(`화면 이동 감지: ${from.fullPath}에서 ${to.fullPath}로 이동`)
-
-  if (from.fullPath=='/community/user/friend') {
-    isfriendscreenchanged.value = true
-    console.log('화면 변경됨')
-  }
-  if (from.fullPath=='/community/user/subscriber'){
-    isSubscribesscreenchanged.value = true
-  }
-  if (from.fullPath=='/community/user/mate'){
-    isMatescreenchanged.value = true
-  }
-  next()
-})
 
 // Docs: https://router.vuejs.org/guide/advanced/navigation-guards.html#global-before-guards
 // router.beforeEach(to => {

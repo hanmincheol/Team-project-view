@@ -148,6 +148,9 @@ const profiledata = ref([])//내 프로필 데이터
 const length = ref(0) //구독자 초기값
 
 
+
+
+
 async function fetchData() {
   if (!userInfo.value || !userInfo.value || !userInfo.value.id) {
     console.log('비회원으로 데이터를 가져올 수 없습니다.')
@@ -265,6 +268,9 @@ const imagechange = () => {
     }, withCredentials: true })
     .then(response => {
       console.log('프로필 이미지 업데이트 성공')
+
+      // 이미지 업데이트가 성공적으로 이루어진 후 userInfo 상태를 업데이트
+
       fetchProfile()
     })
     .catch(error => {
@@ -319,6 +325,11 @@ const uploadFile = file => {
 
 
 onMounted(async () => {
+  // userInfo.value가 null인 경우 함수를 종료
+  if (!userInfo.value) {
+    return
+  }
+
   try {
     await Promise.all([fetchData(), fetchProfile()])
   } catch (error) {
