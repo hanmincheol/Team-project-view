@@ -272,7 +272,7 @@ const imagechange = () => {
     .then(response => {
       console.log('프로필 이미지 업데이트 성공')
 
-      // 이미지 업데이트가 성공적으로 이루어진 후 userInfo 상태를 업데이트
+      updateProFilepath('http://localhost:4000/images/'+inputfilename.value)
 
       fetchProfile()
     })
@@ -281,6 +281,11 @@ const imagechange = () => {
       console.error(error)
     })
 }
+
+// .then(() => {
+//     // 이미지 업로드가 성공적으로 완료된 후에 updateProFilepath를 호출
+//       updateProFilepath('http://localhost:4000/images/'+inputfilename.value)
+//     })
 
 // 프로필 파일 업로드할때 필요한 함수
 const uploadImg = e => {
@@ -323,10 +328,7 @@ const uploadFile = file => {
   return axios.post('http://localhost:4000/comm/upload', formData, {  params: {
     id: userInfo.value ? userInfo.value.id : null,
   }, withCredentials: true })
-    .then(() => {
-    // 이미지 업로드가 성공적으로 완료된 후에 updateProFilepath를 호출
-      updateProFilepath('http://localhost:4000/images/'+inputfilename.value)
-    })
+    
 }
 
 
