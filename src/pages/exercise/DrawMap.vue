@@ -24,12 +24,10 @@ export default {
   mounted() {
     console.log('DrawMap:', typeof lat)
     if (window.kakao && window.kakao.maps && this.drawingMap != null) { //카카오 api가 로드되었을 때
-      console.log('마운트 if 안에 들어옴')
 
       this.initMap()
       this.drawingMap.relayout()
     }else {
-      console.log('마운트 else 안에 들어옴')
 
       const script = document.createElement("script")
 
@@ -83,7 +81,6 @@ export default {
       kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
         map.relayout()
                     
-        console.log('클릭이벤트 발생')
 
         // 마우스로 클릭한 위치입니다 
         var clickPosition = mouseEvent.latLng

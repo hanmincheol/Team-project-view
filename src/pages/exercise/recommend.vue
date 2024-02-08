@@ -47,23 +47,18 @@
       <VCol cols="6">
         <!-- 지도 보여주는 영역 -->
         <VCard :style="{'height':'600px'}">
-          <div :style="{'height':'50px'}">
+          <div>
+            <!-- :style="{'height':'50px'}" -->
             <!-- 새로고침 버튼(추천경로 클릭시 show) -->
             <!--
-              <VBtn
-              v-show="recoDropDown"
-              icon="mdi-refresh"
-              variant="text"
-              color="success"
-              />
-            -->
-            <VSelect
+              <VSelect
               v-show="recoDropDown"
               :items="recommendPathView"
               label="추천 경로를 선택하세요"
               variant="filled"
               :style="{'width':'100%','float':'right'}"
-            />
+              />
+            -->
             <!-- 지도 검색창 화면 활성화 스위치(직접설정 클릭시 show) -->
             <VSwitch
               v-show="searchSwitch"
@@ -74,26 +69,24 @@
               @click="showSearchUi"
             />
             <!-- 즐겨찾기 목록화(즐겨찾기 클릭시 show) -->
-            <VSelect
+            <!--
+              <VSelect
               v-show="likeCategoryMenu"
               :items="items"
               label="원하는 동을 선택하세요"
               variant="filled"
               :style="{'width':'50%','float':'right'}"
               prepend-icon="mdi-map-search-outline"
-            />
+              />
+            -->
           </div>
-          <div
-            v-show="!isSelfControlMap"
-            id="map"
-            :style="{'width':'100%','height':'450px'}"
-          />
+          <RecoMap v-show="!isSelfControlMap" />
+          <LikePath v-show="likeCategoryMenu" />
           <DrawMap
             v-show="isSelfControlMap"
             ref="childMap"
             @refresh-child-road="createRoadView"
           />
-          <!-- @refresh-child-road="createRoadView" -->
           <!-- 지도 검색창 -->
           <div
             v-show="isSearchShow"
@@ -183,9 +176,11 @@
 <script>
 import AppDateTimePicker from '@/@core/components/app-form-elements/AppDateTimePicker.vue'
 import DrawMap from '@/pages/exercise/DrawMap.vue'
+import RecoMap from '@/pages/exercise/RecoMap.vue'
 import * as mapData from '@/pages/exercise/mapData'
 import { isSearchListClicked } from '@/pages/exercise/mapSearch'
 import { ref } from 'vue'
+import LikePath from './LikePath.vue'
 
 //지도위에 현재 로드뷰의 위치와, 각도를 표시하기 위한 map walker 아이콘 생성 클래스
 function MapWalker(position){
@@ -263,6 +258,8 @@ export default {
   components: {
     DrawMap,
     AppDateTimePicker,
+    RecoMap,
+    LikePath,
   },
   data() {
     return {
@@ -329,6 +326,7 @@ export default {
       script.onload = () => { //컴포넌트가 마운트된 후 호출될 콜백 등록
         kakao.maps.load(()=>{ //kakao가 로드되었을 때 호출될 콜백 함수 등록
           this.initMap()
+          
           var places = new kakao.maps.services.Places()
           this.recoPath.value = []
           this.recommendPath.forEach(ele=>{
@@ -396,11 +394,14 @@ export default {
       //map walker 생성-----------------------------------------------
       // 로드뷰의 초기화 되었을때 map walker를 생성한다.
       kakao.maps.event.addListener(roadview, 'init', function() {
-
+        
         // map walker를 생성한다. 생성시 지도의 중심좌표를 넘긴다.
-        this.mapWalker = new MapWalker(position)
-        this.mapWalker.setMap(map) // map walker를 지도에 설정한다.
+        if (this.mapWalker == null) {
+          this.mapWalker = new MapWalker(position)
+          this.mapWalker.setMap(map) // map walker를 지도에 설정한다.
 
+        }
+        
         // 로드뷰가 초기화 된 후, 추가 이벤트를 등록한다.
         // 로드뷰를 상,하,좌,우,줌인,줌아웃을 할 경우 발생한다.
         // 로드뷰를 조작할때 발생하는 값을 받아 map walker의 상태를 변경해 준다.
@@ -452,7 +453,7 @@ export default {
           //지도 객체는 반응형 관리 대상이 아니므로 initMap에서 선언합니다.
           console.log(lat)
           this.map = new kakao.maps.Map(container, options)
-          this.drawPolyLine(this.likePath)
+          this.drawPolyLine(this.recoPath)
           this.createRoadView(lat.value, lng.value, this.map)
           
         })
