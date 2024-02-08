@@ -2,62 +2,12 @@ import mock from '@/@fake-db/mock'
 import { genId } from '@/@fake-db/utils'
 
 // Images
-import axios from '@axios'
 import avatar1 from '@images/avatars/avatar-1.png'
 import avatar2 from '@images/avatars/avatar-2.png'
 import avatar5 from '@images/avatars/avatar-5.png'
 
 const previousDay = new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
 const dayBeforePreviousDay = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 2)
-
-async function fetchDatabase(userId) {
-  try {
-    console.log("userId:", userId)
-
-    const response = await axios.get("http://localhost:4000/comm/profile", { params: { id: userId } })
-
-    console.log("response.data:", response.data)
-
-    database.profileUser.id = userId
-    database.profileUser.avatar = response.data.profilePath
-    database.profileUser.fullName = response.data.name
-
-    console.log("database.profileUser.id", database.profileUser.id)
-    console.log("database.profileUser.avatar", database.profileUser.avatar)
-    console.log("database.profileUser.fullName", database.profileUser.fullName)
-  
-  } catch (error) {
-    console.error(`데이터를 가져오는데 실패했습니다: ${error}`)
-  }
-}
-
-async function fetchFriendDatabase(userId) {
-  try {
-    console.log("userId:", userId)
-
-    const response = await axios.get("http://localhost:4000/comm/friend", { params: { id: userId } })
-
-    console.log("response.data:", response.data)
-
-    response.data.forEach(item => {
-      database.contacts.push({
-        id: item.friend_id,
-        avatar: item.profilePath,
-        fullName: item.name,
-        status: item.status || 'offline', 
-      })
-    })
-
-    database.contacts.forEach((contact, index) => {
-      console.log(`database.contacts[${index}].id`, contact.id)
-      console.log(`database.contacts[${index}].avatar`, contact.avatar)
-      console.log(`database.contacts[${index}].fullName`, contact.fullName)
-    })
-  
-  } catch (error) {
-    console.error(`데이터를 가져오는데 실패했습니다: ${error}`)
-  }
-}
 
 
 const database = {

@@ -81,16 +81,20 @@ const getData = async function() {
       },
       withCredentials: true,
     })
+
+
     // 응답 처리
     if (response.status === 200) {
       console.log('데이터 받기 성공')
       state.items = response.data // 데이터 저장
+
       const tempUserKeys = []
       for(var i=0; i<state.items.length; i++){
         tempUserKeys[i] = state.items[i].id
       }
       const tempUserKeysSet = new Set(tempUserKeys) //중복 아이디 제거
       const temp = [...tempUserKeysSet] //ids
+
       /*
       temp의 앞에 현재 서비스를 이용 중인 유저의 아이디가 들어가야 함.
       뿌려주는 게시글 작성자들의 목록을 불러옴.
@@ -917,7 +921,7 @@ const getMyList = async id => {
       :open-user-profile-modal="openUserProfileModal"
       :insert-comment="insertComment"
       :searchuser="searchuser"
-      :getComment="getComment"
+      :get-comment="getComment"
     />
   </section>
 </template>

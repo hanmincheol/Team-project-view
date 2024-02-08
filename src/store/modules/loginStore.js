@@ -1,4 +1,4 @@
-// store/modules/loginStore.js
+
 
 
 import axiosIns from '@/plugins/axios'
@@ -20,7 +20,7 @@ const loginStore = {
       state.userInfo = payload
       state.isLogin = true
       
-      router.push('/main')
+      
 
     },
     logoutTest: function (state) {
@@ -35,13 +35,13 @@ const loginStore = {
 
   },
   actions: {
-    login(context, loginObj) {
+    async login(context, loginObj) {
       const formdata = new FormData()
       
       formdata.append("id", loginObj['id'])
       formdata.append("pwd", loginObj['pwd'])
     
-      axios.post('http://localhost:4000/login', formdata, {
+      await axios.post('http://localhost:4000/login', formdata, {
         headers: {
           'X-SKIP-INTERCEPTOR': true,
           'Content-Type': 'multipart/form-data',
@@ -62,6 +62,7 @@ const loginStore = {
     
           console.log(token)
           context.dispatch('saveToken', token)
+          router.push('/main')
         })
         .catch(error => {
           console.log(error)
@@ -69,26 +70,32 @@ const loginStore = {
           
         })
     },
+
+    updateUserInfo({ commit }, newUserInfo) {
+      commit('loginSuccess', newUserInfo)  // 'loginSuccess' 뮤테이션 커밋
+    },
+
+
     socialLogin(context, url) {
       window.location.href = url // 백엔드 서버로 리다이렉트
       console.log("여기는 되는거지?")
     },
     
-    isSocialLogin(context) {
-      axios.get('http://localhost:4000/user/isSocialLogin', {
-        withCredentials: true,
-      })
-        .then(res => {
-          const token = res.data
+    // isSocialLogin(context) {
+    //   axios.get('http://localhost:4000/user/isSocialLogin', {
+    //     withCredentials: true,
+    //   })
+    //     .then(res => {
+    //       const token = res.data
 
-          console.log("이거 실행되니?")
-          context.dispatch('saveToken', token) // 토큰을 저장함
-        })
-        .catch(error => {
-          console.log(error)
-          alert('소셜 로그인에 실패했습니다. 다시 시도해주세요.')
-        })
-    },
+    //       console.log("이거 실행되니?")
+    //       context.dispatch('saveToken', token) // 토큰을 저장함
+    //     })
+    //     .catch(error => {
+    //       console.log(error)
+    //       alert('소셜 로그인에 실패했습니다. 다시 시도해주세요.')
+    //     })
+    // },
 
 
     saveToken(context, token){
@@ -123,17 +130,17 @@ const loginStore = {
           dispatch('updateUserInfo', userInfo, { root: true })
         })
     },
-    logout({ commit, dispatch }) {  // dispatch를 인자로 추가
-      return new Promise(async (resolve, reject) => {  // async를 추가
+    logout({ commit, dispatch }) {
+      return new Promise(async (resolve, reject) => {
         try {
-          const res = await axiosIns.post('http://localhost:4000/logout', null, { withCredentials: true })  // await를 추가
+          const res = await axiosIns.post('http://localhost:4000/logout', null, { withCredentials: true })
+    
+          
+          await dispatch('userStore/userlogout', null, { root: true }) // 'userStore'의 'logout' 액션 디스패치
+          await commit('logoutTest')
 
-          await commit('logoutTest')  // await를 추가
-          await dispatch('updateUserInfo', null, { root: true })  // await를 추가
-    
-          // 서버에서 받은 redirectUrl을 이용해 페이지를 리다이렉트
           window.location.href = res.data.redirectUrl
-    
+          
           resolve()
         } catch (error) {
           console.log('로그아웃 요청 중 에러가 발생했습니다:', error)

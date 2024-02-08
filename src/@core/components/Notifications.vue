@@ -6,22 +6,15 @@ import axios from '@axios'
 import { useStore } from 'vuex'
 import { errorMessages } from 'vue/compiler-sfc'
 
-const store = useStore()
-
-// 로그인 스토어와 사용자 스토어의 상태를 가져옵니다.
-const userInfo = computed(() => store.state.userStore.userInfo)
-const connetId=userInfo.value.id
-const name = computed(() => store.state.userStore.userInfo ? store.state.userStore.userInfo.name : null)
-
 const props = defineProps({
   location: {
     type: null,
     required: false,
     default: 'bottom end',
   },
-  noticlists:{
-    type:Array,
-    required:true,
+  noticlists: {
+    type: Array,
+    required: true,
   },
   noticflag:{
     type:Boolean,
@@ -40,20 +33,29 @@ const emit = defineEmits([
   'click:notification',
 ])
 
+const store = useStore()
+
+// 로그인 스토어와 사용자 스토어의 상태를 가져옵니다.
+const userInfo = computed(() => store.state.userStore.userInfo)
+const connetId=computed(() => userInfo.value.id)
+const name = computed(() => store.state.userStore.userInfo ? store.state.userStore.userInfo.name : null)
+
 function getTimeDiffString(triggerDate) {
-  const triggerDateObj = new Date(triggerDate);
-  const currentDate = new Date();
-  const timeDiff = currentDate - triggerDateObj;
-  const minutes = Math.floor(timeDiff / (1000 * 60));
+  const triggerDateObj = new Date(triggerDate)
+  const currentDate = new Date()
+  const timeDiff = currentDate - triggerDateObj
+  const minutes = Math.floor(timeDiff / (1000 * 60))
 
   if (minutes < 60) {
-    return `${minutes}분 전`;
+    return `${minutes}분 전`
   } else if (minutes < 24 * 60) {
-    const hours = Math.floor(minutes / 60);
-    return `${hours}시간 전`;
+    const hours = Math.floor(minutes / 60)
+    
+    return `${hours}시간 전`
   } else {
-    const days = Math.floor(minutes / (24 * 60));
-    return `${days}일 전`;
+    const days = Math.floor(minutes / (24 * 60))
+    
+    return `${days}일 전`
   }
 }
 
@@ -99,7 +101,7 @@ const updatenotic = async (notification, trigger_pk, index) => {
         <!-- 👉 Header -->
         <VCardItem class="notification-section">
           <VCardTitle class="text-lg">
-            '{{connetId}}'님 알림 현황
+            '{{ connetId }}'님 알림 현황
           </VCardTitle>
 
           <template #append>
@@ -150,12 +152,15 @@ const updatenotic = async (notification, trigger_pk, index) => {
                   </VListItemAction>
                 </template>
 
-                <VListItemTitle><v-chip color="error">{{notification.notic_trigger_user}}</v-chip> 
-                <small>{{ notification.notic_type===1? '님께서 댓글을 달았습니다.': '님께서 좋아요를 눌렀습니다.'}}</small>                  
+                <VListItemTitle>
+                  <VChip color="error">
+                    {{ notification.notic_trigger_user }}
+                  </VChip> 
+                  <small>{{ notification.notic_type===1? '님께서 댓글을 달았습니다.': '님께서 좋아요를 눌렀습니다.' }}</small>                  
                 </VListItemTitle>
                 
                 <!-- <VListItemSubtitle>{{ notification.ccomment }}</VListItemSubtitle> -->
-                <span class="text-xs text-disabled">{{getTimeDiffString(notification.notic_trigger_date)}}</span>
+                <span class="text-xs text-disabled">{{ getTimeDiffString(notification.notic_trigger_date) }}</span>
 
                 <!-- Slot: Append -->
                 <template #append>

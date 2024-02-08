@@ -9,12 +9,6 @@ const login =()=> {
   router.push('/login')
 }
 
-const profilePath = computed(() => {
-  const userInfo = store.getters['userStore/userInfo']
-  
-  return userInfo && userInfo.profilePath ? userInfo.profilePath : null
-})
-
 
 const store = useStore()
 
@@ -35,24 +29,61 @@ const userId = computed(() => {
   return userInfo ? userInfo.id : "로그인 필요"
 })
 
-watch(userInfo, (newVal, oldVal) => {
-  // 'newVal'은 'userInfo'의 새로운 값이고, 'oldVal'은 이전 값입니다.
-  // 이 콜백 함수는 'userInfo'의 값이 변경될 때마다 실행됩니다.
+const loginPro_filepath = computed(() => {
+  const userInfo = store.state.loginStore.userInfo
+  
+  return userInfo ? userInfo.pro_filepath : null
+})
 
-  if (newVal && oldVal && newVal.pro_filepath !== oldVal.pro_filepath) {
-    // 'userInfo.pro_filepath'가 변경되었을 때만 로직을 실행합니다.
-    console.log('프로필 이미지가 변경되었습니다:', newVal.pro_filepath)
+const pro_filepath = computed(() => {
+  const userInfo = store.state.userStore.userInfo
+  
+  return userInfo ? userInfo.pro_filepath : null
+})
+
+
+
+
+const userPro_filepath = computed(() => store.state.userStore.userInfo?.pro_filepath)
+
+const activePro_filepath = ref(null)
+
+watch(userPro_filepath, newVal => {
+  if (newVal) {
+    activePro_filepath.value = newVal
   }
-}, { immediate: false })
+}, { immediate: true })
 
-console.log(userInfo.value)
+watch(userPro_filepath, newVal => {
+  if (newVal) { // userStore의 pro_filepath가 존재하면
+    activePro_filepath.value = newVal // activePro_filepath를 업데이트
+  }
+}, { immediate: true })
+
+// watch(() => store.state.userStore.userInfo, newUserInfo => {
+
+// }, { immediate: true }) // 초기화 시에도 watch 콜백 실행
+watch(() => store.state.userStore.userInfo, newUserInfo => {
+  if (newUserInfo && newUserInfo.pro_filepath !== activePro_filepath.value) {
+    activePro_filepath.value = newUserInfo.pro_filepath
+  }
+}, { immediate: true })
+
+// watch(() => store.state.userStore.userInfo, newUserInfo => {
+//   console.log('User info updated:', newUserInfo)
+
+//   //필요한 로직을 여기에 추가하세요.
+// }, { immediate: true }) // 초기화 시에도 watch 콜백 실행
+
+
+
 
 const logout = async () => {
   try {
-    
     console.log("이게 실행 안되는거지?")
     localStorage.removeItem('User-Token')
-    await store.dispatch('logout')
+    await store.dispatch('logout') // 'loginStore/logout' 액션 디스패치
+    await store.dispatch('userlogout')
   } catch (error) {
     console.log('')
     console.error(error)
@@ -73,7 +104,7 @@ const logout = async () => {
       color="primary"
       variant="tonal"
     >
-      <VImg :src="userInfo.pro_filepath" />
+      <VImg :src="activePro_filepath" />
 
       <!-- SECTION Menu -->
       <VMenu
@@ -98,7 +129,7 @@ const logout = async () => {
                     color="primary"
                     variant="tonal"
                   >
-                    <VImg :src="userInfo.pro_filepath" />
+                    <VImg :src="activePro_filepath" />
                   </VAvatar>
                 </VBadge>
               </VListItemAction>

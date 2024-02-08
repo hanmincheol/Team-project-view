@@ -15,13 +15,14 @@ import { createApp } from 'vue'
 import store from './store'
 
 // import 'bootstrap/dist/css/bootstrap.min.css'
-import { createPinia } from 'pinia'
+//import { createPinia } from 'pinia'
 
 loadFonts()
 
 
 // Create vue app
 const app = createApp(App)
+
 
 app.component('Friend', friend)
 
