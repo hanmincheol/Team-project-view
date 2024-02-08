@@ -709,6 +709,8 @@ const getMyList = async id => {
                         class="transparent-carousel"
                         show-arrows-on-hover
                         color="success"
+                        cycle
+                        interval="2000"
                       >
                         <VCarouselItem
                           v-for="(image, i) in item.files" 
