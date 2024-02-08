@@ -1,11 +1,9 @@
 <script setup>
 import ChatContact from '@/views/apps/chat/ChatContact.vue'
-import { useChatStore } from '@/views/apps/chat/useChatStore'
 import axios from '@axios'
 import { onMounted, ref } from 'vue'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import { useChat } from './useChat'
-import { useStore } from 'vuex'
 
 
 const props = defineProps({
@@ -26,16 +24,18 @@ const emit = defineEmits([
   'update:search',
 ])
 
-//const store = useStore()
+const contactfriend = ref([])
+
 
 // 로그인 스토어와 사용자 스토어의 상태를 가져옵니다.
-//const userInfo = computed(() => store.state.userStore.userInfo)
-//const connetId=userInfo.value.id
+const userInfo = computed(() => store.state.userStore.userInfo)
+const connetId=userInfo.value.id
 
 onMounted(async () => {
   //실제 사용자 ID 넣기!!!
-  await fetchDatabase('LSY')
-  await fetchFriendDatabase('LSY')
+  await fetchDatabase(connetId)
+  await fetchFriendDatabase(connetId)
+  contactFriendDatabase()
 })
 
 const database = ref({
@@ -43,6 +43,7 @@ const database = ref({
     id: null,
     avatar: null,
     fullName: null,
+    status: null,
   },
   contacts: [],  // 친구 목록을 저장할 배열
 })
@@ -58,6 +59,7 @@ async function fetchDatabase(userId) {
     database.value.profileUser.id = userId
     database.value.profileUser.avatar = response.data.profilePath
     database.value.profileUser.fullName = response.data.name
+    database.value.profileUser.status = 'online'
 
     console.log("database.profileUser.id", database.value.profileUser.id)
     console.log("database.profileUser.avatar", database.value.profileUser.avatar)
@@ -81,7 +83,7 @@ async function fetchFriendDatabase(userId) {
         id: item.friend_id,
         avatar: item.profilePath,
         fullName: item.name,
-        status: item.status || 'offline', 
+        status: 'online', 
       })
     })
 
@@ -96,9 +98,27 @@ async function fetchFriendDatabase(userId) {
   }
 }
 
+async function contactFriendDatabase() {
+  try {
+    console.log("connetId:", connetId)
+
+    const response = await axios.post('http://localhost:4000/chat/selectChat.do', {
+      id: connetId,
+    })
+
+    console.log(response.data)
+    console.log(response.data.ruser)
+    contactfriend.value = response.data.ruser
+    isActive.value = store.state.activeChat?.contact.id === props.user.id
+  
+  } catch (error) {
+    console.error(`데이터를 가져오는데 실패했습니다: ${error}`)
+  }
+}
+
 const { resolveAvatarBadgeVariant } = useChat()
 const search = useVModel(props, 'search', emit)
-const store = useChatStore()
+const store = useStore()
 </script>
 
 <template>
@@ -157,11 +177,11 @@ const store = useChatStore()
       <span class="chat-contact-header d-block text-primary text-xl font-weight-medium">채팅방</span>
     </li>
     <ChatContact
-      v-for="contact in store.chatsContacts"
-      :key="`chat-${contact.id}`"
+      v-for="contact in contactfriend"
+      :key="`chat-${contact}`"
       :user="contact"
       is-chat-contact
-      @click="$emit('openChatOfContact', contact.id)"
+      @click="$emit('openChatOfContact', contact)"
     />
     <span
       v-show="!store.chatsContacts.length"

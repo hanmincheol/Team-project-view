@@ -1,10 +1,12 @@
 <script setup>
 import { useChat } from '@/views/apps/chat/useChat'
-import { useChatStore } from '@/views/apps/chat/useChatStore'
+import axios from '@axios'
 import {
   avatarText,
   formatDateToMonthShort,
 } from '@core/utils/formatters'
+import { computed, ref } from 'vue'
+import { useStore } from 'vuex'
 
 const props = defineProps({
   isChatContact: {
@@ -18,29 +20,52 @@ const props = defineProps({
   },
 })
 
-const store = useChatStore()
+const store = useStore()
+const ruser = ref("")
+
+// 로그인 스토어와 사용자 스토어의 상태를 가져옵니다.
+const userInfo = computed(() => store.state.userStore.userInfo)
+const connetId=userInfo.value.id
 const { resolveAvatarBadgeVariant } = useChat()
 
-// isChatContactActive는 computed property로,
-// 현재 활성화된 채팅의 연락처 ID가 props.user.id와 동일한지에 따라 결정됩니다.
-// props.isChatContact이 아니라면, store.activeChat이 채팅이 아니고 isActive가 참일 경우를 반환합니다.
-// 그렇지 않으면 isActive를 반환합니다.
+const isActive = ref(false)
+
+// 메서드 정의
+const fetchData = async () => {
+  try {
+    const response = await axios.post('http://localhost:4000/chat/selectChat.do', {
+      id: connetId,
+    })
+
+    console.log(response.data)
+    ruser.value = response.data.ruser
+    isActive.value = store.state.activeChat?.contact.id === props.user.id
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+// 컴포넌트가 마운트되었을 때 fetchData를 호출합니다.
+onMounted(fetchData)
+
+// computed 속성 정의
 const isChatContactActive = computed(() => {
-  const isActive = store.activeChat?.contact.id === props.user.id
   if (!props.isChatContact)
-    return !store.activeChat?.chat && isActive
-  
-  return isActive
+    return !store.state.activeChat?.chat && isActive.value
+
+  return isActive.value
 })
+
+//:color="resolveAvatarBadgeVariant(props.user.status)"
 </script>
 
 
 <template>
   <li
-    :key="store.chatsContacts.length"
+    :key="isChatContactActive"
     class="chat-contact cursor-pointer d-flex align-center"
     :class="{ 'chat-contact-active': isChatContactActive }"
-    :data-x="store.chatsContacts.length"
+    :data-x="isChatContactActive"
   >
     <VBadge
       dot
