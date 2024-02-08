@@ -14,6 +14,7 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
 
 // @layouts plugin
 import { VerticalNavLayout } from '@layouts'
+import { useStore } from 'vuex'
 
 const { appRouteTransition, isLessThanOverlayNavBreakpoint } = useThemeConfig()
 const { width: windowWidth } = useWindowSize()
