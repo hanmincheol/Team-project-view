@@ -5,87 +5,37 @@ import avatar4 from '@images/avatars/avatar-4.png'
 import avatar5 from '@images/avatars/avatar-5.png'
 import paypal from '@images/svg/paypal.svg'
 
-const notifications = ref([
-  {
-    id: 1,
-    img: avatar4,
-    title: 'Congratulation Flora! 🎉',
-    subtitle: 'Won the monthly best seller badge',
-    time: 'Today',
-    isSeen: true,
-  },
-  {
-    id: 2,
-    text: 'Tom Holland',
-    title: 'New user registered.',
-    subtitle: '5 hours ago',
-    time: 'Yesterday',
-    isSeen: false,
-  },
-  {
-    id: 3,
-    img: avatar5,
-    title: 'New message received 👋🏻',
-    subtitle: 'You have 10 unread messages',
-    time: '11 Aug',
-    isSeen: true,
-  },
-  {
-    id: 4,
-    img: paypal,
-    title: 'Paypal',
-    subtitle: 'Received Payment',
-    time: '25 May',
-    isSeen: false,
-    color: 'error',
-  },
-  {
-    id: 5,
-    img: avatar3,
-    title: 'Received Order 📦',
-    subtitle: 'New order received from john',
-    time: '19 Mar',
-    isSeen: true,
-  },
-])
 
-const removeNotification = notificationId => {
-  notifications.value.forEach((item, index) => {
-    if (notificationId === item.id)
-      notifications.value.splice(index, 1)
-  })
+import { useStore } from 'vuex'
+import axios from '@axios'
+
+const store = useStore()
+
+// 로그인 스토어와 사용자 스토어의 상태를 가져옵니다.
+const userInfo = computed(() => store.state.userStore.userInfo)
+const connetId=userInfo.value.id
+const name = computed(() => store.state.userStore.userInfo ? store.state.userStore.userInfo.name : null)
+
+let noticlists = ref([])
+const getNoticList = async (id) =>{
+
+    await axios.get('http://localhost:4000/Notic/View.do', { params: { id: 'hmc0110' } })
+    .then(response => {
+        console.log('가져오기 성공')
+        console.log(response.data)
+        noticlists.value = response.data        
+    }).catch(error => {
+        // 업데이트 중 오류가 발생했을 때의 처리
+        console.log('실패')
+    })    
 }
 
-const markRead = notificationId => {
-  notifications.value.forEach(item => {
-    notificationId.forEach(id => {
-      if (id === item.id)
-        item.isSeen = true
-    })
-  })
-}
-
-const markUnRead = notificationId => {
-  notifications.value.forEach(item => {
-    notificationId.forEach(id => {
-      if (id === item.id)
-        item.isSeen = false
-    })
-  })
-}
-
-const handleNotificationClick = notification => {
-  if (!notification.isSeen)
-    markRead([notification.id])
-}
 </script>
 
 <template>
   <Notifications
-    :notifications="notifications"
-    @remove="removeNotification"
-    @read="markRead"
-    @unread="markUnRead"
-    @click:notification="handleNotificationClick"
+    :noticlists="noticlists"
+    @click="getNoticList(connetId)"
+    :noticflag = false   
   />
 </template>

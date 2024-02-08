@@ -1,4 +1,5 @@
 <script setup>
+import AppDateTimePicker from '@/@core/components/app-form-elements/AppDateTimePicker.vue'
 import TextEmotionDetectionModal from '@/pages/components/diaryModal/TextEmotionDetectionModal.vue'
 import TextEmotionResultModal from '@/pages/components/diaryModal/TextEmotionResultModal.vue'
 import DiaryView from '@/pages/diaryView.vue'
@@ -201,21 +202,42 @@ const openModal = () => {
     })
 }
 
-const postDiary = score => {
-  console.log('값 잘 들어옴?:', score)
-
+function getTodayLabel() {
   const today = new Date()
   const year = today.getFullYear()
   const month = String(today.getMonth() + 1).padStart(2, '0')
   const day = String(today.getDate()).padStart(2, '0')
   
-  const diaryId = `${year}${month}${day}-${userId.value}` //다이어리 아이디 설정
+  return `${year}-${month}-${day}`
+}
+
+
+//등록을 누르면 실행되는 코드
+const postDiary = score => {
+  console.log('값 잘 들어옴?:', score)
+
+  const dateTag = document.getElementById("date").children[0]
+  var dateVal = dateTag.value.replace(/-/g, '')+'-'+userId.value
+  if(dateVal.trim()[0]=='-'){
+    dateVal = getTodayLabel().replace(/-/g, '')+'-'+userId.value
+  }
+
+  
+  console.log('날짜:', dateTag.value)
+  console.log("dateVal", dateVal)
+
+  // const today = new Date()
+  // const year = today.getFullYear()
+  // const month = String(today.getMonth() + 1).padStart(2, '0')
+  // const day = String(today.getDate()).padStart(2, '0')
+  
+  // const diaryId = `${year}${month}${day}-${userId.value}` //다이어리 아이디 설정
 
   const formData = new FormData()
 
   console.log('함수 안의 파일명:', files)
   formData.append('id', userId.value)
-  formData.append("diaryId", diaryId)
+  formData.append("diaryId", dateVal)
   formData.append('diary_content', diaryContent.value)
 
   //formData.append('imgUrls', files)
@@ -229,6 +251,14 @@ const postDiary = score => {
   }
 
   axios.post("http://localhost:4000/manage/diary/upload", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+    .then(resp => {
+      console.log('확인:', resp.data)
+      if(resp.data==1) {
+        alert('글이 성공적으로 등록되었습니다.')
+        window.location.href = 'http://localhost:3333/diary'
+      }
+      else alert('글 등록에 실패했습니다. 관리자에게 문의하세요.')
+    })
     .catch(err=>console.error(err))
 }
 </script>
@@ -313,6 +343,12 @@ const postDiary = score => {
                 @click="writeDiaryContent = true"
               >
                 일기 작성
+                <VTooltip
+                  location="top"
+                  activator="parent"
+                >
+                  오늘은 {{ getTodayLabel() }} 입니다
+                </VTooltip>
               </VBtn>
             </VCol>
             <VCol cols="2">
@@ -379,6 +415,16 @@ const postDiary = score => {
                   </VImg>
                 </VRow>
               </Transition>
+            </VCol>
+            <VCol
+              cols="3"
+              style="margin-left: 12px;"
+            >
+              <AppDateTimePicker
+                id="date"
+                v-model="date"
+                :label="getTodayLabel()"
+              />
             </VCol>
             <VCol>
               <VCol cols="12">

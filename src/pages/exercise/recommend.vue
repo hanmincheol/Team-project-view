@@ -1,5 +1,6 @@
 <template>
   <section>
+    <!-- 시간 입력 -->
     <VAlert
       v-show="timeValidityAlert"
       variant="outlined"
@@ -40,62 +41,56 @@
           total<br>{{ hour }} h : {{ minute }} m
         </VCol>
       </VRow>
-    <!-- </VCardItem> -->
     </VCard>
-    <!-- </VRow> -->
+    <!-- 시간 입력 end -->
     <VRow>
       <VCol cols="6">
         <!-- 지도 보여주는 영역 -->
         <VCard :style="{'height':'600px'}">
-          <div :style="{'height':'50px'}">
+          <div>
+            <!-- :style="{'height':'50px'}" -->
             <!-- 새로고침 버튼(추천경로 클릭시 show) -->
-            <VBtn
-              v-show="refreshBtn"
-              icon="mdi-refresh"
-              variant="text"
-              color="success"
-            />
-            <DrawMap
-              v-show="isSelfControlMap"
-              ref="childMap"
-              @refresh-child-road="createRoadView"
+            <!--
+              <VSelect
+              v-show="recoDropDown"
+              :items="recommendPathView"
+              label="추천 경로를 선택하세요"
+              variant="filled"
+              :style="{'width':'100%','float':'right'}"
+              />
+            -->
+            <!-- 지도 검색창 화면 활성화 스위치(직접설정 클릭시 show) -->
+            <VSwitch
+              v-show="searchSwitch"
+              label="검색창 보기"
+              :value="Info"
+              :color="'Info'.toLowerCase()"
+              :style="{'float':'right', 'margin':'5px','margin-right':'20px'}"
+              @click="showSearchUi"
             />
             <!-- 즐겨찾기 목록화(즐겨찾기 클릭시 show) -->
-            <VSelect
+            <!--
+              <VSelect
               v-show="likeCategoryMenu"
               :items="items"
               label="원하는 동을 선택하세요"
               variant="filled"
               :style="{'width':'50%','float':'right'}"
               prepend-icon="mdi-map-search-outline"
-            />
+              />
+            -->
           </div>
-          <div
-            v-show="!isSelfControlMap"
-            id="map"
-            :style="{'width':'100%','height':'450px'}"
+          <RecoMap
+            v-show="isRecoMenuClicked"
+            @click="console.log(isLikeMenuClicked)"
           />
+          <LikePath v-show="isLikeMenuClicked" />
           <DrawMap
-            v-show="isSelfControlMap"
+            v-show="isDrawMenuClicked"
             ref="childMap"
             @refresh-child-road="createRoadView"
           />
-          <!-- @refresh-child-road="createRoadView" -->
           <!-- 지도 검색창 -->
-          <div :style="{'display':'flex','justify-content':'center','margin-top':'10px'}">
-            <VTabs
-              next-icon="mdi-arrow-right"
-              prev-icon="mdi-arrow-left"
-            >
-              <VTab
-                v-for="i in 3"
-                :key="i"
-                @click="whatBtnClick"
-              >
-                {{ tabs[i] }}
-              </VTab>
-            </VTabs>
-          </div>
           <div
             v-show="isSearchShow"
             id="menu-wrap"
@@ -153,6 +148,33 @@
               <div id="pagination" />
             </div>
           </div>
+          <div :style="{'display':'flex','justify-content':'center','margin-top':'10px'}">
+            <!--
+              <VTabs
+              next-icon="mdi-arrow-right"
+              prev-icon="mdi-arrow-left"
+              >
+              <VTab
+              v-for="i in 3"
+              :key="i"
+              @click="whatBtnClick"
+              >
+              {{ tabs[i] }}
+              </VTab>
+              </VTabs>
+            -->
+            <VTabs>
+              <VTab @click="mapViewController(1)">
+                추천경로
+              </VTab>
+              <VTab @click="mapViewController(2)">
+                즐겨찾기
+              </VTab>
+              <VTab @click="mapViewController(3)">
+                직접등록
+              </VTab>
+            </VTabs>
+          </div>
         </VCard>
       </VCol> <!-- 지도 보여주는 영역 end -->
       <VCol cols="6">
@@ -170,9 +192,11 @@
 <script>
 import AppDateTimePicker from '@/@core/components/app-form-elements/AppDateTimePicker.vue'
 import DrawMap from '@/pages/exercise/DrawMap.vue'
+import RecoMap from '@/pages/exercise/RecoMap.vue'
 import * as mapData from '@/pages/exercise/mapData'
 import { isSearchListClicked } from '@/pages/exercise/mapSearch'
 import { ref } from 'vue'
+import LikePath from './LikePath.vue'
 
 //지도위에 현재 로드뷰의 위치와, 각도를 표시하기 위한 map walker 아이콘 생성 클래스
 function MapWalker(position){
@@ -250,9 +274,14 @@ export default {
   components: {
     DrawMap,
     AppDateTimePicker,
+    RecoMap,
+    LikePath,
   },
   data() {
     return {
+      isRecoMenuClicked: ref(true),
+      isLikeMenuClicked: ref(false),
+      isDrawMenuClicked: ref(false),
       isSearchListClicked: isSearchListClicked,
       startTime: mapData.startTime, //시작 시간 선택
       endTime: mapData.endTime, //종료 시간 선택
@@ -269,22 +298,28 @@ export default {
         '성북동',
         '한남동',
       ],
+      recommendPath: [ //받아온 데이터라고 가정
+        ["달터근린공원", "구룡산길", "개암약수터"],
+        ["실로암 약수터", "대모산 초소위", "독도모형", "대모산 정상"],
+        ["선정릉", "봉은사"],
+      ],
+      recommendPathView: ref([]), //받아온 경로를 뿌려줄 값
 
       infowindow: null,
       map: ref(""),
       drawingMap: ref(""),
       markers: ref([]),
 
-      refreshBtn: ref(true), //새로고침 버튼 (경로추천)
+      recoDropDown: ref(true), //추천 경로 선택 드롭다운
       searchSwitch: ref(false), //위치 검색창 활성화 스위치 (직접설정)
       switchOnOff: ref(false), //검색창 활성화 버튼 (직접설정)
       likeCategoryMenu: ref(false), //즐겨찾기 목록 버튼 (즐겨찾기)
       isMyPlace: ref(false), //직접 설정에서 내가 자주 찾는 장소 보기 클릭했는지 확인 (직접설정)
       isSearchShow: ref(false), //검색창 화면 조정
+      
 
-
-      likePath: [[33.452344169439975, 126.56878163224233], [33.452739313807456, 126.5709308145358], [33.45178067090639, 126.5726886938753]],
-      recoPath: [[33.452344169439975, 126.56878163224233], [33.452739313807456, 126.5709308145358], [33.45178067090639, 126.5726886938753]],
+      likePath: ref([]),
+      recoPath: ref([]),
       tabs: ['', '추천경로', '즐겨찾기', '직접설정'],
 
       //로드뷰 동동이에 필요한 변수
@@ -307,13 +342,40 @@ export default {
       const script = document.createElement("script")
 
       /* global kakao */
-      script.onload = () => kakao.maps.load(this.initMap)
+      script.onload = () => { //컴포넌트가 마운트된 후 호출될 콜백 등록
+        kakao.maps.load(()=>{ //kakao가 로드되었을 때 호출될 콜백 함수 등록
+          this.initMap()
+          
+          var places = new kakao.maps.services.Places()
+          this.recoPath.value = []
+          this.recommendPath.forEach(ele=>{
+            var path=''
+            var temp = [] //경로 하나에 대한 x, y좌표값 [[x,y],[x,y],..]
+            ele.forEach(i=>{
+              path += i + ' - '
+              console.log('콜백 return 값 확인', places.keywordSearch(i, (result, status)=>{
+                if (status === kakao.maps.services.Status.OK) {
+                  console.log('검색 결과:', result[0])
+                  temp.push([result[0].x, result[0].y]) //[x,y]
+                }
+              }))
+            })
+            console.log('temp:', temp)
+            this.recoPath.value.push(temp)
+            this.recommendPathView.push(path)
+
+            //drawPolyLine()
+            console.log('recommendPathView', this.recommendPathView)
+          })
+          console.log('recoPath:', this.recoPath)
+        })
+      }
       script.src =
         "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=ca9eb44c2889273e11b9860d99308508&libraries=services,clusterer,drawing"
       document.head.appendChild(script)
     }
+
   }, //mounted
-  
   methods: {
     //위치 리스트 클릭
     searchListClickController(e){
@@ -330,10 +392,23 @@ export default {
       // 장소 검색 객체를 생성합니다
       // mapSearch.searchPlaces(ps, this.map)
     },
+    mapViewController(menu){
+      if(menu==1){
+        this.isRecoMenuClicked = true
+        this.isLikeMenuClicked, this.isDrawMenuClicked = false
+      }
+      if(menu==2){
+        this.isLikeMenuClicked = true
+        this.isRecoMenuClicked, this.isDrawMenuClicked = false
+      }
+      if(menu==3){
+        this.isDrawMenuClicked = true
+        this.isLikeMenuClicked, this.isRecoMenuClicked = false
+      }
+    },
 
     //로드 뷰 관련 함수---------------------------------------------------------
     createRoadView(lat, lng, map){ //로드뷰 보여주기
-      console.log('drawmap확인용:', lat)
 
       // 로드뷰 도로를 지도위에 올린다. (근데 올리면 정신없음)
       // map.addOverlayMapTypeId(kakao.maps.MapTypeId.ROADVIEW)
@@ -352,14 +427,14 @@ export default {
       //map walker 생성-----------------------------------------------
       // 로드뷰의 초기화 되었을때 map walker를 생성한다.
       kakao.maps.event.addListener(roadview, 'init', function() {
-        console.log('로드뷰 동동이 디버깅용')
-
+        
         // map walker를 생성한다. 생성시 지도의 중심좌표를 넘긴다.
-        this.mapWalker = new MapWalker(position)
-        this.mapWalker.setMap(map) // map walker를 지도에 설정한다.
-        console.log('동동이지도:', map)
-        console.log('동동이:', this.mapWalker)
+        if (this.mapWalker == null) {
+          this.mapWalker = new MapWalker(position)
+          this.mapWalker.setMap(map) // map walker를 지도에 설정한다.
 
+        }
+        
         // 로드뷰가 초기화 된 후, 추가 이벤트를 등록한다.
         // 로드뷰를 상,하,좌,우,줌인,줌아웃을 할 경우 발생한다.
         // 로드뷰를 조작할때 발생하는 값을 받아 map walker의 상태를 변경해 준다.
@@ -368,7 +443,6 @@ export default {
           // 이벤트가 발생할 때마다 로드뷰의 viewpoint값을 읽어, map walker에 반영
           var viewpoint = roadview.getViewpoint()
           this.mapWalker.setAngle(viewpoint.pan)
-          console.log('viewpoint디버깅:', viewpoint)
         })
 
         // 로드뷰내의 화살표나 점프를 하였을 경우 발생한다.
@@ -377,7 +451,6 @@ export default {
 
           // 이벤트가 발생할 때마다 로드뷰의 position값을 읽어, map walker에 반영 
           var position = roadview.getPosition()
-          console.log('position디버깅:', position)
           this.mapWalker.setPosition(position)
           map.setCenter(position)
 
@@ -413,10 +486,21 @@ export default {
           //지도 객체는 반응형 관리 대상이 아니므로 initMap에서 선언합니다.
           console.log(lat)
           this.map = new kakao.maps.Map(container, options)
-          this.drawPolyLine(this.likePath)
+          this.drawPolyLine(this.recoPath)
           this.createRoadView(lat.value, lng.value, this.map)
           
         })
+        
+        //카카오 위도 경도 검색 api 테스트
+        var places = new kakao.maps.services.Places()
+
+        var callback = function(result, status) {
+          if (status === kakao.maps.services.Status.OK) {
+            console.log('검색 결과:', result)
+          }
+        }
+
+        places.keywordSearch('망경산사', callback)
       }//if
 
     }, //initMap
@@ -431,7 +515,7 @@ export default {
       searchDiv.hidden = true
 
       //ui관련
-      this.refreshBtn = false //새로고침 버튼 숨기기
+      this.recoDropDown = false //새로고침 버튼 숨기기
       this.searchSwitch = false //검색창 스위치 숨기기
       this.likeCategoryMenu = true //즐겨찾기 목록 보이기
       this.setCenter(33.450701, 126.570667, this.map) //지도의 중심 이동 및 로드뷰 이동
@@ -444,7 +528,7 @@ export default {
       searchDiv.hidden = true
 
       //ui관련
-      this.refreshBtn = true //새로고침 버튼 보이기
+      this.recoDropDown = true //새로고침 버튼 보이기
       this.searchSwitch = false //검색창 스위치 숨기기
       this.likeCategoryMenu = false //즐겨찾기 목록 숨기기
       if(navigator.geolocation){
@@ -466,7 +550,7 @@ export default {
       
       searchDiv.hidden = false
       
-      this.refreshBtn = false //새로고침 버튼 숨기기
+      this.recoDropDown = false //새로고침 버튼 숨기기
       this.searchSwitch = true //검색창 스위치 보이기
       this.likeCategoryMenu = false //즐겨찾기 목록 숨기기
       //ui관련 end-------------------------------------------------
@@ -556,20 +640,17 @@ export default {
 </script>
 
 <style scoped>
-@import "../exercise/mapCss.css";
-
+@import url('../exercise/mapCss.css');
 #map {
-  block-size: 500px;
-  inline-size: 500px;
+  width: 500px;
+  height: 500px;
 }
 
 .button-group {
-  margin-block: 10px;
-  margin-inline: 0;
+  margin: 10px 0px;
 }
 
 button {
-  margin-block: 0;
-  margin-inline: 3px;
+  margin: 0 3px;
 }
 </style>

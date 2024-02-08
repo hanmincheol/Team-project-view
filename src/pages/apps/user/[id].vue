@@ -1,5 +1,6 @@
 <script setup>
 import ShareProjectDialogTemp from '@/components/dialogs/ShareProjectDialogTemp.vue'
+import Pricingtest from '@/components/dialogs/pricingtest.vue'
 import Chat from '@/pages/apps/challengeChat.vue'
 import { useUserListStore } from '@/views/apps/user/useUserListStore'
 import UserProfileForChellenge from '@/views/apps/user/view/UserProfileForChellenge.vue'

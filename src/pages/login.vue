@@ -197,6 +197,12 @@ export default{
                   >
                     회원가입
                   </RouterLink>
+                  <RouterLink
+                    class="text-primary ms-2"
+                    :to="{ name: 'registerSocial' }"
+                  >
+                    회원가입(임시)
+                  </RouterLink>
                   <br><br>
                   <RouterLink
                     class="text-primary ms-2 mb-1"
