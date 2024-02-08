@@ -35,13 +35,13 @@ const loginStore = {
 
   },
   actions: {
-    login(context, loginObj) {
+    async login(context, loginObj) {
       const formdata = new FormData()
       
       formdata.append("id", loginObj['id'])
       formdata.append("pwd", loginObj['pwd'])
     
-      axios.post('http://localhost:4000/login', formdata, {
+      await axios.post('http://localhost:4000/login', formdata, {
         headers: {
           'X-SKIP-INTERCEPTOR': true,
           'Content-Type': 'multipart/form-data',

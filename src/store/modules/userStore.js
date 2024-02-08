@@ -10,6 +10,9 @@ const userStore = {
     UPDATE_SEARCH_USER(state, newSearchUser) {
       state.searchuser = newSearchUser
     },
+    UPDATE_PRO_FILEPATH(state, newProFilepath){
+      state.userInfo.pro_filepath = newProFilepath
+    },
     RESET_USER_INFO(state) { // 추가된 뮤테이션
       state.userInfo = null
     },
@@ -21,6 +24,10 @@ const userStore = {
     updateSearchUser({ commit }, newSearchUser) { // 수정된 액션
       commit('UPDATE_SEARCH_USER', newSearchUser)
     },
+    updateProFilepath({commit}, newProFilepath){
+      commit('UPDATE_PRO_FILEPATH', newProFilepath);
+    },
+
     userlogout({ commit }) { // 추가된 액션
       commit('RESET_USER_INFO')
     },

@@ -6,7 +6,7 @@ import {
 import Btnsu from '@/pages/views/demos/components/button/self-suc.vue'
 import SelfEdit from '@/pages/views/demos/forms/form-elements/textarea/self-edit.vue'
 import axios from '@axios'
-import { computed, onUpdated, ref, watch, watchEffect } from 'vue'
+import { computed, onMounted, onUpdated, ref, watch, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
@@ -235,7 +235,10 @@ const updateprofile = newcolval => {
     })
 }
 
-
+const updateProFilepath = async newProFilepath => {
+  // newProFilepath는 새로운 pro_filepath 값입니다.
+  await store.dispatch('updateProFilepath', newProFilepath)
+}
 
 //////////////////////////////////////////////////////////////////////
 // 이미지
@@ -320,6 +323,10 @@ const uploadFile = file => {
   return axios.post('http://localhost:4000/comm/upload', formData, {  params: {
     id: userInfo.value ? userInfo.value.id : null,
   }, withCredentials: true })
+    .then(() => {
+    // 이미지 업로드가 성공적으로 완료된 후에 updateProFilepath를 호출
+      updateProFilepath('http://localhost:4000/images/'+inputfilename.value)
+    })
 }
 
 
