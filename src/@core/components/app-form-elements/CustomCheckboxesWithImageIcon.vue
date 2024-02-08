@@ -21,6 +21,20 @@ const selectedOption = ref(structuredClone(toRaw(props.selectedCheckbox)))
 watch(selectedOption, () => {
   emit('update:selectedCheckbox', selectedOption.value)
 })
+
+const hateFoodchk = ref([])
+const checkval = (item) => {
+  console.log('값:',item.value, '이름:',item.name)
+  if(!hateFoodchk.value.includes(item.value)){
+    hateFoodchk.value.push(item.value);
+  }else{
+    const index = hateFoodchk.value.indexOf(item.value);
+      if (index !== -1) {
+        hateFoodchk.value.splice(index, 1);
+      }
+  }
+  console.log('현재',hateFoodchk.value);
+}
 </script>
 
 <template>
@@ -41,6 +55,7 @@ watch(selectedOption, () => {
           <VCheckbox
             v-model="selectedOption"
             :value="item.value"
+            @click="checkval(item)"
           />
         </div>
         <img

@@ -75,78 +75,92 @@ const checkboxContent = [
   {
     bgImage: bg1,
     value: '1',
+    name: '알류',
   },
   {
     bgImage: bg2,
     value: '2',
+    name: '우유',
   },
   {
     bgImage: bg3,
     value: '3',
+    name: '메밀',
   },
   {
     bgImage: bg4,
     value: '4',
+    name: '땅콩',
   },
   {
     bgImage: bg5,
     value: '5',
+    name: '대두',
   },
   {
     bgImage: bg6,
     value: '6',
+    name: '밀',
   },
   {
     bgImage: bg7,
     value: '7',
+    name: '고등어',
   },
   {
     bgImage: bg8,
     value: '8',
+    name: '게',
   },
   {
     bgImage: bg9,
     value: '9',
+    name: '새우',
   },
   {
     bgImage: bg10,
     value: '10',
+    name: '돼지고기',
   },
   {
     bgImage: bg11,
     value: '11',
+    name: '복숭아',
   },
   {
     bgImage: bg12,
     value: '12',
-  },
-  {
-    bgImage: bg12,
-    value: '12',
+    name: '토마토',
   },
   {
     bgImage: bg13,
     value: '13',
+    name: '아황산류',
   },
   {
     bgImage: bg14,
     value: '14',
+    name: '호두',
   },
   {
     bgImage: bg15,
     value: '15',
+    name: '닭고기',
   },
   {
     bgImage: bg16,
     value: '16',
+    name: '쇠고기',
   },
   {
     bgImage: bg17,
     value: '17',
+    name: '오징어',
   },
   {
     bgImage: bg18,
     value: '18',
+    name: '조개류',
   },
 ]
 
@@ -155,6 +169,7 @@ const checkboxContent2 = [
   {
     bgImage: ht1,
     value: '19',
+    name:'오이'
   },
   {
     bgImage: ht2,
@@ -269,6 +284,16 @@ const onSubmit = () => {
 const isSelected = value => {
   return selectedCheckbox.value === value
 }
+
+const sendchkList = (currentStep) => {
+  if(currentStep == 1){
+    console.log('DB에 넘기는 로직을 짜야하는데 귀찮다.')
+  }else if(currentStep == 2){
+    console.log('과연?')
+  }else if(currentStep == 3){
+    console.log('허허')
+  }
+}
 </script>
 
 <template>
@@ -297,6 +322,7 @@ const isSelected = value => {
                 v-model:selected-checkbox="selectedCheckbox"
                 :checkbox-content="checkboxContent"
                 :grid-column="{ sm: '3', cols: '12' }"
+                :allergyFoodchk="allergyFoodchk"
               />
             </VRow>
           </VWindowItem>
@@ -541,7 +567,7 @@ const isSelected = value => {
 
           <VBtn
             v-else
-            @click="currentStep++"
+            @click="currentStep++, sendchkList(currentStep)"
           >
             다음
 

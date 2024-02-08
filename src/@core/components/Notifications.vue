@@ -4,6 +4,7 @@ import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import { avatarText } from '@core/utils/formatters'
 import axios from '@axios'
 import { useStore } from 'vuex'
+import { errorMessages } from 'vue/compiler-sfc'
 
 const store = useStore()
 
@@ -25,6 +26,10 @@ const props = defineProps({
   noticflag:{
     type:Boolean,
     required:true,
+  },
+  getNoticList:{
+    type:Function,
+    required:true
   }
 })
 
@@ -52,6 +57,18 @@ function getTimeDiffString(triggerDate) {
   }
 }
 
+const updatenotic = async (notification, trigger_pk, index) => {
+  await axios.get('http://localhost:4000/Notic/Update.do',{ params: { trigger_pk: trigger_pk } })
+  .then(response => {
+      console.log('성공')
+
+      // checked_time 값을 업데이트하고 화면 갱신
+      notification.checked_time = new Date();//사실상 DB에 들어간 값과 같은 값이다.
+    })
+  .catch(error => {
+    console.log('실패', error)
+  })
+}
 
 </script>
 
@@ -120,6 +137,7 @@ function getTimeDiffString(triggerDate) {
                 lines="one"
                 min-height="66px"
                 class="list-item-hover-class"
+                @click="updatenotic(notification, notification.trigger_pk, index)"
               >
                 <!-- Slot: Prepend -->
                 <!-- Handles Avatar: Image, Icon, Text -->
@@ -146,14 +164,14 @@ function getTimeDiffString(triggerDate) {
                       dot
                       :color="notification.checked_time == null ? 'primary' : '#a8aaae'"
                       :class="`${notification.checked_time !== null ? 'visible-in-hover' : ''} ms-1`"
-                      @click.stop="updatenotic(connetId)"
+                      @click.stop="updatenotic(notification,notification.trigger_pk, index)"
                     />
 
                     <div style="block-size: 28px; inline-size: 28px;">
                       <IconBtn
                         size="x-small"
                         class="visible-in-hover"
-                        @click="removenotic(notification.notic_receive_user, notification.notic_trigger_date)"
+                        @click="removenotic(notification.trigger_pk)"
                       >
                         <VIcon
                           size="20"

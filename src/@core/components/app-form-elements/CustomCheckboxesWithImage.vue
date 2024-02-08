@@ -12,15 +12,37 @@ const props = defineProps({
     type: null,
     required: false,
   },
+  allergyFoodchk:{
+    type:Array,
+    required:true
+  }
 })
 
 const emit = defineEmits(['update:selectedCheckbox'])
 
 const selectedOption = ref(structuredClone(toRaw(props.selectedCheckbox)))
 
+
 watch(selectedOption, () => {
   emit('update:selectedCheckbox', selectedOption.value)
 })
+
+const allergyFoodchk = ref([])
+
+const checkval = (item) => {
+  console.log('값:',item.value, '이름:',item.name)
+  if(!allergyFoodchk.value.includes(item.name)){
+    allergyFoodchk.value.push(item.name);
+  }else{
+    const index = allergyFoodchk.value.indexOf(item.name);
+      if (index !== -1) {
+        allergyFoodchk.value.splice(index, 1);
+      }
+  }
+  console.log('현재',allergyFoodchk.value);
+}
+
+
 </script>
 
 <template>
@@ -41,6 +63,7 @@ watch(selectedOption, () => {
           <VCheckbox
             v-model="selectedOption"
             :value="item.value"
+            @click="checkval(item)"
           />
         </div>
         <img

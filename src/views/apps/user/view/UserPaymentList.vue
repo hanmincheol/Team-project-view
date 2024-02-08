@@ -2,6 +2,14 @@
 import axios from '@axios'
 import { computed } from 'vue'
 import { VDataTable } from 'vuetify/labs/VDataTable'
+import { useStore } from 'vuex'
+
+const store = useStore()
+
+// 로그인 스토어와 사용자 스토어의 상태를 가져옵니다.
+const userInfo = computed(() => store.state.userStore.userInfo)
+const connetId=userInfo.value.id
+const name = computed(() => store.state.userStore.userInfo ? store.state.userStore.userInfo.name : null)
 
 // ...
 const headers= [
@@ -11,6 +19,7 @@ const headers= [
   { title: '결제 수단', key: 'payMethod' },
 ]
 
+// 카테고리에 따른 값 보여주기
 const filteredPaylist = computed(() => {
   if (selected.value.length === 0) {
     // 선택된 카테고리가 없는 경우 전체 paylist 반환
@@ -33,16 +42,32 @@ const filteredPaylist = computed(() => {
   }
 })
 
-// paylist
+//유저 포인트 조회
+const pointval = ref()
+
+// 유저 결제 내역 가져오기
 const paylist = ref([])
-const searchuser = 'OSH' //접속중인 유저 아이디값 받아넣기
 const form = ref('')
+
+const userpoint = async () =>{
+  axios
+    .get('http://localhost:4000/searchPoint',{
+      params:{
+        id: connetId,
+      }
+    })
+    .then(response => {
+      if(response.status === 200){
+        pointval.value = response.data.POINT
+      }
+    })
+}
 
 const fetchData = async () => {
   axios
     .get('http://localhost:4000/PaymentList', {
       params: {
-        id: searchuser,
+        id: connetId,
       },
     })
     .then(response => {
@@ -50,6 +75,7 @@ const fetchData = async () => {
         paylist.value = response.data
         console.log(response.data)
         console.log(paylist.value)
+        userpoint()
       } else {
         console.log('데이터 가져오기 실패')
       }
@@ -100,16 +126,9 @@ onMounted(fetchData)
                   </VCol>
                   <VCol
                     cols="5"
-                    style="margin-top: -15px;"
+                    style="margin-top: -15px; display: flex; justify-content: flex-end; align-items: center;"
                   >
-                    <VTextField
-                      v-model="q"
-                      class="search px-1 flex-grow-1"
-                      placeholder="Search"
-                      :style="{ border: `1px solid ${borderColor}`, borderRadius: '5px' }"  
-                      @focus="borderColor = '#28a745'"  
-                      @blur="borderColor = '#ccc'" 
-                    />
+                      <h3 style="padding: 5px;">보유 포인트 : {{ pointval }} Point</h3>
                   </VCol>
                 </VRow>
               </VCol>
