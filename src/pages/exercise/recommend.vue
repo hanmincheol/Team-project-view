@@ -47,23 +47,18 @@
       <VCol cols="6">
         <!-- 지도 보여주는 영역 -->
         <VCard :style="{'height':'600px'}">
-          <div :style="{'height':'50px'}">
+          <div>
+            <!-- :style="{'height':'50px'}" -->
             <!-- 새로고침 버튼(추천경로 클릭시 show) -->
             <!--
-              <VBtn
-              v-show="recoDropDown"
-              icon="mdi-refresh"
-              variant="text"
-              color="success"
-              />
-            -->
-            <VSelect
+              <VSelect
               v-show="recoDropDown"
               :items="recommendPathView"
               label="추천 경로를 선택하세요"
               variant="filled"
               :style="{'width':'100%','float':'right'}"
-            />
+              />
+            -->
             <!-- 지도 검색창 화면 활성화 스위치(직접설정 클릭시 show) -->
             <VSwitch
               v-show="searchSwitch"
@@ -74,26 +69,27 @@
               @click="showSearchUi"
             />
             <!-- 즐겨찾기 목록화(즐겨찾기 클릭시 show) -->
-            <VSelect
+            <!--
+              <VSelect
               v-show="likeCategoryMenu"
               :items="items"
               label="원하는 동을 선택하세요"
               variant="filled"
               :style="{'width':'50%','float':'right'}"
               prepend-icon="mdi-map-search-outline"
-            />
+              />
+            -->
           </div>
-          <div
-            v-show="!isSelfControlMap"
-            id="map"
-            :style="{'width':'100%','height':'450px'}"
+          <RecoMap
+            v-show="isRecoMenuClicked"
+            @click="console.log(isLikeMenuClicked)"
           />
+          <LikePath v-show="isLikeMenuClicked" />
           <DrawMap
-            v-show="isSelfControlMap"
+            v-show="isDrawMenuClicked"
             ref="childMap"
             @refresh-child-road="createRoadView"
           />
-          <!-- @refresh-child-road="createRoadView" -->
           <!-- 지도 검색창 -->
           <div
             v-show="isSearchShow"
@@ -153,16 +149,29 @@
             </div>
           </div>
           <div :style="{'display':'flex','justify-content':'center','margin-top':'10px'}">
-            <VTabs
+            <!--
+              <VTabs
               next-icon="mdi-arrow-right"
               prev-icon="mdi-arrow-left"
-            >
-              <VTab
-                v-for="i in 3"
-                :key="i"
-                @click="whatBtnClick"
               >
-                {{ tabs[i] }}
+              <VTab
+              v-for="i in 3"
+              :key="i"
+              @click="whatBtnClick"
+              >
+              {{ tabs[i] }}
+              </VTab>
+              </VTabs>
+            -->
+            <VTabs>
+              <VTab @click="mapViewController(1)">
+                추천경로
+              </VTab>
+              <VTab @click="mapViewController(2)">
+                즐겨찾기
+              </VTab>
+              <VTab @click="mapViewController(3)">
+                직접등록
               </VTab>
             </VTabs>
           </div>
@@ -183,9 +192,11 @@
 <script>
 import AppDateTimePicker from '@/@core/components/app-form-elements/AppDateTimePicker.vue'
 import DrawMap from '@/pages/exercise/DrawMap.vue'
+import RecoMap from '@/pages/exercise/RecoMap.vue'
 import * as mapData from '@/pages/exercise/mapData'
 import { isSearchListClicked } from '@/pages/exercise/mapSearch'
 import { ref } from 'vue'
+import LikePath from './LikePath.vue'
 
 //지도위에 현재 로드뷰의 위치와, 각도를 표시하기 위한 map walker 아이콘 생성 클래스
 function MapWalker(position){
@@ -263,9 +274,14 @@ export default {
   components: {
     DrawMap,
     AppDateTimePicker,
+    RecoMap,
+    LikePath,
   },
   data() {
     return {
+      isRecoMenuClicked: ref(true),
+      isLikeMenuClicked: ref(false),
+      isDrawMenuClicked: ref(false),
       isSearchListClicked: isSearchListClicked,
       startTime: mapData.startTime, //시작 시간 선택
       endTime: mapData.endTime, //종료 시간 선택
@@ -302,8 +318,8 @@ export default {
       isSearchShow: ref(false), //검색창 화면 조정
       
 
-      likePath: [[33.452344169439975, 126.56878163224233], [33.452739313807456, 126.5709308145358], [33.45178067090639, 126.5726886938753]],
-      recoPath: [[33.452344169439975, 126.56878163224233], [33.452739313807456, 126.5709308145358], [33.45178067090639, 126.5726886938753]],
+      likePath: ref([]),
+      recoPath: ref([]),
       tabs: ['', '추천경로', '즐겨찾기', '직접설정'],
 
       //로드뷰 동동이에 필요한 변수
@@ -329,24 +345,29 @@ export default {
       script.onload = () => { //컴포넌트가 마운트된 후 호출될 콜백 등록
         kakao.maps.load(()=>{ //kakao가 로드되었을 때 호출될 콜백 함수 등록
           this.initMap()
+          
           var places = new kakao.maps.services.Places()
-
-          var callback = function(result, status) {
-            if (status === kakao.maps.services.Status.OK) {
-              console.log('검색 결과:', result)
-            }
-          }//callback
-
-          console.log('업데이트됨')
+          this.recoPath.value = []
           this.recommendPath.forEach(ele=>{
             var path=''
+            var temp = [] //경로 하나에 대한 x, y좌표값 [[x,y],[x,y],..]
             ele.forEach(i=>{
               path += i + ' - '
-              console.log(places.keywordSearch(i, callback))
+              console.log('콜백 return 값 확인', places.keywordSearch(i, (result, status)=>{
+                if (status === kakao.maps.services.Status.OK) {
+                  console.log('검색 결과:', result[0])
+                  temp.push([result[0].x, result[0].y]) //[x,y]
+                }
+              }))
             })
+            console.log('temp:', temp)
+            this.recoPath.value.push(temp)
             this.recommendPathView.push(path)
+
+            //drawPolyLine()
             console.log('recommendPathView', this.recommendPathView)
           })
+          console.log('recoPath:', this.recoPath)
         })
       }
       script.src =
@@ -355,27 +376,6 @@ export default {
     }
 
   }, //mounted
-  // updated() {
-    
-  //   var places = new kakao.maps.services.Places()
-
-  //   var callback = function(result, status) {
-  //     if (status === kakao.maps.services.Status.OK) {
-  //       console.log('검색 결과:', result)
-  //     }
-  //   }//callback
-
-  //   console.log('업데이트됨')
-  //   this.recommendPath.forEach(ele=>{
-  //     var path=''
-  //     ele.forEach(i=>{
-  //       path += i + ' - '
-  //       places.keywordSearch(i, callback)
-  //     })
-  //     this.recommendPathView.push(path)
-  //     console.log('recommendPathView', this.recommendPathView)
-  //   })
-  // },
   methods: {
     //위치 리스트 클릭
     searchListClickController(e){
@@ -391,6 +391,20 @@ export default {
 
       // 장소 검색 객체를 생성합니다
       // mapSearch.searchPlaces(ps, this.map)
+    },
+    mapViewController(menu){
+      if(menu==1){
+        this.isRecoMenuClicked = true
+        this.isLikeMenuClicked, this.isDrawMenuClicked = false
+      }
+      if(menu==2){
+        this.isLikeMenuClicked = true
+        this.isRecoMenuClicked, this.isDrawMenuClicked = false
+      }
+      if(menu==3){
+        this.isDrawMenuClicked = true
+        this.isLikeMenuClicked, this.isRecoMenuClicked = false
+      }
     },
 
     //로드 뷰 관련 함수---------------------------------------------------------
@@ -413,11 +427,14 @@ export default {
       //map walker 생성-----------------------------------------------
       // 로드뷰의 초기화 되었을때 map walker를 생성한다.
       kakao.maps.event.addListener(roadview, 'init', function() {
-
+        
         // map walker를 생성한다. 생성시 지도의 중심좌표를 넘긴다.
-        this.mapWalker = new MapWalker(position)
-        this.mapWalker.setMap(map) // map walker를 지도에 설정한다.
+        if (this.mapWalker == null) {
+          this.mapWalker = new MapWalker(position)
+          this.mapWalker.setMap(map) // map walker를 지도에 설정한다.
 
+        }
+        
         // 로드뷰가 초기화 된 후, 추가 이벤트를 등록한다.
         // 로드뷰를 상,하,좌,우,줌인,줌아웃을 할 경우 발생한다.
         // 로드뷰를 조작할때 발생하는 값을 받아 map walker의 상태를 변경해 준다.
@@ -469,7 +486,7 @@ export default {
           //지도 객체는 반응형 관리 대상이 아니므로 initMap에서 선언합니다.
           console.log(lat)
           this.map = new kakao.maps.Map(container, options)
-          this.drawPolyLine(this.likePath)
+          this.drawPolyLine(this.recoPath)
           this.createRoadView(lat.value, lng.value, this.map)
           
         })
