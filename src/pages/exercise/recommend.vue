@@ -326,34 +326,56 @@ export default {
       const script = document.createElement("script")
 
       /* global kakao */
-      script.onload = () => kakao.maps.load(this.initMap)
+      script.onload = () => { //컴포넌트가 마운트된 후 호출될 콜백 등록
+        kakao.maps.load(()=>{ //kakao가 로드되었을 때 호출될 콜백 함수 등록
+          this.initMap()
+          var places = new kakao.maps.services.Places()
+
+          var callback = function(result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+              console.log('검색 결과:', result)
+            }
+          }//callback
+
+          console.log('업데이트됨')
+          this.recommendPath.forEach(ele=>{
+            var path=''
+            ele.forEach(i=>{
+              path += i + ' - '
+              console.log(places.keywordSearch(i, callback))
+            })
+            this.recommendPathView.push(path)
+            console.log('recommendPathView', this.recommendPathView)
+          })
+        })
+      }
       script.src =
         "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=ca9eb44c2889273e11b9860d99308508&libraries=services,clusterer,drawing"
       document.head.appendChild(script)
     }
 
   }, //mounted
-  updated() {
+  // updated() {
     
-    var places = new kakao.maps.services.Places()
+  //   var places = new kakao.maps.services.Places()
 
-    var callback = function(result, status) {
-      if (status === kakao.maps.services.Status.OK) {
-        console.log('검색 결과:', result)
-      }
-    }//callback
+  //   var callback = function(result, status) {
+  //     if (status === kakao.maps.services.Status.OK) {
+  //       console.log('검색 결과:', result)
+  //     }
+  //   }//callback
 
-    console.log('업데이트됨')
-    this.recommendPath.forEach(ele=>{
-      var path=''
-      ele.forEach(i=>{
-        path += i + ' - '
-        places.keywordSearch(i,callback)
-      })
-      this.recommendPathView.push(path)
-      console.log('recommendPathView', this.recommendPathView)
-    })
-  },
+  //   console.log('업데이트됨')
+  //   this.recommendPath.forEach(ele=>{
+  //     var path=''
+  //     ele.forEach(i=>{
+  //       path += i + ' - '
+  //       places.keywordSearch(i, callback)
+  //     })
+  //     this.recommendPathView.push(path)
+  //     console.log('recommendPathView', this.recommendPathView)
+  //   })
+  // },
   methods: {
     //위치 리스트 클릭
     searchListClickController(e){
