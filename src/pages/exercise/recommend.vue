@@ -80,10 +80,13 @@
               />
             -->
           </div>
-          <RecoMap v-show="!isSelfControlMap" />
-          <LikePath v-show="likeCategoryMenu" />
+          <RecoMap
+            v-show="isRecoMenuClicked"
+            @click="console.log(isLikeMenuClicked)"
+          />
+          <LikePath v-show="isLikeMenuClicked" />
           <DrawMap
-            v-show="isSelfControlMap"
+            v-show="isDrawMenuClicked"
             ref="childMap"
             @refresh-child-road="createRoadView"
           />
@@ -146,16 +149,29 @@
             </div>
           </div>
           <div :style="{'display':'flex','justify-content':'center','margin-top':'10px'}">
-            <VTabs
+            <!--
+              <VTabs
               next-icon="mdi-arrow-right"
               prev-icon="mdi-arrow-left"
-            >
-              <VTab
-                v-for="i in 3"
-                :key="i"
-                @click="whatBtnClick"
               >
-                {{ tabs[i] }}
+              <VTab
+              v-for="i in 3"
+              :key="i"
+              @click="whatBtnClick"
+              >
+              {{ tabs[i] }}
+              </VTab>
+              </VTabs>
+            -->
+            <VTabs>
+              <VTab @click="mapViewController(1)">
+                추천경로
+              </VTab>
+              <VTab @click="mapViewController(2)">
+                즐겨찾기
+              </VTab>
+              <VTab @click="mapViewController(3)">
+                직접등록
               </VTab>
             </VTabs>
           </div>
@@ -263,6 +279,9 @@ export default {
   },
   data() {
     return {
+      isRecoMenuClicked: ref(true),
+      isLikeMenuClicked: ref(false),
+      isDrawMenuClicked: ref(false),
       isSearchListClicked: isSearchListClicked,
       startTime: mapData.startTime, //시작 시간 선택
       endTime: mapData.endTime, //종료 시간 선택
@@ -372,6 +391,20 @@ export default {
 
       // 장소 검색 객체를 생성합니다
       // mapSearch.searchPlaces(ps, this.map)
+    },
+    mapViewController(menu){
+      if(menu==1){
+        this.isRecoMenuClicked = true
+        this.isLikeMenuClicked, this.isDrawMenuClicked = false
+      }
+      if(menu==2){
+        this.isLikeMenuClicked = true
+        this.isRecoMenuClicked, this.isDrawMenuClicked = false
+      }
+      if(menu==3){
+        this.isDrawMenuClicked = true
+        this.isLikeMenuClicked, this.isRecoMenuClicked = false
+      }
     },
 
     //로드 뷰 관련 함수---------------------------------------------------------

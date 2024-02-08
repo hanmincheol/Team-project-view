@@ -40,7 +40,7 @@ onMounted(()=>{
         var option = ''
         path.forEach(point=>{
           option += point + '-' //뿌려주는 용도의 text
-          places.keywordSearch(i, (result, status)=>{
+          places.keywordSearch(point, (result, status)=>{
             if (status === kakao.maps.services.Status.OK) {
               console.log('검색 결과:', result[0]) //위도, 경도 값에 대한 정보가 나와있음
               temp.push([result[0].x, result[0].y]) //[x,y] = [lng, lat]

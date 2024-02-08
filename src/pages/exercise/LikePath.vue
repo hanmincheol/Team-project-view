@@ -39,22 +39,7 @@ onMounted(()=>{
       //지도 띄우기
       initMap(getCurrentPosition()[0], getCurrentPosition()[0])
 
-      var places = new kakao.maps.services.Places() //검색을 위한 객체
-      recommendPath.forEach(path=>{
-        var temp = [] //[[lng,lat], [lng,lat], [lng,lat]...]
-        var option = ''
-        path.forEach(point=>{
-          option += point + '-' //뿌려주는 용도의 text
-          places.keywordSearch(i, (result, status)=>{
-            if (status === kakao.maps.services.Status.OK) {
-              console.log('검색 결과:', result[0]) //위도, 경도 값에 대한 정보가 나와있음
-              temp.push([result[0].x, result[0].y]) //[x,y] = [lng, lat]
-            }
-          })
-        })
-        recommendPathView.push(option) //드롭다운 선택란에 뿌려줄 값
-        pathAboutLatLng.push(temp) //지도에 뿌려줄 위도, 경도 값
-      })
+    
       
     })
   }
