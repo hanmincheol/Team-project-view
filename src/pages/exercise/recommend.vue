@@ -302,8 +302,8 @@ export default {
       isSearchShow: ref(false), //검색창 화면 조정
       
 
-      likePath: [[33.452344169439975, 126.56878163224233], [33.452739313807456, 126.5709308145358], [33.45178067090639, 126.5726886938753]],
-      recoPath: [[33.452344169439975, 126.56878163224233], [33.452739313807456, 126.5709308145358], [33.45178067090639, 126.5726886938753]],
+      likePath: ref([]),
+      recoPath: ref([]),
       tabs: ['', '추천경로', '즐겨찾기', '직접설정'],
 
       //로드뷰 동동이에 필요한 변수
@@ -330,23 +330,27 @@ export default {
         kakao.maps.load(()=>{ //kakao가 로드되었을 때 호출될 콜백 함수 등록
           this.initMap()
           var places = new kakao.maps.services.Places()
-
-          var callback = function(result, status) {
-            if (status === kakao.maps.services.Status.OK) {
-              console.log('검색 결과:', result)
-            }
-          }//callback
-
-          console.log('업데이트됨')
+          this.recoPath.value = []
           this.recommendPath.forEach(ele=>{
             var path=''
+            var temp = [] //경로 하나에 대한 x, y좌표값 [[x,y],[x,y],..]
             ele.forEach(i=>{
               path += i + ' - '
-              console.log(places.keywordSearch(i, callback))
+              console.log('콜백 return 값 확인', places.keywordSearch(i, (result, status)=>{
+                if (status === kakao.maps.services.Status.OK) {
+                  console.log('검색 결과:', result[0])
+                  temp.push([result[0].x, result[0].y]) //[x,y]
+                }
+              }))
             })
+            console.log('temp:', temp)
+            this.recoPath.value.push(temp)
             this.recommendPathView.push(path)
+
+            //drawPolyLine()
             console.log('recommendPathView', this.recommendPathView)
           })
+          console.log('recoPath:', this.recoPath)
         })
       }
       script.src =
@@ -355,27 +359,6 @@ export default {
     }
 
   }, //mounted
-  // updated() {
-    
-  //   var places = new kakao.maps.services.Places()
-
-  //   var callback = function(result, status) {
-  //     if (status === kakao.maps.services.Status.OK) {
-  //       console.log('검색 결과:', result)
-  //     }
-  //   }//callback
-
-  //   console.log('업데이트됨')
-  //   this.recommendPath.forEach(ele=>{
-  //     var path=''
-  //     ele.forEach(i=>{
-  //       path += i + ' - '
-  //       places.keywordSearch(i, callback)
-  //     })
-  //     this.recommendPathView.push(path)
-  //     console.log('recommendPathView', this.recommendPathView)
-  //   })
-  // },
   methods: {
     //위치 리스트 클릭
     searchListClickController(e){
