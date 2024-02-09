@@ -151,71 +151,6 @@ const searchPosition = e => {
   // mapSearch.searchPlaces(ps, this.map)
 }
 
-
-// //로드 뷰 관련 함수---------------------------------------------------------
-// const createRoadView = (lat, lng, map) => { //로드뷰 보여주기
-
-//   // 로드뷰 도로를 지도위에 올린다. (근데 올리면 정신없음)
-//   // map.addOverlayMapTypeId(kakao.maps.MapTypeId.ROADVIEW)
-
-//   var roadviewContainer = document.getElementById('roadview') //로드뷰를 표시할 div
-//   var roadview = new kakao.maps.Roadview(roadviewContainer) //로드뷰 객체
-//   var roadviewClient = new kakao.maps.RoadviewClient() //좌표로부터 로드뷰 파노ID를 가져올 로드뷰 helper객체
-//   var position = new kakao.maps.LatLng(lat, lng) //테스트 위치
-
-//   // 특정 위치의 좌표와 가까운 로드뷰의 panoId를 추출하여 로드뷰를 띄운다.
-//   roadviewClient.getNearestPanoId(position, 300, function(panoId) {
-//     roadview.setPanoId(panoId, position) //panoId와 중심좌표를 통해 로드뷰 실행
-//   })
-
-      
-//   //map walker 생성-----------------------------------------------
-//   // 로드뷰의 초기화 되었을때 map walker를 생성한다.
-//   kakao.maps.event.addListener(roadview, 'init', function() {
-        
-//     // map walker를 생성한다. 생성시 지도의 중심좌표를 넘긴다.
-//     if (this.mapWalker == null) {
-//       this.mapWalker = new MapWalker(position)
-//       this.mapWalker.setMap(map) // map walker를 지도에 설정한다.
-
-//     }
-        
-//     // 로드뷰가 초기화 된 후, 추가 이벤트를 등록한다.
-//     // 로드뷰를 상,하,좌,우,줌인,줌아웃을 할 경우 발생한다.
-//     // 로드뷰를 조작할때 발생하는 값을 받아 map walker의 상태를 변경해 준다.
-//     kakao.maps.event.addListener(roadview, 'viewpoint_changed', function(){
-
-//       // 이벤트가 발생할 때마다 로드뷰의 viewpoint값을 읽어, map walker에 반영
-//       var viewpoint = roadview.getViewpoint()
-//       this.mapWalker.setAngle(viewpoint.pan)
-//     })
-
-//     // 로드뷰내의 화살표나 점프를 하였을 경우 발생한다.
-//     // position값이 바뀔 때마다 map walker의 상태를 변경해 준다.
-//     kakao.maps.event.addListener(roadview, 'position_changed', function(){
-
-//       // 이벤트가 발생할 때마다 로드뷰의 position값을 읽어, map walker에 반영 
-//       var position = roadview.getPosition()
-//       this.mapWalker.setPosition(position)
-//       map.setCenter(position)
-
-//     })
-//   })
-// } //createRoadView
-    
-//로드 뷰 관련 함수 end-----------------------------------------------------
-
-
-
-const currPosition = () => { //현재 위치 반환
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(positions=>{
-      var lat = positions.coords.latitude
-      var lng = positions.coords.longitude
-      console.log(positions.coords.latitude)
-    })
-  }
-}
     
 const showSearchUi = () => { //검색창 ui 보이기
   this.switchOnOff = !this.switchOnOff
@@ -327,21 +262,9 @@ const checkTimeValidity = () => { //종료시간이 시작시간보다 늦는지
       <VCol cols="6">
         <!-- 지도 보여주는 영역 -->
         <VCard :style="{'height':'600px'}">
-          <div>
-            <!-- 지도 검색창 화면 활성화 스위치(직접설정 클릭시 show) -->
-            <VSwitch
-              v-show="searchSwitch"
-              label="검색창 보기"
-              :value="Info"
-              :color="'Info'.toLowerCase()"
-              :style="{'float':'right', 'margin':'5px','margin-right':'20px'}"
-              @click="showSearchUi"
-            />
-          </div>
-
           <VWindow
             v-model="activeTab"
-            class="mt-6 disable-tab-transition"
+            class="mb-6 disable-tab-transition"
             :touch="false"
           >
             <VWindowItem value="reco">

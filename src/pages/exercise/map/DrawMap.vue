@@ -1,4 +1,13 @@
 <template>
+  <div>
+    <!-- 지도 검색창 화면 활성화 스위치(직접설정 클릭시 show) -->
+    <VSwitch
+      label="검색창 보기"
+      :value="Info"
+      :color="'Info'.toLowerCase()"
+      :style="{'float':'right', 'margin':'5px','margin-right':'20px'}"
+    />
+  </div>
   <div
     id="drawingMap"
     :style="{'width':'100%','height':'450px'}"
@@ -43,6 +52,16 @@ export default {
     //this.drawingMap.relayout();
   }, //mounted
   methods: {
+    showSearchUi() {
+      this.switchOnOff = !this.switchOnOff
+      var mapEl = document.getElementById('menu-wrap') //지도 태그 가져오기
+      if(this.switchOnOff) { //스위치가 켜져 있으면 검색창 띄우기
+        this.isSearchShow = true
+      }
+      else { //스위치가 꺼져 있으면 검색창 숨기기
+        this.isSearchShow = false
+      }
+    },
     initMap() { //지도 초기화 함수
       const drawingContainer = document.getElementById("drawingMap")
       var lat = ref(33.450701)
