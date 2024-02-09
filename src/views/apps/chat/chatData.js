@@ -1,5 +1,5 @@
-import { ref, onMounted } from 'vue'
 import axios from '@axios'
+import { onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 
 export default function useDatabase() {
@@ -26,13 +26,20 @@ export default function useDatabase() {
     }
   
     return database.value.chats.map(chat => {
-      const contact = JSON.parse(JSON.stringify(database.value.contacts.find(c => c.id === chat.userId)))
-
-      contact.chat = { id: chat.id, unseenMsgs: chat.unseenMsgs, lastMessage: chat.messages.at(-1) }
+      const contact = database.value.contacts.find(c => c.id === chat.userId)
+  
+      if (!contact) {
+        return null 
+      }
+  
+      const deepCopiedContact = JSON.parse(JSON.stringify(contact))
+  
+      deepCopiedContact.chat = { id: chat.id, unseenMsgs: chat.unseenMsgs, lastMessage: chat.messages.at(-1) }
       
-      return contact
-    }).reverse()
+      return deepCopiedContact
+    }).filter(contact => contact !== null).reverse()
   })
+  
 
 
   
@@ -67,41 +74,62 @@ export default function useDatabase() {
   async function allData(userId) {
     try {
       console.log("userId:", userId)
-      
+  
       const response = await axios.get("http://localhost:4000/chat/allChating.do", { params: { id: userId } })
-      
+  
+      console.log("response:", response.data)
+  
       if (response.data && Array.isArray(response.data)) {
         console.log("response.data:", response.data)
-
+  
         const newChats = [...database.value.chats]
-
+  
         response.data.forEach((item, index) => {
-          newChats.push({
-            userId: item.ruser,
-            unseenMsgs: 0,
-            fullName: item.name,
-            messages: [
-              {
-                message: item.content,
-                time: item.sendDate,
-                senderId: userId,
-                feedback: {
-                  isSent: true,
-                  isDelivered: true,
-                  isSeen: false,
-                },
+          // 해당 userId를 가진 채팅 찾기
+          const chat = newChats.find(chat => chat.userId === item.ruser)
+  
+          if (chat) {
+            // 채팅이 존재하면 메시지 추가
+            chat.messages.push({
+              message: item.content,
+              time: item.sendDate,
+              senderId: userId,
+              feedback: {
+                isSent: true,
+                isDelivered: true,
+                isSeen: false,
               },
-            ],
-          })
+            })
+          } else {
+            // 채팅이 존재하지 않으면 새 채팅 추가
+            newChats.push({
+              userId: item.ruser,
+              unseenMsgs: 0,
+              fullName: item.name,
+              messages: [
+                {
+                  message: item.content,
+                  time: item.sendDate,
+                  senderId: userId,
+                  feedback: {
+                    isSent: true,
+                    isDelivered: true,
+                    isSeen: false,
+                  },
+                },
+              ],
+            })
+          }
         })
-
+  
         database.value = { ...database.value, chats: newChats }
       }
-
+  
     } catch (error) {
       console.error(`데이터를 가져오는데 실패했습니다: ${error}`)
     }
   }
+  
 
   async function fetchFriendDatabase(userId) {
     try {
