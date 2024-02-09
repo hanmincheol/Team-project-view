@@ -3,144 +3,77 @@ import ChatActiveChatUserProfileSidebarContent from '@/views/apps/chat/ChatActiv
 import ChatLeftSidebarContent from '@/views/apps/chat/ChatLeftSidebarContent.vue'
 import ChatLog from '@/views/apps/chat/ChatLog.vue'
 import ChatUserProfileSidebarContent from '@/views/apps/chat/ChatUserProfileSidebarContent.vue'
+import useDatabase from '@/views/apps/chat/chatData.js'
 import { useChat } from '@/views/apps/chat/useChat'
-import axios from '@axios'
+import { useChatStore } from '@/views/apps/chat/useChatStore'
 import { useResponsiveLeftSidebar } from '@core/composable/useResponsiveSidebar'
 import { avatarText } from '@core/utils/formatters'
-import { onMounted, onUnmounted, ref } from 'vue'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import { useDisplay } from 'vuetify'
-import { useStore } from 'vuex'
 
-//현재 화면 크기에 대한 정보
+
 const vuetifyDisplays = useDisplay()
-
-//상태를 관리하고 액션을 수행
-const store = useStore()
-
-// 로그인 스토어와 사용자 스토어의 상태를 가져옵니다.
-const userInfo = computed(() => store.state.userStore.userInfo)
-const connetId=computed(() => userInfo.value.id)
-
-//왼쪽 사이드바의 열림/닫힘 상태를 결정
+const store = useChatStore()
 const { isLeftSidebarOpen } = useResponsiveLeftSidebar(vuetifyDisplays.smAndDown)
-
-//유저 상태 색상
 const { resolveAvatarBadgeVariant } = useChat()
 
-// Perfect scrollbar
+// 스크롤바
 const chatLogPS = ref()
 
-const ruser = ref()
-
-//맨 아래로 스크롤
 const scrollToBottomInChatLog = () => {
   const scrollEl = chatLogPS.value.$el || chatLogPS.value
 
   scrollEl.scrollTop = scrollEl.scrollHeight
 }
 
+let { database, fetchDatabase, fetchFriendDatabase, allData, chatsContacts, connetId, activeChat } = useDatabase()
 
-//검색 쿼리에 따라 채팅 및 연락처 목록이 동적으로 업데이트
-//채팅 로그가 업데이트되면 맨 아래로 스크롤하여 사용자에게 가장 최근의 채팅 내용을 보여주는 기능
+// 검색
+const q = ref('')
 
-const q = ref(connetId) // 로그인 유저
+watch(q, val => store.fetchChatsAndContacts(val), { immediate: true })
 
-async function fetchChatsAndContacts(q) {
-  const { data } = await axios.get('/apps/chat/chats-and-contacts', {
-    params: { q },
-  })
-
-  const { chatsContacts, contacts, profileUser } = data
-
-  this.chatsContacts = chatsContacts
-  this.contacts = contacts
-  this.profileUser = profileUser
-}
-
-watch(q, async val => await fetchChatsAndContacts(val), { immediate: true })
-
-// 채팅방 시작
+// 친구 클릭시 열리는 채팅방
 const startConversation = () => {
   if (vuetifyDisplays.mdAndUp.value)
     return
   isLeftSidebarOpen.value = true
 }
 
-
-// 메세지 부분
+// 메세지
 const msg = ref('')
 
-// 웹소켓 연결 설정
-let socket = null
-
-onMounted(() => {
-  socket = new WebSocket('ws://localhost:4000/chat')
-
-  socket.onopen = () => {
-    console.log('웹소켓 시작')
-  }
-
-  socket.onmessage = async event => { 
-    const message = JSON.parse(event.data)
-
-    // data 객체 생성
-    const data = {
-      id: connetId,
-      ruser: "보내려는 사람",
-      content: message,
-    }
-
-    const response = await axios.post("http://localhost:4000/chat/SoloWrite.do", data)
-  }
-
-  socket.onclose = () => {
-    console.log('웹소켓 끝')
-  }
-
-  socket.onerror = error => {
-    console.error('웹소켓 에러: ', error)
-  }
-})
-
-// 메세지 전송
-const sendMessage = ruser => {
+const sendMessage = async () => {
   if (!msg.value)
     return
+  await store.sendMsg(msg.value)
 
-  const message = {
-    id: connetId,
-    ruser: ruser,  // "받는 사람의 아이디" 부분을 실제 받는 사람의 아이디로 바꿔주세요.
-    content: msg.value,
-  }
-
-  // 메세지를 웹소켓을 통해 전송
-  socket.send(JSON.stringify(message))
-
-  // Reset message input
+  // 메세지 보내는 란 초기화
   msg.value = ''
 
-  // Scroll to bottom
-  nextTick(() => {
+  // 스크롤을 아래로 내리기
+  this.$nextTick(() => {
     scrollToBottomInChatLog()
   })
 }
 
-// 컴포넌트가 unmount될 때 웹소켓 연결 종료
-onUnmounted(() => {
-  if (socket) {
-    socket.close() 
+const openChatOfContact = async userId => {
+  const chat = database.value.chats.find(c => c.userId === userId)
+
+  if (chat) {
+    chat.unseenMsgs = 0
   }
-})
 
-
-const openChatOfContact = async connetId => {
+  activeChat = {
+    chat,
+    contact: database.value.contacts.find(c => c.id === userId),
+  }
 
   // Reset message input
   msg.value = ''
 
   // Set unseenMsgs to 0
-  const contact = store.chatsContacts.find(c => c.id === connetId)
+  const contact = chatsContacts.find(c => c.id === userId)
   if (contact)
     contact.chat.unseenMsgs = 0
 
@@ -148,11 +81,12 @@ const openChatOfContact = async connetId => {
   if (vuetifyDisplays.smAndDown.value)
     isLeftSidebarOpen.value = false
 
-  // Scroll to bottom
-  nextTick(() => {
+  // 스크롤바 아래로 내리기
+  this.$nextTick(() => {
     scrollToBottomInChatLog()
   })
 }
+
 
 // User profile sidebar
 const isUserProfileSidebarOpen = ref(false)
@@ -163,22 +97,21 @@ const isActiveChatUserProfileSidebarOpen = ref(false)
 // file input
 const refInputEl = ref()
 
-//햄버거 누르면 나오는 창
 const moreList = [
   {
-    title: '연락처 보기',
+    title: 'View Contact',
     value: 'View Contact',
   },
   {
-    title: '음소거 알림',
+    title: 'Mute Notifications',
     value: 'Mute Notifications',
   },
   {
-    title: '차단하기',
+    title: 'Block Contact',
     value: 'Block Contact',
   },
   {
-    title: '채팅 지우기',
+    title: 'Clear Chat',
     value: 'Clear Chat',
   },
   {
@@ -190,8 +123,7 @@ const moreList = [
 
 <template>
   <VLayout class="chat-app-layout bg-surface">
-    <!-- "bg-surface" 클래스는 배경 색상 -->
-    <!-- 사용자 프로필 사이드바의 열림/닫힘 상태를 관리 => 고칠곳 x -->
+    <!-- 👉 user profile sidebar -->
     <VNavigationDrawer
       v-model="isUserProfileSidebarOpen"
       temporary
@@ -241,7 +173,7 @@ const moreList = [
     <VMain class="chat-content-container">
       <!-- 👉 Right content: Active Chat -->
       <div
-        v-if="store.activeChat"
+        v-if="activeChat"
         class="d-flex flex-column h-100"
       >
         <!-- 👉 Active chat header -->
@@ -323,30 +255,17 @@ const moreList = [
         <!-- Message form -->
         <VForm
           class="chat-log-message-form mb-5 mx-5"
-          @submit.prevent="sendMessage(ruser)"
+          @submit.prevent="sendMessage"
         >
           <VTextField
             :key="store.activeChat?.contact.id"
             v-model="msg"
             variant="solo"
             class="chat-message-input"
-            placeholder="메세지를 입력해주세요"
+            placeholder="Type your message..."
             autofocus
           >
             <template #append-inner>
-              <IconBtn>
-                <VIcon
-                  icon="mdi-map-legend "
-                  size="22"
-                />
-              </IconBtn>
-              <IconBtn>
-                <VIcon
-                  icon="mdi-instagram "
-                  size="22"
-                />
-              </IconBtn>
-
               <IconBtn>
                 <VIcon
                   icon="mdi-microphone-outline"
@@ -364,8 +283,8 @@ const moreList = [
                 />
               </IconBtn>
 
-              <VBtn @click="sendMessage(ruser)">
-                보내기
+              <VBtn @click="sendMessage">
+                Send
               </VBtn>
             </template>
           </VTextField>
@@ -380,7 +299,7 @@ const moreList = [
         </VForm>
       </div>
 
-      <!-- 채팅방을 하나도 열지 않았을 시 -->
+      <!-- 👉 Start conversation -->
       <div
         v-else
         class="d-flex h-100 align-center justify-center flex-column"
@@ -400,7 +319,7 @@ const moreList = [
           :class="[{ 'cursor-pointer': $vuetify.display.smAndDown }]"
           @click="startConversation"
         >
-          채팅방을 클릭하세요!
+          채팅방을 선택해주세요!
         </p>
       </div>
     </VMain>

@@ -1,12 +1,10 @@
 <script setup>
+import useDatabase from '@/views/apps/chat/chatData.js'
 import { useChat } from '@/views/apps/chat/useChat'
-import axios from '@axios'
 import {
   avatarText,
   formatDateToMonthShort,
 } from '@core/utils/formatters'
-import { computed, ref } from 'vue'
-import { useStore } from 'vuex'
 
 const props = defineProps({
   isChatContact: {
@@ -20,52 +18,28 @@ const props = defineProps({
   },
 })
 
-const store = useStore()
-const ruser = ref("")
+const { database, fetchDatabase, fetchFriendDatabase, allData, chatsContacts, connetId, activeChat } = useDatabase()
 
-// 로그인 스토어와 사용자 스토어의 상태를 가져옵니다.
-const userInfo = computed(() => store.state.userStore.userInfo)
-const connetId=userInfo.value.id
+
 const { resolveAvatarBadgeVariant } = useChat()
 
-const isActive = ref(false)
 
-// 메서드 정의
-const fetchData = async () => {
-  try {
-    const response = await axios.post('http://localhost:4000/chat/selectChat.do', {
-      id: connetId,
-    })
 
-    console.log(response.data)
-    ruser.value = response.data.ruser
-    isActive.value = store.state.activeChat?.contact.id === props.user.id
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-// 컴포넌트가 마운트되었을 때 fetchData를 호출합니다.
-onMounted(fetchData)
-
-// computed 속성 정의
 const isChatContactActive = computed(() => {
+  const isActive = activeChat?.contact.id === props.user.id
   if (!props.isChatContact)
-    return !store.state.activeChat?.chat && isActive.value
-
-  return isActive.value
+    return !activeChat?.chat && isActive
+  
+  return isActive
 })
-
-//:color="resolveAvatarBadgeVariant(props.user.status)"
 </script>
-
 
 <template>
   <li
-    :key="isChatContactActive"
+    :key="chatsContacts.length"
     class="chat-contact cursor-pointer d-flex align-center"
     :class="{ 'chat-contact-active': isChatContactActive }"
-    :data-x="isChatContactActive"
+    :data-x="chatsContacts.length"
   >
     <VBadge
       dot

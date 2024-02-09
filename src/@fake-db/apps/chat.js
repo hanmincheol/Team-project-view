@@ -81,10 +81,6 @@ const database = {
 mock.onGet('/apps/chat/chats-and-contacts').reply(async config => {
   const { q = '' } = config.params
 
-  console.log("나는 누구인가?", q)
-  await fetchDatabase(q)
-  await fetchFriendDatabase (q)
-
   const qLowered = q.toLowerCase()
 
   const chatsContacts = database.chats
