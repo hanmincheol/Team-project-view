@@ -7,8 +7,9 @@
 </template>
 
 <script>
+import * as mapSearch from '@/pages/exercise/mapSearch'
 import { ref } from 'vue'
-import * as mapSearch from '../exercise/mapSearch'
+import { createRoadView } from '../createRoadView'
 
 var lat = []
 var lng = []
@@ -22,11 +23,12 @@ export default {
     }
   }, //data
   mounted() {
-    console.log('DrawMap:', typeof lat)
+    console.log('DrawMap:', this.drawingMap)
     if (window.kakao && window.kakao.maps && this.drawingMap != null) { //카카오 api가 로드되었을 때
 
       this.initMap()
-      this.drawingMap.relayout()
+
+      //this.drawingMap.relayout()
     }else {
 
       const script = document.createElement("script")
@@ -61,6 +63,9 @@ export default {
           //지도 객체는 반응형 관리 대상이 아니므로 initMap에서 선언합니다.
           this.drawingMap = new kakao.maps.Map(drawingContainer, tempoptions)
           this.drawingMap.addOverlayMapTypeId(kakao.maps.MapTypeId.ROADVIEW)
+          console.log('draw:', this.drawingMap)
+
+          createRoadView(this.drawingMap)
           this.drawingLine(this.drawingMap)
         })
       }//if
