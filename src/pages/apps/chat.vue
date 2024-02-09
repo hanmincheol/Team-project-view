@@ -32,11 +32,12 @@ const q = ref('')
 
 // 메세지
 const msg = ref('')
+let message = ref('')
 
 let sendMessage = null
 
 onMounted(() => {
-// 웹소켓 연결 생성
+  // 웹소켓 연결 생성
   const socket = new WebSocket('ws://localhost:4000/chat')
 
   // 웹소켓 연결이 열렸을 때
@@ -44,7 +45,7 @@ onMounted(() => {
     console.log('----웹소켓 연결되었습니다.--------')
 
     sendMessage = async () => {
-      const message = msg.value
+      message = msg.value
       if (!message)
         return
 
@@ -65,6 +66,11 @@ onMounted(() => {
         },
       }
 
+
+      // 새 메시지를 messages 배열에 추가합니다.
+      messages.value.push(newMessageData)
+      console.log(messages.value) // 배열 로그
+
       try {
       // 데이터베이스에 메시지 저장
         const response = await axios.post("http://localhost:4000/chat/SoloWrite.do", {
@@ -77,7 +83,7 @@ onMounted(() => {
         socket.send(message)
 
         // 해당 연락처에 대한 채팅이 없으면 새로운 채팅을 생성 및 데이터베이스에 추가
-        if (activeChat === undefined) {
+        if (activeChat.value === undefined) {
           database.chats.push({
             userId: contactId,
             unseenMsgs: 0,
@@ -138,7 +144,7 @@ onMounted(() => {
 
     // 받은 메시지를 messages 배열에 추가
     this.messages.push(message)
-
+    console.log(this.messages) // 배열 로그
   })
 })
 
@@ -155,7 +161,10 @@ const openChatOfContact = async userId => {
 
   console.log("activeChat----", activeChat)
   console.log("userId----", userId)
-  
+  console.log("chat-----------------------------------------------", chat)
+  chat.messages.forEach((msg, index) => {
+    console.log(`Message ${index + 1}:`, msg.message)
+  })
 
   if (chat) {
     chat.unseenMsgs = 0
@@ -198,9 +207,6 @@ const openChatOfContact = async userId => {
   // 채팅 및 연락처 왼쪽 사이드바 닫기
   if (vuetifyDisplays.smAndDown.value)
     isLeftSidebarOpen.value = false
-
-  if(activeChat)
-    console.log("여길 들어오니??????????????????????????????")
 
   // 스크롤바 아래로 내리기
   await nextTick()
@@ -290,7 +296,7 @@ const refInputEl = ref()
           :options="{ wheelPropagation: false }"
           class="flex-grow-1"
         >
-          <ChatLog :messages="messages" />
+          <ChatLog :active-chat="activeChat" />
         </PerfectScrollbar>
 
         <!-- Message form -->

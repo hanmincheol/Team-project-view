@@ -1,15 +1,22 @@
 <script setup>
-import useDatabase from '@/views/apps/chat/chatData.js'
 import { formatDate } from '@core/utils/formatters'
+import { computed, defineProps } from 'vue'
 
-let { activeChat } = useDatabase()
+const props = defineProps({
+  activeChat: {
+    type: Object,
+    required: true,
+  },
+})
+
 
 const contact = computed(() => ({
-  id: activeChat?.contact?.id,
-  avatar: activeChat?.contact?.avatar,
+  id: props.activeChat?.contact?.id,
+  avatar: props.activeChat?.contact?.avatar,
 }))
 
-console.log("contact---여기 들어오긴해?", contact)
+console.log("contact.value.id---여기 들어오긴해?", props.activeChat.chat)
+
 
 const resolveFeedbackIcon = feedback => {
   if (feedback.isSeen)
@@ -32,8 +39,11 @@ const resolveFeedbackIcon = feedback => {
 const msgGroups = computed(() => {
   let messages = []
   const _msgGroups = []
-  if (activeChat?.chat) {
-    messages = activeChat.chat.messages
+
+  console.log("props.activeChat.value?.chat", props.activeChat.value?.chat)
+
+  if (props.activeChat?.chat) {
+    messages = props.activeChat.chat.messages
     let msgSenderId = messages[0]?.senderId
     let msgGroup = {
       senderId: msgSenderId,

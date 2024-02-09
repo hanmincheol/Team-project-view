@@ -38,11 +38,13 @@ const resolveFeedbackIcon = feedback => {
 
 const msgGroups = computed(() => {
   let messages = []
+
+  //let messages = props.messages.value
   const _msgGroups = []
   if (activeChat?.chat) {
-    let messages = props.messages
+    //messages = props.messages.value
 
-    //messages = activeChat.chat.messages
+    messages = activeChat.chat.messages
     let msgSenderId = messages[0]?.senderId
     let msgGroup = {
       senderId: msgSenderId,
