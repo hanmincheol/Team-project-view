@@ -78,6 +78,7 @@ export default function useDatabase() {
       const response = await axios.get("http://localhost:4000/chat/allChating.do", { params: { id: userId } })
   
       console.log("response:", response.data)
+      
   
       if (response.data && Array.isArray(response.data)) {
         console.log("response.data:", response.data)

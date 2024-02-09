@@ -32,9 +32,10 @@ const q = ref('')
 
 // 메세지
 const msg = ref('')
-let message = ref('')
-
 let sendMessage = null
+let messages = ref([]) // 메시지를 저장할 배열 변수 선언
+let contactId = null 
+let senderId = null  
 
 onMounted(() => {
   // 웹소켓 연결 생성
@@ -45,18 +46,18 @@ onMounted(() => {
     console.log('----웹소켓 연결되었습니다.--------')
 
     sendMessage = async () => {
-      message = msg.value
-      if (!message)
+      let message = ref(msg.value) // 여기서 message 변수 선언 및 초기화
+      if (!message.value) // .value를 사용하여 message의 값을 확인
         return
 
-      const senderId = connetId
-      const contactId = activeChat?.value.contact.id
+      senderId = connetId
+      contactId = activeChat?.value.contact.id
 
       console.log("----------contactId---------", contactId)
 
       // 새 메시지 데이터를 생성
       const newMessageData = {
-        message,
+        message: message.value,
         time: String(new Date()),
         senderId,
         feedback: {
@@ -76,22 +77,22 @@ onMounted(() => {
         const response = await axios.post("http://localhost:4000/chat/SoloWrite.do", {
           id: senderId,
           ruser: contactId,
-          content: message,
+          content: message.value,
         })
 
         // 웹소켓을 통해 메시지 전송
-        socket.send(message)
+        socket.send(message.value)
 
         // 해당 연락처에 대한 채팅이 없으면 새로운 채팅을 생성 및 데이터베이스에 추가
         if (activeChat.value === undefined) {
-          database.chats.push({
+          database.value.chats.push({
             userId: contactId,
             unseenMsgs: 0,
             messages: [newMessageData],
           })
 
           // 새로운 채팅을 활성 채팅으로 설정합니다.
-          activeChat = database.chats.at(-1)
+          activeChat.value = database.value.chats[database.value.chats.length - 1]
 
           const activeChatContact = chatsContacts.find(c => c.id === contactId)
 
@@ -104,19 +105,23 @@ onMounted(() => {
           }
         }
         else {
-        // 채팅이 이미 있다면, 새 메시지를 채팅에 추가합니다.
-          activeChat.messages.push(newMessageData)
+          // 채팅이 이미 있다면, 새 메시지를 채팅에 추가합니다.
+          if (activeChat.value && activeChat.value.messages) {
+            activeChat.value.messages.push(newMessageData)
+          }
         }
      
         // 활성 연락처에 대한 마지막 메시지 설정
         const contact = chatsContacts.find(c => {
-          if (activeChat)
-            return c.userId === activeChat.contact.userId
-        
+          if (activeChat.value)
+            return c.userId === activeChat.value.contact.userId
+
           return false
         })
 
-        contact.chat.lastMessage = newMessageData
+        if (contact && contact.chat) {
+          contact.chat.lastMessage = newMessageData
+        }
 
         // 메시지 보내는 란 초기화
         msg.value = ''
@@ -133,7 +138,7 @@ onMounted(() => {
   })
 
   socket.addEventListener('message', async event => {
-    const message = JSON.parse(event.data)
+    const message = event.data
   
     // 데이터베이스에 메시지 저장
     const response = await axios.post("http://localhost:4000/chat/SoloWrite.do", {
@@ -143,8 +148,8 @@ onMounted(() => {
     })
 
     // 받은 메시지를 messages 배열에 추가
-    this.messages.push(message)
-    console.log(this.messages) // 배열 로그
+    messages.value.push(message)
+    console.log(messages.value.push) // 배열 로그
   })
 })
 
@@ -296,7 +301,10 @@ const refInputEl = ref()
           :options="{ wheelPropagation: false }"
           class="flex-grow-1"
         >
-          <ChatLog :active-chat="activeChat" />
+          <ChatLog
+            :messages="messages"
+            :active-chat="activeChat"
+          />
         </PerfectScrollbar>
 
         <!-- Message form -->

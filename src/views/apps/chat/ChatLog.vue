@@ -3,6 +3,10 @@ import { formatDate } from '@core/utils/formatters'
 import { computed, defineProps } from 'vue'
 
 const props = defineProps({
+  messages: {
+    type: Array,
+    required: true,
+  },
   activeChat: {
     type: Object,
     required: true,
