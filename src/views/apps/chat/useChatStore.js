@@ -21,16 +21,9 @@ export const useChatStore = defineStore('chat', {
       this.profileUser = profileUser
     },
     async getChat(userId) {
-      const chat = database.value.chats.find(c => c.userId === userId)
+      const { data } = await axios.get(`/apps/chat/chats/${userId}`)
 
-      if (chat) {
-        chat.unseenMsgs = 0
-      }
-    
-      this.activeChat = {
-        chat,
-        contact: database.value.contacts.find(c => c.id === userId),
-      }
+      this.activeChat = data
     },
     async sendMsg(message) {
       const senderId = this.profileUser?.id

@@ -18,7 +18,7 @@ const props = defineProps({
   },
 })
 
-const { database, fetchDatabase, fetchFriendDatabase, allData, chatsContacts, connetId, activeChat } = useDatabase()
+const { chatsContacts, activeChat } = useDatabase()
 
 
 const { resolveAvatarBadgeVariant } = useChat()
@@ -26,7 +26,7 @@ const { resolveAvatarBadgeVariant } = useChat()
 
 
 const isChatContactActive = computed(() => {
-  const isActive = activeChat?.contact.id === props.user.id
+  const isActive = activeChat?.contact?.id === props.user?.id
   if (!props.isChatContact)
     return !activeChat?.chat && isActive
   
@@ -58,7 +58,6 @@ const isChatContactActive = computed(() => {
         <VImg
           v-if="props.user.avatar"
           :src="props.user.avatar"
-          alt="John Doe"
         />
         <span v-else>{{ avatarText(user.fullName) }}</span>
       </VAvatar>

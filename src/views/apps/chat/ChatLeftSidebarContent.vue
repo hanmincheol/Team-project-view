@@ -2,7 +2,6 @@
 import ChatContact from '@/views/apps/chat/ChatContact.vue'
 import useDatabase from '@/views/apps/chat/chatData.js'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
-import { useStore } from 'vuex'
 import { useChat } from './useChat'
 
 const props = defineProps({
@@ -18,21 +17,18 @@ const props = defineProps({
 
 const emit = defineEmits([
   'openChatOfContact',
-  'showUserProfile',
   'close',
   'update:search',
 ])
 
-const { database, fetchDatabase, fetchFriendDatabase, allData, chatsContacts, connetId } = useDatabase()
+const { database, chatsContacts, connetId } = useDatabase()
 
 
 const { resolveAvatarBadgeVariant } = useChat()
 const search = useVModel(props, 'search', emit)
-const store = useStore()
 </script>
 
 <template>
-  <!-- 👉 Chat list header -->
   <div
     v-if="database.profileUser"
     class="chat-list-header"
