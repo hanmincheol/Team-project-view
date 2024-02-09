@@ -14,8 +14,6 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
-
 var recommendPath = [ //받아온 데이터라고 가정
   ["달터근린공원", "구룡산길", "개암약수터"],
   ["실로암 약수터", "대모산 초소위", "독도모형", "대모산 정상"],
@@ -25,7 +23,7 @@ var map = ref("") //지도 객체를 담을 변수
 var recommendPathView = [] //받아온 경로를 뿌려주는 값을 저장할 변수
 var pathAboutLatLng = [] //lat, lng 값을 저장할 변수 
 
-onMounted(()=>{
+onUpdated(()=>{
   const script = document.createElement("script")
 
   script.onload = () => {
@@ -33,6 +31,9 @@ onMounted(()=>{
 
       //지도 띄우기
       initMap(getCurrentPosition()[0], getCurrentPosition()[0])
+      console.log('reco:', map)
+
+      //map.relayout()
 
       var places = new kakao.maps.services.Places() //검색을 위한 객체
       recommendPath.forEach(path=>{
@@ -69,7 +70,7 @@ const initMap = (lng, lat) => {
   }
 
   map.value = new kakao.maps.Map(container, options)
-
+  
   //경로 가져오기
 }
 

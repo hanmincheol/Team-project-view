@@ -80,13 +80,10 @@
               />
             -->
           </div>
-          <RecoMap
-            v-show="isRecoMenuClicked"
-            @click="console.log(isLikeMenuClicked)"
-          />
-          <LikePath v-show="isLikeMenuClicked" />
+          <RecoMap v-if="isRecoMenuClicked" />
+          <LikePath v-if="isLikeMenuClicked" />
           <DrawMap
-            v-show="isDrawMenuClicked"
+            v-if="isDrawMenuClicked"
             ref="childMap"
             @refresh-child-road="createRoadView"
           />
@@ -148,21 +145,8 @@
               <div id="pagination" />
             </div>
           </div>
+          <!-- 지도 검색창end -->
           <div :style="{'display':'flex','justify-content':'center','margin-top':'10px'}">
-            <!--
-              <VTabs
-              next-icon="mdi-arrow-right"
-              prev-icon="mdi-arrow-left"
-              >
-              <VTab
-              v-for="i in 3"
-              :key="i"
-              @click="whatBtnClick"
-              >
-              {{ tabs[i] }}
-              </VTab>
-              </VTabs>
-            -->
             <VTabs>
               <VTab @click="mapViewController(1)">
                 추천경로
@@ -395,7 +379,11 @@ export default {
     mapViewController(menu){
       if(menu==1){
         this.isRecoMenuClicked = true
-        this.isLikeMenuClicked, this.isDrawMenuClicked = false
+        this.isLikeMenuClicked = false
+        this.isDrawMenuClicked = false
+        console.log('1번 메뉴 클릭isRecoMenuClicked:', this.isRecoMenuClicked)
+        console.log('1번 메뉴 클릭isLikeMenuClicked:', this.isLikeMenuClicked)
+        console.log('1번 메뉴 클릭isDrawMenuClicked:', this.isDrawMenuClicked)
       }
       if(menu==2){
         this.isLikeMenuClicked = true
@@ -403,7 +391,11 @@ export default {
       }
       if(menu==3){
         this.isDrawMenuClicked = true
-        this.isLikeMenuClicked, this.isRecoMenuClicked = false
+        this.isLikeMenuClicked = false
+        this.isRecoMenuClicked = false
+        console.log('3번 메뉴 클릭 isDrawMenuClicked:', this.isDrawMenuClicked)
+        console.log('3번 메뉴 클릭 isLikeMenuClicked:', this.isLikeMenuClicked)
+        console.log('3번 메뉴 클릭 isRecoMenuClicked:', this.isRecoMenuClicked)
       }
     },
 

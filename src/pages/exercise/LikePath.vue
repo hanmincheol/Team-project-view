@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onUpdated } from 'vue'
 
 var items = [ //즐겨찾기 경로의 상위 카테고리 선택 (받아온 데이터라고 가정)
   '불당동',
@@ -27,10 +27,9 @@ var items = [ //즐겨찾기 경로의 상위 카테고리 선택 (받아온 데
   '한남동',
 ]
 var map = ref("") //지도 객체를 담을 변수
-//var recommendPathView = [] //받아온 경로를 뿌려주는 값을 저장할 변수
-//var pathAboutLatLng = [] //lat, lng 값을 저장할 변수 
 
-onMounted(()=>{
+
+onUpdated(()=>{
   const script = document.createElement("script")
 
   script.onload = () => {
@@ -38,8 +37,8 @@ onMounted(()=>{
 
       //지도 띄우기
       initMap(getCurrentPosition()[0], getCurrentPosition()[0])
-
-    
+      map.relayout()
+      console.log('like:', map)
       
     })
   }
