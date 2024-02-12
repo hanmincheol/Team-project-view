@@ -4,17 +4,22 @@ import { genId } from '@/@fake-db/utils'
 // Images
 import avatar1 from '@images/avatars/avatar-1.png'
 import avatar2 from '@images/avatars/avatar-2.png'
+import avatar3 from '@images/avatars/avatar-3.png'
+import avatar4 from '@images/avatars/avatar-4.png'
 import avatar5 from '@images/avatars/avatar-5.png'
+import avatar6 from '@images/avatars/avatar-6.png'
+import avatar8 from '@images/avatars/avatar-8.png'
 
 const previousDay = new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
 const dayBeforePreviousDay = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 2)
-
 
 const database = {
   profileUser: {
     id: 11,
     avatar: avatar1,
-    fullName: '안녕',
+    fullName: 'John Doe',
+    role: 'admin',
+    about: 'Dessert chocolate cake lemon drops jujubes. Biscuit cupcake ice cream bear claw brownie marshmallow.',
     status: 'online',
     settings: {
       isTwoStepAuthVerificationEnabled: true,
@@ -25,15 +30,82 @@ const database = {
     {
       id: 1,
       fullName: 'Gavin Griffith',
+      role: 'Frontend Developer',
+      about: 'Cake pie jelly jelly beans. Marzipan lemon drops halvah cake. Pudding cookie lemon drops icing',
       avatar: avatar5,
       status: 'offline',
     },
     {
       id: 2,
       fullName: 'Harriet McBride',
+      role: 'UI/UX Designer',
       about: 'Toffee caramels jelly-o tart gummi bears cake I love ice cream lollipop. Sweet liquorice croissant candy danish dessert icing. Cake macaroon gingerbread toffee sweet.',
       avatar: avatar2,
       status: 'busy',
+    },
+    {
+      id: 3,
+      fullName: 'Danny Conner',
+      role: 'Town planner',
+      about: 'Soufflé soufflé caramels sweet roll. Jelly lollipop sesame snaps bear claw jelly beans sugar plum sugar plum.',
+      avatar: '',
+      status: 'busy',
+    },
+    {
+      id: 4,
+      fullName: 'Janie West',
+      role: 'Data scientist',
+      about: 'Chupa chups candy canes chocolate bar marshmallow liquorice muffin. Lemon drops oat cake tart liquorice tart cookie. Jelly-o cookie tootsie roll halvah.',
+      avatar: '',
+      status: 'online',
+    },
+    {
+      id: 5,
+      fullName: 'Bryan Murray',
+      role: 'Dietitian',
+      about: 'Cake pie jelly jelly beans. Marzipan lemon drops halvah cake. Pudding cookie lemon drops icing',
+      avatar: avatar5,
+      status: 'busy',
+    },
+    {
+      id: 6,
+      fullName: 'Albert Underwood',
+      role: 'Marketing executive',
+      about: 'Toffee caramels jelly-o tart gummi bears cake I love ice cream lollipop. Sweet liquorice croissant candy danish dessert icing. Cake macaroon gingerbread toffee sweet.',
+      avatar: avatar6,
+      status: 'online',
+    },
+    {
+      id: 7,
+      fullName: 'Adele Ross',
+      role: 'Special educational needs teacher',
+      about: 'Biscuit powder oat cake donut brownie ice cream I love soufflé. I love tootsie roll I love powder tootsie roll.',
+      avatar: '',
+      status: 'online',
+    },
+    {
+      id: 8,
+      fullName: 'Mark Berry',
+      role: 'Advertising copywriter',
+      about: 'Bear claw ice cream lollipop gingerbread carrot cake. Brownie gummi bears chocolate muffin croissant jelly I love marzipan wafer.',
+      avatar: avatar3,
+      status: 'away',
+    },
+    {
+      id: 9,
+      fullName: 'Joseph Evans',
+      role: 'Designer, television/film set',
+      about: 'Gummies gummi bears I love candy icing apple pie I love marzipan bear claw. I love tart biscuit I love candy canes pudding chupa chups liquorice croissant.',
+      avatar: avatar8,
+      status: 'offline',
+    },
+    {
+      id: 10,
+      fullName: 'Blake Carter',
+      role: 'Building surveyor',
+      about: 'Cake pie jelly jelly beans. Marzipan lemon drops halvah cake. Pudding cookie lemon drops icing',
+      avatar: avatar4,
+      status: 'away',
     },
   ],
   chats: [
@@ -50,6 +122,56 @@ const database = {
             isSent: true,
             isDelivered: true,
             isSeen: true,
+          },
+        },
+        {
+          message: 'Hello. How can I help You?',
+          time: 'Mon Dec 11 2018 07:45:15 GMT+0000 (GMT)',
+          senderId: 2,
+          feedback: {
+            isSent: true,
+            isDelivered: true,
+            isSeen: true,
+          },
+        },
+        {
+          message: 'Can I get details of my last transaction I made last month? 🤔',
+          time: 'Mon Dec 11 2018 07:46:10 GMT+0000 (GMT)',
+          senderId: 11,
+          feedback: {
+            isSent: true,
+            isDelivered: true,
+            isSeen: true,
+          },
+        },
+        {
+          message: 'We need to check if we can provide you such information.',
+          time: 'Mon Dec 11 2018 07:45:15 GMT+0000 (GMT)',
+          senderId: 2,
+          feedback: {
+            isSent: true,
+            isDelivered: true,
+            isSeen: true,
+          },
+        },
+        {
+          message: 'I will inform you as I get update on this.',
+          time: 'Mon Dec 11 2018 07:46:15 GMT+0000 (GMT)',
+          senderId: 2,
+          feedback: {
+            isSent: true,
+            isDelivered: true,
+            isSeen: true,
+          },
+        },
+        {
+          message: 'If it takes long you can mail me at my mail address.',
+          time: String(dayBeforePreviousDay),
+          senderId: 11,
+          feedback: {
+            isSent: true,
+            isDelivered: false,
+            isSeen: false,
           },
         },
       ],
@@ -69,6 +191,96 @@ const database = {
             isSeen: true,
           },
         },
+        {
+          message: 'Hey John, I am looking for the best admin template. Could you please help me to find it out?',
+          time: 'Mon Dec 10 2018 07:45:23 GMT+0000 (GMT)',
+          senderId: 1,
+          feedback: {
+            isSent: true,
+            isDelivered: true,
+            isSeen: true,
+          },
+        },
+        {
+          message: 'It should use nice Framework.',
+          time: 'Mon Dec 10 2018 07:45:55 GMT+0000 (GMT)',
+          senderId: 1,
+          feedback: {
+            isSent: true,
+            isDelivered: true,
+            isSeen: true,
+          },
+        },
+        {
+          message: 'Absolutely!',
+          time: 'Mon Dec 10 2018 07:46:00 GMT+0000 (GMT)',
+          senderId: 11,
+          feedback: {
+            isSent: true,
+            isDelivered: true,
+            isSeen: true,
+          },
+        },
+        {
+          message: 'Our admin is the responsive admin template.!',
+          time: 'Mon Dec 10 2018 07:46:05 GMT+0000 (GMT)',
+          senderId: 11,
+          feedback: {
+            isSent: true,
+            isDelivered: true,
+            isSeen: true,
+          },
+        },
+        {
+          message: 'Looks clean and fresh UI. 😍',
+          time: 'Mon Dec 10 2018 07:46:23 GMT+0000 (GMT)',
+          senderId: 1,
+          feedback: {
+            isSent: true,
+            isDelivered: true,
+            isSeen: true,
+          },
+        },
+        {
+          message: 'It\'s perfect for my next project.',
+          time: 'Mon Dec 10 2018 07:46:33 GMT+0000 (GMT)',
+          senderId: 1,
+          feedback: {
+            isSent: true,
+            isDelivered: true,
+            isSeen: true,
+          },
+        },
+        {
+          message: 'How can I purchase it?',
+          time: 'Mon Dec 10 2018 07:46:43 GMT+0000 (GMT)',
+          senderId: 1,
+          feedback: {
+            isSent: true,
+            isDelivered: true,
+            isSeen: true,
+          },
+        },
+        {
+          message: 'Thanks, From our official site  😇',
+          time: 'Mon Dec 10 2018 07:46:53 GMT+0000 (GMT)',
+          senderId: 11,
+          feedback: {
+            isSent: true,
+            isDelivered: true,
+            isSeen: true,
+          },
+        },
+        {
+          message: 'I will purchase it for sure. 👍',
+          time: String(previousDay),
+          senderId: 1,
+          feedback: {
+            isSent: true,
+            isDelivered: true,
+            isSeen: true,
+          },
+        },
       ],
     },
   ],
@@ -78,13 +290,8 @@ const database = {
 // ------------------------------------------------
 // GET: Return Chats Contacts and Contacts
 // ------------------------------------------------
-mock.onGet('/apps/chat/chats-and-contacts').reply(async config => {
+mock.onGet('/apps/chat/chats-and-contacts').reply(config => {
   const { q = '' } = config.params
-
-  console.log("나는 누구인가?", q)
-  await fetchDatabase(q)
-  await fetchFriendDatabase (q)
-
   const qLowered = q.toLowerCase()
 
   const chatsContacts = database.chats
@@ -116,19 +323,13 @@ mock.onGet('/apps/chat/users/profile-user').reply(() => [200, database.profileUs
 // ------------------------------------------------
 // GET: Return Single Chat
 // ------------------------------------------------
-// 첫 번째 부분: 특정 사용자의 채팅을 반환하는 GET 요청을 처리합니다.
 mock.onGet(/\/apps\/chat\/chats\/\d+/).reply(config => {
-  // 요청 URL에서 사용자 ID를 추출합니다.
+  // Get user id from URL
   const userId = Number(config.url?.substring(config.url.lastIndexOf('/') + 1))
-
-  // 사용자 ID를 사용하여 해당 사용자의 채팅을 데이터베이스에서 찾습니다.
   const chat = database.chats.find(c => c.userId === userId)
-
-  // 채팅이 있으면 unseenMsgs를 0으로 설정합니다.
   if (chat)
     chat.unseenMsgs = 0
-
-  // HTTP 상태 코드 200과 함께 채팅과 연락처 정보를 반환합니다.
+  
   return [
     200,
     {
@@ -138,18 +339,17 @@ mock.onGet(/\/apps\/chat\/chats\/\d+/).reply(config => {
   ]
 })
 
-// 두 번째 부분: 새 채팅 메시지를 추가하는 POST 요청을 처리합니다.
+// ------------------------------------------------
+// POST: Add new chat message
+// ------------------------------------------------
 mock.onPost(/\/apps\/chat\/chats\/\d+/).reply(config => {
-  // URL에서 연락처 ID를 추출합니다.
+  // Get user id from URL
   const contactId = Number(config.url?.substring(config.url.lastIndexOf('/') + 1))
 
-  // POST 데이터에서 메시지와 보낸이 ID를 추출합니다.
+  // Get message from post data
   const { message, senderId } = JSON.parse(config.data)
-
-  // 데이터베이스에서 해당 연락처의 채팅을 찾습니다.
   let activeChat = database.chats.find(chat => chat.userId === contactId)
-  
-  // 새 메시지 데이터를 생성합니다. 이 데이터는 메시지, 시간, 보낸이 ID, 그리고 피드백 정보를 포함합니다.
+
   const newMessageData = {
     message,
     time: String(new Date()),
@@ -161,7 +361,8 @@ mock.onPost(/\/apps\/chat\/chats\/\d+/).reply(config => {
     },
   }
 
-  // 해당 연락처에 대한 채팅이 없으면 새로운 채팅을 생성하고, 데이터베이스에 추가합니다.
+
+  // If there's new chat for user create one
   let isNewChat = false
   if (activeChat === undefined) {
     isNewChat = true
@@ -169,20 +370,14 @@ mock.onPost(/\/apps\/chat\/chats\/\d+/).reply(config => {
       id: genId(database.chats),
       userId: contactId,
       unseenMsgs: 0,
-      messages: "" })
-
-    // 새로운 채팅을 활성 채팅으로 설정합니다.
+      messages: [],
+    })
     activeChat = database.chats.at(-1)
   }
   else {
-    // 채팅이 이미 있다면, 새 메시지를 채팅에 추가합니다.
     activeChat.messages.push(newMessageData)
   }
-
-  // HTTP 상태 코드 201과 함께 새 메시지를 반환합니다.
   const response = { msg: newMessageData }
-
-  // 새로운 채팅이 생성되었다면, 이 채팅도 함께 반환합니다.
   if (isNewChat)
     response.chat = activeChat
   

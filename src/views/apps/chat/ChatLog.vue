@@ -1,13 +1,26 @@
 <script setup>
-import { useChatStore } from '@/views/apps/chat/useChatStore'
 import { formatDate } from '@core/utils/formatters'
+import { computed, defineProps } from 'vue'
 
-const store = useChatStore()
+const props = defineProps({
+  messages: {
+    type: Array,
+    required: true,
+  },
+  activeChat: {
+    type: Object,
+    required: true,
+  },
+})
+
 
 const contact = computed(() => ({
-  id: store.activeChat?.contact.id,
-  avatar: store.activeChat?.contact.avatar,
+  id: props.activeChat?.contact?.id,
+  avatar: props.activeChat?.contact?.avatar,
 }))
+
+console.log("contact.value.id---여기 들어오긴해?", props.activeChat.chat)
+
 
 const resolveFeedbackIcon = feedback => {
   if (feedback.isSeen)
@@ -30,9 +43,12 @@ const resolveFeedbackIcon = feedback => {
 const msgGroups = computed(() => {
   let messages = []
   const _msgGroups = []
-  if (store.activeChat.chat) {
-    messages = store.activeChat.chat.messages
-    let msgSenderId = messages[0].senderId
+
+  console.log("props.activeChat.value?.chat", props.activeChat.value?.chat)
+
+  if (props.activeChat?.chat) {
+    messages = props.activeChat.chat.messages
+    let msgSenderId = messages[0]?.senderId
     let msgGroup = {
       senderId: msgSenderId,
       messages: [],
@@ -81,7 +97,7 @@ const msgGroups = computed(() => {
         :class="msgGrp.senderId !== contact.id ? 'ms-4' : 'me-4'"
       >
         <VAvatar size="32">
-          <VImg :src="msgGrp.senderId === contact.id ? contact.avatar : store.profileUser?.avatar" />
+          <VImg :src="msgGrp.senderId === contact.id ? contact.avatar : profileUser?.avatar" />
         </VAvatar>
       </div>
       <div

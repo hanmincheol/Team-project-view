@@ -1,10 +1,7 @@
 <script setup>
-import ViewPostPage from '@/components/dialogs/ViewPostPage.vue'
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
-import { avatarText } from '@core/utils/formatters'
 import axios from '@axios'
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import { useStore } from 'vuex'
-import { errorMessages } from 'vue/compiler-sfc'
 
 const props = defineProps({
   location: {
@@ -16,14 +13,14 @@ const props = defineProps({
     type: Array,
     required: true,
   },
-  noticflag:{
-    type:Boolean,
-    required:true,
+  noticflag: {
+    type: Boolean,
+    required: true,
   },
-  getNoticList:{
-    type:Function,
-    required:true
-  }
+  getNoticList: {
+    type: Function,
+    required: true,
+  },
 })
 
 const emit = defineEmits([
@@ -60,18 +57,17 @@ function getTimeDiffString(triggerDate) {
 }
 
 const updatenotic = async (notification, trigger_pk, index) => {
-  await axios.get('http://localhost:4000/Notic/Update.do',{ params: { trigger_pk: trigger_pk } })
-  .then(response => {
+  await axios.get('http://localhost:4000/Notic/Update.do', { params: { trigger_pk: trigger_pk } })
+    .then(response => {
       console.log('성공')
 
       // checked_time 값을 업데이트하고 화면 갱신
-      notification.checked_time = new Date();//사실상 DB에 들어간 값과 같은 값이다.
+      notification.checked_time = new Date()//사실상 DB에 들어간 값과 같은 값이다.
     })
-  .catch(error => {
-    console.log('실패', error)
-  })
+    .catch(error => {
+      console.log('실패', error)
+    })
 }
-
 </script>
 
 <template>
