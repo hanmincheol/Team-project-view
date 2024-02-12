@@ -12,10 +12,6 @@ const props = defineProps({
     type: null,
     required: false,
   },
-  allergyFoodchk:{
-    type:Array,
-    required:true
-  }
 })
 
 const emit = defineEmits(['update:selectedCheckbox'])
@@ -30,19 +26,41 @@ watch(selectedOption, () => {
 const allergyFoodchk = ref([])
 
 const checkval = (item) => {
-  console.log('값:',item.value, '이름:',item.name)
-  if(!allergyFoodchk.value.includes(item.name)){
-    allergyFoodchk.value.push(item.name);
-  }else{
-    const index = allergyFoodchk.value.indexOf(item.name);
-      if (index !== -1) {
-        allergyFoodchk.value.splice(index, 1);
-      }
+  console.log('값:', item.value, '이름:', item.name);
+  const index = allergyFoodchk.value.indexOf(item.value);
+  if (index === -1) {
+    allergyFoodchk.value.push(item.value);
+  } else {
+    allergyFoodchk.value.splice(index, 1);
   }
-  console.log('현재',allergyFoodchk.value);
+  allergyFoodchk.value.sort((a, b) => a - b);
+  console.log('현재', allergyFoodchk.value);
+  sendAllergyList(allergyFoodchk);
+};
+
+
+// const checkval = (item) => {
+//   console.log('값:', item.value, '이름:', item.name);
+//   if (!allergyFoodchk.value.includes(item.name)) {
+//     allergyFoodchk.value.push({ [item.value]: item.name });
+//   } else {
+//     const index = allergyFoodchk.value.findIndex((element) => element[item.value] === item.name);
+//     if (index !== -1) {
+//       allergyFoodchk.value.splice(index, 1);
+//     }
+//   }
+//   allergyFoodchk.value.sort((a, b) => {
+//     const valueA = Object.keys(a)[0];
+//     const valueB = Object.keys(b)[0];
+//     return valueA - valueB;
+//   });
+//   console.log('현재', allergyFoodchk.value);
+//   sendAllergyList(allergyFoodchk);
+// };
+
+const sendAllergyList = (val) => {
+  emit('AllergyList', val)
 }
-
-
 </script>
 
 <template>
@@ -65,6 +83,7 @@ const checkval = (item) => {
             :value="item.value"
             @click="checkval(item)"
           />
+          <!-- @click="checkval(item)" -->
         </div>
         <img
           :src="item.bgImage"

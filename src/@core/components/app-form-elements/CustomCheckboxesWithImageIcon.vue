@@ -23,17 +23,28 @@ watch(selectedOption, () => {
 })
 
 const hateFoodchk = ref([])
+
 const checkval = (item) => {
-  console.log('값:',item.value, '이름:',item.name)
-  if(!hateFoodchk.value.includes(item.value)){
-    hateFoodchk.value.push(item.value);
-  }else{
-    const index = hateFoodchk.value.indexOf(item.value);
-      if (index !== -1) {
-        hateFoodchk.value.splice(index, 1);
-      }
+  console.log('값:', item.value, '이름:', item.name);
+  if (!hateFoodchk.value.includes(item.name)) {
+    hateFoodchk.value.push({ [item.value]: item.name });
+  } else {
+    const index = hateFoodchk.value.findIndex((element) => element[item.value] === item.name);
+    if (index !== -1) {
+      hateFoodchk.value.splice(index, 1);
+    }
   }
-  console.log('현재',hateFoodchk.value);
+  hateFoodchk.value.sort((a, b) => {
+    const valueA = Object.keys(a)[0];
+    const valueB = Object.keys(b)[0];
+    return valueA - valueB;
+  });
+  console.log('현재', hateFoodchk.value);
+  sendHateFoodList(hateFoodchk);
+};
+
+const sendHateFoodList = (val) => {
+  emit('HateFoodList', val)
 }
 </script>
 
@@ -57,6 +68,7 @@ const checkval = (item) => {
             :value="item.value"
             @click="checkval(item)"
           />
+
         </div>
         <img
           :src="item.bgImage"

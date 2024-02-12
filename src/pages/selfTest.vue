@@ -1,22 +1,4 @@
 <script setup>
-import bg1 from '@images/allergy/1.jpg'
-import bg10 from '@images/allergy/10.jpg'
-import bg11 from '@images/allergy/11.jpg'
-import bg12 from '@images/allergy/12.jpg'
-import bg13 from '@images/allergy/13.jpg'
-import bg14 from '@images/allergy/14.jpg'
-import bg15 from '@images/allergy/15.jpg'
-import bg16 from '@images/allergy/16.jpg'
-import bg17 from '@images/allergy/17.jpg'
-import bg18 from '@images/allergy/18.jpg'
-import bg2 from '@images/allergy/2.jpg'
-import bg3 from '@images/allergy/3.jpg'
-import bg4 from '@images/allergy/4.jpg'
-import bg5 from '@images/allergy/5.jpg'
-import bg6 from '@images/allergy/6.jpg'
-import bg7 from '@images/allergy/7.jpg'
-import bg8 from '@images/allergy/8.jpg'
-import bg9 from '@images/allergy/9.jpg'
 
 import ht1 from '@images/Unbalanced/1.jpg'
 import ht10 from '@images/Unbalanced/10.jpg'
@@ -41,7 +23,15 @@ import ht7 from '@images/Unbalanced/7.jpg'
 import ht8 from '@images/Unbalanced/8.jpg'
 import ht9 from '@images/Unbalanced/9.jpg'
 
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { useStore } from 'vuex'
+import axios from '@axios'
+
+const store = useStore()
+// 로그인 스토어와 사용자 스토어의 상태를 가져옵니다.
+const userInfo = computed(() => store.state.userStore.userInfo)
+const connetId=computed(() => userInfo.value.id)
+const name = computed(() => store.state.userStore.userInfo ? store.state.userStore.userInfo.name : null)
 
 const isDialogVisible = ref(false)
 
@@ -70,192 +60,171 @@ const formData = ref({
   linkedIn: 'https://linkedin.com/abc',
 })
 
-// 탭에다 뿌려줄 사진 및 밸류
-const checkboxContent = [
-  {
-    bgImage: bg1,
-    value: '1',
-    name: '알류',
-  },
-  {
-    bgImage: bg2,
-    value: '2',
-    name: '우유',
-  },
-  {
-    bgImage: bg3,
-    value: '3',
-    name: '메밀',
-  },
-  {
-    bgImage: bg4,
-    value: '4',
-    name: '땅콩',
-  },
-  {
-    bgImage: bg5,
-    value: '5',
-    name: '대두',
-  },
-  {
-    bgImage: bg6,
-    value: '6',
-    name: '밀',
-  },
-  {
-    bgImage: bg7,
-    value: '7',
-    name: '고등어',
-  },
-  {
-    bgImage: bg8,
-    value: '8',
-    name: '게',
-  },
-  {
-    bgImage: bg9,
-    value: '9',
-    name: '새우',
-  },
-  {
-    bgImage: bg10,
-    value: '10',
-    name: '돼지고기',
-  },
-  {
-    bgImage: bg11,
-    value: '11',
-    name: '복숭아',
-  },
-  {
-    bgImage: bg12,
-    value: '12',
-    name: '토마토',
-  },
-  {
-    bgImage: bg13,
-    value: '13',
-    name: '아황산류',
-  },
-  {
-    bgImage: bg14,
-    value: '14',
-    name: '호두',
-  },
-  {
-    bgImage: bg15,
-    value: '15',
-    name: '닭고기',
-  },
-  {
-    bgImage: bg16,
-    value: '16',
-    name: '쇠고기',
-  },
-  {
-    bgImage: bg17,
-    value: '17',
-    name: '오징어',
-  },
-  {
-    bgImage: bg18,
-    value: '18',
-    name: '조개류',
-  },
-]
+// 알러지 음식 정보 DB에서 가져오기
+const checkboxContent = ref([])
+const getallergyInfo = async() => {
+  await axios.get('http://localhost:4000/Allergy/ListView.do')
+  .then(response => {
+    console.log('성공', response.data)
+    checkboxContent.value = response.data.map((item) => ({
+      bgImage:item.allergy_imagepath,
+      value:item.allergy_no,
+      name:item.allergy_name
+    }))
+  })
+  .catch(error => {
+    console.log('실패', error)
+  })
+}
+
+const saveMemberAllergy = async (receivedAllergyList) => {
+  // const formData = new FormData()
+  // console.log('알러지 목록',receivedAllergyList._rawValue._rawValue)
+  // formData.append('id', connetId.value)
+  // formData.append('allergies', receivedAllergyList._rawValue._rawValue)
+  
+  // await axios.post('http://localhost:4000/SaveMember/Allergy', formData,{
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //   }}
+  // )
+  //   .catch(error => {
+  //     console.log(error)
+  //   })
+}
+
+
+
+// 싫어하는 음식 정보 DB에서 가져오기
+const checkboxContent2 = ref([])
+const gethatefoodInfo = async() => {
+  await axios.get('http://localhost:4000/HateFood/ListView.do')
+  .then(response => {
+    console.log('성공', response.data)
+    checkboxContent2.value = response.data.map((item) => ({
+      bgImage:item.HateFood_imagepath,
+      value:item.HateFood_no,
+      name:item.HateFood_name
+    }))
+  })
+  .catch(error => {
+    console.log('실패', error)
+  })
+}
 
 // 탭에다 뿌려줄 사진 및 밸류
-const checkboxContent2 = [
-  {
-    bgImage: ht1,
-    value: '19',
-    name:'오이'
-  },
-  {
-    bgImage: ht2,
-    value: '20',
-  },
-  {
-    bgImage: ht3,
-    value: '21',
-  },
-  {
-    bgImage: ht4,
-    value: '22',
-  },
-  {
-    bgImage: ht5,
-    value: '23',
-  },
-  {
-    bgImage: ht6,
-    value: '24',
-  },
-  {
-    bgImage: ht7,
-    value: '25',
-  },
-  {
-    bgImage: ht8,
-    value: '26',
-  },
-  {
-    bgImage: ht9,
-    value: '27',
-  },
-  {
-    bgImage: ht10,
-    value: '28',
-  },
-  {
-    bgImage: ht11,
-    value: '29',
-  },
-  {
-    bgImage: ht12,
-    value: '30',
-  },
-  {
-    bgImage: ht13,
-    value: '31',
-  },
-  {
-    bgImage: ht14,
-    value: '32',
-  },
-  {
-    bgImage: ht15,
-    value: '33',
-  },  
-  {
-    bgImage: ht16,
-    value: '34',
-  },
-  {
-    bgImage: ht17,
-    value: '35',
-  },
-  {
-    bgImage: ht18,
-    value: '36',
-  },  
-  {
-    bgImage: ht19,
-    value: '37',
-  },
-  {
-    bgImage: ht20,
-    value: '38',
-  },
-  {
-    bgImage: ht21,
-    value: '39',
-  },
-  {
-    bgImage: ht22,
-    value: '40',
-  },
-]
+// const checkboxContent2 = [
+//   {
+//     bgImage: ht1,
+//     value: '19',
+//     name:'오이'
+//   },
+//   {
+//     bgImage: ht2,
+//     value: '20',
+//     name:'버섯'
+//   },
+//   {
+//     bgImage: ht3,
+//     value: '21',
+//     name:'파프리카'
+//   },
+//   {
+//     bgImage: ht4,
+//     value: '22',
+//     name:'생선'
+//   },
+//   {
+//     bgImage: ht5,
+//     value: '23',
+//     name:'굴'
+//   },
+//   {
+//     bgImage: ht6,
+//     value: '24',
+//     name:'딸기'
+//   },
+//   {
+//     bgImage: ht7,
+//     value: '25',
+//     name:'당근'
+//   },
+//   {
+//     bgImage: ht8,
+//     value: '26',
+//     name:'치즈'
+//   },
+//   {
+//     bgImage: ht9,
+//     value: '27',
+//     name:'가지'
+//   },
+//   {
+//     bgImage: ht10,
+//     value: '28',
+//     name:'애호박'
+//   },
+//   {
+//     bgImage: ht11,
+//     value: '29',
+//     name:'브로콜리'
+//   },
+//   {
+//     bgImage: ht12,
+//     value: '30',
+//     name:'김치'
+//   },
+//   {
+//     bgImage: ht13,
+//     value: '31',
+//     name:'고구마'
+//   },
+//   {
+//     bgImage: ht14,
+//     value: '32',
+//     name:'감자'
+//   },
+//   {
+//     bgImage: ht15,
+//     value: '33',
+//     name:'양배추'
+//   },  
+//   {
+//     bgImage: ht16,
+//     value: '34',
+//     name:'양상추'
+//   },
+//   {
+//     bgImage: ht17,
+//     value: '35',
+//     name:'비트'
+//   },
+//   {
+//     bgImage: ht18,
+//     value: '36',
+//     name:'닭고기'
+//   },  
+//   {
+//     bgImage: ht19,
+//     value: '37',
+//     name:'돼지고기'
+//   },
+//   {
+//     bgImage: ht20,
+//     value: '38',
+//     name:'소고기'
+//   },
+//   {
+//     bgImage: ht21,
+//     value: '39',
+//     name:'양갈비'
+//   },
+//   {
+//     bgImage: ht22,
+//     value: '40',
+//     name:'해산물'
+//   },
+// ]
 
 const selectedCheckbox = ref(['basic'])
 
@@ -285,15 +254,33 @@ const isSelected = value => {
   return selectedCheckbox.value === value
 }
 
+const receivedAllergyList = ref('');
+const receivedHateFoodList = ref('');
+
+const handleAllergyList = (AllergyList) => {
+  receivedAllergyList.value = AllergyList;
+  console.log('선택한 알러지 목록 :', receivedAllergyList.value._rawValue)
+};
+
+const handleHateFoodList = (HateFoodList) => {
+  receivedHateFoodList.value = HateFoodList;
+  console.log('선택한 알러지 목록 :', receivedHateFoodList.value._rawValue)
+};
+
 const sendchkList = (currentStep) => {
   if(currentStep == 1){
-    console.log('DB에 넘기는 로직을 짜야하는데 귀찮다.')
+    const allergyNames = receivedAllergyList.value._rawValue.map(obj => Object.values(obj)[0]);
+    alert('[알러지 정보를 저장합니다.]\n\n\t선택한 알러지 목록 : ' + allergyNames.join(', '));
+    saveMemberAllergy(receivedAllergyList)
   }else if(currentStep == 2){
-    console.log('과연?')
+    console.log('[선택하신 알러지 정보를 저장합니다.]')
+    const hateFoodNames = receivedHateFoodList.value._rawValue.map(obj => Object.values(obj)[0]);
+    alert('[싫어하는 음식 정보를 저장합니다.]\n\n\t선택한 음식 목록 : ' + hateFoodNames.join(', '));
   }else if(currentStep == 3){
     console.log('허허')
   }
 }
+onMounted(getallergyInfo(), gethatefoodInfo());
 </script>
 
 <template>
@@ -318,23 +305,28 @@ const sendchkList = (currentStep) => {
           <!-- 첫번째 탭 (알레르기) -->
           <VWindowItem>
             <VRow>
+              <div>
               <CustomCheckboxesWithImage
                 v-model:selected-checkbox="selectedCheckbox"
                 :checkbox-content="checkboxContent"
                 :grid-column="{ sm: '3', cols: '12' }"
-                :allergyFoodchk="allergyFoodchk"
-              />
+                @AllergyList="handleAllergyList" />
+                <p>받은 데이터: {{ receivedAllergyList }}</p>                
+              </div>              
             </VRow>
           </VWindowItem>
           <!-- 두번쨰 탭 (좋아하는 음식) -->
           <!-- 하트 이미지 수정하려면 src\@core\components\app-form-elements\CustomCheckboxesWithImageIcon.vue 에서 수정 -->
           <VWindowItem>
             <VRow>
+              <div>
               <CustomCheckboxesWithImageIcon
                 v-model:selected-checkbox="selectedCheckbox"
                 :checkbox-content="checkboxContent2"
                 :grid-column="{ sm: '3', cols: '12' }"
-              />
+                @HateFoodList="handleHateFoodList" />
+                <p>받은 데이터: {{ receivedHateFoodList }}</p>
+              </div>
             </VRow>
           </VWindowItem>
           <!-- 세번쨰 탭 (싫어하는 음식) -->
