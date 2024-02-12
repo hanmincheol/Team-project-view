@@ -1,6 +1,6 @@
 <script setup>
+import useDatabase from '@/views/apps/chat/chatData.js'
 import { useChat } from '@/views/apps/chat/useChat'
-import { useChatStore } from '@/views/apps/chat/useChatStore'
 import {
   avatarText,
   formatDateToMonthShort,
@@ -18,29 +18,28 @@ const props = defineProps({
   },
 })
 
-const store = useChatStore()
+const { chatsContacts, activeChat } = useDatabase()
+
+
 const { resolveAvatarBadgeVariant } = useChat()
 
-// isChatContactActive는 computed property로,
-// 현재 활성화된 채팅의 연락처 ID가 props.user.id와 동일한지에 따라 결정됩니다.
-// props.isChatContact이 아니라면, store.activeChat이 채팅이 아니고 isActive가 참일 경우를 반환합니다.
-// 그렇지 않으면 isActive를 반환합니다.
+
+
 const isChatContactActive = computed(() => {
-  const isActive = store.activeChat?.contact.id === props.user.id
+  const isActive = activeChat?.contact?.id === props.user?.id
   if (!props.isChatContact)
-    return !store.activeChat?.chat && isActive
+    return !activeChat?.chat && isActive
   
   return isActive
 })
 </script>
 
-
 <template>
   <li
-    :key="store.chatsContacts.length"
+    :key="chatsContacts.length"
     class="chat-contact cursor-pointer d-flex align-center"
     :class="{ 'chat-contact-active': isChatContactActive }"
-    :data-x="store.chatsContacts.length"
+    :data-x="chatsContacts.length"
   >
     <VBadge
       dot
@@ -59,7 +58,6 @@ const isChatContactActive = computed(() => {
         <VImg
           v-if="props.user.avatar"
           :src="props.user.avatar"
-          alt="John Doe"
         />
         <span v-else>{{ avatarText(user.fullName) }}</span>
       </VAvatar>

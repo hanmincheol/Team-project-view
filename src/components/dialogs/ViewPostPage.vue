@@ -1,12 +1,11 @@
 <script setup>
+import axios from '@axios'
 import avatar1 from '@images/avatars/avatar-1.png'
 import avatar2 from '@images/avatars/avatar-2.png'
 import avatar3 from '@images/avatars/avatar-3.png'
 import avatar4 from '@images/avatars/avatar-4.png'
 import backgroundimg from '@images/pages/writing.jpg'
-import axios from '@axios'
 
-const commentval = ref()
 const props = defineProps({
   isDialogVisible: {
     type: Boolean,
@@ -28,27 +27,30 @@ const props = defineProps({
     type: Function,
     required: true,
   },
-  insertComment:{
+  insertComment: {
     type: Function,
     required: true,
   },
-  searchuser:{
-    type:String,
-    required:true,
+  searchuser: {
+    type: String,
+    required: true,
   },
-  getComment:{
+  getComment: {
     type: Function,
     required: true,
-  }
+  },
 })
 
+const commentval = ref()
 let commentAddevent = ref(false)
 
 const commentAdd = (event, val) => {
   commentAddevent = !commentAddevent
 }
+
 const newcomment = ref()
-let parentcomm = ref(0);
+let parentcomm = ref(0)
+
 const avatars = [
   avatar1,
   avatar2,
@@ -56,63 +58,65 @@ const avatars = [
   avatar4,
 ]
 
-const parent_comment = (val) => {
-  console.log('클릭한 댓글:',val);
+const parent_comment = val => {
+  console.log('클릭한 댓글:', val)
   parentcomm = val
   console.log(parentcomm)
 }
 
 const toggleComment = (comment, comments) => {
   // 다른 댓글들의 clicked 속성 초기화
-  comments.forEach((c) => {
+  comments.forEach(c => {
     if (c !== comment) {
-      c.clicked = false;
+      c.clicked = false
     }
-  });
+  })
 
   // 현재 클릭된 댓글의 clicked 속성 토글
   comment.clicked = !comment.clicked
 
   // commentAddevent 속성 토글
-  comments.forEach((c) => {
+  comments.forEach(c => {
     if (c === comment) {
-      c.commentAddevent = !c.commentAddevent;
+      c.commentAddevent = !c.commentAddevent
     } else {
-      c.commentAddevent = false;
+      c.commentAddevent = false
     }
-  });
+  })
 }
 
-const editMode = ref(false);
+const editMode = ref(false)
+
 const actionType = async (typeNo, C_NO, val) => {
   const params = {
     c_no: C_NO,
-  };
+  }
+
   if(typeNo == 1){
-    params.ccomment = val;
+    params.ccomment = val
     await axios.put(`http://localhost:4000/commentline/Edit.do`, params, {
       headers: {
         'Content-Type': 'multipart/form-data',
-      }
+      },
     }).then(response => {
       // 성공적으로 업데이트되었을 때의 처리
       console.log('성공')
-      props.getComment();
+      props.getComment()
     }).catch(error => {
       // 업데이트 중 오류가 발생했을 때의 처리
       console.log('실패', error)
     })  
   }
   else if(typeNo == 2){
-    await axios.delete(`http://localhost:4000/commentline/Delete.do`,{
-      params:params,
+    await axios.delete(`http://localhost:4000/commentline/Delete.do`, {
+      params: params,
       headers: {
         'Content-Type': 'multipart/form-data',
-      }
+      },
     }).then(response => {
       // 성공적으로 업데이트되었을 때의 처리
       console.log('성공')
-      props.getComment();
+      props.getComment()
     }).catch(error => {
       // 업데이트 중 오류가 발생했을 때의 처리
       console.log('실패', error)
@@ -171,7 +175,8 @@ const actionType = async (typeNo, C_NO, val) => {
                 class="transparent-carousel"
                 show-arrows-on-hover
                 color="success"
-                style="margin-top: 15%;"
+                cycle
+                interval="2000"
               >
                 <VCarouselItem
                   v-for="(img, index) in postToEdit.files"
@@ -221,77 +226,81 @@ const actionType = async (typeNo, C_NO, val) => {
                   <VDivider />
                   <br>
                   <!-- 댓글 시작 -->
-                    <div
-                      style="overflow: auto;width: 100%;height: 350px;font-size: 14px;"
-                      class="scrollbar"
-                    >
-                      <div v-if="comments">
-                        <div
-                          v-for="comment in comments"
-                          :key="comment.C_NO"
-                        >
-                          <!-- 최상위 댓글 -->
-                          <div v-if="comment.LEVEL == 1"> 
-                            <VAlert                            
-                              border="start"
-                              color="success"
-                              variant="tonal"
-                              style="height: 50px; opacity: 0.8;"
-                              @click="editMode ? null : (parent_comment(comment.C_NO), toggleComment(comment,comments))"
-                              :class="{'blink': comment.clicked && !editMode}"
-                            >
-                              <div style="display: flex; justify-content: space-between;">
-                                <div>
-                                  <VAvatar 
-                                    :image="comment.PRO_FILEPATH"
-                                    style="padding: 5px;margin: 2px;"
-                                    @click="openUserProfileModal(comment.ID)"
-                                  />
-                                  <span style="margin-right: 10px;font-size: 12px;">{{ comment.ID }}</span> 
-                                  <strong v-if="!comment.editMode">{{ comment.CCOMMENT }}</strong> <!-- 수정 모드가 아닐 때 -->
-                                  <input v-else type="text" v-model="comment.CCOMMENT" @keydown.enter="actionType(1,comment.C_NO, comment.CCOMMENT), comment.editMode=!comment.editMode" /> <!-- 수정 모드일 때 -->
-                                </div>
-                                <VBtn
-                                  v-if="searchuser === comment.ID"
-                                  icon
-                                  variant="text"
-                                  size="small"
-                                  color="medium-emphasis"
-                                  
-                                >
-                                  <VIcon
-                                    size="24"
-                                    icon="mdi-dots-vertical"
-                                  />
+                  <div
+                    style="overflow: auto;width: 100%;height: 350px;font-size: 14px;"
+                    class="scrollbar"
+                  >
+                    <div v-if="comments">
+                      <div
+                        v-for="comment in comments"
+                        :key="comment.C_NO"
+                      >
+                        <!-- 최상위 댓글 -->
+                        <div v-if="comment.LEVEL == 1"> 
+                          <VAlert                            
+                            border="start"
+                            color="success"
+                            variant="tonal"
+                            style="height: 50px; opacity: 0.8;"
+                            :class="{'blink': comment.clicked && !editMode}"
+                            @click="editMode ? null : (parent_comment(comment.C_NO), toggleComment(comment,comments))"
+                          >
+                            <div style="display: flex; justify-content: space-between;">
+                              <div>
+                                <VAvatar 
+                                  :image="comment.PRO_FILEPATH"
+                                  style="padding: 5px;margin: 2px;"
+                                  @click="openUserProfileModal(comment.ID)"
+                                />
+                                <span style="margin-right: 10px;font-size: 12px;">{{ comment.ID }}</span> 
+                                <strong v-if="!comment.editMode">{{ comment.CCOMMENT }}</strong> <!-- 수정 모드가 아닐 때 -->
+                                <input
+                                  v-else
+                                  v-model="comment.CCOMMENT"
+                                  type="text"
+                                  @keydown.enter="actionType(1,comment.C_NO, comment.CCOMMENT), comment.editMode=!comment.editMode"
+                                > <!-- 수정 모드일 때 -->
+                              </div>
+                              <VBtn
+                                v-if="searchuser === comment.ID"
+                                icon
+                                variant="text"
+                                size="small"
+                                color="medium-emphasis"
+                              >
+                                <VIcon
+                                  size="24"
+                                  icon="mdi-dots-vertical"
+                                />
 
-                                  <VMenu activator="parent">
-                                    <VList v-if="!comment.editMode">
-                                      <VListItem @click="comment.editMode=!comment.editMode">
-                                        <template #prepend>
-                                          <VIcon icon="mdi-comment-edit-outline" />
-                                        </template>
-                                        <VListItemTitle>수정하기</VListItemTitle>
-                                      </VListItem>
+                                <VMenu activator="parent">
+                                  <VList v-if="!comment.editMode">
+                                    <VListItem @click="comment.editMode=!comment.editMode">
+                                      <template #prepend>
+                                        <VIcon icon="mdi-comment-edit-outline" />
+                                      </template>
+                                      <VListItemTitle>수정하기</VListItemTitle>
+                                    </VListItem>
 
-                                      <VListItem @click="actionType(2,comment.C_NO, 0)">
-                                        <template #prepend>
-                                          <VIcon icon="mdi-delete-outline" />
-                                        </template>
-                                        <VListItemTitle>삭제하기</VListItemTitle>
-                                      </VListItem>                                  
-                                    </VList>
-                                    <VList v-else>
-                                      <VListItem @click=" comment.editMode=!comment.editMode">
-                                        <template #prepend>
-                                          <VIcon icon="mdi-comment-edit-outline" />
-                                        </template>
-                                        <VListItemTitle>수정 취소</VListItemTitle>
-                                      </VListItem>
-                                    </VList>
-                                  </VMenu>
-                                </VBtn>
-                              </div> 
-                            </VAlert>
+                                    <VListItem @click="actionType(2,comment.C_NO, 0)">
+                                      <template #prepend>
+                                        <VIcon icon="mdi-delete-outline" />
+                                      </template>
+                                      <VListItemTitle>삭제하기</VListItemTitle>
+                                    </VListItem>                                  
+                                  </VList>
+                                  <VList v-else>
+                                    <VListItem @click=" comment.editMode=!comment.editMode">
+                                      <template #prepend>
+                                        <VIcon icon="mdi-comment-edit-outline" />
+                                      </template>
+                                      <VListItemTitle>수정 취소</VListItemTitle>
+                                    </VListItem>
+                                  </VList>
+                                </VMenu>
+                              </VBtn>
+                            </div> 
+                          </VAlert>
 
                           <!-- 최상위 댓글에 댓글 달기 -->
                           <VAlert       
@@ -299,17 +308,17 @@ const actionType = async (typeNo, C_NO, val) => {
                             border="start"
                             color="info"
                             variant="tonal"
-                            style="height: 50px; opacity: 0.8;margin-left:20px"
+                            style="height: 50px;margin-left: 20px; opacity: 0.8;"
                           >
                             <VTextarea 
                               v-if="comment.commentAddevent" 
+                              v-model="commentval"
                               label="댓글달기"
                               color="success"
                               rows="1"
                               style="height: 55px; border: none;"
-                              variant="plain"
-                              no-resize                                                            
-                              v-model="commentval"
+                              variant="plain"                                                            
+                              no-resize
                               @keydown.enter="insertComment(bno, commentval, 2, parentcomm); commentval = ''; parentcomm=0;"
                             />
                           </VAlert>
@@ -325,8 +334,8 @@ const actionType = async (typeNo, C_NO, val) => {
                             color="info"
                             variant="tonal"
                             style="height: 50px; opacity: 0.8;"
-                            @click="comment.editMode ? null : (parent_comment(comment.C_NO), toggleComment(comment,comments))"
                             :class="{'blink': comment.clicked && !comment.editMode, 'white-background': comment.editMode}"
+                            @click="comment.editMode ? null : (parent_comment(comment.C_NO), toggleComment(comment,comments))"
                           >
                             <div style="display: flex; justify-content: space-between;">
                               <div>
@@ -337,7 +346,12 @@ const actionType = async (typeNo, C_NO, val) => {
                                 />
                                 <span style="margin-right: 10px;font-size: 12px;">{{ comment.ID }}</span>
                                 <strong v-if="!comment.editMode">{{ comment.CCOMMENT }}</strong> <!-- 수정 모드가 아닐 때 -->
-                                <input v-else type="text" v-model="comment.CCOMMENT" @keydown.enter="actionType(1,comment.C_NO, comment.CCOMMENT), comment.editMode=!comment.editMode" /> <!-- 수정 모드일 때 -->
+                                <input
+                                  v-else
+                                  v-model="comment.CCOMMENT"
+                                  type="text"
+                                  @keydown.enter="actionType(1,comment.C_NO, comment.CCOMMENT), comment.editMode=!comment.editMode"
+                                > <!-- 수정 모드일 때 -->
                               </div>
                               <VBtn
                                 v-if="searchuser === comment.ID"
@@ -386,17 +400,17 @@ const actionType = async (typeNo, C_NO, val) => {
                             border="start"
                             color="info"
                             variant="tonal"
-                            style="height: 50px; opacity: 0.8;margin-left:20px"
+                            style="height: 50px;margin-left: 20px; opacity: 0.8;"
                           >
                             <VTextarea 
                               v-if="comment.commentAddevent"
-                              label="답글달기" 
+                              v-model="commentval" 
+                              label="답글달기"
                               color="info"
                               rows="1"
-                              style="height: 55px; border: none; flex: 1;"
+                              style="height: 55px; flex: 1; border: none;"
                               variant="plain"
                               no-resize
-                              v-model="commentval"
                               @keydown.enter="insertComment(bno, commentval, 2, parentcomm); commentval = ''; parentcomm=0;"
                             />
                           </VAlert>
@@ -429,19 +443,21 @@ const actionType = async (typeNo, C_NO, val) => {
               <VRow style="margin-bottom: 5px;">
                 <VCol cols="9">
                   <VTextarea 
-                    label="댓글달기" 
+                    v-model="newcomment" 
+                    label="댓글달기"
                     rows="1"
                     style="height: 20px; border: none;"
                     variant="underlined"
                     prepend-icon="mdi-emoticon"
                     no-resize
-                    v-model="newcomment"
                     @keydown.enter="insertComment(bno, newcomment, 1, 0); newcomment = '';"
                   />
                 </VCol>
                 <VCol cols="1">
-                  <VBtn size="large"
-                    @click="insertComment(bno, newcomment, 1, 0); newcomment = '';">
+                  <VBtn
+                    size="large"
+                    @click="insertComment(bno, newcomment, 1, 0); newcomment = '';"
+                  >
                     게시
                   </VBtn>
                 </VCol>
@@ -492,9 +508,10 @@ const actionType = async (typeNo, C_NO, val) => {
 .scrollbar::-webkit-scrollbar-track {
   background: rgba(220, 20, 60, 10%);  /* 스크롤바 뒷 배경 색상 */
 }
+
 .solid-effect {
-  border-style: solid;
   border-width: 2px;
+  border-style: solid;
   border-color: red;
 }
 
@@ -502,12 +519,15 @@ const actionType = async (typeNo, C_NO, val) => {
   0% {
     background-color: #fff;
   }
+
   50% {
-    background-color: #ffcc00;
+    background-color: #fc0;
   }
+
   100% {
     background-color: #fff;
   }
+
   /* 0%{
     opacity: 1;
   }
@@ -522,7 +542,8 @@ const actionType = async (typeNo, C_NO, val) => {
 .blink {
   animation: sparkle 2s infinite;
 }
-.white-background{
+
+.white-background {
   color: white;
 }
 </style>

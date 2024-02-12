@@ -1,14 +1,12 @@
 <template>
   <div :style="{'height':'50px'}">
-    <!--
-      <VSelect
+    <VSelect
       :items="items"
-      label="원하는 동을 선택하세요"
+      label="원하는 시/군/구를 선택하세요"
       variant="filled"
       :style="{'width':'50%','float':'right'}"
       prepend-icon="mdi-map-search-outline"
-      />
-    -->
+    />
   </div>
   <div
     id="map"
@@ -17,18 +15,16 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
-
-var items = [ //즐겨찾기 경로의 상위 카테고리 선택 (받아온 데이터라고 가정)
-  '불당동',
-  '서초동',
-  '노고산동',
-  '성북동',
-  '한남동',
+var items = [ //즐겨찾기 경로의 시/군/구 카테고리 선택 (받아온 데이터라고 가정)
+  '평창군',
+  '춘천시',
+  '양구군',
+  '인제군',
+  '영월군',
 ]
+
 var map = ref("") //지도 객체를 담을 변수
-//var recommendPathView = [] //받아온 경로를 뿌려주는 값을 저장할 변수
-//var pathAboutLatLng = [] //lat, lng 값을 저장할 변수 
+
 
 onMounted(()=>{
   const script = document.createElement("script")
@@ -38,8 +34,8 @@ onMounted(()=>{
 
       //지도 띄우기
       initMap(getCurrentPosition()[0], getCurrentPosition()[0])
-
-    
+      map.relayout()
+      console.log('like:', map)
       
     })
   }

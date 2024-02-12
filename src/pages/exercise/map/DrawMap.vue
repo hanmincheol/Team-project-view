@@ -1,4 +1,13 @@
 <template>
+  <div>
+    <!-- 지도 검색창 화면 활성화 스위치(직접설정 클릭시 show) -->
+    <VSwitch
+      label="검색창 보기"
+      :value="Info"
+      :color="'Info'.toLowerCase()"
+      :style="{'float':'right', 'margin':'5px','margin-right':'20px'}"
+    />
+  </div>
   <div
     id="drawingMap"
     :style="{'width':'100%','height':'450px'}"
@@ -7,8 +16,9 @@
 </template>
 
 <script>
+import * as mapSearch from '@/pages/exercise/mapSearch'
 import { ref } from 'vue'
-import * as mapSearch from '../exercise/mapSearch'
+import { createRoadView } from '../createRoadView'
 
 var lat = []
 var lng = []
@@ -22,11 +32,12 @@ export default {
     }
   }, //data
   mounted() {
-    console.log('DrawMap:', typeof lat)
+    console.log('DrawMap:', this.drawingMap)
     if (window.kakao && window.kakao.maps && this.drawingMap != null) { //카카오 api가 로드되었을 때
 
       this.initMap()
-      this.drawingMap.relayout()
+
+      //this.drawingMap.relayout()
     }else {
 
       const script = document.createElement("script")
@@ -41,6 +52,16 @@ export default {
     //this.drawingMap.relayout();
   }, //mounted
   methods: {
+    showSearchUi() {
+      this.switchOnOff = !this.switchOnOff
+      var mapEl = document.getElementById('menu-wrap') //지도 태그 가져오기
+      if(this.switchOnOff) { //스위치가 켜져 있으면 검색창 띄우기
+        this.isSearchShow = true
+      }
+      else { //스위치가 꺼져 있으면 검색창 숨기기
+        this.isSearchShow = false
+      }
+    },
     initMap() { //지도 초기화 함수
       const drawingContainer = document.getElementById("drawingMap")
       var lat = ref(33.450701)
@@ -61,6 +82,9 @@ export default {
           //지도 객체는 반응형 관리 대상이 아니므로 initMap에서 선언합니다.
           this.drawingMap = new kakao.maps.Map(drawingContainer, tempoptions)
           this.drawingMap.addOverlayMapTypeId(kakao.maps.MapTypeId.ROADVIEW)
+          console.log('draw:', this.drawingMap)
+
+          createRoadView(this.drawingMap)
           this.drawingLine(this.drawingMap)
         })
       }//if

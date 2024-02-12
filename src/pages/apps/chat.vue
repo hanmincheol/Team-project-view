@@ -1,47 +1,159 @@
 <script setup>
-import ChatActiveChatUserProfileSidebarContent from '@/views/apps/chat/ChatActiveChatUserProfileSidebarContent.vue'
 import ChatLeftSidebarContent from '@/views/apps/chat/ChatLeftSidebarContent.vue'
 import ChatLog from '@/views/apps/chat/ChatLog.vue'
-import ChatUserProfileSidebarContent from '@/views/apps/chat/ChatUserProfileSidebarContent.vue'
+import useDatabase from '@/views/apps/chat/chatData.js'
 import { useChat } from '@/views/apps/chat/useChat'
-import { useChatStore } from '@/views/apps/chat/useChatStore'
+import axios from '@axios'
 import { useResponsiveLeftSidebar } from '@core/composable/useResponsiveSidebar'
 import { avatarText } from '@core/utils/formatters'
-import { onMounted, onUnmounted, ref } from 'vue'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import { useDisplay } from 'vuetify'
 
-//현재 화면 크기에 대한 정보
 const vuetifyDisplays = useDisplay()
-
-//상태를 관리하고 액션을 수행
-const store = useChatStore()
-
-//왼쪽 사이드바의 열림/닫힘 상태를 결정
 const { isLeftSidebarOpen } = useResponsiveLeftSidebar(vuetifyDisplays.smAndDown)
-
-//유저 상태 색상
 const { resolveAvatarBadgeVariant } = useChat()
 
-// Perfect scrollbar
+// 스크롤바
 const chatLogPS = ref()
 
-//맨 아래로 스크롤
 const scrollToBottomInChatLog = () => {
-  const scrollEl = chatLogPS.value.$el || chatLogPS.value
+  if (chatLogPS.value) {
+    const scrollEl = chatLogPS.value.$el || chatLogPS.value
 
-  scrollEl.scrollTop = scrollEl.scrollHeight
+    scrollEl.scrollTop = scrollEl.scrollHeight
+  }
 }
 
+let { database, chatsContacts, connetId } = useDatabase()
+let activeChat = ref(database.value.chats.find(chat => chat.userId === connetId))
 
-//검색 쿼리에 따라 채팅 및 연락처 목록이 동적으로 업데이트
-//채팅 로그가 업데이트되면 맨 아래로 스크롤하여 사용자에게 가장 최근의 채팅 내용을 보여주는 기능
+// 검색
+const q = ref('')
 
-const q = ref("") // 로그인 유저
+// 메세지
+const msg = ref('')
+let sendMessage = null
+let messages = ref([]) // 메시지를 저장할 배열 변수 선언
+let contactId = null 
+let senderId = null  
 
-watch(q, val => store.fetchChatsAndContacts(val), { immediate: true })
+onMounted(() => {
+  // 웹소켓 연결 생성
+  const socket = new WebSocket('ws://localhost:4000/chat')
 
-// 채팅방 시작
+  // 웹소켓 연결이 열렸을 때
+  socket.addEventListener('open', async function (event) {
+    console.log('----웹소켓 연결되었습니다.--------')
+
+    sendMessage = async () => {
+      let message = ref(msg.value) // 여기서 message 변수 선언 및 초기화
+      if (!message.value) // .value를 사용하여 message의 값을 확인
+        return
+
+      senderId = connetId
+      contactId = activeChat?.value.contact.id
+
+      console.log("----------contactId---------", contactId)
+
+      // 새 메시지 데이터를 생성
+      const newMessageData = {
+        message: message.value,
+        time: String(new Date()),
+        senderId,
+        feedback: {
+          isSent: true,
+          isDelivered: false,
+          isSeen: false,
+        },
+      }
+
+
+      // 새 메시지를 messages 배열에 추가합니다.
+      messages.value.push(newMessageData)
+      console.log(messages.value) // 배열 로그
+
+      try {
+      // 데이터베이스에 메시지 저장
+        const response = await axios.post("http://localhost:4000/chat/SoloWrite.do", {
+          id: senderId,
+          ruser: contactId,
+          content: message.value,
+        })
+
+        // 웹소켓을 통해 메시지 전송
+        socket.send(message.value)
+
+        // 해당 연락처에 대한 채팅이 없으면 새로운 채팅을 생성 및 데이터베이스에 추가
+        if (activeChat.value === undefined) {
+          database.value.chats.push({
+            userId: contactId,
+            unseenMsgs: 0,
+            messages: [newMessageData],
+          })
+
+          // 새로운 채팅을 활성 채팅으로 설정합니다.
+          activeChat.value = database.value.chats[database.value.chats.length - 1]
+
+          const activeChatContact = chatsContacts.find(c => c.id === contactId)
+
+          chatsContacts.push({
+            ...activeChatContact,
+            chat: activeChat,
+          })
+          if (activeChat) {
+            activeChat.chat = activeChat
+          }
+        }
+        else {
+          // 채팅이 이미 있다면, 새 메시지를 채팅에 추가합니다.
+          if (activeChat.value && activeChat.value.messages) {
+            activeChat.value.messages.push(newMessageData)
+          }
+        }
+     
+        // 활성 연락처에 대한 마지막 메시지 설정
+        const contact = chatsContacts.find(c => {
+          if (activeChat.value)
+            return c.userId === activeChat.value.contact.userId
+
+          return false
+        })
+
+        if (contact && contact.chat) {
+          contact.chat.lastMessage = newMessageData
+        }
+
+        // 메시지 보내는 란 초기화
+        msg.value = ''
+
+        // 스크롤을 아래로 내리기
+        await nextTick()
+        scrollToBottomInChatLog()
+
+      } catch (error) {
+        console.error(`데이터를 가져오는데 실패했습니다: ${error}`)
+      }
+    }
+
+  })
+
+  socket.addEventListener('message', async event => {
+    const message = event.data
+  
+    // 데이터베이스에 메시지 저장
+    const response = await axios.post("http://localhost:4000/chat/SoloWrite.do", {
+      id: contactId,
+      ruser: senderId,
+      content: message,
+    })
+
+    // 받은 메시지를 messages 배열에 추가
+    messages.value.push(message)
+    console.log(messages.value.push) // 배열 로그
+  })
+})
+
+// 친구 클릭시 열리는 채팅방
 const startConversation = () => {
   if (vuetifyDisplays.mdAndUp.value)
     return
@@ -49,148 +161,69 @@ const startConversation = () => {
 }
 
 
-// 메세지 부분
-const msg = ref('')
-
-// 웹소켓 연결 설정
-let socket = null
-
-onMounted(() => {
-  socket = new WebSocket('ws://localhost:4000/chat')
-
-  socket.onopen = () => {
-    console.log('웹소켓 시작')
-  }
-
-  socket.onmessage = event => {
-    const message = JSON.parse(event.data)
-
-
-    // 웹소켓으로 받은 메세지를 store에 추가
-    store.addMessage(message)
-  }
-
-  socket.onclose = () => {
-    console.log('웹소켓 끝')
-  }
-
-  socket.onerror = error => {
-    console.error('웹소켓 에러: ', error)
-  }
-})
-
-// 메세지 전송
-const sendMessage = async () => {
-  if (!msg.value)
-    return
-
-  const message = { text: msg.value }
-
-
-  // 메세지를 웹소켓을 통해 전송
-  socket.send(JSON.stringify(message))
-
-  // Reset message input
-  msg.value = ''
-
-  // Scroll to bottom
-  nextTick(() => {
-    scrollToBottomInChatLog()
-  })
-}
-
-// 컴포넌트가 unmount될 때 웹소켓 연결 종료
-onUnmounted(() => {
-  if (socket) {
-    socket.close()
-  }
-})
-
-
 const openChatOfContact = async userId => {
-  await store.getChat(userId)
+  const chat = database.value.chats.find(c => c.userId === userId)
 
-  // Reset message input
+  console.log("activeChat----", activeChat)
+  console.log("userId----", userId)
+  console.log("chat-----------------------------------------------", chat)
+  chat.messages.forEach((msg, index) => {
+    console.log(`Message ${index + 1}:`, msg.message)
+  })
+
+  if (chat) {
+    chat.unseenMsgs = 0
+  }
+
+  activeChat.value = {
+    chat: chat ? chat : {
+      userId: userId,
+      unseenMsgs: 0,
+      messages: [
+        {
+          message: '',
+          time: '',
+          senderId: connetId,
+          feedback: {
+            isSent: true,
+            isDelivered: true,
+            isSeen: true,
+          },
+        },
+      ],
+    },
+    contact: database.value.contacts.find(c => c.id === userId),
+  }
+
+  console.log("activeChat", activeChat.value)
+  console.log("activeChat.chat----", activeChat.value.chat)
+  console.log("activeChat.contact----", activeChat.value.contact)
+
+  // 메세지 초기화
   msg.value = ''
 
-  // Set unseenMsgs to 0
-  const contact = store.chatsContacts.find(c => c.id === userId)
+  // unseenMsgs을 0으로 초기화
+  const contact = chatsContacts.value.find(c => c.id === userId)
+
+  console.log("contact----", contact)
   if (contact)
     contact.chat.unseenMsgs = 0
 
-  // if smAndDown =>  Close Chat & Contacts left sidebar
+  // 채팅 및 연락처 왼쪽 사이드바 닫기
   if (vuetifyDisplays.smAndDown.value)
     isLeftSidebarOpen.value = false
 
-  // Scroll to bottom
-  nextTick(() => {
-    scrollToBottomInChatLog()
-  })
+  // 스크롤바 아래로 내리기
+  await nextTick()
+  scrollToBottomInChatLog()
 }
-
-// User profile sidebar
-const isUserProfileSidebarOpen = ref(false)
-
-// Active chat user profile sidebar
-const isActiveChatUserProfileSidebarOpen = ref(false)
 
 // file input
 const refInputEl = ref()
-
-//햄버거 누르면 나오는 창
-const moreList = [
-  {
-    title: '연락처 보기',
-    value: 'View Contact',
-  },
-  {
-    title: '음소거 알림',
-    value: 'Mute Notifications',
-  },
-  {
-    title: '차단하기',
-    value: 'Block Contact',
-  },
-  {
-    title: '채팅 지우기',
-    value: 'Clear Chat',
-  },
-  {
-    title: 'Report',
-    value: 'Report',
-  },
-]
 </script>
 
 <template>
   <VLayout class="chat-app-layout bg-surface">
-    <!-- "bg-surface" 클래스는 배경 색상 -->
-    <!-- 사용자 프로필 사이드바의 열림/닫힘 상태를 관리 => 고칠곳 x -->
-    <VNavigationDrawer
-      v-model="isUserProfileSidebarOpen"
-      temporary
-      touchless
-      absolute
-      class="user-profile-sidebar"
-      location="start"
-      width="370"
-    >
-      <ChatUserProfileSidebarContent @close="isUserProfileSidebarOpen = false" />
-    </VNavigationDrawer>
-
-    <!-- 👉 Active Chat sidebar -->
-    <VNavigationDrawer
-      v-model="isActiveChatUserProfileSidebarOpen"
-      width="374"
-      absolute
-      temporary
-      location="end"
-      touchless
-      class="active-chat-user-profile-sidebar"
-    >
-      <ChatActiveChatUserProfileSidebarContent @close="isActiveChatUserProfileSidebarOpen = false" />
-    </VNavigationDrawer>
-
     <!-- 👉 Left sidebar   -->
     <VNavigationDrawer
       v-model="isLeftSidebarOpen"
@@ -206,7 +239,6 @@ const moreList = [
         v-model:isDrawerOpen="isLeftSidebarOpen"
         v-model:search="q"
         @open-chat-of-contact="openChatOfContact"
-        @show-user-profile="isUserProfileSidebarOpen = true"
         @close="isLeftSidebarOpen = false"
       />
     </VNavigationDrawer>
@@ -215,7 +247,7 @@ const moreList = [
     <VMain class="chat-content-container">
       <!-- 👉 Right content: Active Chat -->
       <div
-        v-if="store.activeChat"
+        v-if="activeChat"
         class="d-flex flex-column h-100"
       >
         <!-- 👉 Active chat header -->
@@ -229,57 +261,35 @@ const moreList = [
           </IconBtn>
 
           <!-- avatar -->
-          <div
-            class="d-flex align-center cursor-pointer"
-            @click="isActiveChatUserProfileSidebarOpen = true"
+          <VBadge
+            dot
+            location="bottom right"
+            offset-x="3"
+            offset-y="3"
+            :color="resolveAvatarBadgeVariant(activeChat.contact.status)"
+            bordered
           >
-            <VBadge
-              dot
-              location="bottom right"
-              offset-x="3"
-              offset-y="3"
-              :color="resolveAvatarBadgeVariant(store.activeChat.contact.status)"
-              bordered
+            <VAvatar
+              size="40"
+              :variant="!activeChat.contact.avatar ? 'tonal' : undefined"
+              :color="!activeChat.contact.avatar ? resolveAvatarBadgeVariant(activeChat.contact.status) : undefined"
+              class="cursor-pointer"
             >
-              <VAvatar
-                size="40"
-                :variant="!store.activeChat.contact.avatar ? 'tonal' : undefined"
-                :color="!store.activeChat.contact.avatar ? resolveAvatarBadgeVariant(store.activeChat.contact.status) : undefined"
-                class="cursor-pointer"
-              >
-                <VImg
-                  v-if="store.activeChat.contact.avatar"
-                  :src="store.activeChat.contact.avatar"
-                  :alt="store.activeChat.contact.fullName"
-                />
-                <span v-else>{{ avatarText(store.activeChat.contact.fullName) }}</span>
-              </VAvatar>
-            </VBadge>
+              <VImg
+                v-if="activeChat.contact.avatar"
+                :src="activeChat.contact.avatar"
+                :alt="activeChat.contact.fullName"
+              />
+              <span v-else>{{ avatarText(activeChat.contact.fullName) }}</span>
+            </VAvatar>
+          </VBadge>
 
-            <div class="flex-grow-1 ms-4 overflow-hidden">
-              <h6 class="text-base font-weight-regular text-medium-emphasis">
-                {{ store.activeChat.contact.fullName }}
-              </h6>
-              <span class="d-block text-sm text-truncate text-disabled">{{ store.activeChat.contact.role }}</span>
-            </div>
+          <div class="flex-grow-1 ms-4 overflow-hidden">
+            <h6 class="text-base font-weight-regular text-medium-emphasis">
+              {{ activeChat.contact.fullName }}
+            </h6>
+            <span class="d-block text-sm text-truncate text-disabled">{{ activeChat.contact.role }}</span>
           </div>
-
-          <VSpacer />
-
-          <!-- Header right content -->
-          <div class="d-sm-flex align-center d-none">
-            <IconBtn>
-              <VIcon icon="mdi-phone" />
-            </IconBtn>
-            <IconBtn>
-              <VIcon icon="mdi-video-outline" />
-            </IconBtn>
-            <IconBtn>
-              <VIcon icon="mdi-magnify" />
-            </IconBtn>
-          </div>
-
-          <MoreBtn :menu-list="moreList" />
         </div>
 
         <VDivider />
@@ -291,7 +301,10 @@ const moreList = [
           :options="{ wheelPropagation: false }"
           class="flex-grow-1"
         >
-          <ChatLog />
+          <ChatLog
+            :messages="messages"
+            :active-chat="activeChat"
+          />
         </PerfectScrollbar>
 
         <!-- Message form -->
@@ -300,7 +313,7 @@ const moreList = [
           @submit.prevent="sendMessage"
         >
           <VTextField
-            :key="store.activeChat?.contact.id"
+            :key="activeChat?.contact.id"
             v-model="msg"
             variant="solo"
             class="chat-message-input"
@@ -308,19 +321,6 @@ const moreList = [
             autofocus
           >
             <template #append-inner>
-              <IconBtn>
-                <VIcon
-                  icon="mdi-map-legend "
-                  size="22"
-                />
-              </IconBtn>
-              <IconBtn>
-                <VIcon
-                  icon="mdi-instagram "
-                  size="22"
-                />
-              </IconBtn>
-
               <IconBtn>
                 <VIcon
                   icon="mdi-microphone-outline"
@@ -354,7 +354,7 @@ const moreList = [
         </VForm>
       </div>
 
-      <!-- 채팅방을 하나도 열지 않았을 시 -->
+      <!-- 👉 Start conversation -->
       <div
         v-else
         class="d-flex h-100 align-center justify-center flex-column"
@@ -374,7 +374,7 @@ const moreList = [
           :class="[{ 'cursor-pointer': $vuetify.display.smAndDown }]"
           @click="startConversation"
         >
-          채팅방을 클릭하세요!
+          채팅방을 선택해주세요!
         </p>
       </div>
     </VMain>

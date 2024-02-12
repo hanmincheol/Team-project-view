@@ -18,9 +18,49 @@ const emit = defineEmits(['update:selectedCheckbox'])
 
 const selectedOption = ref(structuredClone(toRaw(props.selectedCheckbox)))
 
+
 watch(selectedOption, () => {
   emit('update:selectedCheckbox', selectedOption.value)
 })
+
+const allergyFoodchk = ref([])
+
+const checkval = (item) => {
+  console.log('값:', item.value, '이름:', item.name);
+  const index = allergyFoodchk.value.indexOf(item.value);
+  if (index === -1) {
+    allergyFoodchk.value.push(item.value);
+  } else {
+    allergyFoodchk.value.splice(index, 1);
+  }
+  allergyFoodchk.value.sort((a, b) => a - b);
+  console.log('현재', allergyFoodchk.value);
+  sendAllergyList(allergyFoodchk);
+};
+
+
+// const checkval = (item) => {
+//   console.log('값:', item.value, '이름:', item.name);
+//   if (!allergyFoodchk.value.includes(item.name)) {
+//     allergyFoodchk.value.push({ [item.value]: item.name });
+//   } else {
+//     const index = allergyFoodchk.value.findIndex((element) => element[item.value] === item.name);
+//     if (index !== -1) {
+//       allergyFoodchk.value.splice(index, 1);
+//     }
+//   }
+//   allergyFoodchk.value.sort((a, b) => {
+//     const valueA = Object.keys(a)[0];
+//     const valueB = Object.keys(b)[0];
+//     return valueA - valueB;
+//   });
+//   console.log('현재', allergyFoodchk.value);
+//   sendAllergyList(allergyFoodchk);
+// };
+
+const sendAllergyList = (val) => {
+  emit('AllergyList', val)
+}
 </script>
 
 <template>
@@ -41,7 +81,9 @@ watch(selectedOption, () => {
           <VCheckbox
             v-model="selectedOption"
             :value="item.value"
+            @click="checkval(item)"
           />
+          <!-- @click="checkval(item)" -->
         </div>
         <img
           :src="item.bgImage"
