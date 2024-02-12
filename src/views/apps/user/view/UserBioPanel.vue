@@ -6,7 +6,7 @@ import {
 import Btnsu from '@/pages/views/demos/components/button/self-suc.vue'
 import SelfEdit from '@/pages/views/demos/forms/form-elements/textarea/self-edit.vue'
 import axios from '@axios'
-import { computed, onUpdated, ref, watch, watchEffect } from 'vue'
+import { computed, onMounted, onUpdated, ref, watch, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
@@ -148,6 +148,9 @@ const profiledata = ref([])//내 프로필 데이터
 const length = ref(0) //구독자 초기값
 
 
+
+
+
 async function fetchData() {
   if (!userInfo.value || !userInfo.value || !userInfo.value.id) {
     console.log('비회원으로 데이터를 가져올 수 없습니다.')
@@ -232,7 +235,10 @@ const updateprofile = newcolval => {
     })
 }
 
-
+const updateProFilepath = async newProFilepath => {
+  // newProFilepath는 새로운 pro_filepath 값입니다.
+  await store.dispatch('updateProFilepath', newProFilepath)
+}
 
 //////////////////////////////////////////////////////////////////////
 // 이미지
@@ -265,6 +271,9 @@ const imagechange = () => {
     }, withCredentials: true })
     .then(response => {
       console.log('프로필 이미지 업데이트 성공')
+
+      updateProFilepath('http://localhost:4000/images/'+inputfilename.value)
+
       fetchProfile()
     })
     .catch(error => {
@@ -272,6 +281,11 @@ const imagechange = () => {
       console.error(error)
     })
 }
+
+// .then(() => {
+//     // 이미지 업로드가 성공적으로 완료된 후에 updateProFilepath를 호출
+//       updateProFilepath('http://localhost:4000/images/'+inputfilename.value)
+//     })
 
 // 프로필 파일 업로드할때 필요한 함수
 const uploadImg = e => {
@@ -314,10 +328,16 @@ const uploadFile = file => {
   return axios.post('http://localhost:4000/comm/upload', formData, {  params: {
     id: userInfo.value ? userInfo.value.id : null,
   }, withCredentials: true })
+    
 }
 
 
 onMounted(async () => {
+  // userInfo.value가 null인 경우 함수를 종료
+  if (!userInfo.value) {
+    return
+  }
+
   try {
     await Promise.all([fetchData(), fetchProfile()])
   } catch (error) {

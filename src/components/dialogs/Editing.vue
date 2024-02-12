@@ -166,6 +166,8 @@ const submitEdit = async function() {
               show-arrows-on-hover
               color="success"
               style="margin-top: 0%;"
+              cycle
+              interval="2000"
             >
               <VCarouselItem
                 v-for="(img, index) in postToEdit.files"

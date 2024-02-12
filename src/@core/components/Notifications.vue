@@ -1,16 +1,7 @@
 <script setup>
-import ViewPostPage from '@/components/dialogs/ViewPostPage.vue'
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
-import { avatarText } from '@core/utils/formatters'
 import axios from '@axios'
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import { useStore } from 'vuex'
-
-const store = useStore()
-
-// 로그인 스토어와 사용자 스토어의 상태를 가져옵니다.
-const userInfo = computed(() => store.state.userStore.userInfo)
-const connetId=userInfo.value.id
-const name = computed(() => store.state.userStore.userInfo ? store.state.userStore.userInfo.name : null)
 
 const props = defineProps({
   location: {
@@ -18,14 +9,18 @@ const props = defineProps({
     required: false,
     default: 'bottom end',
   },
-  noticlists:{
-    type:Array,
-    required:true,
+  noticlists: {
+    type: Array,
+    required: true,
   },
-  noticflag:{
-    type:Boolean,
-    required:true,
-  }
+  noticflag: {
+    type: Boolean,
+    required: true,
+  },
+  getNoticList: {
+    type: Function,
+    required: true,
+  },
 })
 
 const emit = defineEmits([
@@ -35,24 +30,44 @@ const emit = defineEmits([
   'click:notification',
 ])
 
+const store = useStore()
+
+// 로그인 스토어와 사용자 스토어의 상태를 가져옵니다.
+const userInfo = computed(() => store.state.userStore.userInfo)
+const connetId=computed(() => userInfo.value.id)
+const name = computed(() => store.state.userStore.userInfo ? store.state.userStore.userInfo.name : null)
+
 function getTimeDiffString(triggerDate) {
-  const triggerDateObj = new Date(triggerDate);
-  const currentDate = new Date();
-  const timeDiff = currentDate - triggerDateObj;
-  const minutes = Math.floor(timeDiff / (1000 * 60));
+  const triggerDateObj = new Date(triggerDate)
+  const currentDate = new Date()
+  const timeDiff = currentDate - triggerDateObj
+  const minutes = Math.floor(timeDiff / (1000 * 60))
 
   if (minutes < 60) {
-    return `${minutes}분 전`;
+    return `${minutes}분 전`
   } else if (minutes < 24 * 60) {
-    const hours = Math.floor(minutes / 60);
-    return `${hours}시간 전`;
+    const hours = Math.floor(minutes / 60)
+    
+    return `${hours}시간 전`
   } else {
-    const days = Math.floor(minutes / (24 * 60));
-    return `${days}일 전`;
+    const days = Math.floor(minutes / (24 * 60))
+    
+    return `${days}일 전`
   }
 }
 
+const updatenotic = async (notification, trigger_pk, index) => {
+  await axios.get('http://localhost:4000/Notic/Update.do', { params: { trigger_pk: trigger_pk } })
+    .then(response => {
+      console.log('성공')
 
+      // checked_time 값을 업데이트하고 화면 갱신
+      notification.checked_time = new Date()//사실상 DB에 들어간 값과 같은 값이다.
+    })
+    .catch(error => {
+      console.log('실패', error)
+    })
+}
 </script>
 
 <template>
@@ -82,7 +97,7 @@ function getTimeDiffString(triggerDate) {
         <!-- 👉 Header -->
         <VCardItem class="notification-section">
           <VCardTitle class="text-lg">
-            '{{connetId}}'님 알림 현황
+            '{{ connetId }}'님 알림 현황
           </VCardTitle>
 
           <template #append>
@@ -120,6 +135,7 @@ function getTimeDiffString(triggerDate) {
                 lines="one"
                 min-height="66px"
                 class="list-item-hover-class"
+                @click="updatenotic(notification, notification.trigger_pk, index)"
               >
                 <!-- Slot: Prepend -->
                 <!-- Handles Avatar: Image, Icon, Text -->
@@ -132,12 +148,15 @@ function getTimeDiffString(triggerDate) {
                   </VListItemAction>
                 </template>
 
-                <VListItemTitle><v-chip color="error">{{notification.notic_trigger_user}}</v-chip> 
-                <small>{{ notification.notic_type===1? '님께서 댓글을 달았습니다.': '님께서 좋아요를 눌렀습니다.'}}</small>                  
+                <VListItemTitle>
+                  <VChip color="error">
+                    {{ notification.notic_trigger_user }}
+                  </VChip> 
+                  <small>{{ notification.notic_type===1? '님께서 댓글을 달았습니다.': '님께서 좋아요를 눌렀습니다.' }}</small>                  
                 </VListItemTitle>
                 
                 <!-- <VListItemSubtitle>{{ notification.ccomment }}</VListItemSubtitle> -->
-                <span class="text-xs text-disabled">{{getTimeDiffString(notification.notic_trigger_date)}}</span>
+                <span class="text-xs text-disabled">{{ getTimeDiffString(notification.notic_trigger_date) }}</span>
 
                 <!-- Slot: Append -->
                 <template #append>
@@ -146,14 +165,14 @@ function getTimeDiffString(triggerDate) {
                       dot
                       :color="notification.checked_time == null ? 'primary' : '#a8aaae'"
                       :class="`${notification.checked_time !== null ? 'visible-in-hover' : ''} ms-1`"
-                      @click.stop="updatenotic(connetId)"
+                      @click.stop="updatenotic(notification,notification.trigger_pk, index)"
                     />
 
                     <div style="block-size: 28px; inline-size: 28px;">
                       <IconBtn
                         size="x-small"
                         class="visible-in-hover"
-                        @click="removenotic(notification.notic_receive_user, notification.notic_trigger_date)"
+                        @click="removenotic(notification.trigger_pk)"
                       >
                         <VIcon
                           size="20"
