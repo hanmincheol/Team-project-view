@@ -235,44 +235,6 @@ watch(certifiedPN, newValue => {
 })
 
 
-const validateId = () => {
-  const regex = /^[a-zA-Z0-9]{4,10}$/
-  if (!regex.test(id.value)){
-    idError.value = '아이디는 4~10자의 영문과 숫자 조합이어야 합니다.'
-    idSuccess.value = ''
-
-  }
-  else{
-    idError.value = ''
-    idSuccess.value = '사용가능!'
-  }
-}
-
-
-const validatePassword = () => {
-  const regex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_-])[A-Za-z\d!@#$%^&*()_-]{8,20}$/
-  if(!regex.test(pwd.value)){
-    passwordError.value = '비밀번호는 8~20자의 영문 대/소문자, 숫자, 특수문자를 모두 사용해 주세요.'
-    passwordSuccess.value = ''
-  }
-  else{
-    passwordSuccess.value ='사용가능!'
-    passwordError.value = ''
-  }
-}
-
-const validatePasswordCK = () => {
-  if(pwd.value !== passwordCK.value){
-    passwordCKError.value = "비밀번호가 비밀번호 확인과 일치하지 않습니다."
-    passwordCKSuccess.value = ''
-  }
-  else{
-    if(passwordCK.value !== ''){
-      passwordCKSuccess.value = '일치합니다!'
-    }
-    passwordCKError.value = ''
-  }
-}
 
 const validatenameCK = () => {
   const regex = /^[가-힣]{2,5}$/
@@ -329,9 +291,6 @@ const validatePNCK = () => {
 
 const handleCertification = async () => {
   // 유효성 검사 함수 호출
-  validateId()
-  validatePassword()
-  validatePasswordCK()
   validatenameCK()
   validateHeight()
   validateWeight()
@@ -554,9 +513,24 @@ onSubmitIdCK()
 <template>
   <VForm>
     <!-- () => {} -->
-    <VRow>
+    <VRow class="my-3">
       <VCol cols="12">
         <VRow no-gutters>
+          <VCol cols="12">
+            <VRow
+              no-gutters
+              class="my-3"
+            >
+              <!-- 👉 fullName -->
+              <VCol cols="4" />
+
+         
+              <Myradio @update-gender="handleUpdateGender" />
+
+              <VCol cols="4" />
+            </VRow>
+          </VCol>
+
           <!-- 👉 Password -->
           <VCol
             cols="12"
@@ -565,170 +539,263 @@ onSubmitIdCK()
             
           <VCol
             cols="12"
-            md="1"
-          />
-
-          <VCol
-            cols="12"
-            md="4"
+            class="my-3"
           >
-            <VTextField
+            <VRow no-gutters>
+              <!-- 👉 fullName -->
+              <VCol cols="4" />
+              <VCol cols="2">
+                <VTextField
+                  id="height"
+                  v-model="height"
+                  type="height"
+                  placeholder="키"
+                  persistent-placeholder
+                  label="CM"
             
-              id="pwd"
-              v-model="pwd"
-              placeholder="비밀번호"
-              persistent-placeholder
-              :type="isPasswordVisible ? 'text' : 'password'"
-              :append-inner-icon="isPasswordVisible ? 'mdi-eye-outline' : 'mdi-eye-off-outline'"
-              @input="validatePassword"
-              @click:append-inner="isPasswordVisible = !isPasswordVisible"
-            />
-            <div
-              v-if="passwordError"
-              :style="{ color: 'red' }"
+                  @input="validateHeight"
+                />
+                <div
+                  v-if="heightError"
+                  :style="{ color: 'red' }"
+                >
+                  {{ heightError }}
+                </div> <!-- 아이디 오류 메세지 -->
+
+                <div
+                  v-if="heightSuccess"
+                  :style="{ color: 'greenyellow' }"
+                >
+                  {{ heightSuccess }}
+                </div> <!-- 아이디 성공 메세지 -->
+              </VCol>
+              <VCol cols="2">
+                <VTextField
+                  id="weight"
+                  v-model="weight"
+                  type="weight"
+                  placeholder="몸무게"
+                  persistent-placeholder
+                  label="KG"
+                  @input="validateWeight"
+                />
+                <div
+                  v-if="weightError"
+                  :style="{ color: 'red' }"
+                >
+                  {{ weightError }}
+                </div> <!-- 아이디 오류 메세지 -->
+
+                <div
+                  v-if="weightSuccess"
+                  :style="{ color: 'greenyellow' }"
+                >
+                  {{ weightSuccess }}
+                </div> <!-- 아이디 성공 메세지 -->
+              </VCol>
+
+              <VCol cols="4" />
+            </VRow>
+          </VCol> 
+
+          <VCol cols="12">
+            <VRow
+              no-gutters
+              class="my-3"
             >
-              {{ passwordError }}
-            </div> <!-- 아이디 오류 메세지 -->
+              <VCol
+                cols="12"
+                md="3"
+              />
 
-            <div
-              v-if="passwordSuccess"
-              :style="{ color: 'greenyellow' }"
-            >
-              {{ passwordSuccess }}
-            </div> <!-- 아이디 성공 메세지 -->
-          </VCol>
-        </VRow>
-      </VCol>
-
-      <VCol cols="12">
-        <VRow no-gutters>
-          <!-- 👉 Password -->
-          <VCol
-            cols="12"
-            md="3"
-          />
-
-          <VCol
-            cols="12"
-            md="1"
-          />
-
-          <VCol
-            cols="12"
-            md="4"
-          >
-            <VTextField
-              id="passwordCK"
-              v-model="passwordCK"
-              placeholder="비밀번호 확인"
-              persistent-placeholder
-              :type="isCPasswordVisible ? 'text' : 'password'"
-              :append-inner-icon="isCPasswordVisible ? 'mdi-eye-outline' : 'mdi-eye-off-outline'"
-              @input="validatePasswordCK"
-              @click:append-inner="isCPasswordVisible = !isCPasswordVisible"
-            />
-            <div
-              v-if="passwordCKError && passwordCK !== ''"
-              :style="{ color: 'red' }"
-            >
-              {{ passwordCKError }}
-            </div> <!-- passwordCKError 오류 메세지 -->
-
-            <div
-              v-if="passwordCKSuccess && passwordCK !== ''"
-              :style="{ color: 'greenyellow' }"
-            >
-              {{ passwordCKSuccess }}
-            </div> <!-- passwordCKError 성공 메세지 -->
-          </VCol>
-        </VRow>
-      </VCol>
-
-      <VCol cols="12">
-        <VRow no-gutters>
-          <!-- 👉 fullName -->
-          <VCol cols="4" />
-          <VCol cols="2">
-            <VTextField
-              id="height"
-              v-model="height"
-              type="height"
-              placeholder="키"
-              persistent-placeholder
-              label="CM"
-            
-              @input="validateHeight"
-            />
-            <div
-              v-if="heightError"
-              :style="{ color: 'red' }"
-            >
-              {{ heightError }}
-            </div> <!-- 아이디 오류 메세지 -->
-
-            <div
-              v-if="heightSuccess"
-              :style="{ color: 'greenyellow' }"
-            >
-              {{ heightSuccess }}
-            </div> <!-- 아이디 성공 메세지 -->
-          </VCol>
-          <VCol cols="2">
-            <VTextField
-              id="weight"
-              v-model="weight"
-              type="weight"
-              placeholder="몸무게"
-              persistent-placeholder
-              label="KG"
-              @input="validateWeight"
-            />
-            <div
-              v-if="weightError"
-              :style="{ color: 'red' }"
-            >
-              {{ weightError }}
-            </div> <!-- 아이디 오류 메세지 -->
-
-            <div
-              v-if="weightSuccess"
-              :style="{ color: 'greenyellow' }"
-            >
-              {{ weightSuccess }}
-            </div> <!-- 아이디 성공 메세지 -->
-          </VCol>
-
-          <VCol cols="4" />
-        </VRow>
-      </VCol> 
-
-      <VCol cols="12">
-        <VRow no-gutters>
-          <VCol
-            cols="12"
-            md="3"
-          />
-
-          <VCol
-            cols="12"
-            md="1"
-          />
+              <VCol
+                cols="12"
+                md="1"
+              />
           
+              <VCol
+                cols="12"
+                md="4"
+              >
+                <Sub @update:model-value="handleGoalNoChanged" />
+              </VCol>
+            </VRow>
+          </VCol>
+          
+          <VRow no-gutters>
+            <!-- 👉 ID -->
+            <VCol
+              cols="12"
+              md="3"
+            />
+
+            <VCol
+              cols="12"
+              md="1"
+            />
+          
+            <VCol
+              cols="12"
+              md="4"
+            >
+              <VTextField
+                id="tel"
+                v-model="tel"
+                placeholder="휴대전화 번호(-생략 가능)"
+                persistent-placeholder
+                @input="validatePNCK"
+              />
+              <div
+                v-if="PNError"
+                :style="{ color: 'red' }"
+              >
+                {{ PNError }}
+              </div> <!-- 아이디 오류 메세지 -->
+
+              <div
+                v-if="PNSuccess"
+                :style="{ color: 'greenyellow' }"
+              >
+                {{ PNSuccess }}
+              </div> <!-- 아이디 성공 메세지 -->
+            </VCol>
+          </VRow>
+
+          <AddressApi
+            v-model="userAddress"
+            :new-address="userAddress" 
+            @update-address="handleUpdateAddress"
+          />
+
           <VCol
             cols="12"
-            md="4"
+            class="my-3"
           >
-            <Sub @update:model-value="handleGoalNoChanged" />
+            <VRow no-gutters>
+              <VCol
+                cols="12"
+                md="2"
+              />
+
+              <VCol
+                cols="12"
+                md="2"
+              />
+
+              <VCol
+                cols="12"
+                md="4"
+              >
+                <VDialog
+                  v-model="isDialogVisible"
+                  max-width="800"
+                >
+                  <!-- Dialog Activator -->
+                  <template #activator="{ props }">
+                    <VBtn
+                      :phone-number="tel"
+                      v-bind="props"
+                      color="primary"
+                      class="my-custom-button"
+                      height="55px"
+                      width="800"
+                      @click="handleButtonClick"
+                    >
+                      인증요청
+                    </VBtn>
+                  </template>
+
+                  <!-- Dialog Content -->
+              
+
+                  <VDialog
+                    v-model="isDialogTwoShow"
+                    class="v-dialog-sm text-center"
+                    persistent
+                  >
+                    <VAlert
+                      title="휴대전화로 받은 인증번호를 입력하세요!"
+                      title-size="100px"
+                      class="modal"
+                      icon="mdi-shield-lock-outline"
+                      prominent
+                      aria-setsize="50px"
+                    >
+                      <VAlert
+                        border="bottom"
+                        color="success"
+                        variant="tonal"
+                      >
+                        이름: {{ name }}, 휴대전화: {{ tel }}
+                      </VAlert>
+                      <DialogCloseBtn
+                        variant="text"
+                        size="small"
+                    
+                        @click="closeDialogAndResetTimer"
+                      />
+                      <VRow no-gutters>
+                        <VCol cols="12">
+                          <VCol
+                            cols="12"
+                            md="6"
+                          />
+
+                          <VTextField
+                            id="certifiedPN"
+                            v-model="certifiedPN"
+                        
+                            type="certifiedPN"
+                            placeholder="인증번호"
+                            persistent-placeholder
+                            inputmode="numeric"
+                            class="wider-textfield"
+                            @input="CertiPN"
+                          />
+                      
+                          <VCol
+                            cols="12"
+                            md="7"
+                          >
+                            <VAlert
+                              color="red"
+                              class="alert"
+                            >
+                              {{ formatTime(timerMinutes) }}:{{ formatTime(timerSeconds) }}
+                            </VAlert>
+                            <VCardActions>
+                              <VSpacer />
+                              <VBtn
+                                block
+                                class="btn"
+                                variant="flat"
+                                color="success"
+                                @click="verifyCertification"
+                              >
+                                인증 확인
+                              </VBtn>
+                              <VBtn
+                                block
+                                class="btn"
+                                variant="flat"
+                                color="info"
+                                @click="resendVerificationCode"
+                              >
+                                인증번호 재발송
+                              </VBtn>
+                            </VCardActions>
+                          </vcol>
+                        </vcol>
+                      </VRow>
+                    </valert>
+                  </VDialog>
+                </vdialog>
+              </VCol>
+            </VRow>
           </VCol>
         </VRow>
-      </VCol>
-      
-      <AddressApi
-        v-model="userAddress"
-        :new-address="userAddress" 
-        @update-address="handleUpdateAddress"
-      />
-    </VRow>
+      </vcol>
+    </vrow>
   </VForm>
 </template>
 

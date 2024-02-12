@@ -1,6 +1,6 @@
 <template>
   <VCol cols="12">
-    <VRow>
+    <VRow class="my-1">
       <VCol cols="4" />
       <VCol cols="2">
         <VTextField
