@@ -54,6 +54,9 @@ const msgGroups = computed(() => {
       messages: [],
     }
     messages.forEach((msg, index) => {
+      if (msg.message.trim() === '') {
+        return
+      }
       if (msgSenderId === msg.senderId) {
         msgGroup.messages.push({
           message: msg.message,

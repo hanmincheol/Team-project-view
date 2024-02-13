@@ -20,8 +20,8 @@ const getDotColor = (index) => {
 }
 
 // mh는 Member_History 테이블을 뜻하는 약자
-const mhdate = ref([]);
-const searchuser = 'HMC' //접속중인 유저 아이디값 받아넣기
+const mhdate = ref([])
+const searchuser = 'hmc0110' //접속중인 유저 아이디값 받아넣기
 const form = ref('')
 
 const fetchData = async () => {

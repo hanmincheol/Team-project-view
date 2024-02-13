@@ -83,7 +83,7 @@ userListStore.fetchUser(Number(route.params.id)).then(response => {
         </VWindowItem>
 
         <VWindowItem>
-          <MyList id="HMC" />
+          <MyList id="hmc0110" />
         </VWindowItem>
 
         <VWindowItem>

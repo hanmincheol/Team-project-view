@@ -62,7 +62,7 @@ onMounted(() => {
         senderId,
         feedback: {
           isSent: true,
-          isDelivered: false,
+          isDelivered: socket.readyState === WebSocket.OPEN,
           isSeen: false,
         },
       }
@@ -70,18 +70,42 @@ onMounted(() => {
 
       // 새 메시지를 messages 배열에 추가합니다.
       messages.value.push(newMessageData)
-      console.log(messages.value) // 배열 로그
+      console.log("메세지 잘 들어가고 있나??:", messages.value) // 배열 로그
+
+      // 새로운 activeChat 객체를 만듭니다.
+      const newActiveChat = {
+        ...activeChat.value,
+        chat: {
+          ...activeChat.value.chat,
+          messages: [...activeChat.value.chat.messages, newMessageData],
+        },
+      }
+
+      // 새로운 activeChat 객체를 activeChat.value에 할당합니다.
+      activeChat.value = newActiveChat
 
       try {
-      // 데이터베이스에 메시지 저장
-        const response = await axios.post("http://localhost:4000/chat/SoloWrite.do", {
-          id: senderId,
-          ruser: contactId,
-          content: message.value,
-        })
+        if (socket.readyState === WebSocket.OPEN) {
+          // 웹소켓이 연결된 경우, 웹소켓을 통해 메시지 전송
+          socket.send(JSON.stringify({
+            senderId: senderId,
+            message: message.value,
+          }))
 
-        // 웹소켓을 통해 메시지 전송
-        socket.send(message.value)
+          // 데이터베이스에 메시지 저장
+          const response = await axios.post("http://localhost:4000/chat/SoloWrite.do", {
+            id: senderId,
+            ruser: contactId,
+            content: message.value,
+          })
+        } else {
+          // 웹소켓이 연결되지 않은 경우, 데이터베이스에 메시지 저장
+          const response = await axios.post("http://localhost:4000/chat/SoloWrite.do", {
+            id: senderId,
+            ruser: contactId,
+            content: message.value,
+          })
+        }
 
         // 해당 연락처에 대한 채팅이 없으면 새로운 채팅을 생성 및 데이터베이스에 추가
         if (activeChat.value === undefined) {
@@ -94,7 +118,7 @@ onMounted(() => {
           // 새로운 채팅을 활성 채팅으로 설정합니다.
           activeChat.value = database.value.chats[database.value.chats.length - 1]
 
-          const activeChatContact = chatsContacts.find(c => c.id === contactId)
+          const activeChatContact = chatsContacts.value.find(c => c.id === contactId)
 
           chatsContacts.push({
             ...activeChatContact,
@@ -112,7 +136,7 @@ onMounted(() => {
         }
      
         // 활성 연락처에 대한 마지막 메시지 설정
-        const contact = chatsContacts.find(c => {
+        const contact = chatsContacts.value.find(c => {
           if (activeChat.value)
             return c.userId === activeChat.value.contact.userId
 
@@ -138,18 +162,20 @@ onMounted(() => {
   })
 
   socket.addEventListener('message', async event => {
-    const message = event.data
+
+    // JSON 형태의 메시지를 파싱
+    const receivedMessage = JSON.parse(event.data)
+    
+    // 파싱한 메시지를 messages 배열에 추가
+    messages.value.push(receivedMessage)
   
     // 데이터베이스에 메시지 저장
     const response = await axios.post("http://localhost:4000/chat/SoloWrite.do", {
       id: contactId,
       ruser: senderId,
-      content: message,
+      content: receivedMessage.value,
     })
 
-    // 받은 메시지를 messages 배열에 추가
-    messages.value.push(message)
-    console.log(messages.value.push) // 배열 로그
   })
 })
 
@@ -167,11 +193,11 @@ const openChatOfContact = async userId => {
   console.log("activeChat----", activeChat)
   console.log("userId----", userId)
   console.log("chat-----------------------------------------------", chat)
-  chat.messages.forEach((msg, index) => {
-    console.log(`Message ${index + 1}:`, msg.message)
-  })
 
   if (chat) {
+    chat.messages.forEach((msg, index) => {
+      console.log(`Message ${index + 1}:`, msg.message)
+    })
     chat.unseenMsgs = 0
   }
 
