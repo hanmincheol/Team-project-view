@@ -47,7 +47,9 @@ export default function useDatabase() {
     database.value.chats.find(chat => chat.userId === connetId),
   )
 
+
   console.log("activeChat--------", activeChat)
+  console.log("촤)database---------------------------", database)
 
   async function fetchDatabase(userId) {
     try {
@@ -94,7 +96,7 @@ export default function useDatabase() {
             chat.messages.push({
               message: item.content,
               time: item.sendDate,
-              senderId: userId,
+              senderId: item.id,
               feedback: {
                 isSent: true,
                 isDelivered: true,
@@ -111,7 +113,7 @@ export default function useDatabase() {
                 {
                   message: item.content,
                   time: item.sendDate,
-                  senderId: userId,
+                  senderId: item.id,
                   feedback: {
                     isSent: true,
                     isDelivered: true,
