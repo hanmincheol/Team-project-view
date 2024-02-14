@@ -1,26 +1,38 @@
 <script setup>
+import useDatabase from '@/views/apps/chat/chatData.js'
 import { formatDate } from '@core/utils/formatters'
 import { computed, defineProps } from 'vue'
 
+
 const props = defineProps({
-  messages: {
-    type: Array,
-    required: true,
-  },
-  activeChat: {
+  newChat: {
     type: Object,
     required: true,
   },
 })
 
+let { activeChat } = useDatabase()
 
-const contact = computed(() => ({
-  id: props.activeChat?.contact?.id,
-  avatar: props.activeChat?.contact?.avatar,
+console.log("activeChat------------"+activeChat)
+
+const contact = computed(() => {
+  if (activeChat.value) {
+    return {
+      id: activeChat.value.userId,
+      avatar: activeChat.value.avatar,
+    }
+  } else {
+    return {
+      id: null,
+      avatar: null,
+    }
+  }
+})
+
+const newContact = computed(() => ({
+  id: props.newChat?.contact?.id,
+  avatar: props.newChat?.contact?.avatar,
 }))
-
-console.log("contact.value.id---여기 들어오긴해?", props.activeChat.chat)
-
 
 const resolveFeedbackIcon = feedback => {
   if (feedback.isSeen)
@@ -41,44 +53,52 @@ const resolveFeedbackIcon = feedback => {
 }
 
 const msgGroups = computed(() => {
-  let messages = []
+  let activeMessages = []
+  let newMessages = []
   const _msgGroups = []
 
-  console.log("props.activeChat.value?.chat", props.activeChat.value?.chat)
-
-  if (props.activeChat?.chat) {
-    messages = props.activeChat.chat.messages
-    let msgSenderId = messages[0]?.senderId
-    let msgGroup = {
-      senderId: msgSenderId,
-      messages: [],
-    }
-    messages.forEach((msg, index) => {
-      if (msg.message.trim() === '') {
-        return
-      }
-      if (msgSenderId === msg.senderId) {
-        msgGroup.messages.push({
-          message: msg.message,
-          time: msg.time,
-          feedback: msg.feedback,
-        })
-      } else {
-        msgSenderId = msg.senderId
-        _msgGroups.push(msgGroup)
-        msgGroup = {
-          senderId: msg.senderId,
-          messages: [{
-            message: msg.message,
-            time: msg.time,
-            feedback: msg.feedback,
-          }],
-        }
-      }
-      if (index === messages.length - 1)
-        _msgGroups.push(msgGroup)
-    })
+  if (activeChat.value && activeChat.value.messages) {
+    activeMessages = activeChat.value.messages.map(msg => ({
+      ...msg,
+      senderId: contact.value.id,
+    }))
   }
+
+  if (props.newChat?.chat && props.newChat.chat.messages) {
+    newMessages = props.newChat.chat.messages.map(msg => ({
+      ...msg,
+      senderId: newContact.value.id,
+    }))
+  }
+
+  const messages = [...activeMessages, ...newMessages]
+
+  messages.sort((a, b) => new Date(a.time) - new Date(b.time))
+
+  let msgSenderId = messages[0]?.senderId
+  let msgGroup = {
+    senderId: msgSenderId,
+    messages: [],
+  }
+
+  messages.forEach((msg, index) => {
+    if (msg.message.trim() === '') {
+      return
+    }
+    if (msgSenderId === msg.senderId) {
+      msgGroup.messages.push(msg)
+    } else {
+      msgSenderId = msg.senderId
+      _msgGroups.push(msgGroup)
+      msgGroup = {
+        senderId: msg.senderId,
+        messages: [msg],
+      }
+    }
+    if (index === messages.length - 1) {
+      _msgGroups.push(msgGroup)
+    }
+  })
   
   return _msgGroups
 })

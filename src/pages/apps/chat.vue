@@ -25,7 +25,8 @@ const scrollToBottomInChatLog = () => {
 }
 
 let { database, chatsContacts, connetId } = useDatabase()
-let activeChat = ref(database.value.chats.find(chat => chat.userId === connetId))
+
+let newchat = ref('')
 
 // 검색
 const q = ref('')
@@ -41,6 +42,8 @@ onMounted(() => {
   // 웹소켓 연결 생성
   const socket = new WebSocket('ws://localhost:4000/chat')
 
+  console.log(newchat)
+
   // 웹소켓 연결이 열렸을 때
   socket.addEventListener('open', async function (event) {
     console.log('----웹소켓 연결되었습니다.--------')
@@ -51,7 +54,7 @@ onMounted(() => {
         return
 
       senderId = connetId
-      contactId = activeChat?.value.contact.id
+      contactId = newchat?.value.contact.id
 
       console.log("----------contactId---------", contactId)
 
@@ -72,17 +75,17 @@ onMounted(() => {
       messages.value.push(newMessageData)
       console.log("메세지 잘 들어가고 있나??:", messages.value) // 배열 로그
 
-      // 새로운 activeChat 객체를 만듭니다.
-      const newActiveChat = {
-        ...activeChat.value,
+      // 새로운 newchat 객체를 만듭니다.
+      const newnewchat = {
+        ...newchat.value,
         chat: {
-          ...activeChat.value.chat,
-          messages: [...activeChat.value.chat.messages, newMessageData],
+          ...newchat.value.chat,
+          messages: [...newchat.value.chat.messages, newMessageData],
         },
       }
 
-      // 새로운 activeChat 객체를 activeChat.value에 할당합니다.
-      activeChat.value = newActiveChat
+      // 새로운 newchat 객체를 newchat.value에 할당합니다.
+      newchat.value = newnewchat
 
       try {
         if (socket.readyState === WebSocket.OPEN) {
@@ -108,7 +111,7 @@ onMounted(() => {
         }
 
         // 해당 연락처에 대한 채팅이 없으면 새로운 채팅을 생성 및 데이터베이스에 추가
-        if (activeChat.value === undefined) {
+        if (newchat.value === undefined) {
           database.value.chats.push({
             userId: contactId,
             unseenMsgs: 0,
@@ -116,29 +119,29 @@ onMounted(() => {
           })
 
           // 새로운 채팅을 활성 채팅으로 설정합니다.
-          activeChat.value = database.value.chats[database.value.chats.length - 1]
+          newchat.value = database.value.chats[database.value.chats.length - 1]
 
-          const activeChatContact = chatsContacts.value.find(c => c.id === contactId)
+          const newchatContact = chatsContacts.value.find(c => c.id === contactId)
 
           chatsContacts.push({
-            ...activeChatContact,
-            chat: activeChat,
+            ...newchatContact,
+            chat: newchat,
           })
-          if (activeChat) {
-            activeChat.chat = activeChat
+          if (newchat) {
+            newchat.chat = newchat
           }
         }
         else {
           // 채팅이 이미 있다면, 새 메시지를 채팅에 추가합니다.
-          if (activeChat.value && activeChat.value.messages) {
-            activeChat.value.messages.push(newMessageData)
+          if (newchat.value && newchat.value.messages) {
+            newchat.value.messages.push(newMessageData)
           }
         }
      
         // 활성 연락처에 대한 마지막 메시지 설정
         const contact = chatsContacts.value.find(c => {
-          if (activeChat.value)
-            return c.userId === activeChat.value.contact.userId
+          if (newchat.value)
+            return c.userId === newchat.value.contact.userId
 
           return false
         })
@@ -190,7 +193,7 @@ const startConversation = () => {
 const openChatOfContact = async userId => {
   const chat = database.value.chats.find(c => c.userId === userId)
 
-  console.log("activeChat----", activeChat)
+  console.log("newchat----", newchat)
   console.log("userId----", userId)
   console.log("chat-----------------------------------------------", chat)
 
@@ -201,7 +204,7 @@ const openChatOfContact = async userId => {
     chat.unseenMsgs = 0
   }
 
-  activeChat.value = {
+  newchat.value = {
     chat: chat ? chat : {
       userId: userId,
       unseenMsgs: 0,
@@ -221,9 +224,7 @@ const openChatOfContact = async userId => {
     contact: database.value.contacts.find(c => c.id === userId),
   }
 
-  console.log("activeChat", activeChat.value)
-  console.log("activeChat.chat----", activeChat.value.chat)
-  console.log("activeChat.contact----", activeChat.value.contact)
+  console.log("newchat", newchat.value)
 
   // 메세지 초기화
   msg.value = ''
@@ -273,7 +274,7 @@ const refInputEl = ref()
     <VMain class="chat-content-container">
       <!-- 👉 Right content: Active Chat -->
       <div
-        v-if="activeChat"
+        v-if="newchat"
         class="d-flex flex-column h-100"
       >
         <!-- 👉 Active chat header -->
@@ -292,29 +293,29 @@ const refInputEl = ref()
             location="bottom right"
             offset-x="3"
             offset-y="3"
-            :color="resolveAvatarBadgeVariant(activeChat.contact.status)"
+            :color="resolveAvatarBadgeVariant(newchat.contact.status)"
             bordered
           >
             <VAvatar
               size="40"
-              :variant="!activeChat.contact.avatar ? 'tonal' : undefined"
-              :color="!activeChat.contact.avatar ? resolveAvatarBadgeVariant(activeChat.contact.status) : undefined"
+              :variant="!newchat.contact.avatar ? 'tonal' : undefined"
+              :color="!newchat.contact.avatar ? resolveAvatarBadgeVariant(newchat.contact.status) : undefined"
               class="cursor-pointer"
             >
               <VImg
-                v-if="activeChat.contact.avatar"
-                :src="activeChat.contact.avatar"
-                :alt="activeChat.contact.fullName"
+                v-if="newchat.contact.avatar"
+                :src="newchat.contact.avatar"
+                :alt="newchat.contact.fullName"
               />
-              <span v-else>{{ avatarText(activeChat.contact.fullName) }}</span>
+              <span v-else>{{ avatarText(newchat.contact.fullName) }}</span>
             </VAvatar>
           </VBadge>
 
           <div class="flex-grow-1 ms-4 overflow-hidden">
             <h6 class="text-base font-weight-regular text-medium-emphasis">
-              {{ activeChat.contact.fullName }}
+              {{ newchat.contact.fullName }}
             </h6>
-            <span class="d-block text-sm text-truncate text-disabled">{{ activeChat.contact.role }}</span>
+            <span class="d-block text-sm text-truncate text-disabled">{{ newchat.contact.role }}</span>
           </div>
         </div>
 
@@ -327,10 +328,7 @@ const refInputEl = ref()
           :options="{ wheelPropagation: false }"
           class="flex-grow-1"
         >
-          <ChatLog
-            :messages="messages"
-            :active-chat="activeChat"
-          />
+          <ChatLog :new-chat="newchat" />
         </PerfectScrollbar>
 
         <!-- Message form -->
@@ -339,7 +337,7 @@ const refInputEl = ref()
           @submit.prevent="sendMessage"
         >
           <VTextField
-            :key="activeChat?.contact.id"
+            :key="newchat?.contact.id"
             v-model="msg"
             variant="solo"
             class="chat-message-input"
