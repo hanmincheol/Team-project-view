@@ -77,10 +77,10 @@ const onSubmit = () => {
               class="centered-content"
             >
               <h6 class="text-lg font-weight-medium">
-                회원가입 정보 입력
+                간편회원 가입 필수 추가정보 입력
               </h6>
               <p class="text-md mb-0">
-                HealthyReal의 회원이 되어보세요!
+                필수정보를 입력하고 HealthyReal의 다양한 서비스를 이용하세요!
               </p>
             </VCol>
             <FormLayoutSocialForm />

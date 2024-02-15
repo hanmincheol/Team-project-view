@@ -77,8 +77,10 @@ const loginStore = {
 
 
     socialLogin(context, url) {
+
       window.location.href = url // 백엔드 서버로 리다이렉트
-      console.log("여기는 되는거지?")
+      
+
     },
     
     // isSocialLogin(context) {
@@ -101,13 +103,16 @@ const loginStore = {
     saveToken(context, token){
       console.log('여기 와지니??')
       localStorage.setItem('access_token', token) // 토큰을 저장함
+      console.log('소셜')
       context.dispatch('getMemberInfo').catch(error => {
         console.log('회원 정보를 가져오는 데 실패했습니다:', error)
       })
     },
     getToken() {
+      
       return axios.post('http://localhost:4000/user/getToken', null, {
         withCredentials: true,
+        
       })
       
     },
@@ -122,6 +127,7 @@ const loginStore = {
             pro_filepath: res.data.pro_filepath,
           }
 
+          console.log('소셜2')
           console.log(res.data.pro_filepath)
           
           commit('loginSuccess', userInfo)
