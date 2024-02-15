@@ -162,14 +162,23 @@ socket.addEventListener('open', async function (event) {
 })
 
 socket.addEventListener('message', async event => {
-
   // JSON 형태의 메시지를 파싱
-  const receivedMessage = JSON.parse(event.data)
-    
-  // 파싱한 메시지를 messages 배열에 추가
-  messages.value.push(receivedMessage)
-  
+  const { senderId, message } = JSON.parse(event.data)
 
+  // 동일한 형태의 메시지 객체를 생성
+  const receivedMessage = {
+    message,
+    senderId,
+    time: String(new Date()),
+    feedback: {
+      isSent: true,
+      isDelivered: true,
+      isSeen: false,
+    },
+  }
+
+  // 파싱한 메시지를 messages 배열에 추가
+  newchat.value.push(receivedMessage)
 })
 
 // 친구 클릭시 열리는 채팅방

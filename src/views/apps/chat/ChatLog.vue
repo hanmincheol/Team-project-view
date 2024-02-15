@@ -19,6 +19,8 @@ console.log("datavbase------------")
 console.log(database)
 console.log("props.newChat------------------")
 console.log(props.newChat) //내가 보낸 메세지
+console.log("props.messages------------------")
+console.log(props.messages) //내가 보낸 메세지
 
 
 
@@ -36,11 +38,6 @@ const contact = computed(() => {
     }
   }
 })
-
-const newContact = computed(() => ({
-  id: props.newChat?.contact?.id,
-  avatar: props.newChat?.contact?.avatar,
-}))
 
 const resolveFeedbackIcon = feedback => {
   if (feedback.isSeen)
