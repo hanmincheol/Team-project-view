@@ -11,15 +11,22 @@ const props = defineProps({
   },
 })
 
-let { activeChat } = useDatabase()
+let { activeChat, database, fetchFriendDatabase } = useDatabase()
 
-console.log("activeChat------------"+activeChat)
+console.log("activeChat------------")
+console.log(activeChat) //내가 받은 메세지
+console.log("datavbase------------")
+console.log(database)
+console.log("props.newChat------------")
+console.log(props.newChat) //내가 보낸 메세지
+
+
 
 const contact = computed(() => {
   if (activeChat.value) {
     return {
-      id: activeChat.value.userId,
-      avatar: activeChat.value.avatar,
+      id: activeChat.value.messages.senderId,
+      avatar: props.newChat?.contact?.avatar,
     }
   } else {
     return {
@@ -99,6 +106,8 @@ const msgGroups = computed(() => {
       _msgGroups.push(msgGroup)
     }
   })
+  console.log("점검!!!!!!")
+  console.log(_msgGroups)
   
   return _msgGroups
 })
