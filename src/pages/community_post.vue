@@ -481,7 +481,7 @@ const toggleLike = async bno => {
 
   try {
     const response = await axios.post('http://localhost:4000/bbs/likes.do', {
-      id: "hmc0110",
+      id: connetId,
       bno: bno,
       cno: "",
       isLiked: isLiked.value,

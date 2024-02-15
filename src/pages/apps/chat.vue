@@ -38,148 +38,138 @@ let messages = ref([]) // 메시지를 저장할 배열 변수 선언
 let contactId = null 
 let senderId = null  
 
-onMounted(() => {
-  // 웹소켓 연결 생성
-  const socket = new WebSocket('ws://localhost:4000/chat')
+// 웹소켓 연결 생성
+const socket = new WebSocket('ws://localhost:4000/chat')
 
-  console.log(newchat)
+// 웹소켓 연결이 열렸을 때
+socket.addEventListener('open', async function (event) {
+  console.log('----웹소켓 연결되었습니다.--------')
 
-  // 웹소켓 연결이 열렸을 때
-  socket.addEventListener('open', async function (event) {
-    console.log('----웹소켓 연결되었습니다.--------')
+  sendMessage = async () => {
+    let message = ref(msg.value) // 여기서 message 변수 선언 및 초기화
+    if (!message.value) // .value를 사용하여 message의 값을 확인
+      return
 
-    sendMessage = async () => {
-      let message = ref(msg.value) // 여기서 message 변수 선언 및 초기화
-      if (!message.value) // .value를 사용하여 message의 값을 확인
-        return
+    senderId = connetId
+    contactId = newchat?.value.contact.id
 
-      senderId = connetId
-      contactId = newchat?.value.contact.id
+    console.log("----------contactId---------", contactId)
 
-      console.log("----------contactId---------", contactId)
-
-      // 새 메시지 데이터를 생성
-      const newMessageData = {
-        message: message.value,
-        time: String(new Date()),
-        senderId,
-        feedback: {
-          isSent: true,
-          isDelivered: socket.readyState === WebSocket.OPEN,
-          isSeen: false,
-        },
-      }
-
-
-      // 새 메시지를 messages 배열에 추가합니다.
-      messages.value.push(newMessageData)
-      console.log("메세지 잘 들어가고 있나??:", messages.value) // 배열 로그
-
-      // 새로운 newchat 객체를 만듭니다.
-      const newnewchat = {
-        ...newchat.value,
-        chat: {
-          ...newchat.value.chat,
-          messages: [...newchat.value.chat.messages, newMessageData],
-        },
-      }
-
-      // 새로운 newchat 객체를 newchat.value에 할당합니다.
-      newchat.value = newnewchat
-
-      try {
-        if (socket.readyState === WebSocket.OPEN) {
-          // 웹소켓이 연결된 경우, 웹소켓을 통해 메시지 전송
-          socket.send(JSON.stringify({
-            senderId: senderId,
-            message: message.value,
-          }))
-
-          // 데이터베이스에 메시지 저장
-          const response = await axios.post("http://localhost:4000/chat/SoloWrite.do", {
-            id: senderId,
-            ruser: contactId,
-            content: message.value,
-          })
-        } else {
-          // 웹소켓이 연결되지 않은 경우, 데이터베이스에 메시지 저장
-          const response = await axios.post("http://localhost:4000/chat/SoloWrite.do", {
-            id: senderId,
-            ruser: contactId,
-            content: message.value,
-          })
-        }
-
-        // 해당 연락처에 대한 채팅이 없으면 새로운 채팅을 생성 및 데이터베이스에 추가
-        if (newchat.value === undefined) {
-          database.value.chats.push({
-            userId: contactId,
-            unseenMsgs: 0,
-            messages: [newMessageData],
-          })
-
-          // 새로운 채팅을 활성 채팅으로 설정합니다.
-          newchat.value = database.value.chats[database.value.chats.length - 1]
-
-          const newchatContact = chatsContacts.value.find(c => c.id === contactId)
-
-          chatsContacts.push({
-            ...newchatContact,
-            chat: newchat,
-          })
-          if (newchat) {
-            newchat.chat = newchat
-          }
-        }
-        else {
-          // 채팅이 이미 있다면, 새 메시지를 채팅에 추가합니다.
-          if (newchat.value && newchat.value.messages) {
-            newchat.value.messages.push(newMessageData)
-          }
-        }
-     
-        // 활성 연락처에 대한 마지막 메시지 설정
-        const contact = chatsContacts.value.find(c => {
-          if (newchat.value)
-            return c.userId === newchat.value.contact.userId
-
-          return false
-        })
-
-        if (contact && contact.chat) {
-          contact.chat.lastMessage = newMessageData
-        }
-
-        // 메시지 보내는 란 초기화
-        msg.value = ''
-
-        // 스크롤을 아래로 내리기
-        await nextTick()
-        scrollToBottomInChatLog()
-
-      } catch (error) {
-        console.error(`데이터를 가져오는데 실패했습니다: ${error}`)
-      }
+    // 새 메시지 데이터를 생성
+    const newMessageData = {
+      message: message.value,
+      time: String(new Date()),
+      senderId,
+      feedback: {
+        isSent: true,
+        isDelivered: socket.readyState === WebSocket.OPEN,
+        isSeen: false,
+      },
     }
 
-  })
 
-  socket.addEventListener('message', async event => {
+    // 새 메시지를 messages 배열에 추가합니다.
+    messages.value.push(newMessageData)
+    console.log("메세지 잘 들어가고 있나??:", messages.value) // 배열 로그
 
-    // JSON 형태의 메시지를 파싱
-    const receivedMessage = JSON.parse(event.data)
+    // 새로운 newchat 객체를 만듭니다.
+    const newnewchat = {
+      ...newchat.value,
+      chat: {
+        ...newchat.value.chat,
+        messages: [...newchat.value.chat.messages, newMessageData],
+      },
+    }
+
+    // 새로운 newchat 객체를 newchat.value에 할당합니다.
+    newchat.value = newnewchat
+
+    try {
+      if (socket.readyState === WebSocket.OPEN) {
+        // 웹소켓이 연결된 경우, 웹소켓을 통해 메시지 전송
+        socket.send(JSON.stringify({
+          senderId: senderId,
+          message: message.value,
+        }))
+
+        // 데이터베이스에 메시지 저장
+        const response = await axios.post("http://localhost:4000/chat/SoloWrite.do", {
+          id: senderId,
+          ruser: contactId,
+          content: message.value,
+        })
+      } else {
+        // 웹소켓이 연결되지 않은 경우, 데이터베이스에 메시지 저장
+        const response = await axios.post("http://localhost:4000/chat/SoloWrite.do", {
+          id: senderId,
+          ruser: contactId,
+          content: message.value,
+        })
+      }
+
+      // 해당 연락처에 대한 채팅이 없으면 새로운 채팅을 생성 및 데이터베이스에 추가
+      if (newchat.value === undefined) {
+        database.value.chats.push({
+          userId: contactId,
+          unseenMsgs: 0,
+          messages: [newMessageData],
+        })
+
+        // 새로운 채팅을 활성 채팅으로 설정합니다.
+        newchat.value = database.value.chats[database.value.chats.length - 1]
+
+        const newchatContact = chatsContacts.value.find(c => c.id === contactId)
+
+        chatsContacts.push({
+          ...newchatContact,
+          chat: newchat,
+        })
+        if (newchat) {
+          newchat.chat = newchat
+        }
+      }
+      else {
+        // 채팅이 이미 있다면, 새 메시지를 채팅에 추가합니다.
+        if (newchat.value && newchat.value.messages) {
+          newchat.value.messages.push(newMessageData)
+        }
+      }
+     
+      // 활성 연락처에 대한 마지막 메시지 설정
+      const contact = chatsContacts.value.find(c => {
+        if (newchat.value)
+          return c.userId === newchat.value.contact.userId
+
+        return false
+      })
+
+      if (contact && contact.chat) {
+        contact.chat.lastMessage = newMessageData
+      }
+
+      // 메시지 보내는 란 초기화
+      msg.value = ''
+
+      // 스크롤을 아래로 내리기
+      await nextTick()
+      scrollToBottomInChatLog()
+
+    } catch (error) {
+      console.error(`데이터를 가져오는데 실패했습니다: ${error}`)
+    }
+  }
+
+})
+
+socket.addEventListener('message', async event => {
+
+  // JSON 형태의 메시지를 파싱
+  const receivedMessage = JSON.parse(event.data)
     
-    // 파싱한 메시지를 messages 배열에 추가
-    messages.value.push(receivedMessage)
+  // 파싱한 메시지를 messages 배열에 추가
+  messages.value.push(receivedMessage)
   
-    // 데이터베이스에 메시지 저장
-    const response = await axios.post("http://localhost:4000/chat/SoloWrite.do", {
-      id: contactId,
-      ruser: senderId,
-      content: receivedMessage.value,
-    })
 
-  })
 })
 
 // 친구 클릭시 열리는 채팅방
@@ -193,7 +183,6 @@ const startConversation = () => {
 const openChatOfContact = async userId => {
   const chat = database.value.chats.find(c => c.userId === userId)
 
-  console.log("newchat----", newchat)
   console.log("userId----", userId)
   console.log("chat-----------------------------------------------", chat)
 
@@ -228,13 +217,6 @@ const openChatOfContact = async userId => {
 
   // 메세지 초기화
   msg.value = ''
-
-  // unseenMsgs을 0으로 초기화
-  const contact = chatsContacts.value.find(c => c.id === userId)
-
-  console.log("contact----", contact)
-  if (contact)
-    contact.chat.unseenMsgs = 0
 
   // 채팅 및 연락처 왼쪽 사이드바 닫기
   if (vuetifyDisplays.smAndDown.value)

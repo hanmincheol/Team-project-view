@@ -1,7 +1,7 @@
 <script setup>
-import useDatabase from '@/views/apps/chat/chatData.js'
-import { formatDate } from '@core/utils/formatters'
-import { computed, defineProps } from 'vue'
+import useDatabase from '@/views/apps/chat/chatData.js';
+import { formatDate } from '@core/utils/formatters';
+import { computed, defineProps } from 'vue';
 
 
 const props = defineProps({
@@ -11,14 +11,15 @@ const props = defineProps({
   },
 })
 
-let { activeChat, database, fetchFriendDatabase } = useDatabase()
+const { activeChat, database, connetId } = useDatabase()
 
 console.log("activeChat------------")
 console.log(activeChat) //내가 받은 메세지
 console.log("datavbase------------")
 console.log(database)
-console.log("props.newChat------------")
+console.log("props.newChat------------------")
 console.log(props.newChat) //내가 보낸 메세지
+
 
 
 
@@ -67,20 +68,42 @@ const msgGroups = computed(() => {
   if (activeChat.value && activeChat.value.messages) {
     activeMessages = activeChat.value.messages.map(msg => ({
       ...msg,
-      senderId: contact.value.id,
+      senderId: msg.senderId,
     }))
   }
+
 
   if (props.newChat?.chat && props.newChat.chat.messages) {
     newMessages = props.newChat.chat.messages.map(msg => ({
       ...msg,
-      senderId: newContact.value.id,
+      senderId: msg.senderId,
     }))
   }
 
-  const messages = [...activeMessages, ...newMessages]
+  let messages = [...activeMessages, ...newMessages]
 
   messages.sort((a, b) => new Date(a.time) - new Date(b.time))
+
+
+  console.log("activeMessages------1")
+  console.log(activeMessages)
+  console.log("newMessages------1")
+  console.log(newMessages)
+  console.log("messages------1")
+  console.log(messages)
+  console.log("props.newChat?.contact?.id---------1")
+  console.log(props.newChat?.contact?.id)
+  console.log("connetId---------1")
+  console.log(connetId)
+
+  messages = messages
+  .filter(msg => msg.senderId === props.newChat?.contact?.id || msg.senderId === connetId)
+  .map(msg => ({
+    ...msg,
+  }))
+
+  console.log("messages------2")
+  console.log(messages)
 
   let msgSenderId = messages[0]?.senderId
   let msgGroup = {
@@ -88,22 +111,40 @@ const msgGroups = computed(() => {
     messages: [],
   }
 
-  messages.forEach((msg, index) => {
+  messages.forEach((msg,index) => {
     if (msg.message.trim() === '') {
       return
     }
+
+    
     if (msgSenderId === msg.senderId) {
+      console.log("msgSenderId------"+index)
+      console.log(msgSenderId)
+      console.log("msg.senderId------"+index)
+      console.log(msg.senderId)
       msgGroup.messages.push(msg)
-    } else {
-      msgSenderId = msg.senderId
-      _msgGroups.push(msgGroup)
-      msgGroup = {
-        senderId: msg.senderId,
-        messages: [msg],
-      }
+      console.log("msg------"+index)
+      console.log(msg)
+    } 
+    else {
+      console.log("msgSenderId------"+index)
+      console.log(msgSenderId)
+      console.log("msg.senderId------"+index)
+      console.log(msg.senderId)
+      console.log("msg------"+index)
+      console.log(msg)
+      _msgGroups.push(msgGroup) // 이전 그룹을 _msgGroups에 추가
+      msgSenderId = msg.senderId // 새로운 그룹의 senderId를 설정
+      msgGroup = { // 새로운 그룹을 시작
+      senderId: msgSenderId,
+      messages: [msg], // 현재 메시지를 새로운 그룹에 추가
     }
+      console.log("msgGroup------"+index)
+      console.log(msgGroup)
+    }
+      // 마지막 메시지인 경우, 현재 그룹을 _msgGroups에 추가
     if (index === messages.length - 1) {
-      _msgGroups.push(msgGroup)
+       _msgGroups.push(msgGroup)
     }
   })
   console.log("점검!!!!!!")
@@ -120,37 +161,37 @@ const msgGroups = computed(() => {
       :key="msgGrp.senderId + String(index)"
       class="chat-group d-flex align-start"
       :class="[{
-        'flex-row-reverse': msgGrp.senderId !== contact.id,
+        'flex-row-reverse': msgGrp.senderId == connetId,
         'mb-8': msgGroups.length - 1 !== index,
       }]"
     >
       <div
         class="chat-avatar"
-        :class="msgGrp.senderId !== contact.id ? 'ms-4' : 'me-4'"
+        :class="msgGrp.senderId == connetId ? 'ms-4' : 'me-4'"
       >
         <VAvatar size="32">
-          <VImg :src="msgGrp.senderId === contact.id ? contact.avatar : profileUser?.avatar" />
+          <VImg :src="msgGrp.senderId !== connetId ? contact.avatar : connetAv" />
         </VAvatar>
       </div>
       <div
         class="chat-body d-inline-flex flex-column"
-        :class="msgGrp.senderId !== contact.id ? 'align-end' : 'align-start'"
+        :class="msgGrp.senderId == connetId ? 'align-end' : 'align-start'"
       >
         <p
           v-for="(msgData, msgIndex) in msgGrp.messages"
           :key="msgData.time"
           class="chat-content text-sm py-3 px-4 elevation-1"
           :class="[
-            msgGrp.senderId === contact.id ? 'bg-surface chat-left' : 'bg-primary text-white chat-right',
+            msgGrp.senderId !== connetId ? 'bg-surface chat-left' : 'bg-primary text-white chat-right',
             msgGrp.messages.length - 1 !== msgIndex ? 'mb-3' : 'mb-1',
           ]"
         >
           {{ msgData.message }}
         </p>
-        <div :class="{ 'text-right': msgGrp.senderId !== contact.id }">
+        <div :class="{ 'text-right': msgGrp.senderId == connetId }">
           <span class="text-xs me-1 text-disabled">{{ formatDate(msgGrp.messages[msgGrp.messages.length - 1].time, { hour: 'numeric', minute: 'numeric' }) }}</span>
           <VIcon
-            v-if="msgGrp.senderId !== contact.id"
+            v-if="msgGrp.senderId == connetId"
             size="16"
             :color="resolveFeedbackIcon(msgGrp.messages[msgGrp.messages.length - 1].feedback).color"
           >
